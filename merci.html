@@ -1,0 +1,145 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Demande envoyée – Milou Dogs Provence</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="effects.css">
+<style>
+#merci{background:var(--cream);min-height:80vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 5%;}
+.merci-box{max-width:600px;margin:0 auto;}
+.merci-icon{font-size:4rem;margin-bottom:24px;animation:bounce 1s ease infinite alternate;}
+@keyframes bounce{from{transform:translateY(0);}to{transform:translateY(-12px);}}
+.merci-box h1{font-size:clamp(2rem,4vw,2.8rem);color:var(--lavande-dark);margin-bottom:16px;}
+.merci-box>p{color:var(--text-muted);font-size:1rem;line-height:1.8;font-weight:300;margin-bottom:28px;}
+.merci-recap{background:white;border:1px solid var(--border);border-radius:20px;padding:28px;margin-bottom:24px;text-align:left;}
+.merci-recap h3{font-size:1rem;color:var(--lavande-dark);margin-bottom:16px;}
+.merci-step{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px;font-size:.9rem;color:var(--text-muted);}
+.merci-step-num{width:28px;height:28px;border-radius:50%;background:var(--lavande);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;margin-top:1px;}
+.merci-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.merci-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+@media(max-width:540px){.merci-actions{grid-template-columns:1fr;}}
+.merci-action-card{background:white;border:1px solid var(--border);border-radius:20px;padding:24px 20px;text-align:center;text-decoration:none;transition:all .25s;display:block;}
+.merci-action-card:hover{box-shadow:var(--shadow);transform:translateY(-3px);}
+.merci-action-card .mac-icon{font-size:2rem;margin-bottom:10px;}
+.merci-action-card h4{font-size:.95rem;color:var(--lavande-dark);margin-bottom:6px;font-family:'Playfair Display',serif;}
+.merci-action-card p{font-size:.8rem;color:var(--text-muted);line-height:1.5;font-weight:300;margin:0;}
+.mac-google{border-color:#4285F4;background:linear-gradient(135deg,#f0f7ff,#e8f4fd);}
+.mac-google:hover{border-color:#4285F4;}
+.mac-partage{border-color:#25D366;background:linear-gradient(135deg,#f0fff4,#e8fdf0);}
+.mac-partage:hover{border-color:#25D366;}
+.merci-compte{background:linear-gradient(135deg,var(--lavande-light),#f0ecfb);border:1.5px solid var(--lavande);border-radius:20px;padding:24px;margin-bottom:24px;text-align:center;}
+.merci-compte h4{color:var(--lavande-dark);margin-bottom:8px;font-size:1rem;}
+.merci-compte p{font-size:.85rem;color:var(--text-muted);margin-bottom:16px;line-height:1.6;font-weight:300;}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html"><span class="paw">🐾</span><span>Milou Dogs Provence</span></a>
+  <button class="hamburger" onclick="toggleMenu(this)"><span></span><span></span><span></span></button>
+  <ul class="nav-links" id="navlinks">
+        <li><a href="index.html" data-icon="🏠">Accueil</a></li>
+    <li><a href="services.html" data-icon="🐾">Services &amp; Tarifs</a></li>
+    <li><a href="avis.html" data-icon="⭐">Avis</a></li>
+    <li><a href="faq.html" data-icon="❓">FAQ</a></li>
+    <li><a href="parrainage.html" data-icon="🎁">Parrainage</a></li>
+    <li><a href="reservation.html" data-icon="📅">Réservation</a></li>
+    <li id="nav-auth-item"></li>
+    <li class="nav-mobile-cta" style="padding:14px 20px;border:none;"><a href="reservation.html" class="btn-primary" style="display:block;text-align:center;">📅 Réserver maintenant</a></li>
+  </ul>
+  <span id="nav-desktop-auth"></span>
+  <a class="nav-cta" href="reservation.html">Réserver</a>
+</nav>
+<section id="merci">
+  <div class="merci-box fade-in">
+    <div class="merci-icon">🐾</div>
+    <h1>Demande envoyée avec succès !</h1>
+    <p>Merci pour votre confiance. Je vous recontacte dans les <strong>24h</strong> pour confirmer votre réservation.</p>
+    <div class="merci-recap">
+      <h3>📋 La suite se passe en 3 étapes</h3>
+      <div class="merci-step"><div class="merci-step-num">1</div><div><strong>Confirmation sous 24h</strong><br>Je vous rappelle au numéro indiqué pour valider les dates et le service.</div></div>
+      <div class="merci-step"><div class="merci-step-num">2</div><div><strong>Visite de présentation</strong><br>Avant le premier séjour, votre chien vient découvrir les lieux et nous faire connaissance.</div></div>
+      <div class="merci-step"><div class="merci-step-num">3</div><div><strong>Séjour & photos quotidiennes</strong><br>Pendant toute la durée, je vous envoie des nouvelles et photos chaque jour sur WhatsApp.</div></div>
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+        <h3 style="margin-bottom:12px;">🎒 Pensez à apporter</h3>
+        <div class="merci-step"><div style="font-size:1.3rem">🦮</div><div><strong>La laisse et le collier</strong></div></div>
+        <div class="merci-step"><div style="font-size:1.3rem">🥣</div><div><strong>Les croquettes habituelles</strong></div></div>
+        <div class="merci-step"><div style="font-size:1.3rem">🍽️</div><div><strong>La gamelle de votre chien</strong></div></div>
+      </div>
+    </div>
+    <!-- Actions : Avis Google + Partage -->
+    <div class="merci-actions">
+      <a class="merci-action-card mac-google" href="https://g.page/r/CdAXjNRBp4_VEBM/review" target="_blank" rel="noopener">
+        <div class="mac-icon">⭐</div>
+        <h4>Laisser un avis Google</h4>
+        <p>Vous êtes satisfait ? Un avis Google nous aide énormément — ça prend 30 secondes !</p>
+      </a>
+      <a class="merci-action-card mac-partage" id="btn-partage" href="#" target="_blank" rel="noopener">
+        <div class="mac-icon">🎁</div>
+        <h4>Parrainer un ami</h4>
+        <p>Partagez Milou Dogs à un ami propriétaire de chien et gagnez 10€ sur votre prochaine garde !</p>
+      </a>
+    </div>
+
+    <!-- Créer un compte (visible si non connecté) -->
+    <div class="merci-compte" id="merci-compte-block" style="display:none;">
+      <h4>📱 Suivez votre réservation en ligne</h4>
+      <p>Créez votre espace client gratuit pour suivre le statut de votre réservation, recevoir vos confirmations, et gérer la fiche de votre chien.</p>
+      <a class="btn-primary" href="inscription.html">Créer mon espace client →</a>
+    </div>
+
+    <div class="merci-btns">
+      <a class="btn-outline" href="index.html">🏠 Retour à l'accueil</a>
+      <a class="btn-outline" href="https://wa.me/33777234088" target="_blank">💬 WhatsApp</a>
+    </div>
+  </div>
+</section>
+<footer>
+  <div class="footer-logo">🐾 Milou Dogs Provence</div>
+  <div class="social-links">
+    <a href="https://facebook.com/miloudogsprovence" target="_blank">📘 Facebook</a>
+    <a href="https://tiktok.com/@miloudogs_provence" target="_blank">🎵 TikTok</a>
+    <a href="tel:0777234088">📞 07 77 23 40 88</a>
+  </div>
+  <p>Garde de chien à domicile · Promenades · Garderie · Toilettage</p>
+  <p>Miramas & Provence · ⭐⭐⭐⭐⭐ sur Google</p>
+  <p style="margin-top:20px;font-size:.75rem;opacity:.5;">© 2025 Milou Dogs Provence · Tous droits réservés</p>
+</footer>
+<script>
+function toggleMenu(btn){document.getElementById('navlinks').classList.toggle('open');btn.classList.toggle('open');}
+const obs=new IntersectionObserver(els=>els.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.1});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+
+// Lien parrainage WhatsApp
+(function(){
+  const msg = encodeURIComponent(
+    "Bonjour ! Je te recommande Milou Dogs Provence pour la garde de ton chien à Miramas 🐾\n" +
+    "Pension familiale 5★, terrain 2000m², photos quotidiennes, à partir de 20€/nuit.\n\n" +
+    "Réserve ici : https://miloudogsprovence.fr/reservation.html\n\n" +
+    "N'oublie pas de mentionner mon prénom lors de ta réservation — j'ai droit à une réduction de 10€ 🎁"
+  );
+  const btn = document.getElementById('btn-partage');
+  if (btn) btn.href = 'https://wa.me/?text=' + msg;
+})();
+</script>
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-auth.js"></script>
+<script>
+// Afficher bloc "créer un compte" uniquement si non connecté
+firebase.auth().onAuthStateChanged(function(user) {
+  const block = document.getElementById('merci-compte-block');
+  if (!user && block) block.style.display = 'block';
+});
+</script>
+<script src="chatbot.js"></script>
+<script src="effects-extra.js"></script>
+</body>
+</html>
+

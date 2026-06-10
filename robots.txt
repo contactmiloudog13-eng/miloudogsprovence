@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Pages privées — ne pas indexer
+Disallow: /espace-client.html
+Disallow: /connexion.html
+Disallow: /inscription.html
+Disallow: /merci.html
+
+Sitemap: https://miloudogsprovence.fr/sitemap.xml

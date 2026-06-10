@@ -1,0 +1,1725 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Mon espace client – Milou Dogs Provence</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="effects.css">
+<style>
+/* ── LOADER ── */
+.auth-loading{position:fixed;inset:0;background:var(--cream);display:flex;align-items:center;justify-content:center;z-index:9000;transition:opacity .4s;}
+.auth-loading.hide{opacity:0;pointer-events:none;}
+/* Cache nav + footer pendant le chargement pour éviter le flash */
+body:not(.auth-ready) nav,
+body:not(.auth-ready) footer{visibility:hidden;}
+.auth-loading-inner{text-align:center;}
+.auth-loading-inner .paw{font-size:3rem;animation:pawspin 2s linear infinite;display:block;margin-bottom:16px;}
+.auth-loading-inner p{color:var(--text-muted);font-size:.9rem;}
+
+/* ── LAYOUT ── */
+.dashboard-page{
+  min-height:100vh;
+  padding:86px 0 80px;
+  background:linear-gradient(135deg,#F5EFEA 0%,#EDE5F5 40%,#F5EFEA 70%,#FDF3E0 100%);
+  background-size:300% 300%;
+  animation:herogradient 12s ease infinite;
+}
+@keyframes herogradient{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+
+.dashboard-wrap{max-width:980px;margin:0 auto;padding:0 5%;}
+
+/* ── HEADER BIENVENUE ── */
+.welcome-header{
+  background:linear-gradient(135deg,var(--lavande-dark),var(--lavande));
+  border-radius:24px;padding:32px 40px;
+  display:flex;align-items:center;gap:24px;
+  margin-bottom:28px;
+  box-shadow:0 8px 40px rgba(74,63,114,0.25);
+  animation:cardIn .5s cubic-bezier(.23,1,.32,1) both;
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
+@media(max-width:600px){.welcome-header{flex-direction:column;text-align:center;padding:24px;}}
+.welcome-avatar{
+  width:72px;height:72px;border-radius:50%;flex-shrink:0;
+  background:rgba(255,255,255,0.2);border:3px solid rgba(255,255,255,0.4);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:1.8rem;color:white;font-weight:700;
+}
+.welcome-text h2{font-size:1.5rem;color:white;margin-bottom:4px;}
+.welcome-text p{font-size:.9rem;color:rgba(255,255,255,.7);font-weight:300;}
+.welcome-badge{
+  margin-left:auto;flex-shrink:0;
+  background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);
+  color:white;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  padding:6px 14px;border-radius:20px;
+}
+@media(max-width:600px){.welcome-badge{margin:0 auto;}}
+
+/* ── MENU ONGLETS ── */
+.dash-tabs{
+  display:flex;gap:8px;margin-bottom:24px;
+  background:white;border-radius:16px;padding:6px;
+  box-shadow:0 2px 16px rgba(74,63,114,0.08);
+  animation:cardIn .5s .05s cubic-bezier(.23,1,.32,1) both;
+  flex-wrap:wrap;
+}
+.dash-tab{
+  flex:1;min-width:120px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 16px;border-radius:12px;border:none;cursor:pointer;
+  background:transparent;font-family:'Lato',sans-serif;
+  font-size:.88rem;font-weight:700;color:var(--text-muted);
+  text-transform:uppercase;letter-spacing:.06em;
+  transition:all .25s;
+}
+.dash-tab:hover{background:var(--lavande-light);color:var(--lavande-dark);}
+.dash-tab.active{
+  background:linear-gradient(135deg,var(--lavande),var(--lavande-dark));
+  color:white;
+  box-shadow:0 4px 16px rgba(123,111,160,0.35);
+}
+.dash-tab .tab-icon{font-size:1.1rem;}
+@media(max-width:500px){.dash-tab{font-size:.78rem;padding:10px 10px;}}
+
+/* ── PANNEAUX ── */
+.dash-panel{display:none;animation:cardIn .4s cubic-bezier(.23,1,.32,1) both;}
+.dash-panel.active{display:block;}
+
+/* ── CARD GÉNÉRIQUE ── */
+.panel-card{
+  background:white;border-radius:20px;
+  box-shadow:0 4px 24px rgba(74,63,114,0.08);
+  padding:36px 40px;margin-bottom:20px;
+}
+@media(max-width:600px){.panel-card{padding:24px 20px;}}
+.panel-card h3{
+  font-size:1.15rem;color:var(--lavande-dark);
+  margin-bottom:24px;padding-bottom:14px;
+  border-bottom:1.5px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+
+/* ── FORMULAIRE PROFIL ── */
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:540px){.form-row-2{grid-template-columns:1fr;}}
+.form-group{margin-bottom:18px;}
+.form-group label{
+  display:block;font-size:.78rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;
+  color:var(--text-muted);margin-bottom:7px;
+}
+.form-group input{
+  width:100%;padding:12px 15px;border-radius:12px;
+  border:1.5px solid var(--border);
+  font-family:'Lato',sans-serif;font-size:.93rem;color:var(--text);
+  background:var(--cream);transition:border-color .2s,box-shadow .2s;outline:none;
+}
+.form-group input:focus{border-color:var(--lavande);box-shadow:0 0 0 3px rgba(123,111,160,0.12);}
+.form-group input:disabled{background:#f5f5f5;color:var(--text-muted);cursor:not-allowed;}
+.form-group input[readonly]{background:var(--cream);color:var(--text);cursor:default;border-color:transparent;}
+.form-group input[readonly]:focus{box-shadow:none;border-color:transparent;}
+.btn-edit-profile{
+  padding:10px 24px;border-radius:40px;border:2px solid var(--lavande);cursor:pointer;
+  background:transparent;color:var(--lavande);font-family:'Lato',sans-serif;font-size:.9rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.05em;transition:all .2s;
+}
+.btn-edit-profile:hover{background:var(--lavande);color:white;}
+
+.form-actions{display:flex;gap:12px;align-items:center;margin-top:8px;flex-wrap:wrap;}
+.btn-save{
+  padding:13px 32px;border-radius:40px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--lavande),var(--lavande-dark));
+  color:white;font-family:'Lato',sans-serif;font-size:.92rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.05em;
+  box-shadow:0 4px 20px rgba(123,111,160,0.4);
+  transition:transform .2s,box-shadow .2s;
+  display:flex;align-items:center;gap:8px;
+}
+.btn-save:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(123,111,160,0.5);}
+.btn-save:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.btn-save .spinner{
+  display:none;width:15px;height:15px;border:2px solid rgba(255,255,255,.4);
+  border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;
+}
+.btn-save.loading .btn-text{display:none;}
+.btn-save.loading .spinner{display:block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.save-feedback{
+  font-size:.85rem;font-weight:700;padding:8px 16px;border-radius:20px;
+  display:none;
+}
+.save-feedback.ok{display:inline-block;background:var(--vert-light);color:var(--vert);}
+.save-feedback.err{display:inline-block;background:#fdf2f2;color:#c0392b;}
+
+/* ── SECTION MDP ── */
+.pwd-section{margin-top:28px;padding-top:24px;border-top:1.5px solid var(--border);}
+.pwd-section h4{font-size:.95rem;color:var(--lavande-dark);margin-bottom:18px;font-family:'Playfair Display',serif;}
+.password-wrapper{position:relative;}
+.password-wrapper input{padding-right:44px;}
+.toggle-pwd{position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;color:var(--text-muted);padding:4px;}
+
+/* ── SECTION MON CHIEN & RÉSERVATIONS (placeholders) ── */
+.coming-soon-box{
+  text-align:center;padding:60px 20px;
+}
+.coming-soon-box .cs-icon{font-size:4rem;display:block;margin-bottom:20px;}
+.coming-soon-box h3{font-size:1.4rem;color:var(--lavande-dark);margin-bottom:10px;}
+.coming-soon-box p{font-size:.95rem;color:var(--text-muted);max-width:400px;margin:0 auto 28px;font-weight:300;line-height:1.7;}
+.badge-soon{
+  display:inline-block;
+  background:var(--soleil-light);color:#8B6020;
+  font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  padding:6px 18px;border-radius:20px;
+}
+
+/* ── CARTES RÉSERVATIONS ── */
+.resa-card{
+  background:white;border-radius:16px;
+  border:1.5px solid var(--border);
+  padding:20px 24px;margin-bottom:12px;
+  transition:box-shadow .2s;
+}
+.resa-card:hover{box-shadow:0 4px 20px rgba(74,63,114,0.1);}
+.resa-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap;}
+.resa-card-service{font-weight:700;font-size:.95rem;color:var(--lavande-dark);font-family:'Playfair Display',serif;}
+.resa-card-date{font-size:.78rem;color:var(--text-muted);margin-top:3px;}
+.resa-status{
+  display:inline-flex;align-items:center;gap:5px;flex-shrink:0;
+  padding:5px 13px;border-radius:20px;font-size:.78rem;font-weight:700;
+}
+.status-en-attente{background:#FFF8E7;color:#8B6020;}
+.status-confirme{background:var(--vert-light);color:var(--vert);}
+.status-refuse{background:#fdecea;color:#c0392b;}
+.status-annulee{background:#f0f0f0;color:#888;}
+.status-invite{background:#f5f5f5;color:#999;}
+.resa-card-body{
+  display:flex;flex-wrap:wrap;gap:8px 20px;
+  font-size:.85rem;color:var(--text-muted);margin-bottom:10px;
+}
+.resa-card-footer{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+.btn-cancel{
+  background:none;border:1.5px solid #e0c0c0;color:#c0392b;
+  font-family:'Lato',sans-serif;font-size:.8rem;font-weight:700;
+  padding:7px 16px;border-radius:20px;cursor:pointer;
+  transition:all .2s;
+}
+.btn-cancel:hover{background:#fdecea;border-color:#c0392b;}
+.resa-empty{text-align:center;padding:40px 20px;}
+.resa-empty .empty-icon{font-size:3rem;display:block;margin-bottom:16px;}
+.resa-empty p{color:var(--text-muted);margin-bottom:20px;line-height:1.6;}
+
+/* ── MINI CALENDRIER ── */
+.mini-cal{background:var(--cream);border-radius:16px;padding:16px;margin-bottom:20px;}
+.mini-cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.mini-cal-header h4{font-family:'Playfair Display',serif;color:var(--lavande-dark);font-size:1rem;margin:0;}
+.mini-cal-nav{background:none;border:1.5px solid var(--border);border-radius:20px;padding:4px 12px;cursor:pointer;font-size:.85rem;color:var(--lavande-dark);font-weight:700;transition:all .2s;}
+.mini-cal-nav:hover{background:var(--lavande-light);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center;}
+.cal-day-label{font-size:.65rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;padding:4px 0;}
+.cal-day{font-size:.78rem;padding:6px 2px;border-radius:8px;cursor:default;}
+.cal-day.empty{opacity:0;}
+.cal-day.today{background:var(--lavande-light);color:var(--lavande-dark);font-weight:700;}
+.cal-day.resa{background:linear-gradient(135deg,var(--lavande),var(--lavande-dark));color:white;font-weight:700;border-radius:8px;}
+.cal-day.resa-start{border-radius:8px 0 0 8px;}
+.cal-day.resa-end{border-radius:0 8px 8px 0;}
+.cal-day.resa-mid{border-radius:0;background:var(--lavande-light);color:var(--lavande-dark);}
+.cal-legend{display:flex;gap:16px;margin-top:10px;font-size:.72rem;color:var(--text-muted);flex-wrap:wrap;}
+.cal-legend span{display:flex;align-items:center;gap:5px;}
+.cal-legend-dot{width:10px;height:10px;border-radius:3px;display:inline-block;}
+
+/* ── PARRAINAGE ── */
+.parrain-box{background:linear-gradient(135deg,var(--lavande-light),#f0edf8);border:1.5px solid var(--lavande);border-radius:16px;padding:20px;margin-top:20px;}
+.parrain-box h4{font-family:'Playfair Display',serif;color:var(--lavande-dark);margin-bottom:8px;}
+.parrain-code{display:flex;align-items:center;gap:10px;background:white;border:2px dashed var(--lavande);border-radius:12px;padding:12px 16px;margin:12px 0;}
+.parrain-code strong{font-size:1.3rem;font-family:'Playfair Display',serif;color:var(--lavande-dark);letter-spacing:.1em;}
+.btn-copy{background:var(--lavande);color:white;border:none;padding:7px 16px;border-radius:20px;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-copy:hover{background:var(--lavande-dark);}
+.parrain-stats{display:flex;gap:16px;margin-top:12px;flex-wrap:wrap;}
+.parrain-stat{background:white;border-radius:12px;padding:10px 16px;text-align:center;flex:1;min-width:80px;}
+.parrain-stat-val{font-size:1.5rem;font-family:'Playfair Display',serif;color:var(--lavande-dark);}
+.parrain-stat-label{font-size:.7rem;color:var(--text-muted);}
+
+/* ══ RESPONSIVE MOBILE ══ */
+@media(max-width:540px){
+  /* Calendrier */
+  .mini-cal{padding:12px 8px;}
+  .cal-day{font-size:.7rem;padding:5px 1px;}
+  .cal-day-label{font-size:.58rem;}
+  .mini-cal-header h4{font-size:.9rem;}
+
+  /* Radio buttons */
+  .radio-group{gap:5px;}
+  .radio-label{font-size:.78rem;padding:5px 9px;}
+
+  /* Parrainage */
+  .parrain-code{flex-wrap:wrap;gap:8px;}
+  .parrain-code strong{font-size:1.1rem;width:100%;}
+  .btn-copy{flex:1;text-align:center;}
+  .parrain-stats{gap:8px;}
+
+  /* Modal avis */
+  .modal-box{padding:20px 16px;width:calc(100% - 32px);}
+  .star-rating span{font-size:1.7rem;}
+
+  /* Fiche chien sections */
+  .fiche-section-title{font-size:.75rem;}
+  #c-identification{font-size:.85rem;}
+
+  /* Upload zone */
+  .upload-zone{padding:14px 10px;}
+  .upload-zone .upload-icon{font-size:1.5rem;}
+  .upload-zone p{font-size:.75rem;}
+
+  /* Carnet preview */
+  .carnet-preview{flex-wrap:wrap;}
+
+  /* Boutons actions réservation */
+  .resa-card-footer{flex-direction:column;align-items:flex-start;}
+
+  /* Stats parrain */
+  .parrain-stat-val{font-size:1.2rem;}
+}
+
+/* ── SÉLECTEUR MULTI-CHIENS ── */
+.chiens-selector{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px;}
+.chien-mini-card{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:12px 14px;background:white;border-radius:16px;
+  border:2px solid var(--border);cursor:pointer;transition:all .25s;
+  min-width:80px;box-shadow:0 2px 10px rgba(74,63,114,0.06);
+}
+.chien-mini-card:hover{border-color:var(--lavande);transform:translateY(-2px);}
+.chien-mini-card.active{border-color:var(--lavande);background:var(--lavande-light);box-shadow:0 4px 18px rgba(123,111,160,0.2);}
+.chien-mini-avatar{
+  width:52px;height:52px;border-radius:50%;object-fit:cover;
+  border:2px solid var(--border);background:var(--cream);
+  display:flex;align-items:center;justify-content:center;font-size:1.6rem;
+  overflow:hidden;flex-shrink:0;
+}
+.chien-mini-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.chien-mini-name{font-size:.8rem;font-weight:800;color:var(--lavande-dark);text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.btn-add-chien{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:12px 14px;border-radius:16px;border:2px dashed var(--border);
+  background:transparent;cursor:pointer;color:var(--text-muted);
+  font-family:'Lato',sans-serif;font-size:.8rem;font-weight:700;
+  transition:all .25s;min-width:80px;
+}
+.btn-add-chien:hover{border-color:var(--lavande);color:var(--lavande);background:var(--lavande-light);}
+.btn-add-chien .add-icon{font-size:1.6rem;line-height:1;}
+
+/* ── PHOTO CHIEN ── */
+.dog-photo-wrap{
+  display:flex;justify-content:center;margin-bottom:24px;
+}
+.dog-photo-circle{
+  width:90px;height:90px;border-radius:50%;
+  border:3px solid var(--lavande-light);background:var(--cream);
+  display:flex;align-items:center;justify-content:center;font-size:2.5rem;
+  cursor:pointer;position:relative;overflow:hidden;transition:border-color .2s;
+  box-shadow:0 4px 16px rgba(123,111,160,0.15);
+}
+.dog-photo-circle:hover{border-color:var(--lavande);}
+.dog-photo-circle img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.dog-photo-overlay{
+  position:absolute;inset:0;background:rgba(74,63,114,0.5);
+  display:none;align-items:center;justify-content:center;
+  color:white;font-size:.7rem;font-weight:700;text-align:center;border-radius:50%;
+}
+.dog-photo-circle:hover .dog-photo-overlay{display:flex;}
+.dog-photo-circle input[type=file]{display:none;}
+
+/* ── FICHE CHIEN ── */
+.fiche-section-title{font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--lavande-dark);margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--lavande-light);}
+.radio-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
+.radio-label{display:flex;align-items:center;gap:5px;font-size:.85rem;font-weight:700;cursor:pointer;padding:6px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--cream);transition:background .2s,border-color .2s,color .2s;user-select:none;}
+.radio-label:has(input:checked){background:var(--lavande-light);border-color:var(--lavande);color:var(--lavande-dark);}
+.radio-label input[type=radio]{accent-color:var(--lavande);cursor:pointer;}
+.radio-label:has(input:disabled){cursor:default;opacity:.85;}
+.btn-delete-chien{
+  padding:9px 20px;border-radius:30px;border:1.5px solid #e0c0c0;
+  background:transparent;color:#c0392b;font-family:'Lato',sans-serif;
+  font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;
+}
+.btn-delete-chien:hover{background:#fdecea;border-color:#c0392b;}
+
+/* ── CARNET DE SANTÉ ── */
+.upload-zone{border:2px dashed var(--border);border-radius:14px;padding:20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:var(--cream);}
+.upload-zone:hover{border-color:var(--lavande);background:var(--lavande-light);}
+.upload-zone input{display:none;}
+.upload-zone .upload-icon{font-size:2rem;display:block;margin-bottom:8px;}
+.upload-zone p{font-size:.82rem;color:var(--text-muted);margin:0;}
+.carnet-preview{margin-top:12px;display:flex;align-items:center;gap:12px;background:var(--lavande-light);border-radius:12px;padding:10px 14px;}
+.carnet-preview img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--border);}
+.carnet-preview a{font-size:.82rem;color:var(--lavande-dark);font-weight:700;text-decoration:none;}
+.carnet-preview a:hover{text-decoration:underline;}
+.upload-progress{height:6px;border-radius:4px;background:var(--border);margin-top:10px;overflow:hidden;display:none;}
+.upload-progress-bar{height:100%;background:linear-gradient(90deg,var(--lavande),var(--lavande-dark));width:0%;transition:width .3s;}
+
+/* ── AVIS ── */
+.btn-avis{
+  background:linear-gradient(135deg,var(--soleil-light),#fff3cd);
+  border:1.5px solid var(--soleil);color:#8B6020;
+  font-family:'Lato',sans-serif;font-size:.8rem;font-weight:700;
+  padding:7px 16px;border-radius:20px;cursor:pointer;transition:all .2s;
+}
+.btn-avis:hover{background:var(--soleil);color:white;}
+.btn-avis:disabled{opacity:.5;cursor:default;}
+.star-rating{display:flex;gap:6px;justify-content:center;margin:12px 0;}
+.star-rating span{font-size:2rem;cursor:pointer;transition:transform .15s;user-select:none;}
+.star-rating span:hover,.star-rating span.active{transform:scale(1.2);}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;}
+.modal-box{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:301;background:white;border-radius:20px;padding:28px;width:100%;max-width:420px;
+  box-shadow:0 8px 40px rgba(123,111,160,.3);}
+.modal-box h4{font-family:'Playfair Display',serif;color:var(--lavande-dark);margin-bottom:4px;}
+.modal-box textarea{width:100%;padding:12px;border-radius:12px;border:1.5px solid var(--border);
+  font-family:'Lato',sans-serif;font-size:.9rem;resize:vertical;outline:none;margin-top:8px;}
+.modal-box textarea:focus{border-color:var(--lavande);}
+
+/* ── BADGE NOTIFICATION ── */
+.notif-dot{
+  display:inline-block;width:9px;height:9px;border-radius:50%;
+  background:#e74c3c;margin-left:6px;vertical-align:middle;
+  animation:pulse-dot 1.5s infinite;
+}
+@keyframes pulse-dot{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.4);opacity:.7;}}
+
+/* ── DÉCONNEXION ── */
+.btn-logout{
+  display:inline-flex;align-items:center;gap:8px;
+  background:transparent;border:1.5px solid var(--border);
+  color:var(--text-muted);font-family:'Lato',sans-serif;
+  font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+  padding:10px 22px;border-radius:30px;cursor:pointer;transition:all .25s;
+}
+.btn-logout:hover{border-color:#e74c3c;color:#e74c3c;}
+</style>
+</head>
+<body>
+
+<!-- Loader auth -->
+<div class="auth-loading" id="auth-loading">
+  <div class="auth-loading-inner">
+    <span class="paw">🐾</span>
+    <p>Chargement de votre espace…</p>
+  </div>
+</div>
+
+<nav>
+  <a class="nav-logo" href="index.html"><span class="paw">🐾</span><span>Milou Dogs Provence</span></a>
+  <button class="hamburger" onclick="toggleMenu(this)"><span></span><span></span><span></span></button>
+  <ul class="nav-links" id="navlinks">
+    <li><a href="index.html" data-icon="🏠">Accueil</a></li>
+    <li><a href="services.html" data-icon="🐾">Services &amp; Tarifs</a></li>
+    <li><a href="avis.html" data-icon="⭐">Avis</a></li>
+    <li><a href="faq.html" data-icon="❓">FAQ</a></li>
+    <li><a href="parrainage.html" data-icon="🎁">Parrainage</a></li>
+    <li><a href="reservation.html" data-icon="📅">Réservation</a></li>
+    <li id="nav-auth-item"></li>
+    <li class="nav-mobile-cta" style="padding:14px 20px;border:none;"><a href="reservation.html" class="btn-primary" style="display:block;text-align:center;">📅 Réserver maintenant</a></li>
+  </ul>
+  <span id="nav-desktop-auth"></span>
+  <a class="nav-cta" href="reservation.html">Réserver</a>
+</nav>
+
+<main class="dashboard-page" id="dashboard-content" style="display:none;">
+  <div class="dashboard-wrap">
+
+    <!-- Bienvenue -->
+    <div class="welcome-header">
+      <div class="welcome-avatar" id="avatar-initials">?</div>
+      <div class="welcome-text">
+        <h2 id="welcome-name">Bonjour !</h2>
+        <p id="welcome-email"></p>
+      </div>
+      <span class="welcome-badge">✓ Compte actif</span>
+    </div>
+
+    <!-- Onglets -->
+    <div class="dash-tabs">
+      <button class="dash-tab active" onclick="showTab('profil',this)">
+        <span class="tab-icon">👤</span> Mon profil
+      </button>
+      <button class="dash-tab" onclick="showTab('chien',this)">
+        <span class="tab-icon">🐕</span> Mon chien
+      </button>
+      <button class="dash-tab" id="tab-resa" onclick="showTab('reservations',this)">
+        <span class="tab-icon">📅</span> Mes réservations<span class="notif-dot" id="resa-notif-dot" style="display:none;"></span>
+      </button>
+      <button class="dash-tab" id="tab-admin" onclick="showTab('admin',this)" style="display:none;background:linear-gradient(135deg,#fff3cd,#ffe08a);color:#7a5a00;border:1.5px solid #f5c84a;">
+        <span class="tab-icon">⚙️</span> Admin
+      </button>
+    </div>
+
+    <!-- ══ PANNEAU : MON PROFIL ══ -->
+    <div class="dash-panel active" id="panel-profil">
+      <div class="panel-card">
+        <h3>👤 Mes informations personnelles</h3>
+
+        <div id="profile-alert" class="save-feedback" style="margin-bottom:16px;"></div>
+
+        <form id="profile-form" novalidate>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="f-prenom">Prénom</label>
+              <input type="text" id="f-prenom" placeholder="Sophie" autocomplete="given-name" readonly>
+            </div>
+            <div class="form-group">
+              <label for="f-nom">Nom</label>
+              <input type="text" id="f-nom" placeholder="Martin" autocomplete="family-name" readonly>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="f-email">Adresse e-mail</label>
+            <input type="email" id="f-email" disabled title="Contactez-nous pour modifier votre e-mail">
+            <div style="font-size:.75rem;color:var(--text-muted);margin-top:4px;">L'e-mail ne peut pas être modifié ici.</div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="f-telephone">Téléphone</label>
+              <input type="tel" id="f-telephone" placeholder="06 12 34 56 78" autocomplete="tel" readonly>
+            </div>
+            <div class="form-group">
+              <label for="f-adresse">Adresse</label>
+              <input type="text" id="f-adresse" placeholder="12 rue des Mimosas, Miramas" autocomplete="street-address" readonly>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-edit-profile" id="btn-edit-profile" onclick="enableProfileEdit()">✏️ Modifier</button>
+            <button type="submit" class="btn-save" id="btn-save-profile" style="display:none;">
+              <span class="btn-text">💾 Enregistrer</span>
+              <div class="spinner"></div>
+            </button>
+            <span class="save-feedback" id="save-ok"></span>
+          </div>
+        </form>
+
+        <!-- Changer le mot de passe -->
+        <div class="pwd-section">
+          <h4>🔒 Changer le mot de passe</h4>
+          <div id="pwd-alert" class="save-feedback" style="margin-bottom:14px;"></div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="f-pwd-new">Nouveau mot de passe</label>
+              <div class="password-wrapper">
+                <input type="password" id="f-pwd-new" placeholder="Minimum 6 caractères">
+                <button type="button" class="toggle-pwd" onclick="togglePwd('f-pwd-new',this)">👁</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="f-pwd-confirm">Confirmer</label>
+              <div class="password-wrapper">
+                <input type="password" id="f-pwd-confirm" placeholder="••••••••">
+                <button type="button" class="toggle-pwd" onclick="togglePwd('f-pwd-confirm',this)">👁</button>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn-save" id="btn-save-pwd" onclick="changePassword()">
+            <span class="btn-text">Mettre à jour</span>
+            <div class="spinner"></div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Parrainage -->
+      <div class="panel-card" style="margin-top:16px;">
+        <h3>🎁 Mon parrainage</h3>
+        <div class="parrain-box">
+          <h4>Parrainez un ami, gagnez 10€ !</h4>
+          <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:4px;">Partagez votre code à un ami propriétaire de chien. Quand il réserve avec votre code, <strong>vous gagnez 10€ de réduction</strong> sur votre prochaine garde. Pour avoir une remise, votre ami devra à son tour parrainer quelqu'un 😊</p>
+          <div class="parrain-code">
+            <strong id="parrain-code-val">—</strong>
+            <button class="btn-copy" onclick="copyParrainCode()">📋 Copier</button>
+            <button class="btn-copy" style="background:#25D366;" onclick="shareParrainWhatsApp()">💬 Partager</button>
+          </div>
+          <div class="parrain-stats">
+            <div class="parrain-stat"><div class="parrain-stat-val" id="parrain-count">0</div><div class="parrain-stat-label">Amis parrainés</div></div>
+            <div class="parrain-stat"><div class="parrain-stat-val" id="parrain-gains">0€</div><div class="parrain-stat-label">Gains obtenus</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Déconnexion -->
+      <div style="text-align:center;margin-top:8px;">
+        <button class="btn-logout" onclick="logoutUser()">🚪 Se déconnecter</button>
+      </div>
+    </div>
+
+    <!-- ══ PANNEAU : MON CHIEN ══ -->
+    <div class="dash-panel" id="panel-chien">
+
+      <!-- Sélecteur de chiens -->
+      <div class="chiens-selector" id="chiens-selector">
+        <!-- rempli dynamiquement -->
+      </div>
+
+      <div class="panel-card" id="chien-card">
+        <h3>🐕 <span id="chien-card-title">Profil du chien</span></h3>
+
+        <div class="save-feedback" id="chien-alert" style="margin-bottom:16px;"></div>
+
+        <!-- Photo de profil -->
+        <div class="dog-photo-wrap">
+          <div class="dog-photo-circle" id="dog-photo-circle" onclick="document.getElementById('dog-photo-input').click()">
+            <span id="dog-photo-emoji">🐕</span>
+            <input type="file" id="dog-photo-input" accept="image/*" onchange="uploadDogPhoto(this)">
+            <div class="dog-photo-overlay">📷<br>Changer</div>
+          </div>
+        </div>
+
+        <form id="chien-form" novalidate>
+
+          <!-- ── Infos de base ── -->
+          <div class="fiche-section-title">📋 Informations de base</div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="c-nom">Nom du chien *</label>
+              <input type="text" id="c-nom" placeholder="Rex" readonly>
+            </div>
+            <div class="form-group">
+              <label for="c-race">Race</label>
+              <input type="text" id="c-race" placeholder="Labrador, Beagle…" readonly>
+            </div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>Sexe</label>
+              <div class="radio-group" id="c-sexe-group">
+                <label class="radio-label"><input type="radio" name="c-sexe" value="Mâle" disabled> Mâle</label>
+                <label class="radio-label"><input type="radio" name="c-sexe" value="Femelle" disabled> Femelle</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="c-naissance">Date de naissance</label>
+              <input type="date" id="c-naissance" readonly>
+            </div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="c-age">Âge</label>
+              <input type="text" id="c-age" placeholder="ex : 3 ans" readonly>
+            </div>
+            <div class="form-group">
+              <label for="c-poids">Poids (kg)</label>
+              <input type="number" id="c-poids" placeholder="ex : 12" min="0.5" max="120" step="0.5" readonly>
+            </div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="c-couleur">Couleur / robe</label>
+              <input type="text" id="c-couleur" placeholder="ex : fauve, noir et blanc…" readonly>
+            </div>
+            <div class="form-group">
+              <label>Stérilisé(e)</label>
+              <div class="radio-group">
+                <label class="radio-label"><input type="radio" name="c-sterilise" value="Oui" disabled> Oui</label>
+                <label class="radio-label"><input type="radio" name="c-sterilise" value="Non" disabled> Non</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="c-identification">Identification</label>
+              <select id="c-identification" disabled style="width:100%;padding:11px 15px;border-radius:12px;border:1.5px solid transparent;font-family:'Lato',sans-serif;font-size:.93rem;background:var(--cream);color:var(--text);outline:none;">
+                <option value="">— Choisir —</option>
+                <option value="Puce">Puce électronique</option>
+                <option value="Tatouage">Tatouage</option>
+                <option value="Aucune">Aucune</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="c-numero-id">N° d'identification</label>
+              <input type="text" id="c-numero-id" placeholder="ex : 250268500012345" readonly>
+            </div>
+          </div>
+
+          <!-- ── Caractère ── -->
+          <div class="fiche-section-title" style="margin-top:16px;">🎭 Caractère & Habitudes</div>
+          <div class="form-group">
+            <label for="c-temperament">Tempérament</label>
+            <input type="text" id="c-temperament" placeholder="ex : joueur, câlin, craintif, dominant…" readonly>
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>S'entend avec les chiens</label>
+              <div class="radio-group">
+                <label class="radio-label"><input type="radio" name="c-chiens" value="Oui" disabled> Oui</label>
+                <label class="radio-label"><input type="radio" name="c-chiens" value="Non" disabled> Non</label>
+                <label class="radio-label"><input type="radio" name="c-chiens" value="À tester" disabled> À tester</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>S'entend avec les chats</label>
+              <div class="radio-group">
+                <label class="radio-label"><input type="radio" name="c-chats" value="Oui" disabled> Oui</label>
+                <label class="radio-label"><input type="radio" name="c-chats" value="Non" disabled> Non</label>
+                <label class="radio-label"><input type="radio" name="c-chats" value="À tester" disabled> À tester</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Niveau d'énergie</label>
+            <div class="radio-group">
+              <label class="radio-label"><input type="radio" name="c-energie" value="Faible" disabled> 🐢 Faible</label>
+              <label class="radio-label"><input type="radio" name="c-energie" value="Modéré" disabled> 🐕 Modéré</label>
+              <label class="radio-label"><input type="radio" name="c-energie" value="Élevé" disabled> ⚡ Élevé</label>
+            </div>
+          </div>
+
+          <!-- ── Santé ── -->
+          <div class="fiche-section-title" style="margin-top:16px;">🏥 Santé</div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>Vaccins à jour</label>
+              <div class="radio-group">
+                <label class="radio-label"><input type="radio" name="c-vaccins" value="Oui" disabled> Oui</label>
+                <label class="radio-label"><input type="radio" name="c-vaccins" value="Non" disabled> Non</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Traitement en cours</label>
+              <div class="radio-group">
+                <label class="radio-label"><input type="radio" name="c-traitement" value="Oui" disabled onchange="toggleChienField('c-traitement-detail',this.value==='Oui')"> Oui</label>
+                <label class="radio-label"><input type="radio" name="c-traitement" value="Non" disabled onchange="toggleChienField('c-traitement-detail',false)"> Non</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group" id="c-traitement-detail" style="display:none;">
+            <label for="c-traitement-texte">Lequel ?</label>
+            <input type="text" id="c-traitement-texte" placeholder="ex : antibiotiques, antiparasitaires…" readonly>
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>Allergies</label>
+              <div class="radio-group">
+                <label class="radio-label"><input type="radio" name="c-allergies" value="Oui" disabled onchange="toggleChienField('c-allergies-detail',this.value==='Oui')"> Oui</label>
+                <label class="radio-label"><input type="radio" name="c-allergies" value="Non" disabled onchange="toggleChienField('c-allergies-detail',false)"> Non</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group" id="c-allergies-detail" style="display:none;">
+            <label for="c-allergies-texte">Lesquelles ?</label>
+            <input type="text" id="c-allergies-texte" placeholder="ex : poulet, pollen…" readonly>
+          </div>
+
+          <!-- ── Notes ── -->
+          <div class="fiche-section-title" style="margin-top:16px;">📝 Notes supplémentaires</div>
+          <div class="form-group">
+            <textarea id="c-infos" rows="3" placeholder="Habitudes, peurs, comportements particuliers, rituels…" readonly style="width:100%;padding:12px 15px;border-radius:12px;border:1.5px solid transparent;font-family:'Lato',sans-serif;font-size:.93rem;color:var(--text);background:var(--cream);outline:none;resize:none;transition:border-color .2s,box-shadow .2s;"></textarea>
+          </div>
+
+          <!-- Carnet de santé -->
+          <div class="form-group" style="margin-top:8px;">
+            <label>📎 Carnet de santé / vaccins</label>
+            <div class="upload-zone" onclick="document.getElementById('carnet-input').click()">
+              <input type="file" id="carnet-input" accept="image/*,.pdf" onchange="uploadCarnet(this)">
+              <span class="upload-icon">📄</span>
+              <p>Cliquez pour ajouter une photo ou PDF du carnet de santé</p>
+              <p style="font-size:.75rem;margin-top:4px;">JPG, PNG ou PDF · max 2 Mo</p>
+            </div>
+            <div class="upload-progress" id="carnet-progress"><div class="upload-progress-bar" id="carnet-bar"></div></div>
+            <div id="carnet-preview"></div>
+          </div>
+
+          <div class="form-actions" style="justify-content:space-between;flex-wrap:wrap;">
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+              <button type="button" class="btn-edit-profile" id="btn-edit-chien" onclick="enableChienEdit()">✏️ Modifier</button>
+              <button type="submit" class="btn-save" id="btn-save-chien" style="display:none;">
+                <span class="btn-text">💾 Enregistrer</span>
+                <div class="spinner"></div>
+              </button>
+              <span class="save-feedback" id="chien-ok"></span>
+            </div>
+            <button type="button" class="btn-delete-chien" id="btn-delete-chien" onclick="deleteChien()" style="display:none;">🗑 Supprimer ce chien</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ══ PANNEAU : MES RÉSERVATIONS ══ -->
+    <div class="dash-panel" id="panel-reservations">
+      <div class="panel-card">
+        <h3>📅 Mes réservations</h3>
+        <!-- Mini calendrier -->
+        <div class="mini-cal" id="mini-cal">
+          <div class="mini-cal-header">
+            <button class="mini-cal-nav" onclick="calNav(-1)">◀</button>
+            <h4 id="cal-title"></h4>
+            <button class="mini-cal-nav" onclick="calNav(1)">▶</button>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+          <div class="cal-legend">
+            <span><span class="cal-legend-dot" style="background:linear-gradient(135deg,var(--lavande),var(--lavande-dark));"></span>Arrivée/Départ</span>
+            <span><span class="cal-legend-dot" style="background:var(--lavande-light);"></span>Séjour</span>
+            <span><span class="cal-legend-dot" style="background:var(--lavande-light);border:1.5px solid var(--lavande);"></span>Aujourd'hui</span>
+          </div>
+        </div>
+        <div id="resa-list">
+          <p style="text-align:center;color:var(--text-muted);padding:20px;">Chargement…</p>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:8px;">
+        <a href="reservation.html" class="btn-save" style="text-decoration:none;display:inline-flex;font-size:.85rem;">📅 Nouvelle réservation</a>
+      </div>
+    </div>
+
+    <!-- ══ PANNEAU ADMIN ══ -->
+    <div class="dash-panel" id="panel-admin">
+      <div class="panel-card">
+        <h3>⭐ Ajouter un avis Google</h3>
+        <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:20px;">Copie-colle tes vrais avis Google ici — ils seront affichés sur la page Avis.</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;" id="admin-avis-form">
+          <div>
+            <label style="font-size:.78rem;font-weight:700;color:var(--lavande-dark);display:block;margin-bottom:4px;">Nom du client *</label>
+            <input id="adm-nom" type="text" placeholder="ex : Chrystelle Debray" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:12px;font-family:'Lato',sans-serif;font-size:.88rem;outline:none;box-sizing:border-box;">
+          </div>
+          <div>
+            <label style="font-size:.78rem;font-weight:700;color:var(--lavande-dark);display:block;margin-bottom:4px;">Date (ex : il y a 3 jours)</label>
+            <input id="adm-date" type="text" placeholder="il y a 2 semaines" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:12px;font-family:'Lato',sans-serif;font-size:.88rem;outline:none;box-sizing:border-box;">
+          </div>
+          <div style="grid-column:1/-1;">
+            <label style="font-size:.78rem;font-weight:700;color:var(--lavande-dark);display:block;margin-bottom:4px;">Texte de l'avis *</label>
+            <textarea id="adm-texte" rows="4" placeholder="Colle ici le texte exact de l'avis Google…" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:12px;font-family:'Lato',sans-serif;font-size:.88rem;outline:none;resize:vertical;box-sizing:border-box;"></textarea>
+          </div>
+          <div>
+            <label style="font-size:.78rem;font-weight:700;color:var(--lavande-dark);display:block;margin-bottom:6px;">Note</label>
+            <div id="adm-stars" style="display:flex;gap:6px;font-size:1.6rem;cursor:pointer;">
+              <span onclick="setAdmStar(1)" data-s="1">★</span>
+              <span onclick="setAdmStar(2)" data-s="2">★</span>
+              <span onclick="setAdmStar(3)" data-s="3">★</span>
+              <span onclick="setAdmStar(4)" data-s="4">★</span>
+              <span onclick="setAdmStar(5)" data-s="5">★</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-end;">
+            <button onclick="submitAdmAvis()" class="btn-save" style="width:100%;padding:11px;font-size:.88rem;">✅ Publier l'avis</button>
+          </div>
+        </div>
+        <div id="adm-feedback" style="margin-top:10px;font-size:.83rem;font-weight:700;text-align:center;display:none;"></div>
+      </div>
+
+      <!-- Liste des avis publiés -->
+      <div class="panel-card" style="margin-top:16px;">
+        <h3>📋 Avis publiés (<span id="adm-count">0</span>)</h3>
+        <div id="adm-avis-list" style="display:flex;flex-direction:column;gap:10px;margin-top:14px;">
+          <p style="font-size:.85rem;color:var(--text-muted);">Chargement…</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Modal avis -->
+<div class="modal-overlay" id="avis-overlay" onclick="closeAvisModal()"></div>
+<div class="modal-box" id="avis-modal">
+  <h4>⭐ Laisser un avis</h4>
+  <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:4px;" id="avis-modal-sub"></p>
+  <div class="star-rating" id="star-rating">
+    <span onclick="setNote(1)">★</span>
+    <span onclick="setNote(2)">★</span>
+    <span onclick="setNote(3)">★</span>
+    <span onclick="setNote(4)">★</span>
+    <span onclick="setNote(5)">★</span>
+  </div>
+  <textarea id="avis-texte" rows="4" placeholder="Décrivez votre expérience avec Milou Dogs Provence…" maxlength="600"></textarea>
+  <div style="display:flex;gap:10px;margin-top:14px;justify-content:flex-end;">
+    <button onclick="closeAvisModal()" style="background:none;border:1.5px solid var(--border);padding:9px 18px;border-radius:20px;cursor:pointer;font-family:'Lato',sans-serif;font-size:.85rem;">Annuler</button>
+    <button onclick="submitAvis()" class="btn-save" style="padding:9px 22px;font-size:.85rem;"><span class="btn-text">Publier</span><div class="spinner"></div></button>
+  </div>
+  <div id="avis-feedback" style="margin-top:10px;font-size:.82rem;text-align:center;"></div>
+</div>
+
+<footer id="footer-pro" style="background:#0d0820;color:white;padding:40px 5% 24px;">
+  <div style="max-width:980px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,.08);">
+    <div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.1rem;display:flex;align-items:center;gap:8px;margin-bottom:6px;">🐾 Milou Dogs Provence</div>
+      <p style="font-size:.8rem;color:rgba(255,255,255,.4);margin:0;">Pension familiale 5★ à Miramas · Terrain 2 000 m² · Sans cage</p>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <a href="https://facebook.com/miloudogsprovence" target="_blank" rel="noopener" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:.9rem;color:white;text-decoration:none;">📘</a>
+      <a href="https://tiktok.com/@miloudogs_provence" target="_blank" rel="noopener" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:.9rem;color:white;text-decoration:none;">🎵</a>
+      <a href="tel:0777234088" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:.9rem;color:white;text-decoration:none;">📞</a>
+    </div>
+  </div>
+  <div style="max-width:980px;margin:0 auto;padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+    <p style="font-size:.73rem;color:rgba(255,255,255,.25);margin:0;">© 2025 Milou Dogs Provence · Tous droits réservés</p>
+    <p style="font-size:.73rem;color:rgba(255,255,255,.25);margin:0;"><a href="mentions-legales.html" style="color:rgba(255,255,255,.3);text-decoration:underline;">Mentions légales</a> · Note 5★ · 41 avis vérifiés</p>
+  </div>
+</footer>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-auth.js"></script>
+
+<script>
+function toggleMenu(btn){document.getElementById('navlinks').classList.toggle('open');btn.classList.toggle('open');}
+
+// Formate YYYY-MM-DD → JJ/MM/AAAA
+function fmtDate(str) {
+  if (!str) return '—';
+  const parts = str.split('-');
+  if (parts.length === 3) return parts[2] + '/' + parts[1] + '/' + parts[0];
+  return str;
+}
+
+function togglePwd(id,btn){
+  const inp=document.getElementById(id);
+  if(inp.type==='password'){inp.type='text';btn.textContent='🙈';}
+  else{inp.type='password';btn.textContent='👁';}
+}
+
+// ── Navigation onglets ──────────────────────────────────────────────────────
+function showTab(name, btn) {
+  document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+  if (name === 'reservations' && window._resaList) _markResaAsSeen(window._resaList);
+}
+
+// ── Chargement profil ───────────────────────────────────────────────────────
+let _currentUser = null;
+
+firebase.auth().onAuthStateChanged(async user => {
+  const loader  = document.getElementById('auth-loading');
+  const content = document.getElementById('dashboard-content');
+
+  if (!user) { window.location.href = 'connexion.html'; return; }
+  _currentUser = user;
+
+  // ── Onglet Admin visible uniquement pour le propriétaire ──
+  if (user.email === 'contact.miloudog13@gmail.com') {
+    document.getElementById('tab-admin').style.display = '';
+    loadAdminAvis();
+  }
+
+  content.style.display = 'block';
+  document.body.classList.add('auth-ready');
+  loader.classList.add('hide');
+  setTimeout(() => { loader.style.display = 'none'; }, 400);
+
+  try {
+    const snap = await firebase.database().ref('users/' + user.uid).get();
+    const data = snap.exists() ? snap.val() : {};
+
+    const prenom = data.prenom || user.displayName || '';
+    const nom    = data.nom    || '';
+
+    // Header
+    const initiales = ((prenom[0]||'') + (nom[0]||'')).toUpperCase() || '?';
+    document.getElementById('avatar-initials').textContent  = initiales;
+    document.getElementById('welcome-name').textContent     = 'Bonjour ' + (prenom || 'vous') + ' !';
+    document.getElementById('welcome-email').textContent    = user.email;
+
+    // Formulaire
+    document.getElementById('f-prenom').value    = prenom;
+    document.getElementById('f-nom').value       = nom;
+    document.getElementById('f-email').value     = user.email;
+    document.getElementById('f-telephone').value = data.telephone || '';
+    document.getElementById('f-adresse').value   = data.adresse   || '';
+    // Si le profil n'est pas encore rempli → mode édition direct
+    if (!data.prenom || !data.telephone) enableProfileEdit();
+  } catch(e) {
+    console.error('Erreur chargement profil', e);
+  }
+
+  loadChien(user.uid);
+  loadReservations(user);
+  loadParrainage(user);
+  renderCalendar();
+});
+
+// ── Mode édition profil ─────────────────────────────────────────────────────
+function enableProfileEdit() {
+  ['f-prenom','f-nom','f-telephone','f-adresse'].forEach(id => {
+    document.getElementById(id).removeAttribute('readonly');
+  });
+  document.getElementById('btn-edit-profile').style.display = 'none';
+  document.getElementById('btn-save-profile').style.display = '';
+  document.getElementById('f-prenom').focus();
+}
+
+function lockProfileEdit() {
+  ['f-prenom','f-nom','f-telephone','f-adresse'].forEach(id => {
+    document.getElementById(id).setAttribute('readonly', true);
+  });
+  document.getElementById('btn-edit-profile').style.display = '';
+  document.getElementById('btn-save-profile').style.display = 'none';
+}
+
+// ── Sauvegarde profil ───────────────────────────────────────────────────────
+document.getElementById('profile-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = document.getElementById('btn-save-profile');
+  const fb  = document.getElementById('save-ok');
+
+  const prenom    = document.getElementById('f-prenom').value.trim();
+  const nom       = document.getElementById('f-nom').value.trim();
+  const telephone = document.getElementById('f-telephone').value.trim();
+  const adresse   = document.getElementById('f-adresse').value.trim();
+
+  if (!prenom || !nom) {
+    showFeedback(fb, 'Prénom et nom sont obligatoires.', false); return;
+  }
+
+  btn.classList.add('loading'); btn.disabled = true;
+  fb.style.display = 'none';
+
+  try {
+    await firebase.database().ref('users/' + _currentUser.uid).update({
+      prenom, nom, telephone, adresse
+    });
+    await _currentUser.updateProfile({ displayName: prenom });
+
+    // Mise à jour de l'avatar et du header
+    const initiales = ((prenom[0]||'') + (nom[0]||'')).toUpperCase();
+    document.getElementById('avatar-initials').textContent = initiales;
+    document.getElementById('welcome-name').textContent    = 'Bonjour ' + prenom + ' !';
+
+    showFeedback(fb, '✓ Profil mis à jour !', true);
+    lockProfileEdit();
+  } catch(err) {
+    showFeedback(fb, 'Erreur : ' + err.message, false);
+  } finally {
+    btn.classList.remove('loading'); btn.disabled = false;
+  }
+});
+
+// ── Changement mot de passe ─────────────────────────────────────────────────
+async function changePassword() {
+  const btn     = document.getElementById('btn-save-pwd');
+  const fb      = document.getElementById('pwd-alert');
+  const newPwd  = document.getElementById('f-pwd-new').value;
+  const confPwd = document.getElementById('f-pwd-confirm').value;
+
+  if (!newPwd || newPwd.length < 6) {
+    showFeedback(fb, 'Le mot de passe doit contenir au moins 6 caractères.', false); return;
+  }
+  if (newPwd !== confPwd) {
+    showFeedback(fb, 'Les mots de passe ne correspondent pas.', false); return;
+  }
+
+  btn.classList.add('loading'); btn.disabled = true;
+  fb.style.display = 'none';
+
+  try {
+    await _currentUser.updatePassword(newPwd);
+    document.getElementById('f-pwd-new').value     = '';
+    document.getElementById('f-pwd-confirm').value = '';
+    showFeedback(fb, '✓ Mot de passe mis à jour !', true);
+  } catch(err) {
+    const msg = err.code === 'auth/requires-recent-login'
+      ? 'Session expirée. Déconnectez-vous et reconnectez-vous pour changer le mot de passe.'
+      : err.message;
+    showFeedback(fb, msg, false);
+  } finally {
+    btn.classList.remove('loading'); btn.disabled = false;
+  }
+}
+
+// ── Helpers radio ────────────────────────────────────────────────────────────
+function _setRadio(name, val) {
+  document.querySelectorAll('input[name="'+name+'"]').forEach(r => { r.checked = r.value === val; });
+}
+function _getRadio(name) {
+  const r = document.querySelector('input[name="'+name+'"]:checked');
+  return r ? r.value : '';
+}
+function toggleChienField(id, show) {
+  document.getElementById(id).style.display = show ? '' : 'none';
+}
+
+// ── État multi-chiens ─────────────────────────────────────────────────────────
+let _chiens = {};          // { id: chienData }
+let _selectedChienId = null;
+const _chienInputIds = ['c-nom','c-race','c-age','c-poids','c-couleur','c-naissance','c-temperament','c-numero-id','c-traitement-texte','c-allergies-texte','c-infos'];
+const _chienRadios   = ['c-sexe','c-sterilise','c-chiens','c-chats','c-energie','c-vaccins','c-traitement','c-allergies'];
+
+// ── Chargement de tous les chiens ────────────────────────────────────────────
+async function loadChien(uid) {
+  try {
+    // Migration : ancien chemin users/{uid}/chien → users/{uid}/chiens
+    const oldSnap = await firebase.database().ref('users/' + uid + '/chien').get();
+    if (oldSnap.exists()) {
+      const oldData = oldSnap.val();
+      const newRef = firebase.database().ref('users/' + uid + '/chiens').push();
+      await newRef.set({ ...oldData, migratedAt: Date.now() });
+      await firebase.database().ref('users/' + uid + '/chien').remove();
+    }
+
+    const snap = await firebase.database().ref('users/' + uid + '/chiens').get();
+    _chiens = {};
+    if (snap.exists()) {
+      snap.forEach(c => { _chiens[c.key] = c.val(); });
+    }
+    renderChienSelector();
+    // Sélectionner le premier chien ou afficher formulaire vide
+    const ids = Object.keys(_chiens);
+    if (ids.length > 0) selectChien(ids[0]);
+    else showEmptyChienForm();
+  } catch(e) { console.error('Erreur chargement chiens', e); }
+}
+
+// ── Rendu du sélecteur ───────────────────────────────────────────────────────
+function renderChienSelector() {
+  const sel = document.getElementById('chiens-selector');
+  const ids = Object.keys(_chiens);
+  let html = ids.map(id => {
+    const d = _chiens[id];
+    const isActive = id === _selectedChienId;
+    const photoHtml = d.photoUrl
+      ? `<div class="chien-mini-avatar"><img src="${d.photoUrl}" alt="${d.nom||''}"></div>`
+      : `<div class="chien-mini-avatar">🐕</div>`;
+    return `<div class="chien-mini-card${isActive?' active':''}" onclick="selectChien('${id}')">
+      ${photoHtml}
+      <div class="chien-mini-name">${d.nom||'—'}</div>
+    </div>`;
+  }).join('');
+  html += `<button class="btn-add-chien" onclick="addNewChien()">
+    <span class="add-icon">➕</span>
+    <span>Ajouter</span>
+  </button>`;
+  sel.innerHTML = html;
+}
+
+// ── Sélectionner un chien ────────────────────────────────────────────────────
+function selectChien(id) {
+  _selectedChienId = id;
+  const d = _chiens[id] || {};
+  document.getElementById('chien-card-title').textContent = d.nom || 'Profil du chien';
+  document.getElementById('c-nom').value             = d.nom           || '';
+  document.getElementById('c-race').value            = d.race          || '';
+  document.getElementById('c-age').value             = d.age           || '';
+  document.getElementById('c-poids').value           = d.poids         || '';
+  document.getElementById('c-couleur').value         = d.couleur       || '';
+  document.getElementById('c-naissance').value       = d.naissance     || '';
+  document.getElementById('c-temperament').value     = d.temperament   || '';
+  document.getElementById('c-numero-id').value       = d.numeroId      || '';
+  document.getElementById('c-identification').value  = d.identification|| '';
+  document.getElementById('c-traitement-texte').value= d.traitementDetail || '';
+  document.getElementById('c-allergies-texte').value = d.allergiesDetail  || '';
+  document.getElementById('c-infos').value           = d.infos         || '';
+  _setRadio('c-sexe',       d.sexe         || '');
+  _setRadio('c-sterilise',  d.sterilise    || '');
+  _setRadio('c-chiens',     d.entendChiens || '');
+  _setRadio('c-chats',      d.entendChats  || '');
+  _setRadio('c-energie',    d.energie      || '');
+  _setRadio('c-vaccins',    d.vaccins      || '');
+  _setRadio('c-traitement', d.traitement   || '');
+  _setRadio('c-allergies',  d.allergies    || '');
+  toggleChienField('c-traitement-detail', d.traitement === 'Oui');
+  toggleChienField('c-allergies-detail',  d.allergies  === 'Oui');
+  // Photo
+  const circle = document.getElementById('dog-photo-circle');
+  const emoji  = document.getElementById('dog-photo-emoji');
+  if (d.photoUrl) {
+    emoji.style.display = 'none';
+    let img = circle.querySelector('img');
+    if (!img) { img = document.createElement('img'); circle.insertBefore(img, circle.firstChild); }
+    img.src = d.photoUrl;
+  } else {
+    emoji.style.display = '';
+    const img = circle.querySelector('img'); if (img) img.remove();
+  }
+  // Carnet
+  showCarnetPreview(d.carnetUrl || null, (d.carnetUrl||'').startsWith('data:image'));
+  // Si le chien n'a pas encore de nom → mode édition direct, sinon lecture
+  if (!d.nom) {
+    enableChienEdit();
+  } else {
+    lockChienEdit();
+  }
+  document.getElementById('btn-delete-chien').style.display = Object.keys(_chiens).length > 1 ? '' : 'none';
+  // Activer dans sélecteur
+  renderChienSelector();
+}
+
+// ── Formulaire vide (aucun chien) ────────────────────────────────────────────
+function showEmptyChienForm() {
+  _selectedChienId = null;
+  _chienInputIds.forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  _chienRadios.forEach(name => { document.querySelectorAll('input[name="'+name+'"]').forEach(r => r.checked = false); });
+  document.getElementById('chien-card-title').textContent = 'Nouveau chien';
+  document.getElementById('dog-photo-emoji').style.display = '';
+  const img = document.getElementById('dog-photo-circle').querySelector('img'); if(img) img.remove();
+  showCarnetPreview(null);
+  enableChienEdit();
+  document.getElementById('btn-delete-chien').style.display = 'none';
+}
+
+// ── Ajouter un nouveau chien ─────────────────────────────────────────────────
+function addNewChien() {
+  showEmptyChienForm();
+}
+
+// ── Photo de profil chien ────────────────────────────────────────────────────
+function uploadDogPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { alert('Photo trop lourde (max 2 Mo).'); return; }
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    const base64 = e.target.result;
+    const circle = document.getElementById('dog-photo-circle');
+    const emoji  = document.getElementById('dog-photo-emoji');
+    emoji.style.display = 'none';
+    let img = circle.querySelector('img');
+    if (!img) { img = document.createElement('img'); circle.insertBefore(img, circle.firstChild); }
+    img.src = base64;
+    // Sauvegarder immédiatement si un chien est sélectionné
+    if (_selectedChienId && _currentUser) {
+      try {
+        await firebase.database().ref('users/' + _currentUser.uid + '/chiens/' + _selectedChienId).update({ photoUrl: base64 });
+        _chiens[_selectedChienId].photoUrl = base64;
+        renderChienSelector();
+      } catch(err) { console.error('Photo save error', err); }
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── Mode édition chien ────────────────────────────────────────────────────────
+function enableChienEdit() {
+  _chienInputIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.removeAttribute('readonly');
+    if (el.tagName === 'TEXTAREA') { el.style.resize = 'vertical'; el.style.borderColor = ''; }
+  });
+  document.getElementById('c-identification').disabled = false;
+  _chienRadios.forEach(name => {
+    document.querySelectorAll('input[name="'+name+'"]').forEach(r => r.disabled = false);
+  });
+  document.getElementById('btn-edit-chien').style.display = 'none';
+  document.getElementById('btn-save-chien').style.display = '';
+  document.getElementById('c-nom').focus();
+}
+
+function lockChienEdit() {
+  _chienInputIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.setAttribute('readonly', true);
+    if (el.tagName === 'TEXTAREA') { el.style.resize = 'none'; el.style.borderColor = 'transparent'; }
+  });
+  document.getElementById('c-identification').disabled = true;
+  _chienRadios.forEach(name => {
+    document.querySelectorAll('input[name="'+name+'"]').forEach(r => r.disabled = true);
+  });
+  document.getElementById('btn-edit-chien').style.display = '';
+  document.getElementById('btn-save-chien').style.display = 'none';
+}
+
+// ── Carnet de santé upload ────────────────────────────────────────────────────
+function showCarnetPreview(data, isImage) {
+  const el = document.getElementById('carnet-preview');
+  if (!data) { el.innerHTML = ''; return; }
+  el.innerHTML = '<div class="carnet-preview">'
+    + (isImage ? '<img src="' + data + '" alt="Carnet">' : '<span style="font-size:2rem;">📄</span>')
+    + '<div><a href="' + data + '" target="_blank" download>📎 Voir le carnet de santé</a>'
+    + '<p style="font-size:.75rem;color:var(--text-muted);margin:2px 0 0;">Cliquez pour ouvrir</p></div>'
+    + '<button onclick="deleteCarnet()" style="margin-left:auto;background:none;border:none;cursor:pointer;font-size:1.1rem;color:#c0392b;" title="Supprimer">🗑️</button>'
+    + '</div>';
+}
+
+async function deleteCarnet() {
+  if (!confirm('Supprimer le carnet de santé ?')) return;
+  if (!_selectedChienId) return;
+  await firebase.database().ref('users/' + _currentUser.uid + '/chiens/' + _selectedChienId + '/carnetUrl').remove();
+  _chiens[_selectedChienId].carnetUrl = null;
+  showCarnetPreview(null);
+}
+
+function uploadCarnet(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { alert('Fichier trop lourd (max 2 Mo).'); return; }
+  const prog = document.getElementById('carnet-progress');
+  const bar  = document.getElementById('carnet-bar');
+  prog.style.display = 'block'; bar.style.width = '30%';
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    const base64 = e.target.result;
+    bar.style.width = '70%';
+    try {
+      if (_selectedChienId) {
+        await firebase.database().ref('users/' + _currentUser.uid + '/chiens/' + _selectedChienId).update({ carnetUrl: base64 });
+        _chiens[_selectedChienId].carnetUrl = base64;
+      }
+      bar.style.width = '100%';
+      setTimeout(() => { prog.style.display = 'none'; }, 400);
+      showCarnetPreview(base64, file.type.startsWith('image/'));
+    } catch(err) {
+      alert('Erreur : ' + err.message);
+      prog.style.display = 'none';
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── Sauvegarde chien ──────────────────────────────────────────────────────────
+document.getElementById('chien-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = document.getElementById('btn-save-chien');
+  const fb  = document.getElementById('chien-ok');
+
+  const nom = document.getElementById('c-nom').value.trim();
+  if (!nom) { showFeedback(fb, 'Le nom du chien est obligatoire.', false); return; }
+
+  // Préserver la photo et le carnet existants
+  const existing = _selectedChienId ? (_chiens[_selectedChienId] || {}) : {};
+
+  const chienData = {
+    nom,
+    race            : document.getElementById('c-race').value.trim(),
+    age             : document.getElementById('c-age').value.trim(),
+    poids           : document.getElementById('c-poids').value.trim(),
+    couleur         : document.getElementById('c-couleur').value.trim(),
+    naissance       : document.getElementById('c-naissance').value,
+    temperament     : document.getElementById('c-temperament').value.trim(),
+    identification  : document.getElementById('c-identification').value,
+    numeroId        : document.getElementById('c-numero-id').value.trim(),
+    sexe            : _getRadio('c-sexe'),
+    sterilise       : _getRadio('c-sterilise'),
+    entendChiens    : _getRadio('c-chiens'),
+    entendChats     : _getRadio('c-chats'),
+    energie         : _getRadio('c-energie'),
+    vaccins         : _getRadio('c-vaccins'),
+    traitement      : _getRadio('c-traitement'),
+    traitementDetail: document.getElementById('c-traitement-texte').value.trim(),
+    allergies       : _getRadio('c-allergies'),
+    allergiesDetail : document.getElementById('c-allergies-texte').value.trim(),
+    infos           : document.getElementById('c-infos').value.trim(),
+    updatedAt       : Date.now(),
+  };
+  if (existing.photoUrl)  chienData.photoUrl  = existing.photoUrl;
+  if (existing.carnetUrl) chienData.carnetUrl = existing.carnetUrl;
+
+  btn.classList.add('loading'); btn.disabled = true;
+  fb.style.display = 'none';
+
+  try {
+    let savedId = _selectedChienId;
+    if (savedId) {
+      await firebase.database().ref('users/' + _currentUser.uid + '/chiens/' + savedId).set(chienData);
+    } else {
+      const ref = firebase.database().ref('users/' + _currentUser.uid + '/chiens').push();
+      await ref.set(chienData);
+      savedId = ref.key;
+    }
+    _chiens[savedId] = chienData;
+    _selectedChienId = savedId;
+    document.getElementById('chien-card-title').textContent = nom;
+    showFeedback(fb, '✓ Profil de ' + nom + ' enregistré !', true);
+    lockChienEdit();
+    document.getElementById('btn-delete-chien').style.display = Object.keys(_chiens).length > 1 ? '' : 'none';
+    renderChienSelector();
+  } catch(err) {
+    showFeedback(fb, 'Erreur : ' + err.message, false);
+  } finally {
+    btn.classList.remove('loading'); btn.disabled = false;
+  }
+});
+
+// ── Supprimer un chien ────────────────────────────────────────────────────────
+async function deleteChien() {
+  const nom = (_chiens[_selectedChienId] || {}).nom || 'ce chien';
+  if (!confirm('Supprimer le profil de ' + nom + ' ? Cette action est irréversible.')) return;
+  try {
+    await firebase.database().ref('users/' + _currentUser.uid + '/chiens/' + _selectedChienId).remove();
+    delete _chiens[_selectedChienId];
+    const ids = Object.keys(_chiens);
+    if (ids.length > 0) selectChien(ids[0]);
+    else showEmptyChienForm();
+    renderChienSelector();
+  } catch(err) {
+    alert('Erreur : ' + err.message);
+  }
+}
+
+// ── Réservations temps réel ─────────────────────────────────────────────────
+let _resaRef = null;
+
+function _getSeenStatuts() {
+  try { return JSON.parse(localStorage.getItem('resa_seen') || '{}'); } catch(e) { return {}; }
+}
+function _saveSeenStatuts(map) {
+  localStorage.setItem('resa_seen', JSON.stringify(map));
+}
+function _checkNotifBadge(list) {
+  const seen = _getSeenStatuts();
+  const hasNew = list.some(r => {
+    const s = r.statut;
+    return (s === 'confirmé' || s === 'refusé') && seen[r.id] !== s;
+  });
+  document.getElementById('resa-notif-dot').style.display = hasNew ? 'inline-block' : 'none';
+}
+function _markResaAsSeen(list) {
+  const seen = _getSeenStatuts();
+  list.forEach(r => { seen[r.id] = r.statut; });
+  _saveSeenStatuts(seen);
+  document.getElementById('resa-notif-dot').style.display = 'none';
+}
+
+function loadReservations(user) {
+  if (_resaRef) { _resaRef.off(); }
+  _resaRef = firebase.database().ref('reservations');
+  _resaRef.on('value', snap => {
+    const list = [];
+    snap.forEach(child => {
+      const r = child.val();
+      const matchUid   = r.userId === user.uid;
+      const matchEmail = r.email === user.email ||
+                         (r.client && r.client.email === user.email);
+      if (matchUid || matchEmail) list.push({ id: child.key, ...r });
+    });
+    list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    renderReservations(list);
+    _checkNotifBadge(list);
+    window._resaList = list;
+    renderCalendar();
+  });
+}
+
+function renderReservations(list) {
+  const el = document.getElementById('resa-list');
+  if (!list.length) {
+    el.innerHTML = `<div class="resa-empty">
+      <span class="empty-icon">📅</span>
+      <p>Vous n'avez pas encore de réservation.<br>Utilisez le bouton ci-dessous pour en faire une !</p>
+    </div>`;
+    return;
+  }
+  el.innerHTML = list.map(r => {
+    const statut = r.statut || 'invité';
+    const s = {
+      'en-attente': { label: '🟡 En attente de confirmation', cls: 'status-en-attente' },
+      'confirmé':   { label: '🟢 Confirmée',                 cls: 'status-confirme'   },
+      'refusé':     { label: '🔴 Refusée',                   cls: 'status-refuse'     },
+      'annulée':    { label: '⚫ Annulée',                   cls: 'status-annulee'    },
+      'invité':     { label: '🕐 Demande transmise',         cls: 'status-invite'     },
+    }[statut] || { label: statut, cls: 'status-invite' };
+
+    const dateCreation = r.createdAt
+      ? new Date(r.createdAt).toLocaleDateString('fr-FR', { day:'2-digit', month:'long', year:'numeric' })
+      : '—';
+    const periode = r.dateArrivee
+      ? fmtDate(r.dateArrivee) + (r.dateDepart ? ' → ' + fmtDate(r.dateDepart) : '')
+      : null;
+
+    const details = [
+      r.chien?.nom  ? '🐕 ' + r.chien.nom + (r.chien.race ? ' · ' + r.chien.race : '') : null,
+      periode       ? '📅 ' + periode : null,
+      r.heureArrivee? '⏰ Arrivée : ' + r.heureArrivee : null,
+      r.nbChiens    ? '🐶 ' + r.nbChiens : null,
+      r.prix        ? '💶 ' + r.prix : null,
+    ].filter(Boolean);
+
+    return `<div class="resa-card">
+      <div class="resa-card-header">
+        <div>
+          <div class="resa-card-service">${r.service || 'Service non précisé'}</div>
+          <div class="resa-card-date">Demande du ${dateCreation}</div>
+        </div>
+        <span class="resa-status ${s.cls}">${s.label}</span>
+      </div>
+      ${details.length ? `<div class="resa-card-body">${details.map(d => `<span>${d}</span>`).join('')}</div>` : ''}
+      ${r.messageRefus ? `<div class="resa-card-footer" style="background:#fdecea;border-radius:0 0 14px 14px;padding:10px 16px;">
+        <span style="font-size:.82rem;color:#c0392b;font-weight:700;">💬 Message : </span><span style="font-size:.82rem;color:#c0392b;">${r.messageRefus}</span>
+      </div>` : ''}
+      ${statut === 'en-attente' ? `<div class="resa-card-footer">
+        <button class="btn-cancel" onclick="cancelReservation('${r.id}')">✕ Annuler cette réservation</button>
+      </div>` : ''}
+      ${statut === 'confirmé' ? `<div class="resa-card-footer" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <span style="font-size:.8rem;color:var(--text-muted);">Vous avez profité de nos services ?</span>
+        <button class="btn-avis" id="btn-avis-${r.id}" onclick="openAvisModal('${r.id}','${(r.service||'').replace(/'/g,'')}','${(r.chien?.nom||'').replace(/'/g,'')}')">⭐ Laisser un avis</button>
+      </div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ── Mini calendrier ─────────────────────────────────────────────────────────
+let _calYear = new Date().getFullYear();
+let _calMonth = new Date().getMonth();
+const _calDays = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+const _calMonths = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+
+function renderCalendar() {
+  const list = window._resaList || [];
+  const confirmed = list.filter(r => r.statut === 'confirmé' && r.dateArrivee);
+  document.getElementById('cal-title').textContent = _calMonths[_calMonth] + ' ' + _calYear;
+
+  // Construire set des jours occupés
+  const occupied = {};
+  confirmed.forEach(r => {
+    const start = new Date(r.dateArrivee); start.setHours(0,0,0,0);
+    const end   = r.dateDepart ? new Date(r.dateDepart) : new Date(start);
+    end.setHours(0,0,0,0);
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate()+1)) {
+      const key = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+      if (+d === +start && +d === +end) occupied[key] = 'resa';
+      else if (+d === +start) occupied[key] = 'resa-start';
+      else if (+d === +end)   occupied[key] = 'resa-end';
+      else                    occupied[key] = 'resa-mid';
+    }
+  });
+
+  const firstDay = new Date(_calYear, _calMonth, 1);
+  const daysInMonth = new Date(_calYear, _calMonth+1, 0).getDate();
+  let startDow = firstDay.getDay(); // 0=dim
+  startDow = startDow === 0 ? 6 : startDow - 1; // lundi=0
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  let html = _calDays.map(d => '<div class="cal-day-label">'+d+'</div>').join('');
+  for (let i=0; i<startDow; i++) html += '<div class="cal-day empty"></div>';
+  for (let d=1; d<=daysInMonth; d++) {
+    const key = _calYear+'-'+(_calMonth+1)+'-'+d;
+    const dayDate = new Date(_calYear, _calMonth, d);
+    const isToday = +dayDate === +today;
+    const cls = occupied[key] || (isToday ? 'today' : '');
+    html += '<div class="cal-day '+cls+'" title="'+( occupied[key]?'Réservation confirmée':'')+'">' + d + '</div>';
+  }
+  document.getElementById('cal-grid').innerHTML = html;
+}
+
+function calNav(dir) {
+  _calMonth += dir;
+  if (_calMonth > 11) { _calMonth = 0; _calYear++; }
+  if (_calMonth < 0)  { _calMonth = 11; _calYear--; }
+  renderCalendar();
+}
+
+// ── Parrainage ───────────────────────────────────────────────────────────────
+async function loadParrainage(user) {
+  const snap = await firebase.database().ref('users/' + user.uid).once('value');
+  const u = snap.val() || {};
+  let code = u.codeParrain;
+  if (!code) {
+    code = (u.prenom || 'MILOU').toUpperCase().replace(/[^A-Z]/g,'').substring(0,5)
+         + Math.random().toString(36).substring(2,6).toUpperCase();
+    await firebase.database().ref('users/' + user.uid).update({ codeParrain: code });
+  }
+  document.getElementById('parrain-code-val').textContent = code;
+  window._parrainCode = code;
+
+  // Compter les réservations avec ce code
+  const rSnap = await firebase.database().ref('reservations').orderByChild('parrainage').equalTo(code).once('value');
+  let count = 0;
+  rSnap.forEach(() => count++);
+  document.getElementById('parrain-count').textContent = count;
+  document.getElementById('parrain-gains').textContent = (count * 10) + '€';
+}
+
+function copyParrainCode() {
+  const code = window._parrainCode || '';
+  navigator.clipboard.writeText(code).then(() => {
+    const btn = document.querySelector('.btn-copy');
+    btn.textContent = '✓ Copié !';
+    setTimeout(() => btn.textContent = '📋 Copier', 2000);
+  });
+}
+
+function shareParrainWhatsApp() {
+  const code = window._parrainCode || '';
+  const msg = 'Bonjour ! Je te recommande Milou Dogs Provence pour la garde de ton chien 🐾\n'
+    + 'C\'est une pension familiale 5⭐ à Miramas, je suis vraiment satisfait(e) !\n\n'
+    + 'Indique mon code parrain *' + code + '* lors de ta réservation.\n'
+    + 'Si tu réserves avec mon code, je bénéficie d\'une réduction de 10€ 🎁\n\n'
+    + 'Réserve ici : https://miloudogsprovence.fr/reservation.html';
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+
+// ── Avis clients ────────────────────────────────────────────────────────────
+let _avisResaId = null, _avisNote = 5;
+
+function openAvisModal(resaId, service, chienNom) {
+  _avisResaId = resaId;
+  _avisNote = 5;
+  document.getElementById('avis-modal-sub').textContent = service + (chienNom ? ' · ' + chienNom : '');
+  document.getElementById('avis-texte').value = '';
+  document.getElementById('avis-feedback').textContent = '';
+  setNote(5);
+  document.getElementById('avis-overlay').style.display = 'block';
+  document.getElementById('avis-modal').style.display = 'block';
+  // Vérifier si déjà noté
+  firebase.database().ref('avis').orderByChild('reservationId').equalTo(resaId).once('value', snap => {
+    if (snap.exists()) {
+      document.getElementById('avis-feedback').textContent = '✓ Vous avez déjà laissé un avis pour cette réservation.';
+      document.querySelector('#avis-modal .btn-save').disabled = true;
+    } else {
+      document.querySelector('#avis-modal .btn-save').disabled = false;
+    }
+  });
+}
+
+function closeAvisModal() {
+  document.getElementById('avis-overlay').style.display = 'none';
+  document.getElementById('avis-modal').style.display = 'none';
+  _avisResaId = null;
+}
+
+function setNote(n) {
+  _avisNote = n;
+  document.querySelectorAll('#star-rating span').forEach((s, i) => {
+    s.classList.toggle('active', i < n);
+    s.style.color = i < n ? 'var(--soleil)' : '#ccc';
+  });
+}
+
+async function submitAvis() {
+  if (!_avisResaId || !_currentUser) return;
+  const texte = document.getElementById('avis-texte').value.trim();
+  if (!texte) { document.getElementById('avis-feedback').textContent = 'Merci d\'écrire un commentaire.'; return; }
+  const btn = document.querySelector('#avis-modal .btn-save');
+  btn.classList.add('loading'); btn.disabled = true;
+  try {
+    const snap = await firebase.database().ref('users/' + _currentUser.uid).once('value');
+    const u = snap.val() || {};
+    await firebase.database().ref('avis').push({
+      reservationId : _avisResaId,
+      userId        : _currentUser.uid,
+      prenom        : u.prenom || _currentUser.displayName || '',
+      nom           : u.nom || '',
+      note          : _avisNote,
+      texte         : texte,
+      visible       : true,
+      createdAt     : Date.now(),
+    });
+    document.getElementById('avis-feedback').style.color = 'var(--vert)';
+    document.getElementById('avis-feedback').textContent = '✓ Avis publié, merci !';
+    setTimeout(closeAvisModal, 1500);
+  } catch(e) {
+    document.getElementById('avis-feedback').style.color = '#c0392b';
+    document.getElementById('avis-feedback').textContent = 'Erreur : ' + e.message;
+    btn.classList.remove('loading'); btn.disabled = false;
+  }
+}
+
+async function cancelReservation(id) {
+  if (!confirm('Annuler cette réservation ? Cette action est définitive.')) return;
+  try {
+    await firebase.database().ref('reservations/' + id).update({ statut: 'annulée' });
+  } catch(e) {
+    alert('Erreur lors de l\'annulation. Veuillez réessayer.');
+  }
+}
+
+// ── Helper feedback ─────────────────────────────────────────────────────────
+function showFeedback(el, msg, ok) {
+  el.textContent = msg;
+  el.className   = 'save-feedback ' + (ok ? 'ok' : 'err');
+  el.style.display = 'inline-block';
+  if (ok) setTimeout(() => { el.style.display = 'none'; }, 4000);
+}
+
+// ══════════════════════════════════════════════════════
+// ADMIN — Gestion des avis Google
+// ══════════════════════════════════════════════════════
+let _admStar = 5;
+
+function setAdmStar(n) {
+  _admStar = n;
+  document.querySelectorAll('#adm-stars span').forEach((s, i) => {
+    s.style.color = i < n ? '#F5C84A' : '#ddd';
+  });
+}
+// Init étoiles à 5 par défaut
+document.addEventListener('DOMContentLoaded', () => setAdmStar(5));
+
+function submitAdmAvis() {
+  const nom   = document.getElementById('adm-nom').value.trim();
+  const texte = document.getElementById('adm-texte').value.trim();
+  const date  = document.getElementById('adm-date').value.trim() || 'récemment';
+  const fb    = document.getElementById('adm-feedback');
+
+  if (!nom || !texte) {
+    fb.textContent = '⚠️ Nom et texte obligatoires.';
+    fb.style.color = '#c0392b';
+    fb.style.display = 'block';
+    return;
+  }
+
+  // Initiales pour l'avatar
+  const parts = nom.trim().split(' ');
+  const initiales = (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+
+  const avis = {
+    nom, texte, date,
+    note: _admStar,
+    initiales,
+    source: 'google',
+    ts: Date.now()
+  };
+
+  firebase.database().ref('google_avis').push(avis)
+    .then(() => {
+      fb.textContent = '✅ Avis publié avec succès !';
+      fb.style.color = 'var(--vert)';
+      fb.style.display = 'block';
+      // Reset form
+      document.getElementById('adm-nom').value = '';
+      document.getElementById('adm-texte').value = '';
+      document.getElementById('adm-date').value = '';
+      setAdmStar(5);
+      loadAdminAvis();
+      setTimeout(() => { fb.style.display = 'none'; }, 3000);
+    })
+    .catch(err => {
+      fb.textContent = '❌ Erreur : ' + err.message;
+      fb.style.color = '#c0392b';
+      fb.style.display = 'block';
+    });
+}
+
+function loadAdminAvis() {
+  firebase.database().ref('google_avis').orderByChild('ts').once('value', snap => {
+    const list = document.getElementById('adm-avis-list');
+    const count = document.getElementById('adm-count');
+    if (!snap.exists()) {
+      list.innerHTML = '<p style="font-size:.85rem;color:var(--text-muted);">Aucun avis pour l\'instant.</p>';
+      count.textContent = '0';
+      return;
+    }
+    const items = [];
+    snap.forEach(c => items.push({ key: c.key, ...c.val() }));
+    items.reverse(); // plus récents en premier
+    count.textContent = items.length;
+    list.innerHTML = items.map(a => `
+      <div style="display:flex;align-items:center;gap:12px;background:var(--cream);border-radius:12px;padding:12px 16px;border:1px solid var(--border);">
+        <div style="flex:1;min-width:0;">
+          <strong style="font-size:.88rem;color:var(--lavande-dark);">${a.nom}</strong>
+          <span style="color:var(--soleil);font-size:.85rem;margin-left:8px;">${'★'.repeat(a.note||5)}</span>
+          <span style="font-size:.75rem;color:var(--text-muted);margin-left:6px;">${a.date||''}</span>
+          <p style="font-size:.8rem;color:var(--text-muted);margin-top:4px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">${a.texte}</p>
+        </div>
+        <button onclick="deleteAdmAvis('${a.key}')" style="background:none;border:1.5px solid #e0c0c0;color:#c0392b;border-radius:10px;padding:6px 12px;cursor:pointer;font-size:.78rem;font-weight:700;white-space:nowrap;flex-shrink:0;">🗑 Supprimer</button>
+      </div>
+    `).join('');
+  });
+}
+
+function deleteAdmAvis(key) {
+  if (!confirm('Supprimer cet avis ?')) return;
+  firebase.database().ref('google_avis/' + key).remove()
+    .then(() => loadAdminAvis())
+    .catch(err => alert('Erreur : ' + err.message));
+}
+</script>
+<script src="chatbot.js"></script>
+<script src="effects-extra.js"></script>
+</body>
+</html>

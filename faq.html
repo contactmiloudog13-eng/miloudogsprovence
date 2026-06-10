@@ -1,0 +1,380 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Comment se passe la première rencontre ?","acceptedAnswer":{"@type":"Answer","text":"Avant tout séjour, on organise une visite de présentation. Votre chien découvre les lieux, rencontre nos animaux et on échange sur ses habitudes. Étape indispensable pour un séjour serein."}},{"@type":"Question","name":"Combien de chiens accueillez-vous en même temps ?","acceptedAnswer":{"@type":"Answer","text":"Maximum 7 chiens simultanément. Pas de cage, vie en famille dans la maison avec accès à 2 000 m² de terrain clôturé."}},{"@type":"Question","name":"Donnez-vous des nouvelles pendant la garde ?","acceptedAnswer":{"@type":"Answer","text":"Oui, photos et message quotidien sur WhatsApp. Vous pouvez partir sereinement."}},{"@type":"Question","name":"Mon chien doit-il être vacciné ?","acceptedAnswer":{"@type":"Answer","text":"Oui, vaccins à jour (CHPPIL minimum) et traitement antipuces/tiques obligatoires. Carnet de santé demandé à l'arrivée."}}]}</script>
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:url" content="https://miloudogsprovence.fr/faq.html">
+<meta property="og:title" content="FAQ – Milou Dogs Provence | Garde chien Miramas">
+<meta property="og:description" content="Toutes vos questions sur la garde de chien à Miramas. Vaccins, tarifs, urgences vétérinaires, races acceptées.">
+<meta property="og:image" content="https://miloudogsprovence.fr/hero-banner.png">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FAQ Garde de chien Miramas – Questions fréquentes | Milou Dogs Provence</title>
+<meta name="description" content="Toutes vos questions sur la garde de chien à Miramas : vaccins, tarifs, urgences vétérinaires. Pension familiale 5★, terrain 2000m², pas de cage.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
+<link rel="canonical" href="https://miloudogsprovence.fr/faq.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="effects.css">
+<style>
+/* ── HERO ── */
+.faq-hero{background:linear-gradient(135deg,#2d1f4e 0%,#4A3F72 100%);padding:72px 5% 56px;text-align:center;position:relative;overflow:hidden;}
+.faq-hero::after{content:'?';position:absolute;right:-40px;top:-20px;font-size:280px;font-family:'Playfair Display',serif;color:rgba(255,255,255,.04);line-height:1;pointer-events:none;}
+.faq-hero-label{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:var(--soleil);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;padding:6px 18px;border-radius:30px;margin-bottom:18px;}
+.faq-hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,4.5vw,2.8rem);color:white;margin-bottom:14px;}
+.faq-hero p{color:rgba(255,255,255,.65);font-size:.95rem;max-width:480px;margin:0 auto 36px;}
+/* Barre de recherche */
+.faq-search{display:flex;align-items:center;gap:0;background:white;border-radius:50px;padding:6px 6px 6px 20px;max-width:460px;margin:0 auto;box-shadow:0 8px 32px rgba(0,0,0,.2);}
+.faq-search input{flex:1;border:none;outline:none;font-family:'Lato',sans-serif;font-size:.92rem;color:var(--text);background:transparent;}
+.faq-search button{background:var(--lavande);color:white;border:none;padding:10px 20px;border-radius:40px;font-weight:700;font-size:.85rem;cursor:pointer;white-space:nowrap;transition:background .2s;}
+.faq-search button:hover{background:var(--lavande-dark);}
+
+/* ── STATS RAPIDES ── */
+.faq-stats{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;padding:36px 5%;background:white;border-bottom:1px solid var(--border);}
+.faq-stat{text-align:center;}
+.faq-stat strong{display:block;font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--lavande-dark);}
+.faq-stat span{font-size:.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;}
+
+/* ── LAYOUT ── */
+.faq-layout{display:grid;grid-template-columns:220px 1fr;gap:32px;max-width:1000px;margin:0 auto;padding:56px 5%;}
+@media(max-width:760px){.faq-layout{grid-template-columns:1fr;gap:24px;padding:36px 5%;}}
+
+/* Sidebar catégories */
+.faq-cats{position:sticky;top:100px;align-self:start;}
+@media(max-width:760px){.faq-cats{position:static;display:flex;flex-wrap:wrap;gap:8px;}}
+.faq-cat-btn{display:flex;align-items:center;gap:10px;width:100%;background:none;border:none;padding:10px 14px;border-radius:12px;font-family:'Lato',sans-serif;font-size:.85rem;font-weight:600;color:var(--text-muted);cursor:pointer;transition:all .2s;text-align:left;margin-bottom:4px;}
+.faq-cat-btn:hover{background:var(--lavande-light);color:var(--lavande-dark);}
+.faq-cat-btn.active{background:var(--lavande);color:white;}
+.faq-cat-btn .cat-ico{font-size:1rem;width:24px;text-align:center;}
+@media(max-width:760px){.faq-cat-btn{padding:8px 14px;border-radius:30px;border:1.5px solid var(--border);width:auto;margin:0;}}
+@media(max-width:760px){.faq-cat-btn.active{background:var(--lavande);color:white;border-color:var(--lavande);}}
+
+/* Questions */
+.faq-section{margin-bottom:40px;}
+.faq-section-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:var(--lavande);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.faq-section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.faq-item{background:white;border:1.5px solid var(--border);border-radius:16px;margin-bottom:10px;overflow:hidden;transition:border-color .2s,box-shadow .2s;}
+.faq-item:hover{border-color:var(--lavande);box-shadow:0 4px 20px rgba(107,91,149,.1);}
+.faq-item.open{border-color:var(--lavande);}
+.faq-q{width:100%;background:none;border:none;padding:18px 22px;text-align:left;font-family:'Lato',sans-serif;font-size:.92rem;font-weight:700;color:var(--text);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;}
+.faq-q .faq-ico{font-size:1.1rem;flex-shrink:0;width:32px;height:32px;border-radius:10px;background:var(--lavande-light);display:flex;align-items:center;justify-content:center;}
+.faq-q .faq-txt{flex:1;}
+.faq-arrow{width:26px;height:26px;border-radius:50%;background:var(--lavande-light);display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--lavande);flex-shrink:0;transition:transform .3s,background .2s;}
+.faq-item.open .faq-arrow{transform:rotate(180deg);background:var(--lavande);color:white;}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease;}
+.faq-a-inner{padding:0 22px 18px 70px;font-size:.88rem;color:var(--text-muted);line-height:1.8;}
+@media(max-width:500px){.faq-a-inner{padding:0 16px 16px 16px;}}
+.faq-a-inner strong{color:var(--lavande-dark);}
+.faq-a-inner a{color:var(--lavande);font-weight:700;}
+
+/* ── CTA BOTTOM ── */
+.faq-cta{background:linear-gradient(135deg,var(--lavande-dark),var(--lavande));padding:64px 5%;text-align:center;}
+.faq-cta h2{font-family:'Playfair Display',serif;color:white;font-size:1.8rem;margin-bottom:12px;}
+.faq-cta p{color:rgba(255,255,255,.72);max-width:480px;margin:0 auto 32px;font-size:.95rem;}
+.faq-cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+
+/* ── FOOTER ── */
+#footer-pro{background:#0d0820;color:white;padding:72px 5% 0;}
+.footer-pro-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:56px;max-width:1100px;margin:0 auto;padding-bottom:56px;border-bottom:1px solid rgba(255,255,255,.08);}
+@media(max-width:760px){.footer-pro-grid{grid-template-columns:1fr;gap:36px;}}
+.fp-logo{font-family:'Playfair Display',serif;font-size:1.3rem;display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.fp-brand p{font-size:.85rem;color:rgba(255,255,255,.45);line-height:1.75;max-width:300px;margin-bottom:22px;}
+.fp-social{display:flex;gap:10px;}
+.fp-soc-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:.9rem;color:white;text-decoration:none;transition:background .2s;}
+.fp-soc-btn:hover{background:var(--lavande);}
+.fp-col h4{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:18px;}
+.fp-col ul{list-style:none;}
+.fp-col ul li{margin-bottom:10px;}
+.fp-col ul li a{color:rgba(255,255,255,.6);text-decoration:none;font-size:.88rem;transition:color .2s;}
+.fp-col ul li a:hover{color:#F5C84A;}
+.footer-pro-bottom{max-width:1100px;margin:0 auto;padding:22px 0 28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+.footer-pro-bottom p{font-size:.73rem;color:rgba(255,255,255,.25);}
+.footer-pro-bottom a{color:rgba(255,255,255,.3);text-decoration:underline;}
+.no-result{text-align:center;padding:40px;color:var(--text-muted);font-size:.9rem;display:none;}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html"><span class="paw">🐾</span><span>Milou Dogs Provence</span></a>
+  <button class="hamburger" onclick="toggleMenu(this)"><span></span><span></span><span></span></button>
+  <ul class="nav-links" id="navlinks">
+    <li><a href="index.html" data-icon="🏠">Accueil</a></li>
+    <li><a href="services.html" data-icon="🐾">Services &amp; Tarifs</a></li>
+    <li><a href="a-propos.html" data-icon="❤️">À propos</a></li>
+    <li><a href="avis.html" data-icon="⭐">Avis</a></li>
+    <li><a href="faq.html" data-icon="❓" class="active">FAQ</a></li>
+    <li><a href="parrainage.html" data-icon="🎁">Parrainage</a></li>
+    <li><a href="reservation.html" data-icon="📅">Réservation</a></li>
+    <li id="nav-auth-item"></li>
+    <li class="nav-mobile-cta" style="padding:14px 20px;border:none;"><a href="reservation.html" class="btn-primary" style="display:block;text-align:center;">📅 Réserver maintenant</a></li>
+  </ul>
+  <span id="nav-desktop-auth"></span>
+  <a class="nav-cta" href="reservation.html">Réserver</a>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="faq-hero">
+  <div class="faq-hero-label">❓ Questions fréquentes</div>
+  <h1>Tout ce que vous devez savoir</h1>
+  <p>8 questions, toutes les réponses. Si vous n'en trouvez pas une, appelez-nous directement.</p>
+  <div class="faq-search">
+    <input type="text" id="faq-search-input" placeholder="Rechercher une question…" oninput="searchFaq(this.value)">
+    <button onclick="searchFaq(document.getElementById('faq-search-input').value)">🔍 Chercher</button>
+  </div>
+</section>
+
+<!-- Stats rapides -->
+<div class="faq-stats">
+  <div class="faq-stat"><strong>7 max</strong><span>chiens accueillis</span></div>
+  <div class="faq-stat"><strong>2 000 m²</strong><span>terrain clôturé</span></div>
+  <div class="faq-stat"><strong>0</strong><span>cage ou box</span></div>
+  <div class="faq-stat"><strong>Quotidiennes</strong><span>photos WhatsApp</span></div>
+  <div class="faq-stat"><strong>5.0 ★</strong><span>note Google</span></div>
+</div>
+
+<!-- ── LAYOUT PRINCIPAL ── -->
+<div style="background:var(--cream);">
+  <div class="faq-layout">
+
+    <!-- Sidebar catégories -->
+    <div class="faq-cats">
+      <button class="faq-cat-btn active" onclick="filterCat('all',this)"><span class="cat-ico">📋</span> Toutes</button>
+      <button class="faq-cat-btn" onclick="filterCat('sejour',this)"><span class="cat-ico">🏠</span> Séjour</button>
+      <button class="faq-cat-btn" onclick="filterCat('sante',this)"><span class="cat-ico">🩺</span> Santé</button>
+      <button class="faq-cat-btn" onclick="filterCat('pratique',this)"><span class="cat-ico">💳</span> Pratique</button>
+      <button class="faq-cat-btn" onclick="filterCat('urgence',this)"><span class="cat-ico">🚨</span> Urgence</button>
+    </div>
+
+    <!-- Questions -->
+    <div id="faq-main">
+
+      <!-- Séjour -->
+      <div class="faq-section" data-cat="sejour">
+        <div class="faq-section-title"><span>🏠</span> Séjour & accueil</div>
+
+        <div class="faq-item fade-in" data-cat="sejour">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-ico">👋</span>
+            <span class="faq-txt">Comment se passe la première rencontre ?</span>
+            <span class="faq-arrow">▾</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Avant tout séjour, on organise une <strong>visite de présentation gratuite</strong> chez nous. Votre chien découvre les lieux, rencontre les autres pensionnaires et on échange sur ses habitudes, son alimentation et son caractère. Cette étape est indispensable pour un séjour serein pour lui et pour vous !</div>
+          </div>
+        </div>
+
+        <div class="faq-item fade-in" data-cat="sejour">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-ico">🐕</span>
+            <span class="faq-txt">Combien de chiens accueillez-vous en même temps ?</span>
+            <span class="faq-arrow">▾</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner"><strong>7 chiens maximum</strong> en simultané. Pas de box, pas de cage — les chiens vivent dans la maison avec nous, dans une vraie ambiance familiale. Notre terrain de <strong>2 000 m²</strong> entièrement clôturé leur offre tout l'espace pour courir et jouer librement.</div>
+          </div>
+        </div>
+
+        <div class="faq-item fade-in" data-cat="sejour">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-ico">📱</span>
+            <span class="faq-txt">Donnez-vous des nouvelles pendant la garde ?</span>
+            <span class="faq-arrow">▾</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Oui, <strong>photos et vidéos quotidiennes sur WhatsApp</strong>. Vous partez sereinement — votre compagnon est entre de bonnes mains et vous le voyez heureux chaque jour.</div>
+          </div>
+        </div>
+
+        <div class="faq-item fade-in" data-cat="sejour">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-ico">🐶</span>
+            <span class="faq-txt">Acceptez-vous tous les chiens ?</span>
+            <span class="faq-arrow">▾</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">On accueille la grande majorité des races et tailles. Seuls les chiens présentant une <strong>agressivité avérée</strong> envers les autres animaux ne peuvent pas être acceptés, pour la sécurité du groupe. La visite de présentation permet d'évaluer ça ensemble sans jugement.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Santé -->
+      <div class="faq-section" data-cat="sante">
+        <div class="faq-section-title"><span>🩺</span> Santé & sécurité</div>
+
+        <div class="faq-item fade-in" data-cat="sante">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-ico">💉</span>
+            <span class="faq-txt">Mon chien doit-il être vacciné ?</span>
+            <span class="faq-arrow">▾</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Oui, c'est obligatoire pour la sécurité de tous. Votre chien doit être à jour de ses <strong>vaccins (CHPPIL minimum)</strong> et traité contre les puces et tiques. Le carnet de santé est demandé à l'arrivée.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pratique -->
+      <div class="faq-section" data-cat="pratique">
+        <div class="faq-section-title"><span>💳</span> Pratique & tarifs</div>
+
+        <div class="faq-item fade-in" data-cat="pratique">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-ico">💳</span>
+            <span class="faq-txt">Quels modes de paiement acceptez-vous ?</span>
+            <span class="faq-arrow">▾</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">On accepte les <strong>espèces, virement bancaire et PayPal</strong>. Le règlement se fait à la fin du séjour. Pour les séjours longs, un acompte peut être demandé.</div>
+          </div>
+        </div>
+
+        <div class="faq-item fade-in" data-cat="pratique">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-ico">👨‍👩‍🐕</span>
+            <span class="faq-txt">Tarif pour plusieurs chiens d'une même famille ?</span>
+            <span class="faq-arrow">▾</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Oui, une <strong>réduction est appliquée pour 2 chiens</strong> de la même famille. Appelez-nous au <a href="tel:0777234088">07 77 23 40 88</a> pour un devis personnalisé.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Urgence -->
+      <div class="faq-section" data-cat="urgence">
+        <div class="faq-section-title"><span>🚨</span> Urgences</div>
+
+        <div class="faq-item fade-in" data-cat="urgence">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-ico">🚑</span>
+            <span class="faq-txt">Que se passe-t-il en cas d'urgence vétérinaire ?</span>
+            <span class="faq-arrow">▾</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">On vous contacte <strong>immédiatement</strong>. Si vous n'êtes pas joignable, on emmène votre chien chez le vétérinaire que vous avez indiqué lors de la réservation, ou au cabinet d'urgence le plus proche. Les frais vétérinaires restent à votre charge.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="no-result" id="no-result">😕 Aucune question ne correspond à votre recherche.<br><a href="tel:0777234088" style="color:var(--lavande);font-weight:700;">Appelez-nous directement →</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CTA FINAL ── -->
+<section class="faq-cta">
+  <h2>Une question sans réponse ? 🐾</h2>
+  <p>On répond toujours dans la journée — par téléphone, WhatsApp ou via le formulaire de réservation.</p>
+  <div class="faq-cta-btns">
+    <a class="btn-primary" href="tel:0777234088" style="background:var(--soleil);color:#1a0e00;">📞 07 77 23 40 88</a>
+    <a class="btn-primary" href="https://wa.me/33777234088" target="_blank" style="background:#25D366;">💬 WhatsApp</a>
+    <a class="btn-primary" href="reservation.html" style="background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);">📅 Réserver</a>
+  </div>
+</section>
+
+<footer id="footer-pro">
+  <div class="footer-pro-grid">
+    <div class="fp-brand">
+      <div class="fp-logo">🐾 Milou Dogs Provence</div>
+      <p>Pension familiale 5★ à Miramas. Terrain 2 000 m², pas de cage, photos quotidiennes. Maximum 7 chiens pour un accueil vraiment personnalisé.</p>
+      <div class="fp-social">
+        <a class="fp-soc-btn" href="https://facebook.com/miloudogsprovence" target="_blank" rel="noopener">📘</a>
+        <a class="fp-soc-btn" href="https://tiktok.com/@miloudogs_provence" target="_blank" rel="noopener">🎵</a>
+        <a class="fp-soc-btn" href="tel:0777234088">📞</a>
+        <a class="fp-soc-btn" href="https://maps.google.com/?q=Miramas+13140" target="_blank" rel="noopener">📍</a>
+      </div>
+    </div>
+    <div class="fp-col">
+      <h4>Navigation</h4>
+      <ul>
+        <li><a href="index.html">🏠 Accueil</a></li>
+        <li><a href="services.html">🐾 Services &amp; Tarifs</a></li>
+        <li><a href="a-propos.html">❤️ À propos</a></li>
+        <li><a href="avis.html">⭐ Avis clients</a></li>
+        <li><a href="parrainage.html">🎁 Parrainage</a></li>
+        <li><a href="reservation.html">📅 Réservation</a></li>
+        <li><a href="mentions-legales.html">📄 Mentions légales</a></li>
+      </ul>
+    </div>
+    <div class="fp-col">
+      <h4>Contact &amp; Zones</h4>
+      <ul>
+        <li><a href="tel:0777234088">📞 07 77 23 40 88</a></li>
+        <li><a href="https://maps.google.com/?q=Miramas+13140" target="_blank">📍 Miramas 13140</a></li>
+        <li><a href="#">🕐 Lun–Dim 8h–19h</a></li>
+        <li><a href="garde-chien-salon-de-provence.html">Salon-de-Provence</a></li>
+        <li><a href="garde-chien-istres.html">Istres</a></li>
+        <li><a href="garde-chien-vitrolles.html">Vitrolles</a></li>
+        <li><a href="espace-client.html">👤 Mon espace client</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-pro-bottom">
+    <p>© 2025 Milou Dogs Provence · Tous droits réservés · Miramas, Bouches-du-Rhône</p>
+    <p><a href="mentions-legales.html">Mentions légales</a> · Note 5★ sur Google · 41 avis vérifiés</p>
+  </div>
+</footer>
+
+<script>
+function toggleMenu(btn){document.getElementById('navlinks').classList.toggle('open');btn.classList.toggle('open');}
+
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const ans  = btn.nextElementSibling;
+  const isOpen = item.classList.contains('open');
+  // Ferme tout
+  document.querySelectorAll('.faq-item.open').forEach(i => {
+    i.classList.remove('open');
+    i.querySelector('.faq-a').style.maxHeight = '0';
+  });
+  if (!isOpen) {
+    item.classList.add('open');
+    ans.style.maxHeight = ans.scrollHeight + 'px';
+  }
+}
+
+function filterCat(cat, btn) {
+  document.querySelectorAll('.faq-cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('faq-search-input').value = '';
+  document.querySelectorAll('.faq-section').forEach(s => {
+    s.style.display = (cat === 'all' || s.dataset.cat === cat) ? '' : 'none';
+  });
+  document.querySelectorAll('.faq-item').forEach(i => i.style.display = '');
+  document.getElementById('no-result').style.display = 'none';
+}
+
+function searchFaq(val) {
+  const q = val.trim().toLowerCase();
+  // Réinitialise catégories
+  document.querySelectorAll('.faq-cat-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.faq-section').forEach(s => s.style.display = '');
+  let found = 0;
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const txt = item.textContent.toLowerCase();
+    if (!q || txt.includes(q)) { item.style.display = ''; found++; }
+    else item.style.display = 'none';
+  });
+  document.getElementById('no-result').style.display = (q && found === 0) ? 'block' : 'none';
+}
+
+const obs = new IntersectionObserver(els => els.forEach(e => {
+  if (e.isIntersecting) e.target.classList.add('visible');
+}), {threshold:.1});
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+</script>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-auth.js"></script>
+<script src="chatbot.js"></script>
+<script src="effects-extra.js"></script>
+</body>
+</html>
+
+

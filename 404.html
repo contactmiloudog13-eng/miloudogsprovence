@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Page introuvable – Milou Dogs Provence</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="style.css">
+<style>
+#notfound{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 5%;background:linear-gradient(135deg,#2d1f4e 0%,#4A3F72 100%);}
+.nf-box{max-width:520px;}
+.nf-icon{font-size:5rem;margin-bottom:16px;animation:bounce 1.2s ease-in-out infinite alternate;}
+@keyframes bounce{from{transform:translateY(0);}to{transform:translateY(-14px);}}
+.nf-box h1{font-size:clamp(2rem,5vw,3rem);color:white;margin-bottom:8px;}
+.nf-404{font-size:8rem;font-family:'Playfair Display',serif;color:rgba(255,255,255,.12);line-height:1;margin-bottom:8px;font-weight:700;}
+.nf-box p{color:rgba(255,255,255,.65);font-size:1rem;line-height:1.8;font-weight:300;margin-bottom:32px;}
+.nf-links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.nf-links .btn-primary{background:#F5C84A;color:#1a0e00;border:none;}
+.nf-links .btn-outline{border-color:rgba(255,255,255,.4);color:white;}
+.nf-links .btn-outline:hover{background:rgba(255,255,255,.1);}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html"><span class="paw">🐾</span><span>Milou Dogs Provence</span></a>
+</nav>
+<section id="notfound">
+  <div class="nf-box">
+    <div class="nf-404">404</div>
+    <div class="nf-icon">🐾</div>
+    <h1>On a perdu la piste !</h1>
+    <p>Cette page n'existe pas ou a été déplacée. Pas de panique — votre compagnon est en de bonnes mains, lui ! 🐶</p>
+    <div class="nf-links">
+      <a class="btn-primary" href="index.html">🏠 Retour à l'accueil</a>
+      <a class="btn-outline" href="reservation.html">📅 Réserver</a>
+      <a class="btn-outline" href="tel:0777234088">📞 Nous appeler</a>
+    </div>
+  </div>
+</section>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-auth.js"></script>
+<script src="chatbot.js"></script>
+</body>
+</html>
+

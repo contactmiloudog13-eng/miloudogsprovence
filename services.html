@@ -1,0 +1,506 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Milou Dogs Provence","description":"Garde de chien à domicile à Miramas. Pension familiale 5 étoiles, terrain 2000m², photos quotidiennes.","telephone":"+33777234088","url":"https://miloudogsprovence.fr","address":{"@type":"PostalAddress","addressLocality":"Miramas","addressRegion":"Bouches-du-Rhône","addressCountry":"FR"},"geo":{"@type":"GeoCoordinates","latitude":43.5833,"longitude":5.0},"openingHours":"Mo-Su 08:00-19:00","aggregateRating":{"@type":"AggregateRating","ratingValue":"5","reviewCount":"41"},"priceRange":"€€"}</script>
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:url" content="https://miloudogsprovence.fr/services.html">
+<meta property="og:title" content="Services & Tarifs – Milou Dogs Provence">
+<meta property="og:description" content="Garde nuit 20€, garderie 20€, promenades 15€. Services de garde de chien à Miramas.">
+<meta property="og:image" content="https://miloudogsprovence.fr/hero-banner.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Services & Tarifs – Garde de chien Miramas | Milou Dogs Provence</title>
+<meta name="description" content="Pension nuit 20€, garderie 20€, promenades 15€ à Miramas. Garde de chien familiale 5★, terrain 2000m², sans cage. Salon-de-Provence, Istres, Vitrolles.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
+<link rel="canonical" href="https://miloudogsprovence.fr/services.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="effects.css">
+<style>
+/* ── TARIFS ── */
+#services-content{background:var(--cream);padding:56px 5%;}
+.tarifs-header{text-align:center;margin-bottom:48px;}
+.tarifs-badge{display:inline-flex;align-items:center;gap:8px;background:var(--lavande-light);border:1px solid var(--lavande);color:var(--lavande-dark);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;padding:6px 16px;border-radius:30px;margin-bottom:16px;}
+
+/* Grille principale 3 colonnes */
+.tarifs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:1100px;margin:0 auto;}
+@media(max-width:900px){.tarifs-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:560px){.tarifs-grid{grid-template-columns:1fr;}}
+
+/* Card de base */
+.t-card{background:white;border:1.5px solid var(--border);border-radius:18px;padding:24px 22px;display:flex;flex-direction:column;gap:10px;transition:transform .22s,box-shadow .22s,border-color .22s;cursor:pointer;position:relative;}
+.t-card:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(107,91,149,.13);border-color:var(--lavande);}
+
+/* Card vedette */
+.t-card.star{border-color:var(--soleil);background:linear-gradient(145deg,#FFFDF5,#FFF8E6);}
+.t-card.star:hover{box-shadow:0 12px 36px rgba(245,200,74,.25);}
+.star-ribbon{position:absolute;top:-1px;right:20px;background:var(--soleil);color:#1a0e00;font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;padding:4px 12px;border-radius:0 0 10px 10px;}
+
+/* Entête card */
+.t-card-top{display:flex;align-items:center;gap:12px;}
+.t-icon{width:42px;height:42px;border-radius:12px;background:var(--lavande-light);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.star .t-icon{background:#FFF3CD;}
+.t-name{font-size:.92rem;font-weight:800;color:var(--lavande-dark);line-height:1.25;}
+.t-sub{font-size:.75rem;color:var(--text-muted);margin-top:2px;}
+
+/* Prix */
+.t-price-row{display:flex;align-items:baseline;gap:6px;}
+.t-price{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;color:var(--lavande);line-height:1;}
+.star .t-price{color:#b8860b;}
+.t-price-old{font-size:.9rem;color:#b0a8c0;text-decoration:line-through;}
+.t-unit{font-size:.78rem;color:var(--text-muted);}
+
+/* Points inclus */
+.t-perks{list-style:none;display:flex;flex-direction:column;gap:5px;margin-top:2px;}
+.t-perks li{font-size:.78rem;color:var(--text-muted);display:flex;align-items:center;gap:7px;}
+.t-perks li::before{content:'✓';color:var(--vert);font-weight:800;font-size:.75rem;flex-shrink:0;}
+
+/* Badge promo */
+.t-promo{display:inline-flex;align-items:center;gap:5px;background:#e8f8ef;color:#1a7a44;font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:20px;margin-top:2px;width:fit-content;}
+.t-soon{display:inline-flex;align-items:center;gap:5px;background:#FFF3CD;color:#b8860b;font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:20px;margin-top:2px;width:fit-content;}
+
+/* Carte fidélité inline */
+.fidelite-stripe{display:flex;align-items:center;gap:20px;background:white;border:2px solid var(--soleil);border-radius:16px;padding:20px 28px;margin:32px auto 0;max-width:1100px;flex-wrap:wrap;}
+.fidelite-stripe .fi-icon{font-size:2rem;flex-shrink:0;}
+.fidelite-stripe .fi-text strong{display:block;font-size:.95rem;font-weight:800;color:var(--lavande-dark);margin-bottom:3px;}
+.fidelite-stripe .fi-text span{font-size:.82rem;color:var(--text-muted);}
+.fidelite-stripe a{margin-left:auto;white-space:nowrap;}
+@media(max-width:600px){.fidelite-stripe a{margin-left:0;width:100%;text-align:center;}}
+
+/* ── GALLERY ── */
+#galerie{background:white;padding:64px 5%;}
+.gallery-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;height:260px;overflow:hidden;border-radius:16px;}
+.gallery-strip .photo{background-size:cover;background-position:center;transition:transform .4s;}
+.gallery-strip .photo:hover{transform:scale(1.05);}
+.g1{background-image:url('IMG_0952.webp');}
+.g2{background-image:url('IMG_1073.webp');}
+.g3{background-image:url('IMG_1130.webp');}
+.g4{background-image:url('IMG_1240.jpeg');}
+.g5{background-image:url('IMG_1212.jpeg');}
+@media(max-width:600px){.gallery-strip{grid-template-columns:1fr 1fr;height:240px;}.g3,.g4,.g5{display:none;}}
+
+/* ── TERRAIN ── */
+#terrain{background:var(--cream);padding:64px 5%;}
+.terrain-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:50px;align-items:center;}
+@media(max-width:760px){.terrain-grid{grid-template-columns:1fr;}}
+.terrain-photos{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.tp{background-size:cover;background-position:center;border-radius:14px;height:170px;}
+.tp1{background-image:url('IMG_1078.webp');}
+.tp2{background-image:url('IMG_1191.jpeg');}
+.tp3{background-image:url('IMG_1075.webp');}
+.tp4{background-image:url('IMG_1079.webp');}
+.terrain-text ul{list-style:none;margin-top:20px;}
+.terrain-text ul li{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;font-size:.88rem;color:var(--text-muted);}
+.terrain-text ul li .check{color:var(--vert);font-size:1rem;flex-shrink:0;}
+
+/* ── COMPARAISON ── */
+#comparaison{background:white;padding:64px 5%;}
+.comp-table{width:100%;border-collapse:separate;border-spacing:0;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(74,63,114,0.10);}
+.comp-table th{padding:14px 18px;font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700;}
+.comp-table th:first-child{background:#f5f0fa;color:var(--text-muted);text-align:left;}
+.comp-table th.th-milou{background:var(--lavande);color:white;text-align:center;width:32%;}
+.comp-table th.th-chenil{background:#f0f0f0;color:#888;text-align:center;width:32%;}
+.comp-table td{padding:11px 18px;font-size:.85rem;border-top:1px solid var(--border);background:white;}
+.comp-table td:first-child{background:#faf9fb;color:var(--text);font-weight:600;font-size:.84rem;}
+.comp-table td.td-milou{text-align:center;color:var(--vert);font-weight:700;background:linear-gradient(135deg,#f7f4ff,#f0ecfb);}
+.comp-table td.td-chenil{text-align:center;color:#c0392b;background:white;}
+@media(max-width:600px){.comp-table th,.comp-table td{padding:10px 10px;font-size:.78rem;}}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html"><span class="paw">🐾</span><span>Milou Dogs Provence</span></a>
+  <button class="hamburger" onclick="toggleMenu(this)"><span></span><span></span><span></span></button>
+  <ul class="nav-links" id="navlinks">
+        <li><a href="index.html" data-icon="🏠">Accueil</a></li>
+    <li><a href="services.html" data-icon="🐾">Services &amp; Tarifs</a></li>
+    <li><a href="a-propos.html" data-icon="❤️">À propos</a></li>
+    <li><a href="avis.html" data-icon="⭐">Avis</a></li>
+    <li><a href="faq.html" data-icon="❓">FAQ</a></li>
+    <li><a href="parrainage.html" data-icon="🎁">Parrainage</a></li>
+    <li><a href="reservation.html" data-icon="📅">Réservation</a></li>
+    <li id="nav-auth-item"></li>
+    <li class="nav-mobile-cta" style="padding:14px 20px;border:none;"><a href="reservation.html" class="btn-primary" style="display:block;text-align:center;">📅 Réserver maintenant</a></li>
+  </ul>
+  <span id="nav-desktop-auth"></span>
+  <a class="nav-cta" href="reservation.html">Réserver</a>
+</nav>
+
+<div class="page-hero" style="background:linear-gradient(135deg,#2d1f4e 0%,#4A3F72 100%);background-size:unset;animation:none;padding:70px 5% 60px;">
+  <p class="section-label" style="background:rgba(255,255,255,.15);color:#F5C84A;border-color:rgba(255,255,255,.2);">🐶 Services &amp; Tarifs</p>
+  <h1 style="color:white;font-size:clamp(1.8rem,4vw,2.6rem);">Garde de chien à Miramas<br><span style="color:#F5C84A;">dès 10€ la demi-journée</span></h1>
+  <p style="color:rgba(255,255,255,.75);">Pension familiale, garderie, promenades — dans un cadre sans cage à 2 km de Miramas.</p>
+</div>
+
+<section id="services-content">
+  <div style="max-width:1140px;margin:0 auto;">
+
+    <div class="tarifs-grid fade-in">
+
+      <!-- Pension nuit — vedette -->
+      <div class="t-card star" onclick="location.href='reservation.html'" style="grid-row:span 1;">
+        <div class="star-ribbon">⭐ Le plus populaire</div>
+        <div class="t-card-top">
+          <div class="t-icon">🏠</div>
+          <div>
+            <div class="t-name">Pension nuit &amp; journée</div>
+            <div class="t-sub">1 nuit à plusieurs semaines</div>
+          </div>
+        </div>
+        <div class="t-price-row">
+          <span class="t-price-old">25€</span>
+          <span class="t-price">20€</span>
+          <span class="t-unit">/ nuit</span>
+        </div>
+        <ul class="t-perks">
+          <li>Repas, sorties &amp; câlins illimités</li>
+          <li>Nuit dans la maison, au chaud</li>
+          <li>Photos WhatsApp chaque jour</li>
+        </ul>
+        <div class="t-promo">🎁 Nuit offerte !</div>
+      </div>
+
+      <!-- Garderie journée -->
+      <div class="t-card fade-in" onclick="location.href='reservation.html'">
+        <div class="t-card-top">
+          <div class="t-icon">☀️</div>
+          <div>
+            <div class="t-name">Garderie à la journée</div>
+            <div class="t-sub">8h – 19h</div>
+          </div>
+        </div>
+        <div class="t-price-row">
+          <span class="t-price">20€</span>
+          <span class="t-unit">/ journée</span>
+        </div>
+        <ul class="t-perks">
+          <li>Repas inclus si fourni</li>
+          <li>Activités &amp; socialisation</li>
+        </ul>
+      </div>
+
+      <!-- Demi-journée -->
+      <div class="t-card fade-in" onclick="location.href='reservation.html'">
+        <div class="t-card-top">
+          <div class="t-icon">🌤️</div>
+          <div>
+            <div class="t-name">Garderie demi-journée</div>
+            <div class="t-sub">Matin ou après-midi</div>
+          </div>
+        </div>
+        <div class="t-price-row">
+          <span class="t-price">10€</span>
+          <span class="t-unit">/ demi-journée</span>
+        </div>
+        <ul class="t-perks">
+          <li>Durée fixe de 5h30</li>
+          <li>Arrivée flexible</li>
+        </ul>
+      </div>
+
+      <!-- Test demi-journée -->
+      <div class="t-card fade-in" onclick="location.href='reservation.html'">
+        <div class="t-card-top">
+          <div class="t-icon">🐣</div>
+          <div>
+            <div class="t-name">Test demi-journée</div>
+            <div class="t-sub">1ère fois uniquement</div>
+          </div>
+        </div>
+        <div class="t-price-row">
+          <span class="t-price">10€</span>
+          <span class="t-unit">/ demi-journée</span>
+        </div>
+        <ul class="t-perks">
+          <li>Découverte des lieux</li>
+          <li>Rencontre avec les autres chiens</li>
+        </ul>
+      </div>
+
+      <!-- Promenades -->
+      <div class="t-card fade-in" onclick="location.href='reservation.html'">
+        <div class="t-card-top">
+          <div class="t-icon">🦮</div>
+          <div>
+            <div class="t-name">Promenades</div>
+            <div class="t-sub">Environs Miramas</div>
+          </div>
+        </div>
+        <div class="t-price-row">
+          <span class="t-price">15€</span>
+          <span class="t-unit">/ promenade</span>
+        </div>
+        <ul class="t-perks">
+          <li>30 à 60 min en nature</li>
+          <li>Seul ou en petit groupe</li>
+        </ul>
+      </div>
+
+      <!-- Toilettage -->
+      <div class="t-card fade-in" style="opacity:.88;">
+        <div class="t-card-top">
+          <div class="t-icon">🛁</div>
+          <div>
+            <div class="t-name">Toilettage simple</div>
+            <div class="t-sub">Petite-moyenne race</div>
+          </div>
+        </div>
+        <div class="t-price-row">
+          <span class="t-price">30€</span>
+          <span class="t-unit">/ séance</span>
+        </div>
+        <ul class="t-perks">
+          <li>Bain, séchage, brossage</li>
+          <li>Nettoyage oreilles inclus</li>
+        </ul>
+        <div class="t-soon">⏳ Bientôt disponible</div>
+        <div style="margin-top:10px;display:flex;gap:6px;">
+          <input id="toilettage-email" type="email" placeholder="Email pour être prévenu" style="flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:10px;font-family:'Lato',sans-serif;font-size:.8rem;outline:none;min-width:0;">
+          <button onclick="notifyToilettage()" style="padding:8px 12px;background:var(--soleil);color:#1a0e00;border:none;border-radius:10px;font-family:'Lato',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer;white-space:nowrap;">🔔 Notifier</button>
+        </div>
+        <p id="toilettage-msg" style="display:none;font-size:.78rem;color:var(--vert);font-weight:700;margin-top:6px;">✓ Vous serez notifié au lancement !</p>
+      </div>
+
+    </div><!-- /tarifs-grid -->
+
+    <!-- Carte fidélité -->
+    <div class="fidelite-stripe fade-in">
+      <div class="fi-icon">🎴</div>
+      <div class="fi-text">
+        <strong>Carte de fidélité — offerte à chaque client</strong>
+        <span>Chaque visite compte. À la <strong>10ème visite : 1 demi-journée offerte !</strong> Sans limite de temps.</span>
+      </div>
+      <a class="btn-primary" href="reservation.html" style="font-size:.85rem;padding:10px 22px;">Commencer à cumuler →</a>
+    </div>
+
+    <div style="text-align:center;margin-top:32px;">
+      <a class="btn-primary" href="reservation.html">📅 Réserver maintenant</a>
+    </div>
+
+  </div>
+</section>
+
+<section id="comparaison">
+  <div class="container">
+    <div class="section-header fade-in">
+      <p class="section-label">🆚 Pourquoi nous choisir ?</p>
+      <h2 class="section-title">Milou Dogs vs Chenil classique</h2>
+      <p class="section-sub">Votre chien mérite mieux qu'une cage. Voici pourquoi nos clients ne reviennent jamais en arrière.</p>
+    </div>
+    <div class="fade-in" style="overflow-x:auto;">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="th-milou">🐾 Milou Dogs Provence</th>
+            <th class="th-chenil">🏢 Chenil classique</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Cage / Box</td>
+            <td class="td-milou">✅ Aucune cage, vie en liberté</td>
+            <td class="td-chenil">❌ Box ou cage toute la journée</td>
+          </tr>
+          <tr>
+            <td>Espace extérieur</td>
+            <td class="td-milou">✅ 2 000 m² clôturés</td>
+            <td class="td-chenil">⚠️ Sortie limitée en laisse</td>
+          </tr>
+          <tr>
+            <td>Ambiance</td>
+            <td class="td-milou">✅ Familiale, à la maison</td>
+            <td class="td-chenil">❌ Industrielle, bruyante</td>
+          </tr>
+          <tr>
+            <td>Photos quotidiennes</td>
+            <td class="td-milou">✅ Chaque jour sur WhatsApp</td>
+            <td class="td-chenil">❌ Aucune nouvelle</td>
+          </tr>
+          <tr>
+            <td>Nombre de chiens max</td>
+            <td class="td-milou">✅ 7 max — suivi personnalisé</td>
+            <td class="td-chenil">❌ Dizaines de chiens</td>
+          </tr>
+          <tr>
+            <td>Nuit à l'intérieur</td>
+            <td class="td-milou">✅ Dans la maison, au chaud</td>
+            <td class="td-chenil">❌ Box isolé ou cage</td>
+          </tr>
+          <tr>
+            <td>Note client</td>
+            <td class="td-milou">✅ 5.0 ★★★★★ sur Google</td>
+            <td class="td-chenil">⚠️ Variable</td>
+          </tr>
+          <tr>
+            <td>Tarif nuit</td>
+            <td class="td-milou">✅ 20€/nuit · Carte fidélité</td>
+            <td class="td-chenil">⚠️ 20€ à 50€+ sans avantage</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="text-align:center;margin-top:32px;">
+      <a class="btn-primary" href="reservation.html">📅 Réserver maintenant — dès 20€/nuit</a>
+    </div>
+  </div>
+</section>
+
+<section id="galerie">
+  <div class="container" style="max-width:1140px;">
+    <div class="section-header fade-in">
+      <p class="section-label">📸 Photos</p>
+      <h2 class="section-title">La vie chez Milou Dogs</h2>
+    </div>
+    <div class="gallery-strip fade-in">
+      <div class="photo g1"></div>
+      <div class="photo g2"></div>
+      <div class="photo g3"></div>
+      <div class="photo g4"></div>
+      <div class="photo g5"></div>
+    </div>
+  </div>
+</section>
+
+<section id="terrain">
+  <div class="container">
+    <div class="terrain-grid">
+      <div class="terrain-photos fade-in">
+        <div class="tp tp1"></div><div class="tp tp2"></div>
+        <div class="tp tp3"></div><div class="tp tp4"></div>
+      </div>
+      <div class="terrain-text fade-in">
+        <p class="section-label">🏡 Notre espace</p>
+        <h2 class="section-title">2 000 m² de bonheur</h2>
+        <p class="section-sub">Une ambiance 100% familiale — les chiens vivent dans la maison, sur un grand terrain clôturé. Pas de box, pas de cage. Juste de l'amour !</p>
+        <ul>
+          <li><span class="check">✓</span> Terrain entièrement clôturé et sécurisé</li>
+          <li><span class="check">✓</span> Espace de jeu, repos, et détente</li>
+          <li><span class="check">✓</span> Chiens en liberté toute la journée</li>
+          <li><span class="check">✓</span> Accès intérieur maison la nuit</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:linear-gradient(135deg,var(--lavande-dark),var(--lavande));padding:48px 5%;text-align:center;">
+  <div class="container">
+    <p class="section-label" style="color:var(--soleil);">🎁 Parrainage</p>
+    <h2 class="section-title" style="color:white;margin-bottom:12px;">Parrainez un ami = 10€ offerts pour vous</h2>
+    <p style="color:rgba(255,255,255,.8);font-weight:300;max-width:480px;margin:0 auto 28px;">Vous aimez nos services ? Recommandez-nous à un ami et gagnez 10€ sur votre prochaine garde !</p>
+    <a class="btn-primary" href="parrainage.html" style="background:var(--soleil);color:#1a0e00;">En savoir plus →</a>
+  </div>
+</section>
+<style>
+#footer-pro{background:#0d0820;color:white;padding:72px 5% 0;}
+.footer-pro-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:56px;max-width:1100px;margin:0 auto;padding-bottom:56px;border-bottom:1px solid rgba(255,255,255,.08);}
+@media(max-width:760px){.footer-pro-grid{grid-template-columns:1fr;gap:36px;}}
+.fp-logo{font-family:'Playfair Display',serif;font-size:1.3rem;display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.fp-brand p{font-size:.85rem;color:rgba(255,255,255,.45);line-height:1.75;max-width:300px;margin-bottom:22px;}
+.fp-social{display:flex;gap:10px;}
+.fp-soc-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:.9rem;color:white;text-decoration:none;transition:background .2s;}
+.fp-soc-btn:hover{background:var(--lavande,#6B5B95);}
+.fp-col h4{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:18px;}
+.fp-col ul{list-style:none;}
+.fp-col ul li{margin-bottom:10px;}
+.fp-col ul li a{color:rgba(255,255,255,.6);text-decoration:none;font-size:.88rem;transition:color .2s;}
+.fp-col ul li a:hover{color:#F5C84A;}
+.footer-pro-bottom{max-width:1100px;margin:0 auto;padding:22px 0 28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+.footer-pro-bottom p{font-size:.73rem;color:rgba(255,255,255,.25);}
+.footer-pro-bottom a{color:rgba(255,255,255,.3);text-decoration:underline;}
+</style>
+<footer id="footer-pro">
+  <div class="footer-pro-grid">
+    <div class="fp-brand">
+      <div class="fp-logo">🐾 Milou Dogs Provence</div>
+      <p>Pension familiale 5★ à Miramas. Terrain 2 000 m², pas de cage, photos quotidiennes. Maximum 7 chiens pour un accueil vraiment personnalisé.</p>
+      <div class="fp-social">
+        <a class="fp-soc-btn" href="https://facebook.com/miloudogsprovence" target="_blank" rel="noopener">📘</a>
+        <a class="fp-soc-btn" href="https://tiktok.com/@miloudogs_provence" target="_blank" rel="noopener">🎵</a>
+        <a class="fp-soc-btn" href="tel:0777234088">📞</a>
+        <a class="fp-soc-btn" href="https://maps.google.com/?q=Miramas+13140" target="_blank" rel="noopener">📍</a>
+      </div>
+    </div>
+    <div class="fp-col">
+      <h4>Navigation</h4>
+      <ul>
+        <li><a href="index.html">🏠 Accueil</a></li>
+        <li><a href="services.html">🐾 Services & Tarifs</a></li>
+        <li><a href="avis.html">⭐ Avis clients</a></li>
+        <li><a href="faq.html">❓ FAQ</a></li>
+        <li><a href="parrainage.html">🎁 Parrainage</a></li>
+        <li><a href="reservation.html">📅 Réservation</a></li>
+        <li><a href="mentions-legales.html">📄 Mentions légales</a></li>
+      </ul>
+    </div>
+    <div class="fp-col">
+      <h4>Contact & Zones</h4>
+      <ul>
+        <li><a href="tel:0777234088">📞 07 77 23 40 88</a></li>
+        <li><a href="https://maps.google.com/?q=Miramas+13140" target="_blank">📍 Miramas 13140</a></li>
+        <li><a href="#">🕐 Lun–Dim 8h–19h</a></li>
+        <li><a href="garde-chien-salon-de-provence.html">Salon-de-Provence</a></li>
+        <li><a href="garde-chien-istres.html">Istres</a></li>
+        <li><a href="garde-chien-vitrolles.html">Vitrolles</a></li>
+        <li><a href="espace-client.html">👤 Mon espace client</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-pro-bottom">
+    <p>© 2025 Milou Dogs Provence · Tous droits réservés · Miramas, Bouches-du-Rhône</p>
+    <p><a href="mentions-legales.html">Mentions légales</a> · Note 5★ sur Google · 41 avis vérifiés</p>
+  </div>
+</footer>
+<script>
+function toggleMenu(btn){document.getElementById('navlinks').classList.toggle('open');btn.classList.toggle('open');}
+const obs=new IntersectionObserver(els=>els.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.1});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+
+
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.avis-card,.service-card,.faq-item').forEach(card=>{
+    if(!card.classList.contains('faq-item')){
+      card.addEventListener('mousemove',e=>{
+        const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+        card.style.transform=`perspective(900px) rotateY(${x*18}deg) rotateX(${-y*14}deg) translateY(-12px) scale(1.03)`;
+        card.style.boxShadow=`${-x*18}px ${-y*18+22}px 56px rgba(123,111,160,0.27)`;
+      });
+      card.addEventListener('mouseleave',()=>{card.style.transform='';card.style.boxShadow='';});
+    }
+  });
+  const paws=['🐾','🐕'];
+  function spawn(){const el=document.createElement('div');el.className='paw-particle';el.textContent=paws[Math.floor(Math.random()*paws.length)];el.style.left=Math.random()*100+'vw';el.style.animationDuration=(5+Math.random()*5)+'s';el.style.fontSize=(.7+Math.random()*.9)+'rem';document.body.appendChild(el);setTimeout(()=>el.remove(),10000);}
+  window.matchMedia("(hover:none)").matches?setInterval(spawn,15000):setInterval(spawn,3000);
+});
+</script>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-auth.js"></script>
+<script src="chatbot.js"></script>
+
+<script>
+function notifyToilettage(){
+  const email=document.getElementById('toilettage-email').value.trim();
+  const msg=document.getElementById('toilettage-msg');
+  if(!email||!email.includes('@')){document.getElementById('toilettage-email').style.borderColor='#c0392b';return;}
+  fetch('https://formspree.io/f/mojzavza',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({_subject:'🛁 Alerte toilettage',Email:email})}).catch(()=>{});
+  msg.style.display='block';
+  document.getElementById('toilettage-email').style.display='none';
+  document.querySelector('[onclick="notifyToilettage()"]').style.display='none';
+}
+</script>
+<script src="effects-extra.js"></script>
+</body>
+</html>
+
+

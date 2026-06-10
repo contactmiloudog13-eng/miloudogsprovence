@@ -1,0 +1,980 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Milou Dogs Provence","description":"Garde de chien à domicile à Miramas. Pension familiale 5 étoiles, terrain 2000m², photos quotidiennes.","telephone":"+33777234088","url":"https://miloudogsprovence.fr","address":{"@type":"PostalAddress","addressLocality":"Miramas","addressRegion":"Bouches-du-Rhône","addressCountry":"FR"},"geo":{"@type":"GeoCoordinates","latitude":43.5833,"longitude":5.0},"openingHours":"Mo-Su 08:00-19:00","aggregateRating":{"@type":"AggregateRating","ratingValue":"5","reviewCount":"41"},"priceRange":"€€"}</script>
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:url" content="https://miloudogsprovence.fr/reservation.html">
+<meta property="og:title" content="Réserver garde chien Miramas – Milou Dogs Provence">
+<meta property="og:description" content="Réservez en ligne la garde de votre chien à Miramas dès 20€/nuit. Pension familiale 5★, terrain 2000m², réponse sous 24h.">
+<meta property="og:image" content="https://miloudogsprovence.fr/hero-banner.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Réserver garde chien Miramas dès 20€ – Milou Dogs Provence</title>
+<meta name="description" content="Réservez en ligne la garde de votre chien à Miramas dès 20€/nuit. Pension familiale 5★ Google, terrain 2000m², pas de cage, réponse sous 24h. Salon-de-Provence, Istres, Vitrolles. ☎ 07 77 23 40 88">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
+<link rel="canonical" href="https://miloudogsprovence.fr/reservation.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="effects.css">
+<style>
+#resa-section{background:white;}
+.resa-layout{display:grid;grid-template-columns:1fr 1.4fr;gap:60px;align-items:start;}
+@media(max-width:820px){.resa-layout{grid-template-columns:1fr;}}
+.resa-info p.section-sub{max-width:100%;margin-bottom:28px;}
+.resa-info ul{list-style:none;}
+.resa-info ul li{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;font-size:.92rem;color:var(--text-muted);}
+.resa-info ul li .check{color:var(--vert);font-size:1.1rem;flex-shrink:0;margin-top:2px;}
+.contact-box{margin-top:32px;background:var(--lavande-light);border-radius:20px;padding:24px;}
+.contact-box h4{font-size:1rem;color:var(--lavande-dark);margin-bottom:16px;}
+.contact-item{display:flex;align-items:center;gap:12px;margin-bottom:12px;font-size:.9rem;color:var(--text-muted);}
+.contact-item a{color:var(--lavande);text-decoration:none;font-weight:700;}
+.resa-form{background:var(--cream);border-radius:24px;padding:40px;border:1px solid var(--border);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:560px){
+  .form-row{grid-template-columns:1fr;}
+  .resa-form{padding:24px 16px;}
+  .form-group>div[style*="display:flex"]{flex-direction:column;gap:8px;}
+  label[style*="display:flex;align-items:center;gap:8px;padding"]{width:100%;font-size:.85rem!important;padding:10px 14px!important;}
+}
+.form-group{margin-bottom:18px;}
+.form-group label{display:block;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:8px;}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 16px;border:1px solid var(--border);border-radius:12px;background:white;font-family:'Lato',sans-serif;font-size:.95rem;color:var(--text);transition:border-color .2s;outline:none;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--lavande);}
+.form-group textarea{min-height:90px;resize:vertical;}
+.form-service-tags{display:flex;flex-wrap:wrap;gap:8px;}
+.service-tag{padding:8px 16px;border:1px solid var(--border);border-radius:20px;font-size:.85rem;cursor:pointer;transition:all .2s;background:white;color:var(--text-muted);}
+.service-tag.active,.service-tag:hover{background:var(--lavande-light);border-color:var(--lavande);color:var(--lavande-dark);}
+.tag-close{margin-left:6px;font-size:.7rem;opacity:.7;line-height:1;vertical-align:middle;background:rgba(74,63,114,0.15);border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,opacity .2s;}
+.tag-close:hover{background:rgba(74,63,114,0.35);opacity:1;}
+.form-submit{width:100%;padding:16px;background:var(--lavande);color:white;border:none;border-radius:40px;font-family:'Lato',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:all .2s;margin-top:8px;}
+.form-submit:hover{background:var(--lavande-dark);}
+.success-msg{display:none;background:var(--vert-light);border:1px solid var(--vert);border-radius:12px;padding:16px;color:var(--vert);font-weight:700;text-align:center;margin-top:16px;}
+/* ADMIN */
+#admin{display:none;padding:80px 5%;background:#1a1a2e;}
+#admin.visible{display:block;}
+.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;}
+.admin-header h2{color:white;font-size:1.8rem;}
+.admin-close{background:rgba(255,255,255,.1);color:white;border:none;padding:10px 20px;border-radius:20px;cursor:pointer;font-family:'Lato',sans-serif;}
+#admin-login-form{max-width:400px;margin:60px auto;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:40px;text-align:center;}
+#admin-login-form h3{color:white;margin-bottom:24px;}
+#admin-login-form input{width:100%;padding:12px 16px;border:1px solid rgba(255,255,255,.2);border-radius:12px;background:rgba(255,255,255,.05);color:white;font-family:'Lato',sans-serif;font-size:.95rem;outline:none;margin-bottom:16px;}
+#admin-login-form button{width:100%;padding:14px;background:var(--lavande);color:white;border:none;border-radius:40px;font-family:'Lato',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;}
+#pwd-error{color:#ff6b6b;font-size:.85rem;margin-top:8px;display:none;}
+#admin-panel{display:none;}
+#admin-panel.show{display:block;}
+.admin-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:32px;}
+.admin-stat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:20px;text-align:center;}
+.admin-stat strong{font-size:2rem;color:white;font-family:'Playfair Display',serif;display:block;}
+.admin-stat span{font-size:.8rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.1em;}
+.reservations-table{width:100%;border-collapse:collapse;background:rgba(255,255,255,.05);border-radius:16px;overflow:hidden;}
+.reservations-table th{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;padding:14px 16px;text-align:left;}
+.reservations-table td{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.05);color:rgba(255,255,255,.8);font-size:.88rem;}
+.status-badge{padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700;}
+.status-pending{background:rgba(232,168,76,.2);color:var(--soleil);}
+.status-confirmed{background:rgba(90,122,74,.2);color:#7BC75A;}
+.status-done{background:rgba(255,255,255,.1);color:rgba(255,255,255,.5);}
+.btn-sm{padding:6px 14px;border:1px solid var(--lavande);color:var(--lavande);background:none;border-radius:20px;font-size:.75rem;cursor:pointer;transition:all .2s;font-family:'Lato',sans-serif;}
+.btn-sm:hover{background:var(--lavande);color:white;}
+.table-wrap{overflow-x:auto;}
+.form-group select:disabled{background:#f0edf8;color:var(--lavande-dark);cursor:not-allowed;opacity:1;}
+
+/* ── STEP PROGRESS ── */
+.step-progress{display:flex;align-items:center;margin-bottom:28px;gap:0;}
+.step-prog-item{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;}
+.step-prog-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.88rem;background:#E5E0D8;color:#9e9690;transition:all .3s;flex-shrink:0;}
+.step-prog-item.active .step-prog-num{background:var(--lavande);color:white;box-shadow:0 4px 16px rgba(74,63,114,0.4);}
+.step-prog-item.done .step-prog-num{background:var(--vert);color:white;}
+.step-prog-item.done .step-prog-num::before{content:'✓';}
+.step-prog-item.done .step-prog-num-txt{display:none;}
+.step-prog-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#9e9690;white-space:nowrap;}
+.step-prog-item.active .step-prog-label{color:var(--lavande-dark);}
+.step-prog-item.done .step-prog-label{color:var(--vert);}
+.step-prog-line{flex:1;height:2px;background:#E5E0D8;margin:0 6px;margin-bottom:21px;min-width:16px;transition:background .3s;}
+.step-prog-line.done{background:var(--vert);}
+.step-panel{animation:stepfadein .3s ease;}
+@keyframes stepfadein{from{opacity:0;transform:translateX(12px);}to{opacity:1;transform:translateX(0);}}
+.step-panel-nav{display:flex;gap:12px;align-items:stretch;margin-top:8px;}
+.step-next-btn{flex:1;padding:14px;background:var(--lavande);color:white;border:none;border-radius:40px;font-family:'Lato',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;transition:all .2s;}
+.step-next-btn:hover{background:var(--lavande-dark);}
+.step-back-btn{padding:14px 22px;background:transparent;color:var(--text-muted);border:1.5px solid var(--border);border-radius:40px;font-family:'Lato',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0;}
+.step-back-btn:hover{border-color:var(--lavande);color:var(--lavande);}
+.step-title{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--lavande);margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+@media(max-width:480px){.step-prog-label{font-size:.6rem;}.step-prog-line{min-width:10px;}.step-back-btn{padding:14px 14px;font-size:.85rem;}}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html"><span class="paw">🐾</span><span>Milou Dogs Provence</span></a>
+  <button class="hamburger" onclick="toggleMenu(this)"><span></span><span></span><span></span></button>
+  <ul class="nav-links" id="navlinks">
+    <li><a href="index.html" data-icon="🏠">Accueil</a></li>
+    <li><a href="services.html" data-icon="🐾">Services & Tarifs</a></li>
+    <li><a href="avis.html" data-icon="⭐">Avis</a></li>
+    <li><a href="faq.html" data-icon="❓">FAQ</a></li>
+    <li><a href="reservation.html" class="active" data-icon="📅">Réservation</a></li>
+    <li id="nav-auth-item"></li>
+    <li class="nav-mobile-cta" style="padding:14px 20px;border:none;"><a href="#resa-form" class="btn-primary" style="display:block;text-align:center;">📅 Réserver maintenant</a></li>
+  </ul>
+  <span id="nav-desktop-auth"></span>
+  <a class="nav-cta" href="#resa-form">Réserver</a>
+</nav>
+
+<div class="resa-hero">
+  <div class="resa-hero-inner">
+    <div class="resa-hero-label">📅 Réservation en ligne</div>
+    <h1>Réservez en <em>quelques minutes</em></h1>
+    <p>Confirmation sous 24h · Visite de présentation offerte · Nuit offerte pour les nouveaux clients 🎁</p>
+    <div class="resa-hero-stats">
+      <div class="rhs"><strong>24h</strong><span>Réponse garantie</span></div>
+      <div class="rhs"><strong>5★</strong><span>41 avis Google</span></div>
+      <div class="rhs"><strong>20€</strong><span>La nuit</span></div>
+      <div class="rhs"><strong>0€</strong><span>Nuit offerte ✨</span></div>
+    </div>
+  </div>
+</div>
+<style>
+.resa-hero{background:linear-gradient(135deg,#2d1f4e 0%,#4A3F72 100%);padding:80px 5% 60px;text-align:center;position:relative;overflow:hidden;margin-top:70px;}
+.resa-hero::before{content:'📅';position:absolute;right:-20px;top:-10px;font-size:220px;opacity:.04;line-height:1;pointer-events:none;}
+.resa-hero-inner{position:relative;z-index:1;}
+.resa-hero-label{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:var(--soleil);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;padding:6px 18px;border-radius:30px;margin-bottom:20px;}
+.resa-hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,4.5vw,3rem);color:white;margin-bottom:14px;line-height:1.2;}
+.resa-hero h1 em{color:var(--soleil);font-style:italic;}
+.resa-hero > .resa-hero-inner > p{color:rgba(255,255,255,.75);font-size:1rem;max-width:540px;margin:0 auto 36px;}
+.resa-hero-stats{display:flex;justify-content:center;gap:0;max-width:500px;margin:0 auto;background:rgba(0,0,0,.25);border:1px solid rgba(245,200,74,.2);border-radius:16px;overflow:hidden;backdrop-filter:blur(8px);}
+.rhs{flex:1;padding:16px 10px;text-align:center;border-right:1px solid rgba(245,200,74,.15);}
+.rhs:last-child{border-right:none;}
+.rhs strong{display:block;font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--soleil);line-height:1;}
+.rhs span{font-size:.65rem;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.08em;margin-top:3px;display:block;}
+@media(max-width:760px){.resa-hero{padding:56px 5% 40px;}.resa-hero-stats{max-width:100%;}.rhs strong{font-size:1.2rem;}}
+</style>
+
+<div style="background:linear-gradient(135deg,var(--vert-light),#d4edda);border-bottom:2px solid var(--vert);padding:12px 5%;text-align:center;font-size:.88rem;color:var(--vert);font-weight:700;">
+  🐾 Places limitées — Maximum 7 chiens acceptés simultanément
+</div>
+<section id="resa-section">
+  <div class="container">
+    <div class="resa-layout">
+      <div class="resa-info fade-in">
+        <h2 class="section-title">Comment ça marche ?</h2>
+        <div class="resa-steps-cards">
+          <div class="rsc reveal-left"><div class="rsc-num">1</div><div><strong>Remplissez le formulaire</strong><span>2 minutes chrono, en ligne 24h/24</span></div></div>
+          <div class="rsc reveal-left"><div class="rsc-num">2</div><div><strong>Confirmation sous 24h</strong><span>Je vous rappelle pour valider les dates</span></div></div>
+          <div class="rsc reveal-left"><div class="rsc-num">3</div><div><strong>Visite de présentation</strong><span>Votre chien découvre les lieux gratuitement</span></div></div>
+          <div class="rsc reveal-left"><div class="rsc-num">4</div><div><strong>Photos quotidiennes</strong><span>WhatsApp / SMS chaque jour pendant le séjour</span></div></div>
+          <div class="rsc reveal-left"><div class="rsc-num">5</div><div><strong>Paiement à la fin</strong><span>Aucun acompte demandé</span></div></div>
+          <div class="rsc reveal-left" style="background:linear-gradient(135deg,#FFF8E6,#FFF3CD);border-color:var(--soleil);"><div class="rsc-num" style="background:var(--soleil);color:#1a0e00;">🎁</div><div><strong style="color:#8B6020;">Nuit offerte !</strong><span>Pour tous les nouveaux clients</span></div></div>
+        </div>
+        <style>.resa-steps-cards{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}.rsc{display:flex;align-items:center;gap:14px;background:var(--cream);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;transition:transform .2s,box-shadow .2s;}.rsc:hover{transform:translateX(4px);box-shadow:0 4px 16px rgba(74,63,114,.1);}.rsc-num{width:36px;height:36px;border-radius:50%;background:var(--lavande);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.88rem;flex-shrink:0;}.rsc strong{display:block;font-size:.9rem;color:var(--lavande-dark);margin-bottom:2px;}.rsc span{font-size:.78rem;color:var(--text-muted);}</style>
+        <div style="background:var(--lavande-light);border:1px solid var(--lavande);border-radius:14px;padding:16px 20px;margin-bottom:20px;">
+          <p style="font-weight:700;color:var(--lavande-dark);margin-bottom:12px;">📅 Comment fonctionnent les demi-journées ?</p>
+          <p style="font-size:.88rem;font-weight:700;color:var(--lavande-dark);margin-bottom:4px;">1ère demi-journée — Matin</p>
+          <p style="font-size:.85rem;color:var(--text-muted);line-height:1.7;margin-bottom:12px;">Dépôt à partir de <strong>8h</strong> · reprise à <strong>13h30</strong> · durée : 5h30</p>
+          <p style="font-size:.88rem;font-weight:700;color:var(--lavande-dark);margin-bottom:4px;">2ème demi-journée — Après-midi</p>
+          <p style="font-size:.85rem;color:var(--text-muted);line-height:1.7;margin-bottom:12px;">Dépôt à partir de <strong>13h30</strong> · reprise avant <strong>19h</strong> · durée : 5h30</p>
+          <p style="font-size:.82rem;color:var(--text-muted);font-style:italic;line-height:1.6;">Vous choisissez votre créneau et l'heure d'arrivée lors de la réservation — l'heure de départ se calcule 5h30 après.</p>
+        </div>
+        <div style="background:var(--vert-light);border:1px solid var(--vert);border-radius:14px;padding:16px 20px;margin-bottom:20px;">
+          <p style="font-weight:700;color:var(--vert);margin-bottom:8px;">🕗 Horaires d'ouverture</p>
+          <p style="font-size:.9rem;color:var(--text-muted);line-height:1.8;">Lundi – Dimanche : <strong>8h00 – 19h00</strong><br>Arrivées & départs uniquement dans ces horaires.</p>
+        </div>
+        <div class="contact-box">
+          <h4>📞 Contact direct</h4>
+          <div class="contact-item">📱 <a href="tel:0777234088">07 77 23 40 88</a></div>
+          <div class="contact-item">📘 <a href="https://facebook.com/miloudogsprovence" target="_blank">Facebook</a></div>
+          <div class="contact-item">🎵 <a href="https://tiktok.com/@miloudogs_provence" target="_blank">TikTok</a></div>
+          <div class="contact-item">📍 Miramas, Bouches-du-Rhône</div>
+        </div>
+      </div>
+      <div class="resa-form fade-in" id="resa-form">
+        <h3 style="font-size:1.3rem;margin-bottom:20px;color:var(--lavande-dark);">Votre demande de réservation</h3>
+
+        <!-- Barre de progression -->
+        <div class="step-progress" id="step-progress">
+          <div class="step-prog-item active" data-step="1">
+            <div class="step-prog-num"><span class="step-prog-num-txt">1</span></div>
+            <div class="step-prog-label">Vos infos</div>
+          </div>
+          <div class="step-prog-line" id="line-1-2"></div>
+          <div class="step-prog-item" data-step="2">
+            <div class="step-prog-num"><span class="step-prog-num-txt">2</span></div>
+            <div class="step-prog-label">Réservation</div>
+          </div>
+          <div class="step-prog-line" id="line-2-3"></div>
+          <div class="step-prog-item" data-step="3">
+            <div class="step-prog-num"><span class="step-prog-num-txt">3</span></div>
+            <div class="step-prog-label">Confirmation</div>
+          </div>
+        </div>
+
+        <form id="reservation-form">
+          <input type="hidden" name="access_key" value="5a89e49c-e26e-4e6f-8c5a-5d80a63551d5">
+          <input type="hidden" name="redirect" value="/miloudogsprovence/merci.html">
+          <input type="hidden" name="subject" value="🐾 Nouvelle réservation – Milou Dogs Provence">
+          <input type="hidden" name="Service" id="hidden-service">
+          <input type="hidden" name="Devis" id="hidden-devis">
+          <input type="hidden" name="Nombre de chiens" id="hidden-nbchiens" value="1">
+          <input type="hidden" id="hidden-userid" value="">
+          <input type="hidden" id="hidden-statut" value="invité">
+
+          <!-- ═══ ÉTAPE 1 : Vos informations ═══ -->
+          <div class="step-panel" id="step-panel-1">
+            <p class="step-title">👤 Étape 1 — Vos informations</p>
+
+            <!-- Bannière client connecté -->
+            <div id="connected-banner" style="display:none;background:linear-gradient(135deg,var(--lavande-light),#f0ecfb);border:1.5px solid var(--lavande);border-radius:16px;padding:16px 20px;margin-bottom:20px;">
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                <span style="font-size:1.4rem;">👤</span>
+                <div style="flex:1;">
+                  <div style="font-weight:700;color:var(--lavande-dark);font-size:.95rem;" id="banner-client"></div>
+                  <div style="font-size:.82rem;color:var(--text-muted);margin-top:2px;" id="banner-chien"></div>
+                </div>
+                <a href="espace-client.html" style="font-size:.78rem;color:var(--lavande);font-weight:700;text-decoration:none;white-space:nowrap;">Modifier ↗</a>
+              </div>
+            </div>
+
+            <!-- Champs client (masqués si connecté) -->
+            <div id="client-section">
+              <div class="form-row">
+                <div class="form-group"><label for="prenom">Prénom *</label><input id="prenom" autocomplete="given-name" name="Prénom" type="text" placeholder="Votre prénom"></div>
+                <div class="form-group"><label for="nom">Nom</label><input id="nom" autocomplete="family-name" name="Nom" type="text" placeholder="Votre nom"></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label for="tel">Téléphone *</label><input id="tel" autocomplete="tel" name="Téléphone" type="tel" placeholder="07 00 00 00 00" oninput="validTel(this)"><small id="tel-msg" style="font-size:.78rem;margin-top:4px;display:none;"></small></div>
+                <div class="form-group"><label for="email">Email</label><input id="email" autocomplete="email" name="Email" type="email" placeholder="votre@email.fr"></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label id="chien-label" for="chien">Nom du chien *</label><input id="chien" name="Chien" type="text" placeholder="Nom de votre chien"></div>
+                <div class="form-group"><label for="race">Race</label><input id="race" name="Race" type="text" placeholder="Ex: Labrador, Beagle…"></div>
+              </div>
+              <input type="hidden" id="age-chien" name="Âge chien" value="">
+              <input type="hidden" id="poids-chien" name="Poids chien" value="">
+            </div><!-- /client-section -->
+
+            <button type="button" class="step-next-btn" onclick="goStep(2)">Étape suivante →</button>
+          </div>
+
+          <!-- ═══ ÉTAPE 2 : La réservation ═══ -->
+          <div class="step-panel" id="step-panel-2" style="display:none">
+            <p class="step-title">📅 Étape 2 — La réservation</p>
+
+            <div class="form-group">
+              <label>Nombre de chiens</label>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <label style="display:flex;align-items:center;gap:8px;padding:10px 18px;border:1px solid var(--border);border-radius:12px;cursor:pointer;background:white;font-size:.9rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--text);">
+                  <input type="radio" name="nb-chiens" value="1" onchange="calcPrice()" checked style="accent-color:var(--lavande);width:16px;height:16px;"> 1 chien
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;padding:10px 18px;border:1px solid var(--border);border-radius:12px;cursor:pointer;background:white;font-size:.9rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--text);">
+                  <input type="radio" name="nb-chiens" value="2" onchange="calcPrice()" style="accent-color:var(--lavande);width:16px;height:16px;"> 2 chiens <span style="font-size:.75rem;background:var(--vert-light);color:var(--vert);padding:2px 7px;border-radius:20px;font-weight:700;margin-left:4px;">−15%</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;padding:10px 18px;border:1px solid var(--border);border-radius:12px;cursor:pointer;background:white;font-size:.9rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--text);">
+                  <input type="radio" name="nb-chiens" value="3" onchange="calcPrice()" style="accent-color:var(--lavande);width:16px;height:16px;"> 3 chiens <span style="font-size:.75rem;background:var(--vert-light);color:var(--vert);padding:2px 7px;border-radius:20px;font-weight:700;margin-left:4px;">−15%</span>
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Service souhaité *</label>
+              <div class="form-service-tags">
+                <span class="service-tag" data-price="20" data-unit="nuit" onclick="toggleTag(this)">🏠 Pension complète nuit &amp; journée</span>
+                <span class="service-tag" data-price="20" data-unit="jour" data-sameday="1" onclick="toggleTag(this)">☀️ Garderie journée</span>
+                <span class="service-tag" data-price="10" data-unit="jour" data-sameday="1" onclick="toggleTag(this)">🌤️ Garderie demi-journée</span>
+                <span class="service-tag" data-price="10" data-unit="fixe" data-sameday="1" onclick="toggleTag(this)">🐣 Test demi-journée</span>
+                <span class="service-tag" data-price="15" data-unit="fixe" data-sameday="1" data-duration="60" onclick="toggleTag(this)">🦮 Promenade</span>
+                <span class="service-tag" data-price="30" data-unit="fixe" data-sameday="1" onclick="toggleTag(this)">🛁 Toilettage</span>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Date *</label><input id="date-debut" name="Date arrivée" type="date" required oninput="calcPrice()"></div>
+              <div class="form-group"><label>Heure d'arrivée *</label><div style="display:flex;gap:8px;">
+                <select id="heure-debut-h" name="Heure arrivée H" style="flex:1" required onchange="autoDepart();calcPrice()"><option value="">HH</option><option>08</option><option>09</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option></select>
+                <select id="heure-debut-m" name="Heure arrivée M" style="flex:1" required onchange="autoDepart();calcPrice()"><option value="">MM</option><option selected>00</option><option>15</option><option>30</option><option>45</option></select>
+              </div><small style="color:var(--text-muted);font-size:.75rem;">Ouvert de 8h à 19h</small></div>
+            </div>
+            <div id="row-date-fin" style="display:none">
+              <div class="form-row">
+                <div id="col-date-fin" class="form-group"><label>Date de fin</label><input id="date-fin" name="Date départ" type="date" oninput="calcPrice()"></div>
+                <div class="form-group" id="col-heure-fin"><label id="label-heure-fin">Heure de départ</label><div style="display:flex;gap:8px;">
+                  <select id="heure-fin-h" name="Heure départ H" style="flex:1" onchange="calcPrice()"><option value="">HH</option><option>08</option><option>09</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option></select>
+                  <select id="heure-fin-m" name="Heure départ M" style="flex:1"><option value="">MM</option><option selected>00</option><option>15</option><option>30</option><option>45</option></select>
+                </div><small style="color:var(--text-muted);font-size:.75rem;">Ouvert de 8h à 19h</small></div>
+              </div>
+              <small id="msg-depart" style="display:none;margin-top:-8px;margin-bottom:14px;background:#FDF3E0;border:1px solid var(--soleil);border-radius:8px;padding:7px 10px;font-size:.78rem;color:#7a5a1a;line-height:1.5;">⏰ <strong>Heure limite de récupération.</strong> Vous pouvez venir avant, mais pas après — merci de respecter ce créneau ❤️</small>
+            </div>
+
+            <div class="step-panel-nav">
+              <button type="button" class="step-back-btn" onclick="goStep(1)">← Retour</button>
+              <button type="button" class="step-next-btn" onclick="goStep(3)">Étape suivante →</button>
+            </div>
+          </div>
+
+          <!-- ═══ ÉTAPE 3 : Confirmation ═══ -->
+          <div class="step-panel" id="step-panel-3" style="display:none">
+            <p class="step-title">✅ Étape 3 — Finalisation</p>
+
+            <div id="price-box" style="display:none;background:var(--lavande-light);border:1px solid var(--lavande);border-radius:14px;padding:16px 20px;margin-bottom:18px;font-size:.92rem;color:var(--lavande-dark);">
+              <div id="price-detail" style="line-height:1.8;"></div>
+              <div id="price-total" style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;margin-top:8px;color:var(--lavande-dark);border-top:1px solid var(--lavande);padding-top:8px;"></div>
+            </div>
+            <div class="form-group"><label>Message</label><textarea id="message" name="Message" placeholder="Informations supplémentaires sur votre chien, ses habitudes, allergies…"></textarea></div>
+            <div class="form-group">
+              <label>🎁 Code parrain <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#aaa;">(optionnel)</span></label>
+              <input id="parrainage" name="Parrainage" type="text" placeholder="ex : SOPHIE-A3F2" style="text-transform:uppercase;letter-spacing:.08em;" oninput="this.value=this.value.toUpperCase();validateParrainCode(this.value)">
+              <div id="parrain-feedback" style="font-size:.78rem;margin-top:6px;min-height:18px;"></div>
+              <div style="font-size:.75rem;color:var(--text-muted);margin-top:3px;">Votre ami vous a donné un code ? Entrez-le ici pour lui offrir 10€ de réduction sur sa prochaine garde 🎉</div>
+            </div>
+
+            <div class="step-panel-nav">
+              <button type="button" class="step-back-btn" onclick="goStep(2)">← Retour</button>
+              <button type="button" class="form-submit" id="btn-submit" onclick="submitReservation()" style="flex:1;margin-top:0;">📅 Envoyer ma demande</button>
+            </div>
+            <div id="error-msg" style="display:none;background:#fdecea;border:1px solid #c0392b;border-radius:12px;padding:14px;color:#c0392b;font-weight:700;text-align:center;margin-top:12px;font-size:.9rem;"></div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ADMIN -->
+<section id="admin">
+  <div class="container">
+    <div class="admin-header">
+      <h2>🔐 Administration</h2>
+      <button class="admin-close" onclick="document.getElementById('admin').classList.remove('visible')">✕ Fermer</button>
+    </div>
+    <div id="admin-login-form">
+      <h3>Accès administrateur</h3>
+      <input id="admin-pwd" type="password" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')checkAdmin()">
+      <button onclick="checkAdmin()">Se connecter</button>
+      <p id="pwd-error">Mot de passe incorrect.</p>
+    </div>
+    <div id="admin-panel">
+      <div class="admin-stats">
+        <div class="admin-stat"><strong id="stat-total">0</strong><span>Total</span></div>
+        <div class="admin-stat"><strong id="stat-pending">0</strong><span>En attente</span></div>
+        <div class="admin-stat"><strong id="stat-confirmed">0</strong><span>Confirmées</span></div>
+        <div class="admin-stat"><strong id="stat-revenue">0€</strong><span>CA estimé</span></div>
+      </div>
+      <div class="table-wrap">
+        <table class="reservations-table" id="resa-table">
+          <thead><tr><th>Date</th><th>Client</th><th>Chien</th><th>Service</th><th>Dates</th><th>Tél</th><th>Statut</th><th>Action</th></tr></thead>
+          <tbody id="resa-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">🐾 Milou Dogs Provence</div>
+  <div class="social-links">
+    <a href="https://facebook.com/miloudogsprovence" target="_blank">📘 Facebook</a>
+    <a href="https://tiktok.com/@miloudogs_provence" target="_blank">🎵 TikTok</a>
+    <a href="tel:0777234088">📞 07 77 23 40 88</a>
+  </div>
+  <p>Garde de chien à domicile · Promenades · Garderie · Toilettage</p>
+  <p>Miramas & Provence · ⭐⭐⭐⭐⭐ sur Google</p>
+  <p style="margin-top:20px;font-size:.75rem;opacity:.5;">© 2025 Milou Dogs Provence · Tous droits réservés · <a onclick="showAdmin()" style="cursor:pointer;color:rgba(255,255,255,.4);">Admin</a></p>
+</footer>
+<script>
+function toggleMenu(btn){document.getElementById('navlinks').classList.toggle('open');btn.classList.toggle('open');}
+
+// ── Navigation étapes ─────────────────────────────────────────────────────────
+let _currentStep = 1;
+function goStep(n) {
+  if (n > _currentStep) {
+    if (_currentStep === 1 && !_validateStep1()) return;
+    if (_currentStep === 2 && !_validateStep2()) return;
+  }
+  document.getElementById('step-panel-' + _currentStep).style.display = 'none';
+  document.getElementById('step-panel-' + n).style.display = '';
+  // Progress bar
+  document.querySelectorAll('.step-prog-item').forEach(el => {
+    const s = parseInt(el.dataset.step);
+    el.classList.toggle('active', s === n);
+    el.classList.toggle('done', s < n);
+    const numSpan = el.querySelector('.step-prog-num-txt');
+    if (s < n && numSpan) numSpan.style.display = 'none';
+    if (s >= n && numSpan) numSpan.style.display = '';
+  });
+  const l1 = document.getElementById('line-1-2');
+  const l2 = document.getElementById('line-2-3');
+  if (l1) l1.classList.toggle('done', n > 1);
+  if (l2) l2.classList.toggle('done', n > 2);
+  _currentStep = n;
+  document.getElementById('resa-form').scrollIntoView({behavior:'smooth', block:'start'});
+  // Forcer calcul prix à l'étape 3
+  if (n === 3) calcPrice();
+}
+
+function _validateStep1() {
+  if (document.getElementById('client-section').style.display === 'none') return true;
+  let err = false;
+  ['prenom','tel','chien'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el.value.trim()) { el.style.borderColor = '#c0392b'; err = true; }
+    else el.style.borderColor = '';
+  });
+  if (err) {
+    const msg = document.getElementById('error-msg');
+    msg.style.display = 'block';
+    msg.textContent = '⚠️ Merci de remplir votre prénom, téléphone et le nom de votre chien.';
+    document.getElementById('step-panel-1').appendChild(msg);
+    setTimeout(() => msg.style.display = 'none', 4000);
+  }
+  return !err;
+}
+
+function _validateStep2() {
+  let err = false;
+  const services = [...document.querySelectorAll('.service-tag.active')];
+  if (!services.length) {
+    document.querySelector('.form-service-tags').style.outline = '2px solid #c0392b';
+    document.querySelector('.form-service-tags').style.borderRadius = '8px';
+    err = true;
+  } else {
+    document.querySelector('.form-service-tags').style.outline = '';
+  }
+  const dateEl = document.getElementById('date-debut');
+  if (!dateEl.value) { dateEl.style.borderColor = '#c0392b'; err = true; }
+  else dateEl.style.borderColor = '';
+  const hH = document.getElementById('heure-debut-h');
+  if (!hH.value) { hH.style.borderColor = '#c0392b'; err = true; }
+  else hH.style.borderColor = '';
+  if (err) {
+    const msg = document.getElementById('error-msg');
+    msg.style.display = 'block';
+    msg.textContent = '⚠️ Merci de choisir un service, une date et une heure d\'arrivée.';
+    document.getElementById('step-panel-2').appendChild(msg);
+    setTimeout(() => msg.style.display = 'none', 4000);
+  }
+  return !err;
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
+function validTel(el){const v=el.value.replace(/\s/g,'');const ok=/^(0|\+33)[1-9][0-9]{8}$/.test(v);const msg=document.getElementById('tel-msg');msg.style.display=v.length>0?'block':'none';if(ok){el.style.borderColor='var(--vert)';msg.style.color='var(--vert)';msg.textContent='✓ Numéro valide';}else if(v.length>0){el.style.borderColor='#c0392b';msg.style.color='#c0392b';msg.textContent='⚠️ Numéro invalide (ex: 07 77 23 40 88)';}}
+function removeTag(e,el){e.stopPropagation();el.classList.add('active');toggleTag(el);}
+function toggleTag(el){
+  const isToilettage = el.textContent.includes('Toilettage');
+  const wasActive = el.classList.contains('active');
+
+  // Si on active un service de garde (pas toilettage), désactiver les autres services de garde
+  if (!wasActive && !isToilettage) {
+    document.querySelectorAll('.service-tag.active').forEach(t => {
+      if (!t.textContent.includes('Toilettage')) {
+        t.classList.remove('active');
+        const x = t.querySelector('.tag-close');
+        if (x) x.remove();
+      }
+    });
+  }
+
+  el.classList.toggle('active');
+  const x=el.querySelector('.tag-close');
+  if(el.classList.contains('active')){if(!x){const btn=document.createElement('span');btn.className='tag-close';btn.innerHTML='✕';btn.onclick=function(e){removeTag(e,el);};el.appendChild(btn);}}else{if(x)x.remove();}
+  const tags=[...document.querySelectorAll('.service-tag.active')];
+  const isDemi=tags.some(t=>t.dataset.sameday==='1'&&(t.textContent.includes('demi-journée')||t.textContent.includes('Test')));
+  const isPromenade=tags.some(t=>t.dataset.duration==='60');
+  const isJournee=tags.some(t=>t.textContent.includes('Garderie journée'));
+  const allSameday=tags.length&&tags.every(t=>t.dataset.sameday==='1');
+  const needFin=tags.some(t=>!t.dataset.sameday)||isDemi||isPromenade||isJournee;
+  const row=document.getElementById('row-date-fin');
+  row.style.display=needFin?'':'none';
+  const colDate=document.getElementById('col-date-fin');
+  const colH=document.getElementById('col-heure-fin');
+  const msgD=document.getElementById('msg-depart');
+  const lbl=document.getElementById('label-heure-fin');
+  const hFin=document.getElementById('heure-fin-h');
+  const mFin=document.getElementById('heure-fin-m');
+  colDate.style.display=(allSameday||isPromenade||isJournee)?'none':'';
+  if(isDemi){
+    colH.style.gridColumn='2';
+    lbl.textContent='Heure de récupération (demi-journée = 5h30)';
+  } else if(isPromenade){
+    colH.style.gridColumn='2';
+    lbl.textContent="Heure de fin (1h après l'arrivée)";
+    msgD.style.display='none';
+    hFin.disabled=true; mFin.disabled=true;
+  } else if(isJournee){
+    colH.style.gridColumn='2';
+    lbl.textContent='Heure de départ';
+    msgD.style.display='none';
+    hFin.disabled=false; mFin.disabled=false;
+  } else {
+    colH.style.gridColumn='';
+    lbl.textContent='Heure de départ';
+    msgD.style.display='none';
+    hFin.disabled=false; mFin.disabled=false;
+  }
+  autoDepart();
+  calcPrice();
+}
+
+const obs=new IntersectionObserver(els=>els.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.1});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+
+let reservations=JSON.parse(localStorage.getItem('mdp_reservations')||'[]');
+
+function autoDepart(){
+  const tags=[...document.querySelectorAll('.service-tag.active')];
+  const isDemi=tags.some(t=>t.dataset.sameday==='1'&&(t.textContent.includes('demi-journée')||t.textContent.includes('Test')));
+  const isPromenade=tags.some(t=>t.dataset.duration==='60');
+  const isJournee=tags.some(t=>t.textContent.includes('Garderie journée'));
+  if(!isDemi&&!isPromenade) return;
+  if(isJournee&&!isDemi&&!isPromenade) return;
+  const hH=document.getElementById('heure-debut-h').value;
+  const hM=document.getElementById('heure-debut-m').value;
+  if(!hH) return;
+  const duree=isPromenade?60:330;
+  const totalMin=parseInt(hH)*60+parseInt(hM||0)+duree;
+  let h=Math.floor(totalMin/60);
+  let m=totalMin%60;
+  if(h>19){h=19;m=0;}
+  const hFin=document.getElementById('heure-fin-h');
+  const mFin=document.getElementById('heure-fin-m');
+  const hStr=String(h).padStart(2,'0');
+  const opt=[...hFin.options].find(o=>o.value===hStr||o.text===hStr);
+  if(opt) hFin.value=opt.value;
+  const mStr=String(Math.round(m/15)*15%60).padStart(2,'0');
+  const mOpt=[...mFin.options].find(o=>o.value===mStr||o.text===mStr);
+  if(mOpt) mFin.value=mOpt.value;
+  document.getElementById('col-heure-fin').style.gridColumn='2';
+  hFin.disabled=true; mFin.disabled=true;
+  if(isDemi){
+    const msgDepart=document.getElementById('msg-depart');
+    if(msgDepart) msgDepart.style.display='block';
+  }
+}
+
+function calcPrice(){
+  const tags=[...document.querySelectorAll('.service-tag.active')];
+  const box=document.getElementById('price-box');
+  if(!tags.length){box.style.display='none';return;}
+
+  const d1=document.getElementById('date-debut').value;
+  const d2=document.getElementById('date-fin').value;
+  const hH=parseInt(document.getElementById('heure-debut-h').value)||0;
+  const hM=parseInt(document.getElementById('heure-debut-m').value)||0;
+  const hFH=parseInt(document.getElementById('heure-fin-h').value)||0;
+  const nbChiens=parseInt(document.querySelector('input[name="nb-chiens"]:checked')?.value||1);
+  const discount=nbChiens>=2;
+  const disc=v=>discount?Math.round(v*0.85):v;
+
+  // Nombre de nuits (diff jours calendaires)
+  let nuits=0;
+  if(d1&&d2){
+    nuits=Math.max(0,Math.round((new Date(d2)-new Date(d1))/86400000));
+  }
+
+  // Arrivée tardive : après 13h30 → 1ère nuit = 10€
+  const arriveMin=hH*60+hM;
+  const arriveTardive=d1&&arriveMin>=(13*60+30)&&arriveMin<(19*60);
+
+  // Départ : ≥14h = journée complète (20€), entre 8h et 13h inclus = demi-journée (10€), =8h = rien
+  let extraJournee=0,extraDemi=0;
+  if(d2&&hFH>=14) extraJournee=1;
+  else if(d2&&hFH>8&&hFH<=13) extraDemi=1;
+
+  let lines=[],total=0;
+
+  tags.forEach(t=>{
+    const price=parseInt(t.dataset.price);
+    const unit=t.dataset.unit;
+    const name=t.textContent.trim();
+
+    if(unit==='nuit'){
+      // Sans dates : afficher tarif de base
+      if(!d1){
+        lines.push(`${name} — ${price}€ / nuit`);
+        total+=disc(price*nbChiens);
+        return;
+      }
+      // 1ère nuit : tardive = 10€, sinon prix normal
+      const prix1=arriveTardive?10:price;
+      const subNuits=disc((prix1+(Math.max(0,nuits-1)*price))*nbChiens);
+      const subJours=disc(extraJournee*price*nbChiens);
+      const subDemi=disc(extraDemi*10*nbChiens);
+
+      if(nuits>0){
+        if(arriveTardive&&nuits===1)
+          lines.push(`${name} — arrivée tardive → <strong>10€</strong> au lieu de 20€ 🤍`);
+        else if(arriveTardive)
+          lines.push(`${name} — 1ère nuit 10€ + ${nuits-1} nuit${nuits-1>1?'s':''} × ${price}€ = <strong>${subNuits}€</strong> 🤍`);
+        else
+          lines.push(`${name} — ${price}€ × ${nuits} nuit${nuits>1?'s':''} = <strong>${subNuits}€</strong>`);
+      }
+      if(extraJournee) lines.push(`☀️ Jour de départ — <strong>${subJours}€</strong>`);
+      if(extraDemi) lines.push(`🌤️ Demi-journée départ — <strong>${subDemi}€</strong>`);
+      total+=subNuits+subJours+subDemi;
+
+    } else if(unit==='jour'){
+      const sameday=t.dataset.sameday==='1';
+      const qty=sameday?1:Math.max(1,nuits+extraJournee);
+      const sub=disc(price*qty*nbChiens);
+      const label=qty>1?qty+' jours':'1 jour';
+      lines.push(`${name} — ${price}€ × ${label} = <strong>${sub}€</strong>`);
+      total+=sub;
+
+    } else {
+      const sub=disc(price*nbChiens);
+      lines.push(`${name} — ${price}€ forfait = <strong>${sub}€</strong>`);
+      total+=sub;
+    }
+  });
+
+  if(!lines.length){box.style.display='none';return;}
+  document.getElementById('price-detail').innerHTML=lines.join('<br>');
+  let totalLabel='Total : '+total+'€';
+  if(discount) totalLabel+=' (−15% multi-chiens inclus)';
+  document.getElementById('price-total').textContent=totalLabel;
+  box.style.display='block';
+}
+
+function getPriceSummary(){
+  const box=document.getElementById('price-box');
+  if(box.style.display==='none')return'';
+  const detail=document.getElementById('price-detail').innerText;
+  const total=document.getElementById('price-total').textContent;
+  return detail+'\n'+total;
+}
+
+function prepareSubmit(){
+  // À l'étape 3, les étapes 1 et 2 ont déjà été validées.
+  // On complète juste les champs cachés.
+  const services=[...document.querySelectorAll('.service-tag.active')].map(t=>t.textContent.trim()).join(', ');
+  document.getElementById('hidden-service').value=services||'Non précisé';
+  const nb=document.querySelector('input[name="nb-chiens"]:checked')?.value||'1';
+  document.getElementById('hidden-nbchiens').value=nb+' chien'+(parseInt(nb)>1?'s':'');
+  const box=document.getElementById('price-box');
+  if(box.style.display!=='none'){
+    const detail=document.getElementById('price-detail').innerText;
+    const total=document.getElementById('price-total').textContent;
+    document.getElementById('hidden-devis').value=detail+' | '+total;
+  }
+  return true;
+}
+
+// ===== VALIDATION CODE PARRAIN =====
+var _parrainTimer = null;
+function validateParrainCode(val) {
+  var fb = document.getElementById('parrain-feedback');
+  val = val.trim();
+  if (!val) { fb.innerHTML = ''; return; }
+  fb.innerHTML = '<span style="color:#aaa;">🔍 Vérification…</span>';
+  clearTimeout(_parrainTimer);
+  _parrainTimer = setTimeout(function() {
+    firebase.database().ref('users').orderByChild('codeParrain').equalTo(val).once('value').then(function(snap) {
+      if (snap.exists()) {
+        var prenom = '';
+        snap.forEach(function(c){ prenom = c.val().prenom || ''; });
+        fb.innerHTML = '<span style="color:#276749;font-weight:700;">✅ Code valide' + (prenom ? ' — parrain : ' + prenom : '') + ' · -10€ sur sa prochaine garde 🎉</span>';
+      } else {
+        fb.innerHTML = '<span style="color:#c0392b;">❌ Code introuvable — vérifiez avec votre ami</span>';
+      }
+    }).catch(function(){ fb.innerHTML = ''; });
+  }, 600);
+}
+
+// ===== URL DU GOOGLE APPS SCRIPT (à remplacer après déploiement) =====
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxq0PSvFOunFHokWiDbyj3u6Z9w7XPemx6WQQOJ0O7W2ejJ2VJFiZCDSm6BUG-Amyzqew/exec';
+
+async function submitReservation() {
+  if (!prepareSubmit()) return;
+
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.textContent = '⏳ Envoi en cours...';
+
+  const form = document.getElementById('reservation-form');
+  const formData = new FormData(form);
+
+  // --- 1. Envoi vers Google Sheets via Apps Script ---
+  const hH = document.getElementById('heure-debut-h').value;
+  const hM = document.getElementById('heure-debut-m').value;
+  const hFH = document.getElementById('heure-fin-h').value;
+  const hFM = document.getElementById('heure-fin-m').value;
+
+  const sheetData = {
+    'Horodateur': new Date().toLocaleString('fr-FR'),
+    'Prénom': document.getElementById('prenom').value,
+    'Nom': document.getElementById('nom').value,
+    'Téléphone': document.getElementById('tel').value,
+    'Email': document.getElementById('email').value,
+    'Nom du chien': document.getElementById('chien').value,
+    'Race': document.getElementById('race').value,
+    'Nombre de chiens': document.getElementById('hidden-nbchiens').value,
+    'Service souhaité': document.getElementById('hidden-service').value,
+    'Date d\'arrivée': document.getElementById('date-debut').value,
+    'Heure d\'arrivée': hH && hM ? hH + ':' + hM : '',
+    'Date de départ': document.getElementById('date-fin')?.value || '',
+    'Heure de départ': hFH && hFM ? hFH + ':' + hFM : '',
+    'Message / infos supplémentaires': document.getElementById('message').value,
+    'Code parrainage': document.getElementById('parrainage').value,
+    'Devis': document.getElementById('hidden-devis').value,
+  };
+
+  // --- 0. Sauvegarde Firebase Realtime Database ---
+  try {
+    const fbData = {
+      userId   : document.getElementById('hidden-userid').value || null,
+      statut   : document.getElementById('hidden-statut').value || 'invité',
+      email    : _userEmail || document.getElementById('email').value,
+      client   : {
+        prenom    : document.getElementById('prenom').value,
+        nom       : document.getElementById('nom').value,
+        telephone : document.getElementById('tel').value,
+        email     : document.getElementById('email').value,
+      },
+      chien    : await (async () => {
+        const base = {
+          nom   : document.getElementById('chien').value,
+          race  : document.getElementById('race').value,
+          age   : document.getElementById('age-chien').value,
+          poids : document.getElementById('poids-chien').value,
+        };
+        const uid = document.getElementById('hidden-userid').value;
+        if (uid) {
+          try {
+            const snap = await firebase.database().ref('users/' + uid + '/chien').get();
+            if (snap.exists()) return Object.assign(base, snap.val());
+          } catch(e) {}
+        }
+        return base;
+      })(),
+      service   : document.getElementById('hidden-service').value,
+      nbChiens  : document.getElementById('hidden-nbchiens').value,
+      dateArrivee  : document.getElementById('date-debut').value,
+      heureArrivee : (hH && hM) ? hH + ':' + hM : '',
+      dateDepart   : document.getElementById('date-fin')?.value || '',
+      heureDepart  : (hFH && hFM) ? hFH + ':' + hFM : '',
+      prix      : document.getElementById('hidden-devis').value,
+      message   : document.getElementById('message').value,
+      parrainage: document.getElementById('parrainage').value,
+      createdAt : Date.now(),
+    };
+    await firebase.database().ref('reservations').push(fbData);
+
+    // Sauvegarde profil client indépendamment de la réservation
+    try {
+      const tel = (fbData.client.telephone||'').replace(/\s/g,'');
+      const clientKey = tel || (fbData.client.prenom + '_' + fbData.client.nom).toLowerCase().replace(/\s/g,'_');
+      const clientRef = firebase.database().ref('clients/' + clientKey);
+      const snap = await clientRef.get();
+      const existing = snap.val() || {};
+      // Mise à jour ou création de la fiche client
+      await clientRef.set({
+        prenom    : fbData.client.prenom,
+        nom       : fbData.client.nom,
+        email     : fbData.client.email || fbData.email,
+        telephone : fbData.client.telephone,
+        createdAt : existing.createdAt || Date.now(),
+        updatedAt : Date.now(),
+        nbResas   : (existing.nbResas || 0) + 1,
+      });
+      // Ajouter le chien si non déjà présent
+      if (fbData.chien && fbData.chien.nom) {
+        const chiensSnap = await clientRef.child('chiens').get();
+        const chiens = chiensSnap.val() || {};
+        const existingEntry = Object.entries(chiens).find(([k,c]) => c.nom === fbData.chien.nom);
+        if (existingEntry) {
+          // Mettre à jour la fiche chien existante avec les nouvelles données
+          await clientRef.child('chiens/' + existingEntry[0]).update(Object.assign({}, fbData.chien, { updatedAt: Date.now() }));
+        } else {
+          // Nouveau chien — sauvegarder toutes les données
+          await clientRef.child('chiens').push(Object.assign({}, fbData.chien, { createdAt: Date.now() }));
+        }
+      }
+    } catch(ce) { console.warn('Client profile save error:', ce); }
+
+    ejsSendReception({
+      email      : fbData.email,
+      prenom     : fbData.client.prenom,
+      chien      : fbData.chien.nom,
+      service    : fbData.service,
+      dateArrivee: fbData.dateArrivee,
+      dateDepart : fbData.dateDepart,
+    });
+  } catch(e) { console.warn('Firebase save error:', e); }
+
+  // Google Sheets supprimé — tout passe par Firebase
+
+  // --- 2. Envoi vers Web3Forms ---
+  try {
+    const w3res = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      body: formData
+    });
+    const w3data = await w3res.json();
+    if (w3data.success) {
+      window.location.href = '/miloudogsprovence/merci.html';
+      return;
+    }
+  } catch(e) { console.warn('Web3Forms error:', e); }
+
+  // Si Web3Forms échoue, rediriger quand même (Sheet a reçu)
+  window.location.href = '/miloudogsprovence/merci.html';
+}
+
+function showAdmin(){document.getElementById('admin').classList.add('visible');document.getElementById('admin').scrollIntoView({behavior:'smooth'});}
+function checkAdmin(){
+  const _h=s=>[...s].reduce((a,c)=>Math.imul(31,a)+c.charCodeAt(0)|0,0);if(_h(document.getElementById('admin-pwd').value)===_h('milou2024')){
+    document.getElementById('admin-login-form').style.display='none';
+    document.getElementById('admin-panel').classList.add('show');
+    renderAdmin();
+  }else{document.getElementById('pwd-error').style.display='block';}
+}
+function renderAdmin(){
+  reservations=JSON.parse(localStorage.getItem('mdp_reservations')||'[]');
+  const pending=reservations.filter(r=>r.status==='pending').length;
+  const confirmed=reservations.filter(r=>r.status==='confirmed').length;
+  document.getElementById('stat-total').textContent=reservations.length;
+  document.getElementById('stat-pending').textContent=pending;
+  document.getElementById('stat-confirmed').textContent=confirmed;
+  document.getElementById('stat-revenue').textContent=(confirmed*20)+'€';
+  const tbody=document.getElementById('resa-tbody');
+  if(!reservations.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:32px;color:rgba(255,255,255,.4);">Aucune réservation 🐾</td></tr>';return;}
+  tbody.innerHTML=reservations.map((r,i)=>`<tr><td>${r.date}</td><td><strong>${r.prenom} ${r.nom}</strong></td><td>${r.chien}${r.race?' ('+r.race+')':''}</td><td>${r.service}</td><td>${r.dateDebut||'—'}${r.dateFin?' → '+r.dateFin:''}</td><td><a href="tel:${r.tel}" style="color:var(--lavande);font-weight:700;">${r.tel}</a></td><td><span class="status-badge status-${r.status}">${r.status==='pending'?'⏳ En attente':r.status==='confirmed'?'✅ Confirmée':'✔ Terminée'}</span></td><td style="display:flex;gap:6px;flex-wrap:wrap;">${r.status==='pending'?`<button class="btn-sm" onclick="setStatus(${i},'confirmed')">Confirmer</button>`:''}${r.status==='confirmed'?`<button class="btn-sm" onclick="setStatus(${i},'done')">Terminée</button>`:''}<button class="btn-sm" style="border-color:#c0392b;color:#c0392b;" onclick="deleteResa(${i})">✕</button></td></tr>`).join('');
+}
+function setStatus(idx,status){reservations[idx].status=status;localStorage.setItem('mdp_reservations',JSON.stringify(reservations));renderAdmin();}
+function deleteResa(idx){if(confirm('Supprimer ?')){reservations.splice(idx,1);localStorage.setItem('mdp_reservations',JSON.stringify(reservations));renderAdmin();}}
+if(window.location.hash==='#admin-panel')showAdmin();
+
+// Dynamic dog label
+document.querySelectorAll('input[name="nb-chiens"]').forEach(r=>{
+  r.addEventListener('change',()=>{
+    const n=parseInt(r.value);
+    const lbl=document.getElementById('chien-label');
+    if(lbl) lbl.textContent=n>1?`Noms des ${n} chiens *`:'Nom du chien *';
+    const inp=document.getElementById('chien');
+    if(inp) inp.placeholder=n===2?'Ex: Rex, Bella':n===3?'Ex: Rex, Bella, Max':'Nom de votre chien';
+  });
+});
+
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  // Bloquer dates passées
+  const today=new Date().toISOString().split('T')[0];
+  const dateDebut=document.getElementById('date-debut');
+  const dateFin=document.getElementById('date-fin');
+  dateDebut.min=today;
+  if(dateFin)dateFin.min=today;
+  // Quand date début change → date fin minimum = lendemain
+  dateDebut.addEventListener('change',()=>{
+    if(!dateFin)return;
+    const d=new Date(dateDebut.value);
+    d.setDate(d.getDate()+1);
+    const minFin=d.toISOString().split('T')[0];
+    dateFin.min=minFin;
+    if(dateFin.value&&dateFin.value<=dateDebut.value){dateFin.value=minFin;}
+    // Bloquer heures passées si aujourd'hui
+    const heureH=document.getElementById('heure-debut-h');
+    const heureM=document.getElementById('heure-debut-m');
+    const isToday=dateDebut.value===today;
+    const nowH=new Date().getHours();
+    [...heureH.options].forEach(o=>{if(o.value)o.disabled=isToday&&parseInt(o.value)<nowH;});
+    // Si heure déjà choisie est dépassée → la réinitialiser
+    if(isToday&&heureH.value&&parseInt(heureH.value)<nowH){heureH.value='';heureM.value='00';}
+    calcPrice();
+  });
+  document.querySelectorAll('.avis-card,.service-card,.faq-item').forEach(card=>{
+    if(!card.classList.contains('faq-item')){
+      card.addEventListener('mousemove',e=>{
+        const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+        card.style.transform=`perspective(900px) rotateY(${x*18}deg) rotateX(${-y*14}deg) translateY(-12px) scale(1.03)`;
+        card.style.boxShadow=`${-x*18}px ${-y*18+22}px 56px rgba(123,111,160,0.27)`;
+      });
+      card.addEventListener('mouseleave',()=>{card.style.transform='';card.style.boxShadow='';});
+    }
+  });
+  const paws=['🐾','🐕'];
+  function spawn(){const el=document.createElement('div');el.className='paw-particle';el.textContent=paws[Math.floor(Math.random()*paws.length)];el.style.left=Math.random()*100+'vw';el.style.animationDuration=(5+Math.random()*5)+'s';el.style.fontSize=(.7+Math.random()*.9)+'rem';document.body.appendChild(el);setTimeout(()=>el.remove(),10000);}
+  window.matchMedia("(hover:none)").matches?setInterval(spawn,8000):setInterval(spawn,3000);
+});
+</script>
+
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+// ⚙️ EMAILJS — remplace ces 3 valeurs avec tes identifiants emailjs.com
+const EMAILJS_PUBLIC_KEY   = '9aJnH_zz72kllicJB';
+const EMAILJS_SERVICE_ID   = 'service_i6phwqu';
+const EMAILJS_TPL_RECUE    = 'template_el176m5';
+
+(function(){ emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); })();
+
+function ejsSendReception(data) {
+  // Envoie un email au client pour confirmer la réception de sa demande
+  return emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TPL_RECUE, {
+    to_email   : data.email,
+    to_name    : data.prenom,
+    chien_nom  : data.chien,
+    service    : data.service,
+    date_arrivee : data.dateArrivee,
+    date_depart  : data.dateDepart,
+  }).catch(function(e){ console.warn('EmailJS erreur:', e); });
+}
+</script>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-auth.js"></script>
+
+<script>
+// ── Pré-remplissage formulaire si connecté ──────────────────────────────────
+let _userEmail = '';
+firebase.auth().onAuthStateChanged(async user => {
+  if (!user) return; // non connecté → formulaire normal
+  _userEmail = user.email;
+
+  try {
+    const snap = await firebase.database().ref('users/' + user.uid).get();
+    const data = snap.exists() ? snap.val() : {};
+
+    // Pré-remplir champs client
+    if (data.prenom)    document.getElementById('prenom').value = data.prenom;
+    if (data.nom)       document.getElementById('nom').value    = data.nom;
+    if (data.telephone) document.getElementById('tel').value    = data.telephone;
+    document.getElementById('email').value = user.email;
+
+    // Pré-remplir champs chien depuis /users/{uid}/chien
+    const chien = data.chien || {};
+    if (chien.nom)   document.getElementById('chien').value      = chien.nom;
+    if (chien.race)  document.getElementById('race').value       = chien.race;
+    if (chien.age)   document.getElementById('age-chien').value  = chien.age;
+    if (chien.poids) document.getElementById('poids-chien').value= chien.poids;
+
+    // Champs cachés pour Firebase save
+    document.getElementById('hidden-userid').value = user.uid;
+    document.getElementById('hidden-statut').value = 'en-attente';
+
+    // Masquer section client + afficher bannière
+    document.getElementById('client-section').style.display = 'none';
+    const banner = document.getElementById('connected-banner');
+    banner.style.display = 'block';
+    document.getElementById('banner-client').textContent =
+      '👤 ' + (data.prenom || '') + ' ' + (data.nom || '') + ' · ' + user.email;
+    document.getElementById('banner-chien').textContent =
+      chien.nom
+        ? '🐕 ' + chien.nom + (chien.race ? ' · ' + chien.race : '') + (chien.age ? ' · ' + chien.age : '') + (chien.poids ? ' · ' + chien.poids + ' kg' : '')
+        : '🐕 Chien non renseigné — vous pouvez le saisir dans votre espace client';
+    // Connecté → sauter directement à l'étape 2
+    goStep(2);
+
+  } catch(e) { console.warn('Erreur pré-remplissage:', e); }
+});
+</script>
+
+<script src="chatbot.js"></script>
+
+<script src="effects-extra.js"></script>
+</body>
+</html>
+
+

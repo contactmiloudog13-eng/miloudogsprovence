@@ -1,0 +1,255 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>À propos – Milou Dogs Provence | Garde chien Miramas</title>
+<meta name="description" content="Découvrez qui nous sommes : un couple passionné par les animaux à Miramas. Pension familiale 5★, terrain 2000m², pas de cage, photos quotidiennes.">
+<link rel="canonical" href="https://miloudogsprovence.fr/a-propos.html">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
+<meta property="og:title" content="À propos – Milou Dogs Provence">
+<meta property="og:description" content="Un couple passionné par les animaux à Miramas. Pension familiale 5★ Google.">
+<meta property="og:image" content="https://miloudogsprovence.fr/hero-banner.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="effects.css">
+<style>
+/* ── ABOUT HERO ── */
+.about-hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;padding:80px 0;}
+@media(max-width:760px){.about-hero-grid{grid-template-columns:1fr;gap:36px;padding:40px 0;}}
+.about-photos{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.about-photo{background-size:cover;background-position:center;border-radius:16px;}
+.ap1{background-image:url('IMG_1075.webp');height:220px;}
+.ap2{background-image:url('IMG_1138.jpeg');height:220px;}
+.ap3{background-image:url('IMG_1146.jpeg');height:220px;}
+.ap4{background-image:url('IMG_1191.jpeg');height:220px;}
+.about-quote{background:var(--lavande-light);border-left:4px solid var(--lavande);border-radius:0 16px 16px 0;padding:20px 24px;margin:20px 0;font-style:italic;color:var(--lavande-dark);font-size:1.05rem;line-height:1.7;}
+.about-ul{list-style:none;margin-top:20px;}
+.about-ul li{display:flex;gap:12px;margin-bottom:14px;font-size:.93rem;color:var(--text-muted);align-items:flex-start;}
+.about-ul li .ck{color:var(--vert);font-size:1.1rem;flex-shrink:0;margin-top:1px;}
+/* ── VALEURS ── */
+.valeurs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px;margin-top:48px;}
+.valeur-card{background:white;border:1.5px solid var(--border);border-radius:20px;padding:32px 28px;text-align:center;transition:transform .25s,box-shadow .25s;}
+.valeur-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(107,91,149,.12);}
+.valeur-icon{font-size:2.4rem;margin-bottom:16px;}
+.valeur-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--lavande-dark);margin-bottom:8px;}
+.valeur-desc{font-size:.85rem;color:var(--text-muted);line-height:1.6;}
+/* ── CHIFFRES ── */
+.chiffres-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:20px;}
+.chiffre-item{text-align:center;padding:32px 20px;background:white;border-radius:20px;border:1.5px solid var(--border);}
+.chiffre-num{font-family:'Playfair Display',serif;font-size:2.8rem;color:var(--lavande);font-weight:700;line-height:1;}
+.chiffre-lab{font-size:.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-top:8px;}
+/* ── FOOTER ── */
+#footer-pro{background:#0d0820;color:white;padding:72px 5% 0;}
+.footer-pro-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:56px;max-width:1100px;margin:0 auto;padding-bottom:56px;border-bottom:1px solid rgba(255,255,255,.08);}
+@media(max-width:760px){.footer-pro-grid{grid-template-columns:1fr;gap:36px;}}
+.fp-logo{font-family:'Playfair Display',serif;font-size:1.3rem;display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.fp-brand p{font-size:.85rem;color:rgba(255,255,255,.45);line-height:1.75;max-width:300px;margin-bottom:22px;}
+.fp-social{display:flex;gap:10px;}
+.fp-soc-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:.9rem;color:white;text-decoration:none;transition:background .2s;}
+.fp-soc-btn:hover{background:var(--lavande);}
+.fp-col h4{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:18px;}
+.fp-col ul{list-style:none;}
+.fp-col ul li{margin-bottom:10px;}
+.fp-col ul li a{color:rgba(255,255,255,.6);text-decoration:none;font-size:.88rem;transition:color .2s;}
+.fp-col ul li a:hover{color:#F5C84A;}
+.footer-pro-bottom{max-width:1100px;margin:0 auto;padding:22px 0 28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+.footer-pro-bottom p{font-size:.73rem;color:rgba(255,255,255,.25);}
+.footer-pro-bottom a{color:rgba(255,255,255,.3);text-decoration:underline;}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html"><span class="paw">🐾</span><span>Milou Dogs Provence</span></a>
+  <button class="hamburger" onclick="toggleMenu(this)"><span></span><span></span><span></span></button>
+  <ul class="nav-links" id="navlinks">
+    <li><a href="index.html" data-icon="🏠">Accueil</a></li>
+    <li><a href="services.html" data-icon="🐾">Services &amp; Tarifs</a></li>
+    <li><a href="a-propos.html" data-icon="❤️" class="active">À propos</a></li>
+    <li><a href="avis.html" data-icon="⭐">Avis</a></li>
+    <li><a href="faq.html" data-icon="❓">FAQ</a></li>
+    <li><a href="parrainage.html" data-icon="🎁">Parrainage</a></li>
+    <li><a href="reservation.html" data-icon="📅">Réservation</a></li>
+    <li id="nav-auth-item"></li>
+    <li class="nav-mobile-cta" style="padding:14px 20px;border:none;"><a href="reservation.html" class="btn-primary" style="display:block;text-align:center;">📅 Réserver maintenant</a></li>
+  </ul>
+  <span id="nav-desktop-auth"></span>
+  <a class="nav-cta" href="reservation.html">Réserver</a>
+</nav>
+
+<div class="page-hero">
+  <p class="section-label">❤️ Notre histoire</p>
+  <h1>Un couple passionné<br>par les animaux</h1>
+  <p>À Miramas, au cœur de la Provence, nous avons transformé notre maison en un véritable havre de paix pour vos chiens.</p>
+</div>
+
+<!-- ── QUI SOMMES-NOUS ── -->
+<section style="background:white;">
+  <div class="container">
+    <div class="about-hero-grid">
+      <div class="about-photos fade-in">
+        <div class="about-photo ap1"></div>
+        <div class="about-photo ap2"></div>
+        <div class="about-photo ap3"></div>
+        <div class="about-photo ap4"></div>
+      </div>
+      <div class="fade-in">
+        <p class="section-label">💜 Qui sommes-nous ?</p>
+        <h2 class="section-title" style="text-align:left;">Miramas, notre maison,<br>leur paradis</h2>
+        <blockquote class="about-quote">"Chaque chien qui arrive chez nous est traité comme un membre de la famille — avec le même amour et la même attention."</blockquote>
+        <p style="color:var(--text-muted);line-height:1.8;font-size:.95rem;margin-bottom:14px;">Nous sommes un jeune couple de Miramas, amoureux des chiens depuis toujours. Ce qui a commencé comme une passion est devenu Milou Dogs Provence : une pension familiale pas comme les autres.</p>
+        <p style="color:var(--text-muted);line-height:1.8;font-size:.95rem;">Pas de boxes, pas de cages. Vos compagnons vivent avec nous, dans notre maison, avec accès à un terrain clôturé de 2 000 m². Nous accueillons maximum 7 chiens simultanément pour garantir une attention personnalisée à chacun.</p>
+        <ul class="about-ul" style="margin-top:24px;">
+          <li><span class="ck">✓</span> Pas de box ni de cage — vie en famille 24h/24</li>
+          <li><span class="ck">✓</span> Terrain clos de 2 000 m² pour courir en liberté</li>
+          <li><span class="ck">✓</span> Photos & vidéos WhatsApp quotidiennes</li>
+          <li><span class="ck">✓</span> Maximum 7 chiens — suivi personnalisé garanti</li>
+          <li><span class="ck">✓</span> Note 5.0 ★★★★★ sur Google · 41 avis vérifiés</li>
+        </ul>
+        <div style="margin-top:32px;display:flex;gap:12px;flex-wrap:wrap;">
+          <a class="btn-primary" href="reservation.html">📅 Réserver maintenant</a>
+          <a class="btn-outline" href="tel:0777234088">📞 07 77 23 40 88</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── NOS CHIFFRES ── -->
+<section style="background:var(--lavande-dark);padding:80px 5%;">
+  <div class="container">
+    <div class="section-header fade-in">
+      <p class="section-label" style="color:var(--soleil);">📊 En chiffres</p>
+      <h2 class="section-title" style="color:white;">Ce qui nous définit</h2>
+    </div>
+    <div class="chiffres-grid" style="margin-top:48px;">
+      <div class="chiffre-item fade-in">
+        <div class="chiffre-num">5.0<span style="font-size:1.4rem;">★</span></div>
+        <div class="chiffre-lab">Note Google</div>
+      </div>
+      <div class="chiffre-item fade-in">
+        <div class="chiffre-num">29</div>
+        <div class="chiffre-lab">Avis vérifiés</div>
+      </div>
+      <div class="chiffre-item fade-in">
+        <div class="chiffre-num">2000<span style="font-size:1.2rem;">m²</span></div>
+        <div class="chiffre-lab">De terrain clôturé</div>
+      </div>
+      <div class="chiffre-item fade-in">
+        <div class="chiffre-num">7</div>
+        <div class="chiffre-lab">Chiens max à la fois</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── NOS VALEURS ── -->
+<section style="background:var(--cream);padding:80px 5%;">
+  <div class="container">
+    <div class="section-header fade-in">
+      <p class="section-label">💎 Ce qui nous différencie</p>
+      <h2 class="section-title">Nos valeurs</h2>
+      <p class="section-sub">Ce que vous ne trouverez pas dans un chenil classique</p>
+    </div>
+    <div class="valeurs-grid">
+      <div class="valeur-card fade-in">
+        <div class="valeur-icon">🏡</div>
+        <div class="valeur-title">Cadre familial</div>
+        <p class="valeur-desc">Votre chien dort et vit dans notre maison, pas dans un box. Il fait partie de la famille le temps de son séjour.</p>
+      </div>
+      <div class="valeur-card fade-in">
+        <div class="valeur-icon">📱</div>
+        <div class="valeur-title">Transparence totale</div>
+        <p class="valeur-desc">Photos et vidéos envoyées chaque jour sur WhatsApp. Vous savez toujours comment va votre compagnon.</p>
+      </div>
+      <div class="valeur-card fade-in">
+        <div class="valeur-icon">🌿</div>
+        <div class="valeur-title">Liberté & espace</div>
+        <p class="valeur-desc">2 000 m² de terrain entièrement clôturé et sécurisé. Votre chien court, joue et s'épanouit librement.</p>
+      </div>
+      <div class="valeur-card fade-in">
+        <div class="valeur-icon">🎴</div>
+        <div class="valeur-title">Fidélité récompensée</div>
+        <p class="valeur-desc">Carte de fidélité offerte à chaque client. À la 10ème visite, recevez 1 demi-journée gratuite !</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA FINAL ── -->
+<section style="background:linear-gradient(135deg,#2d1f4e 0%,#4A3F72 100%);padding:72px 5%;text-align:center;">
+  <div class="container" style="max-width:640px;">
+    <p style="font-size:2rem;margin-bottom:16px;">🐾</p>
+    <h2 style="font-family:'Playfair Display',serif;color:white;font-size:2rem;margin-bottom:16px;">Confiez-nous votre meilleur ami</h2>
+    <p style="color:rgba(255,255,255,.75);font-size:1rem;line-height:1.7;margin-bottom:36px;">Réservez en quelques clics ou appelez-nous directement. Nous sommes disponibles 7j/7 de 8h à 19h.</p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+      <a class="btn-primary" href="reservation.html" style="background:var(--soleil);color:#1a0e00;">📅 Réserver maintenant</a>
+      <a class="btn-primary" href="tel:0777234088" style="background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.4);">📞 07 77 23 40 88</a>
+    </div>
+  </div>
+</section>
+
+<footer id="footer-pro">
+  <div class="footer-pro-grid">
+    <div class="fp-brand">
+      <div class="fp-logo">🐾 Milou Dogs Provence</div>
+      <p>Pension familiale 5★ à Miramas. Terrain 2 000 m², pas de cage, photos quotidiennes. Maximum 7 chiens pour un accueil vraiment personnalisé.</p>
+      <div class="fp-social">
+        <a class="fp-soc-btn" href="https://facebook.com/miloudogsprovence" target="_blank" rel="noopener">📘</a>
+        <a class="fp-soc-btn" href="https://tiktok.com/@miloudogs_provence" target="_blank" rel="noopener">🎵</a>
+        <a class="fp-soc-btn" href="tel:0777234088">📞</a>
+        <a class="fp-soc-btn" href="https://maps.google.com/?q=Miramas+13140" target="_blank" rel="noopener">📍</a>
+      </div>
+    </div>
+    <div class="fp-col">
+      <h4>Navigation</h4>
+      <ul>
+        <li><a href="index.html">🏠 Accueil</a></li>
+        <li><a href="services.html">🐾 Services &amp; Tarifs</a></li>
+        <li><a href="a-propos.html">❤️ À propos</a></li>
+        <li><a href="avis.html">⭐ Avis clients</a></li>
+        <li><a href="faq.html">❓ FAQ</a></li>
+        <li><a href="parrainage.html">🎁 Parrainage</a></li>
+        <li><a href="reservation.html">📅 Réservation</a></li>
+      </ul>
+    </div>
+    <div class="fp-col">
+      <h4>Contact &amp; Zones</h4>
+      <ul>
+        <li><a href="tel:0777234088">📞 07 77 23 40 88</a></li>
+        <li><a href="https://maps.google.com/?q=Miramas+13140" target="_blank">📍 Miramas 13140</a></li>
+        <li><a href="#">🕐 Lun–Dim 8h–19h</a></li>
+        <li><a href="garde-chien-salon-de-provence.html">Salon-de-Provence</a></li>
+        <li><a href="garde-chien-istres.html">Istres</a></li>
+        <li><a href="garde-chien-vitrolles.html">Vitrolles</a></li>
+        <li><a href="mentions-legales.html">📄 Mentions légales</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-pro-bottom">
+    <p>© 2025 Milou Dogs Provence · Tous droits réservés · Miramas, Bouches-du-Rhône</p>
+    <p><a href="mentions-legales.html">Mentions légales</a> · Note 5★ sur Google · 41 avis vérifiés</p>
+  </div>
+</footer>
+
+<script>
+function toggleMenu(btn){document.getElementById('navlinks').classList.toggle('open');btn.classList.toggle('open');}
+const obs=new IntersectionObserver(els=>els.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.1});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+</script>
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-auth.js"></script>
+<script src="chatbot.js"></script>
+<script src="effects-extra.js"></script>
+</body>
+</html>
+
+
+
+

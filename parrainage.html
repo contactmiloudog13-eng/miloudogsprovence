@@ -1,0 +1,371 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Milou Dogs Provence","telephone":"+33777234088","url":"https://miloudogsprovence.fr","address":{"@type":"PostalAddress","addressLocality":"Miramas","addressRegion":"Bouches-du-Rhône","addressCountry":"FR"}}</script>
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:url" content="https://miloudogsprovence.fr/parrainage.html">
+<meta property="og:title" content="Parrainage – 10€ offerts | Milou Dogs Provence">
+<meta property="og:description" content="Parrainez un ami propriétaire de chien et gagnez 10€ sur votre prochaine garde.">
+<meta property="og:image" content="https://miloudogsprovence.fr/hero-banner.png">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Parrainage – 10€ offerts | Milou Dogs Provence Miramas</title>
+<meta name="description" content="Parrainez un ami propriétaire de chien et gagnez 10€ sur votre prochaine garde chez Milou Dogs Provence à Miramas.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
+<link rel="canonical" href="https://miloudogsprovence.fr/parrainage.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="effects.css">
+<style>
+/* ── HERO PARRAINAGE ── */
+.parr-hero{background:linear-gradient(135deg,#2d1f4e 0%,#4A3F72 100%);padding:80px 5% 0;text-align:center;position:relative;overflow:hidden;}
+.parr-hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");}
+.parr-hero-label{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:var(--soleil);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;padding:6px 18px;border-radius:30px;margin-bottom:20px;}
+.parr-hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);color:white;line-height:1.15;margin-bottom:16px;}
+.parr-hero p{color:rgba(255,255,255,.7);font-size:1rem;max-width:520px;margin:0 auto 40px;}
+
+/* Carte code parrain */
+.parr-code-card{background:rgba(255,255,255,.1);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.2);border-radius:24px;padding:28px 32px;max-width:480px;margin:0 auto;position:relative;z-index:1;}
+.parr-code-card.hidden{display:none;}
+.parr-code-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:rgba(255,255,255,.5);margin-bottom:8px;}
+.parr-code-value{
+  font-family:'Playfair Display',serif;font-size:2.6rem;font-weight:700;color:var(--soleil);
+  letter-spacing:.2em;margin-bottom:16px;display:block;
+  text-shadow:0 0 20px rgba(245,200,74,.5),0 0 40px rgba(245,200,74,.25);
+  animation:codeGlow 2.5s ease-in-out infinite;
+}
+@keyframes codeGlow{
+  0%,100%{text-shadow:0 0 20px rgba(245,200,74,.4),0 0 40px rgba(245,200,74,.15);}
+  50%{text-shadow:0 0 30px rgba(245,200,74,.8),0 0 60px rgba(245,200,74,.4),0 0 80px rgba(245,200,74,.15);}
+}
+.parr-code-box{
+  background:rgba(245,200,74,.12);border:2px solid rgba(245,200,74,.4);
+  border-radius:16px;padding:18px 24px;margin-bottom:18px;
+  animation:codePulse 2.5s ease-in-out infinite;
+}
+@keyframes codePulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(245,200,74,0),border-color:rgba(245,200,74,.4);}
+  50%{box-shadow:0 0 0 8px rgba(245,200,74,.08);}
+}
+.parr-share-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:4px;}
+.parr-share-btn{display:flex;align-items:center;gap:7px;padding:10px 18px;border-radius:30px;font-size:.82rem;font-weight:700;cursor:pointer;border:none;transition:transform .2s,opacity .2s;text-decoration:none;}
+.parr-share-btn:hover{transform:translateY(-2px);opacity:.9;}
+.share-wa{background:#25D366;color:white;}
+.share-sms{background:#3B82F6;color:white;}
+.share-copy{background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.3)!important;}
+.share-copy.copied{background:var(--vert)!important;}
+
+/* Connecte-toi prompt */
+.parr-login-prompt{background:rgba(255,255,255,.08);border:1px dashed rgba(255,255,255,.25);border-radius:20px;padding:24px;max-width:480px;margin:0 auto;color:rgba(255,255,255,.7);font-size:.9rem;}
+.parr-login-prompt a{color:var(--soleil);font-weight:700;text-decoration:none;}
+
+/* Vague de transition */
+.parr-wave{display:block;margin-bottom:-2px;width:100%;}
+
+/* ── COMMENT ÇA MARCHE ── */
+.parr-steps-section{background:white;padding:72px 5%;}
+.parr-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;max-width:860px;margin:48px auto 0;position:relative;}
+.parr-steps::before{content:'';position:absolute;top:30px;left:calc(16.6% + 22px);right:calc(16.6% + 22px);height:2px;background:repeating-linear-gradient(90deg,var(--lavande) 0,var(--lavande) 8px,transparent 8px,transparent 16px);}
+@media(max-width:600px){.parr-steps{grid-template-columns:1fr;gap:20px;}.parr-steps::before{display:none;}}
+.parr-step{text-align:center;position:relative;}
+.parr-step-num{width:56px;height:56px;border-radius:50%;background:var(--lavande);color:white;font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;position:relative;z-index:1;box-shadow:0 4px 16px rgba(107,91,149,.3);}
+.parr-step h3{font-size:.95rem;font-weight:800;color:var(--lavande-dark);margin-bottom:8px;}
+.parr-step p{font-size:.82rem;color:var(--text-muted);line-height:1.6;}
+
+/* ── REWARD BANNER ── */
+.reward-banner{background:linear-gradient(135deg,#FFF8E6,#FFF3CD);border:2px solid var(--soleil);border-radius:20px;padding:28px 36px;display:flex;align-items:center;gap:20px;max-width:700px;margin:0 auto;flex-wrap:wrap;}
+.reward-banner .rb-icon{font-size:2.8rem;flex-shrink:0;}
+.reward-banner .rb-text strong{display:block;font-size:1.1rem;font-weight:800;color:var(--lavande-dark);margin-bottom:4px;}
+.reward-banner .rb-text span{font-size:.85rem;color:var(--text-muted);}
+
+/* ── FAQ PARRAINAGE ── */
+.parr-faq{background:var(--cream);padding:64px 5%;}
+.parr-faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:860px;margin:36px auto 0;}
+@media(max-width:640px){.parr-faq-grid{grid-template-columns:1fr;}}
+.faq-mini{background:white;border:1.5px solid var(--border);border-radius:16px;padding:20px 22px;}
+.faq-mini h4{font-size:.88rem;font-weight:800;color:var(--lavande-dark);margin-bottom:6px;}
+.faq-mini p{font-size:.82rem;color:var(--text-muted);line-height:1.6;}
+
+/* ── FOOTER ── */
+#footer-pro{background:#0d0820;color:white;padding:72px 5% 0;}
+.footer-pro-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:56px;max-width:1100px;margin:0 auto;padding-bottom:56px;border-bottom:1px solid rgba(255,255,255,.08);}
+@media(max-width:760px){.footer-pro-grid{grid-template-columns:1fr;gap:36px;}}
+.fp-logo{font-family:'Playfair Display',serif;font-size:1.3rem;display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.fp-brand p{font-size:.85rem;color:rgba(255,255,255,.45);line-height:1.75;max-width:300px;margin-bottom:22px;}
+.fp-social{display:flex;gap:10px;}
+.fp-soc-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:.9rem;color:white;text-decoration:none;transition:background .2s;}
+.fp-soc-btn:hover{background:var(--lavande);}
+.fp-col h4{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:18px;}
+.fp-col ul{list-style:none;}
+.fp-col ul li{margin-bottom:10px;}
+.fp-col ul li a{color:rgba(255,255,255,.6);text-decoration:none;font-size:.88rem;transition:color .2s;}
+.fp-col ul li a:hover{color:#F5C84A;}
+.footer-pro-bottom{max-width:1100px;margin:0 auto;padding:22px 0 28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+.footer-pro-bottom p{font-size:.73rem;color:rgba(255,255,255,.25);}
+.footer-pro-bottom a{color:rgba(255,255,255,.3);text-decoration:underline;}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html"><span class="paw">🐾</span><span>Milou Dogs Provence</span></a>
+  <button class="hamburger" onclick="toggleMenu(this)"><span></span><span></span><span></span></button>
+  <ul class="nav-links" id="navlinks">
+    <li><a href="index.html" data-icon="🏠">Accueil</a></li>
+    <li><a href="services.html" data-icon="🐾">Services &amp; Tarifs</a></li>
+    <li><a href="a-propos.html" data-icon="❤️">À propos</a></li>
+    <li><a href="avis.html" data-icon="⭐">Avis</a></li>
+    <li><a href="faq.html" data-icon="❓">FAQ</a></li>
+    <li><a href="parrainage.html" data-icon="🎁" class="active">Parrainage</a></li>
+    <li><a href="reservation.html" data-icon="📅">Réservation</a></li>
+    <li id="nav-auth-item"></li>
+    <li class="nav-mobile-cta" style="padding:14px 20px;border:none;"><a href="reservation.html" class="btn-primary" style="display:block;text-align:center;">📅 Réserver maintenant</a></li>
+  </ul>
+  <span id="nav-desktop-auth"></span>
+  <a class="nav-cta" href="reservation.html">Réserver</a>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="parr-hero">
+  <div style="position:relative;z-index:1;max-width:700px;margin:0 auto;">
+    <div class="parr-hero-label">🎁 Parrainage</div>
+    <h1>Parrainez un ami,<br>gagnez <span style="color:var(--soleil);">10€</span> !</h1>
+    <p>Vous adorez nos services ? Partagez votre code unique — chaque parrainage réussi vous rapporte 10€ sur votre prochaine garde.</p>
+
+    <!-- Carte code si connecté -->
+    <div id="parr-logged-in" class="parr-code-card" style="display:none;margin-bottom:48px;">
+      <div class="parr-code-label">🔑 Votre code parrain personnel</div>
+      <div class="parr-code-box">
+        <div class="parr-code-value" id="parr-code-display">—</div>
+        <div style="font-size:.75rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.1em;">Partagez ce code à vos amis</div>
+      </div>
+      <div style="font-size:.82rem;color:rgba(255,255,255,.7);margin-bottom:18px;">Votre ami le mentionne lors de sa réservation → vous gagnez 10€ 🎉</div>
+      <div class="parr-share-btns">
+        <a id="btn-share-wa" href="#" class="parr-share-btn share-wa" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+          WhatsApp
+        </a>
+        <a id="btn-share-sms" href="#" class="parr-share-btn share-sms">
+          💬 SMS
+        </a>
+        <button id="btn-copy-code" class="parr-share-btn share-copy" onclick="copyParrCode()">
+          📋 Copier le code
+        </button>
+      </div>
+    </div>
+
+    <!-- Prompt si non connecté -->
+    <div id="parr-logged-out" class="parr-login-prompt" style="margin-bottom:48px;">
+      <p>🔑 <strong style="color:white;">Connectez-vous</strong> pour voir votre code parrain personnel et le partager directement.</p>
+      <div style="display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+        <a href="connexion.html" class="btn-primary" style="background:var(--soleil);color:#1a0e00;font-size:.88rem;">👤 Me connecter</a>
+        <a href="inscription.html" class="btn-primary" style="background:rgba(255,255,255,.15);font-size:.88rem;">✨ Créer un compte</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vague de transition -->
+  <svg class="parr-wave" viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="height:60px;">
+    <path d="M0,0 C360,60 1080,60 1440,0 L1440,60 L0,60 Z" fill="white"/>
+  </svg>
+</section>
+
+<!-- ── COMMENT ÇA MARCHE ── -->
+<section class="parr-steps-section">
+  <div class="container">
+    <div class="section-header fade-in">
+      <p class="section-label">🗺️ Comment ça marche ?</p>
+      <h2 class="section-title">3 étapes, 10€ dans la poche</h2>
+    </div>
+    <div class="parr-steps fade-in">
+      <div class="parr-step">
+        <div class="parr-step-num">1</div>
+        <h3>Partagez votre code</h3>
+        <p>Envoyez votre code parrain personnel à un ami propriétaire de chien via WhatsApp, SMS ou en le copiant.</p>
+      </div>
+      <div class="parr-step">
+        <div class="parr-step-num">2</div>
+        <h3>Votre ami réserve</h3>
+        <p>Il mentionne votre code lors de sa 1ère réservation chez Milou Dogs Provence.</p>
+      </div>
+      <div class="parr-step">
+        <div class="parr-step-num">3</div>
+        <h3>Vous gagnez 10€</h3>
+        <p>10€ sont déduits de votre prochaine garde. Sans limite — chaque parrainage compte !</p>
+      </div>
+    </div>
+
+    <!-- Reward banner -->
+    <div class="reward-banner fade-in" style="margin-top:48px;">
+      <div class="rb-icon">🎉</div>
+      <div class="rb-text">
+        <strong>10€ offerts à chaque parrainage réussi</strong>
+        <span>Offre cumulable sans limite · Valable sur tous les services · Votre filleul peut aussi parrainer à son tour !</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section class="parr-faq">
+  <div class="container">
+    <div class="section-header fade-in">
+      <p class="section-label">❓ Questions fréquentes</p>
+      <h2 class="section-title">Tout savoir sur le parrainage</h2>
+    </div>
+    <div class="parr-faq-grid fade-in">
+      <div class="faq-mini">
+        <h4>💰 Quand est-ce que je reçois mes 10€ ?</h4>
+        <p>Dès que votre filleul effectue sa 1ère réservation confirmée. Les 10€ sont déduits automatiquement de votre prochaine garde.</p>
+      </div>
+      <div class="faq-mini">
+        <h4>🔢 Y a-t-il une limite de parrainages ?</h4>
+        <p>Aucune limite ! Vous pouvez parrainer autant d'amis que vous voulez. Chaque parrainage réussi = 10€ de plus.</p>
+      </div>
+      <div class="faq-mini">
+        <h4>📋 Comment mon ami mentionne mon code ?</h4>
+        <p>Il l'indique dans le champ "Code parrain" du formulaire de réservation en ligne, ou directement par WhatsApp lors de sa prise de contact.</p>
+      </div>
+      <div class="faq-mini">
+        <h4>🤝 Mon ami a-t-il un avantage aussi ?</h4>
+        <p>Oui ! Il bénéficie de nos services habituels et s'il parraine quelqu'un à son tour, il gagne également 10€ sur sa prochaine garde.</p>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:36px;">
+      <a class="btn-primary" href="reservation.html">📅 Réserver maintenant</a>
+      &nbsp;
+      <a class="btn-outline" href="tel:0777234088">📞 07 77 23 40 88</a>
+    </div>
+  </div>
+</section>
+
+<footer id="footer-pro">
+  <div class="footer-pro-grid">
+    <div class="fp-brand">
+      <div class="fp-logo">🐾 Milou Dogs Provence</div>
+      <p>Pension familiale 5★ à Miramas. Terrain 2 000 m², pas de cage, photos quotidiennes. Maximum 7 chiens pour un accueil vraiment personnalisé.</p>
+      <div class="fp-social">
+        <a class="fp-soc-btn" href="https://facebook.com/miloudogsprovence" target="_blank" rel="noopener">📘</a>
+        <a class="fp-soc-btn" href="https://tiktok.com/@miloudogs_provence" target="_blank" rel="noopener">🎵</a>
+        <a class="fp-soc-btn" href="tel:0777234088">📞</a>
+        <a class="fp-soc-btn" href="https://maps.google.com/?q=Miramas+13140" target="_blank" rel="noopener">📍</a>
+      </div>
+    </div>
+    <div class="fp-col">
+      <h4>Navigation</h4>
+      <ul>
+        <li><a href="index.html">🏠 Accueil</a></li>
+        <li><a href="services.html">🐾 Services &amp; Tarifs</a></li>
+        <li><a href="a-propos.html">❤️ À propos</a></li>
+        <li><a href="avis.html">⭐ Avis clients</a></li>
+        <li><a href="faq.html">❓ FAQ</a></li>
+        <li><a href="reservation.html">📅 Réservation</a></li>
+        <li><a href="mentions-legales.html">📄 Mentions légales</a></li>
+      </ul>
+    </div>
+    <div class="fp-col">
+      <h4>Contact &amp; Zones</h4>
+      <ul>
+        <li><a href="tel:0777234088">📞 07 77 23 40 88</a></li>
+        <li><a href="https://maps.google.com/?q=Miramas+13140" target="_blank">📍 Miramas 13140</a></li>
+        <li><a href="#">🕐 Lun–Dim 8h–19h</a></li>
+        <li><a href="garde-chien-salon-de-provence.html">Salon-de-Provence</a></li>
+        <li><a href="garde-chien-istres.html">Istres</a></li>
+        <li><a href="garde-chien-vitrolles.html">Vitrolles</a></li>
+        <li><a href="espace-client.html">👤 Mon espace client</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-pro-bottom">
+    <p>© 2025 Milou Dogs Provence · Tous droits réservés · Miramas, Bouches-du-Rhône</p>
+    <p><a href="mentions-legales.html">Mentions légales</a> · Note 5★ sur Google · 41 avis vérifiés</p>
+  </div>
+</footer>
+
+<script>
+function toggleMenu(btn){document.getElementById('navlinks').classList.toggle('open');btn.classList.toggle('open');}
+const obs=new IntersectionObserver(els=>els.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.1});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+
+// ── Code parrain ──────────────────────────────────────────────────────────────
+let _parrCode = '';
+
+function genCode(prenom, uid) {
+  // Ex : SOPHIE-A3F2 — déterministe basé sur le prénom + 4 chars de l'UID
+  const base = (prenom || 'CLIENT').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,8);
+  const suffix = (uid || '').replace(/[^A-Z0-9]/gi,'').slice(0,4).toUpperCase();
+  return base + (suffix ? '-' + suffix : '');
+}
+
+function setShareLinks(code) {
+  const siteUrl = 'https://miloudogsprovence.fr';
+  const msg = encodeURIComponent(
+    '🐾 Je te recommande Milou Dogs Provence à Miramas !\n' +
+    'Garde de chien 5★, sans cage, 20€/nuit.\n' +
+    'Utilise mon code parrain ' + code + ' lors de ta réservation 👉 ' + siteUrl
+  );
+  document.getElementById('btn-share-wa').href = 'https://wa.me/?text=' + msg;
+  document.getElementById('btn-share-sms').href = 'sms:?body=' + msg;
+}
+
+function copyParrCode() {
+  navigator.clipboard.writeText(_parrCode).then(() => {
+    const btn = document.getElementById('btn-copy-code');
+    btn.textContent = '✅ Copié !';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 Copier le code'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('parr-logged-in').style.display  = 'none';
+  document.getElementById('parr-logged-out').style.display = 'block';
+});
+</script>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-auth.js"></script>
+<script>
+// Récupère le profil + génère/affiche le code parrain
+firebase.auth().onAuthStateChanged(user => {
+  const loggedIn  = document.getElementById('parr-logged-in');
+  const loggedOut = document.getElementById('parr-logged-out');
+
+  if (!user) {
+    loggedIn.style.display  = 'none';
+    loggedOut.style.display = 'block';
+    return;
+  }
+
+  // Récupère le prénom depuis Firebase
+  firebase.database().ref('users/' + user.uid).get().then(snap => {
+    const data   = snap.exists() ? snap.val() : {};
+    const prenom = data.prenom || user.displayName || 'CLIENT';
+
+    // Génère le code (ou récupère celui déjà stocké)
+    let code = data.codeParrain;
+    if (!code) {
+      code = genCode(prenom, user.uid);
+      // Sauvegarde dans Firebase pour qu'il reste fixe
+      firebase.database().ref('users/' + user.uid + '/codeParrain').set(code);
+    }
+
+    _parrCode = code;
+    document.getElementById('parr-code-display').textContent = code;
+    setShareLinks(code);
+
+    loggedOut.style.display = 'none';
+    loggedIn.style.display  = 'block';
+  });
+});
+</script>
+<script src="chatbot.js"></script>
+<script src="effects-extra.js"></script>
+</body>
+</html>
+
+

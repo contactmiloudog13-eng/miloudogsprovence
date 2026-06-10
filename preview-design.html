@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>🎨 Aperçu améliorations – Milou Dogs Provence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,500&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --lavande:#6B5B95;--lavande-dark:#2d1f4e;--lavande-light:#F0EDF7;
+  --soleil:#F0C060;--vert:#5a7a4a;--cream:#FAF8F5;
+  --text:#1a0e3a;--text-muted:#6B6280;--border:#E5E0D8;
+}
+body{font-family:'Lato',sans-serif;color:var(--text);background:#fff;}
+
+/* ── HEADER ANNONCE ── */
+.preview-header{background:var(--lavande-dark);color:white;padding:18px 32px;text-align:center;font-size:.9rem;letter-spacing:.05em;}
+.preview-header strong{color:var(--soleil);}
+.section-label-preview{background:var(--soleil);color:var(--lavande-dark);font-size:.7rem;font-weight:900;letter-spacing:.15em;text-transform:uppercase;padding:6px 14px;border-radius:20px;display:inline-block;margin-bottom:6px;}
+.preview-sep{background:#f0f0f0;padding:12px 32px;font-size:.8rem;color:#888;letter-spacing:.05em;border-top:3px solid var(--lavande);border-bottom:3px solid var(--lavande);}
+
+/* ── SECTION HERO AMÉLIORÉ ── */
+#hero-new{
+  position:relative;
+  min-height:100vh;
+  background:url('hero-banner.png') center/cover no-repeat;
+  display:flex;align-items:center;
+}
+#hero-new::before{content:'';position:absolute;inset:0;background:linear-gradient(105deg,rgba(29,14,60,.82) 0%,rgba(29,14,60,.35) 60%,transparent 100%);}
+.hero-content-new{position:relative;z-index:2;padding:80px 64px;max-width:680px;}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);border-radius:30px;padding:8px 18px;color:white;font-size:.8rem;font-weight:700;letter-spacing:.08em;margin-bottom:32px;}
+.hero-tag span{color:var(--soleil);}
+.hero-h1{font-family:'Playfair Display',serif;color:white;font-size:clamp(2.8rem,5vw,4.2rem);line-height:1.15;margin-bottom:24px;}
+.hero-h1 em{color:var(--soleil);font-style:italic;}
+.hero-sub{color:rgba(255,255,255,.8);font-size:1.05rem;line-height:1.7;margin-bottom:40px;max-width:500px;}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:40px;}
+.btn-gold{background:var(--soleil);color:var(--text);padding:16px 32px;border-radius:50px;font-weight:900;font-size:.95rem;text-decoration:none;display:inline-block;transition:transform .2s,box-shadow .2s;box-shadow:0 8px 32px rgba(240,192,96,.4);}
+.btn-gold:hover{transform:translateY(-2px);}
+.btn-ghost{background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border:1.5px solid rgba(255,255,255,.4);color:white;padding:16px 32px;border-radius:50px;font-weight:700;font-size:.95rem;text-decoration:none;display:inline-block;transition:all .2s;}
+.hero-stats{display:flex;gap:0;background:rgba(255,255,255,.08);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.15);border-radius:20px;overflow:hidden;}
+.hs{flex:1;padding:18px 24px;text-align:center;border-right:1px solid rgba(255,255,255,.12);}
+.hs:last-child{border-right:none;}
+.hs-num{font-family:'Playfair Display',serif;font-size:1.8rem;color:white;font-weight:700;}
+.hs-num sup{font-size:1rem;color:var(--soleil);}
+.hs-lab{font-size:.7rem;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.1em;margin-top:3px;}
+
+/* ── SECTION SERVICES CARDS AMÉLIORÉES ── */
+#services-new{background:var(--cream);padding:96px 32px;}
+.container{max-width:1100px;margin:0 auto;}
+.section-header-new{text-align:center;margin-bottom:64px;}
+.section-title-new{font-family:'Playfair Display',serif;font-size:clamp(2rem,3.5vw,2.8rem);color:var(--lavande-dark);margin:8px 0 16px;}
+.section-sub-new{color:var(--text-muted);font-size:1rem;max-width:520px;margin:0 auto;line-height:1.7;}
+.services-grid-new{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:28px;}
+.svc-card{background:white;border-radius:28px;padding:40px 32px;border:1.5px solid var(--border);position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s;}
+.svc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--lavande),var(--soleil));}
+.svc-card:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(107,91,149,.15);}
+.svc-icon{width:60px;height:60px;background:var(--lavande-light);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin-bottom:24px;}
+.svc-name{font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--lavande-dark);margin-bottom:8px;}
+.svc-desc{color:var(--text-muted);font-size:.88rem;line-height:1.6;margin-bottom:20px;}
+.svc-price{font-size:2rem;font-family:'Playfair Display',serif;color:var(--lavande);font-weight:700;}
+.svc-price small{font-size:.8rem;color:var(--text-muted);font-family:'Lato',sans-serif;}
+.svc-badge{position:absolute;top:20px;right:20px;background:var(--soleil);color:var(--lavande-dark);font-size:.65rem;font-weight:900;padding:4px 10px;border-radius:20px;letter-spacing:.08em;}
+.svc-perks{margin-top:16px;list-style:none;}
+.svc-perks li{font-size:.82rem;color:var(--text-muted);padding:5px 0;display:flex;gap:8px;align-items:center;}
+.svc-perks li::before{content:'✓';color:var(--vert);font-weight:700;}
+
+/* ── SECTION ABOUT / HISTOIRE ── */
+#about-new{background:white;padding:96px 32px;}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+.about-img-wrap{position:relative;}
+.about-img-main{width:100%;aspect-ratio:4/5;background:var(--lavande-light);border-radius:28px;overflow:hidden;position:relative;}
+.about-img-main img{width:100%;height:100%;object-fit:cover;}
+.about-img-badge{position:absolute;bottom:-20px;right:-20px;background:white;border:2px solid var(--border);border-radius:20px;padding:20px 24px;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,.1);}
+.about-img-badge .num{font-family:'Playfair Display',serif;font-size:2rem;color:var(--lavande-dark);font-weight:700;}
+.about-img-badge .lab{font-size:.72rem;color:var(--text-muted);letter-spacing:.08em;}
+.about-content{padding-right:20px;}
+.about-quote{font-size:1.15rem;font-style:italic;color:var(--lavande-dark);line-height:1.7;margin:24px 0;padding:20px 28px;background:var(--lavande-light);border-left:4px solid var(--lavande);border-radius:0 16px 16px 0;}
+.about-body{color:var(--text-muted);line-height:1.8;font-size:.95rem;margin-bottom:20px;}
+.about-features{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:32px;}
+.af{background:var(--cream);border-radius:14px;padding:16px 20px;display:flex;gap:12px;align-items:flex-start;}
+.af-icon{font-size:1.3rem;flex-shrink:0;}
+.af-text{font-size:.82rem;color:var(--text-muted);line-height:1.5;}
+.af-text strong{display:block;color:var(--text);font-size:.85rem;margin-bottom:2px;}
+
+/* ── GALERIE PHOTOS ── */
+#gallery-new{background:var(--lavande-dark);padding:96px 32px;}
+#gallery-new .section-title-new{color:white;}
+#gallery-new .section-sub-new{color:rgba(255,255,255,.6);}
+.gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,200px);gap:16px;margin-top:48px;}
+.gal-item{border-radius:20px;overflow:hidden;position:relative;background:rgba(255,255,255,.08);}
+.gal-item.big{grid-column:span 2;grid-row:span 2;}
+.gal-item.tall{grid-row:span 2;}
+.gal-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:rgba(255,255,255,.3);font-size:2rem;}
+.gal-placeholder span{font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;}
+
+/* ── AVIS SECTION AMÉLIORÉE ── */
+#avis-new{background:var(--cream);padding:96px 32px;}
+.avis-grid-new{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;}
+.avis-card-new{background:white;border-radius:24px;padding:32px;border:1.5px solid var(--border);position:relative;}
+.avis-card-new::before{content:'❝';position:absolute;top:24px;right:28px;font-size:3rem;color:var(--lavande-light);font-family:serif;line-height:1;}
+.avis-stars{color:#F0C060;font-size:1rem;margin-bottom:16px;letter-spacing:2px;}
+.avis-text-new{font-size:.9rem;color:var(--text-muted);line-height:1.7;font-style:italic;margin-bottom:24px;}
+.avis-author{display:flex;align-items:center;gap:12px;}
+.avis-avatar-new{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--lavande),var(--lavande-dark));color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;}
+.avis-name-new{font-weight:700;font-size:.85rem;color:var(--text);}
+.avis-date-new{font-size:.75rem;color:var(--text-muted);margin-top:1px;}
+.avis-source{position:absolute;bottom:24px;right:28px;font-size:.7rem;color:var(--text-muted);background:var(--cream);padding:3px 8px;border-radius:10px;border:1px solid var(--border);}
+.avis-featured{background:linear-gradient(135deg,var(--lavande-dark),var(--lavande));color:white;}
+.avis-featured .avis-text-new{color:rgba(255,255,255,.85);}
+.avis-featured .avis-name-new{color:white;}
+.avis-featured .avis-date-new{color:rgba(255,255,255,.6);}
+.avis-featured .avis-source{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.2);}
+.avis-featured::before{color:rgba(255,255,255,.15);}
+
+/* ── NEWSLETTER AMÉLIORÉE ── */
+#nl-new{background:linear-gradient(135deg,var(--lavande-dark),#4A3F72);padding:80px 32px;text-align:center;}
+.nl-inner{max-width:560px;margin:0 auto;}
+.nl-title{font-family:'Playfair Display',serif;color:white;font-size:2rem;margin:16px 0 12px;}
+.nl-sub{color:rgba(255,255,255,.65);font-size:.95rem;line-height:1.6;margin-bottom:36px;}
+.nl-form-new{display:flex;gap:0;max-width:440px;margin:0 auto;background:white;border-radius:50px;padding:6px 6px 6px 20px;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.nl-input{flex:1;border:none;outline:none;font-family:'Lato',sans-serif;font-size:.9rem;color:var(--text);background:transparent;}
+.nl-btn{background:var(--soleil);color:var(--lavande-dark);border:none;padding:12px 28px;border-radius:40px;font-family:'Lato',sans-serif;font-weight:900;font-size:.85rem;cursor:pointer;white-space:nowrap;}
+
+/* ── FOOTER AMÉLIORÉ ── */
+#footer-new{background:#0d0820;color:white;padding:80px 32px 32px;}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:64px;max-width:1100px;margin:0 auto 56px;}
+.footer-brand .logo{font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.footer-brand p{font-size:.85rem;color:rgba(255,255,255,.5);line-height:1.7;max-width:300px;margin-bottom:24px;}
+.footer-social{display:flex;gap:12px;}
+.fs-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:1rem;color:white;text-decoration:none;transition:background .2s;}
+.fs-btn:hover{background:var(--lavande);}
+.footer-col h4{font-size:.8rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:20px;}
+.footer-col ul{list-style:none;}
+.footer-col ul li{margin-bottom:10px;}
+.footer-col ul li a{color:rgba(255,255,255,.7);text-decoration:none;font-size:.88rem;transition:color .2s;}
+.footer-col ul li a:hover{color:var(--soleil);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:28px;max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-bottom p{font-size:.75rem;color:rgba(255,255,255,.3);}
+
+/* ── URGENCE BAR AMÉLIORÉE ── */
+#urgence-new{background:linear-gradient(90deg,#c0392b,#e74c3c);color:white;padding:12px 24px;text-align:center;font-size:.82rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:12px;}
+#urgence-new a{color:var(--soleil);text-decoration:none;font-weight:900;}
+
+@media(max-width:768px){
+  .about-grid,.avis-grid-new,.footer-grid{grid-template-columns:1fr;}
+  .gallery-grid{grid-template-columns:repeat(2,1fr);grid-template-rows:auto;}
+  .gal-item.big,.gal-item.tall{grid-column:span 1;grid-row:span 1;}
+  .hero-content-new{padding:40px 24px;}
+  .hero-stats{flex-wrap:wrap;}
+}
+</style>
+</head>
+<body>
+
+<div class="preview-header">
+  🎨 <strong>PRÉVISUALISATION — Propositions d'amélioration</strong> · Milou Dogs Provence · Ces éléments ne sont pas encore sur le vrai site
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="preview-sep">① HERO — Proposition refonte (mise en page + stats)</div>
+
+<section id="hero-new">
+  <div class="hero-content-new">
+    <div class="hero-tag">🐾 <span>Miramas & Provence</span> · 5★ Google · 29 avis</div>
+    <h1 class="hero-h1">La garde de chien<br><em>qui ressemble</em><br>à la maison</h1>
+    <p class="hero-sub">Terrain 2 000 m² · Pas de cage · Photos quotidiennes WhatsApp · Maximum 7 chiens</p>
+    <div class="hero-btns">
+      <a class="btn-gold" href="#">📅 Réserver maintenant</a>
+      <a class="btn-ghost" href="#">Voir les services →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hs"><div class="hs-num">5.0<sup>★</sup></div><div class="hs-lab">Note Google</div></div>
+      <div class="hs"><div class="hs-num">20<sup>€</sup></div><div class="hs-lab">La nuit</div></div>
+      <div class="hs"><div class="hs-num">2000<sup>m²</sup></div><div class="hs-lab">De terrain</div></div>
+      <div class="hs"><div class="hs-num">7<sup>max</sup></div><div class="hs-lab">Chiens</div></div>
+    </div>
+  </div>
+</section>
+
+<div id="urgence-new">
+  🔴 Places limitées — Maximum 7 chiens simultanément · <a href="#">Vérifier les disponibilités →</a>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="preview-sep">② SERVICES — Nouvelles cartes avec détails et prix</div>
+
+<section id="services-new">
+  <div class="container">
+    <div class="section-header-new">
+      <div class="section-label-preview">🐾 Nos prestations</div>
+      <h2 class="section-title-new">Des services pensés pour votre chien</h2>
+      <p class="section-sub-new">Chaque prestation est personnalisée selon les besoins de votre compagnon</p>
+    </div>
+    <div class="services-grid-new">
+      <div class="svc-card">
+        <div class="svc-badge">⭐ POPULAIRE</div>
+        <div class="svc-icon">🏠</div>
+        <div class="svc-name">Pension nuit</div>
+        <div class="svc-desc">Votre chien dort et vit en famille dans notre maison. Terrain 2000m² pour jouer la journée.</div>
+        <div class="svc-price" style="display:flex;align-items:baseline;gap:10px;">
+          <span style="font-size:1.1rem;color:#bbb;text-decoration:line-through;font-family:'Lato',sans-serif;font-weight:400;">25€</span>
+          20€<small>/nuit</small>
+        </div>
+        <div style="display:inline-block;background:#FFF3CD;color:#856404;font-size:.72rem;font-weight:700;padding:4px 12px;border-radius:20px;margin:8px 0 4px;">🎁 1 nuit offerte dès 7 nuits !</div>
+        <ul class="svc-perks">
+          <li>Vie en famille (pas de box)</li>
+          <li>Photos WhatsApp quotidiennes</li>
+          <li>Économisez 25€ sur un séjour 8 nuits</li>
+        </ul>
+      </div>
+      <div class="svc-card">
+        <div class="svc-icon">☀️</div>
+        <div class="svc-name">Garderie journée</div>
+        <div class="svc-desc">Accueil de 8h à 19h pendant que vous travaillez. Jeux, promenades et câlins garantis.</div>
+        <div class="svc-price">20€<small>/jour</small></div>
+        <ul class="svc-perks">
+          <li>Accueil 8h–19h</li>
+          <li>Terrain clôturé 2000m²</li>
+          <li>Suivi photos WhatsApp</li>
+        </ul>
+      </div>
+      <div class="svc-card">
+        <div class="svc-icon">🌤️</div>
+        <div class="svc-name">Demi-journée</div>
+        <div class="svc-desc">Besoin de quelques heures ? On s'occupe de votre chien matin ou après-midi.</div>
+        <div class="svc-price">10€<small>/demi-j</small></div>
+        <ul class="svc-perks">
+          <li>Matin ou après-midi</li>
+          <li>Flexibilité horaire</li>
+          <li>Idéal RDV médicaux</li>
+        </ul>
+      </div>
+      <div class="svc-card">
+        <div class="svc-icon">🦮</div>
+        <div class="svc-name">Promenade</div>
+        <div class="svc-desc">Une sortie encadrée pour dépenser l'énergie de votre chien, avec suivi GPS.</div>
+        <div class="svc-price">15€<small>/sortie</small></div>
+        <ul class="svc-perks">
+          <li>45 min minimum</li>
+          <li>Laisse + sécurité</li>
+          <li>Zone verte Miramas</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="preview-sep">③ À PROPOS — Section "Notre histoire" (personnelle et rassurante)</div>
+
+<section id="about-new">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-img-wrap">
+        <div class="about-img-main">
+          <div class="gal-placeholder" style="height:100%;background:var(--lavande-light);">🐶<span>Ta photo ici</span></div>
+        </div>
+        <div class="about-img-badge">
+          <div class="num">29</div>
+          <div class="lab">Avis 5★ Google</div>
+        </div>
+      </div>
+      <div class="about-content">
+        <div class="section-label-preview">❤️ Notre histoire</div>
+        <h2 class="section-title-new" style="text-align:left;font-size:2rem;">Passionnés par les chiens,<br>depuis toujours</h2>
+        <blockquote class="about-quote">"Chaque chien qui arrive chez nous est traité comme un membre de la famille — avec le même amour et la même attention."</blockquote>
+        <p class="about-body">À Miramas, au cœur de la Provence, nous avons créé une pension pas comme les autres. Pas de boxes, pas de cage — juste une grande maison avec un terrain de 2 000 m² clôturé où chaque chien peut courir, jouer et se reposer à son rythme.</p>
+        <p class="about-body">Nous accueillons maximum 7 chiens simultanément pour garantir une attention personnalisée à chacun. Photos et messages WhatsApp quotidiens pour vous rassurer.</p>
+        <div class="about-features">
+          <div class="af"><div class="af-icon">🏡</div><div class="af-text"><strong>Maison familiale</strong>Pas de chenil, vie intégrée</div></div>
+          <div class="af"><div class="af-icon">📱</div><div class="af-text"><strong>Photos quotidiennes</strong>Via WhatsApp chaque jour</div></div>
+          <div class="af"><div class="af-icon">🌿</div><div class="af-text"><strong>2 000 m² clôturé</strong>Terrain sécurisé en Provence</div></div>
+          <div class="af"><div class="af-icon">⭐</div><div class="af-text"><strong>5★ sur Google</strong>29 avis vérifiés</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="preview-sep">④ GALERIE — Photos mises en valeur (à remplir avec tes vraies photos)</div>
+
+<section id="gallery-new">
+  <div class="container">
+    <div class="section-header-new">
+      <div class="section-label-preview">📸 Galerie</div>
+      <h2 class="section-title-new">Bienvenue dans notre espace</h2>
+      <p class="section-sub-new" style="color:rgba(255,255,255,.6);">Découvrez les lieux où votre chien vivra pendant son séjour</p>
+    </div>
+    <div class="gallery-grid">
+      <div class="gal-item big"><div class="gal-placeholder">🐾<span>Photo principale</span></div></div>
+      <div class="gal-item"><div class="gal-placeholder">🌿<span>Terrain</span></div></div>
+      <div class="gal-item"><div class="gal-placeholder">🏠<span>Maison</span></div></div>
+      <div class="gal-item tall"><div class="gal-placeholder">🐕<span>Les chiens</span></div></div>
+      <div class="gal-item"><div class="gal-placeholder">☀️<span>Jeux</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="preview-sep">⑤ AVIS — Mise en page améliorée (carte featured + grille)</div>
+
+<section id="avis-new">
+  <div class="container">
+    <div class="section-header-new">
+      <div class="section-label-preview">⭐ Témoignages</div>
+      <h2 class="section-title-new">Ce que disent nos clients</h2>
+      <p class="section-sub-new">29 familles nous font confiance · Note 5/5 sur Google</p>
+    </div>
+    <div class="avis-grid-new">
+      <div class="avis-card-new avis-featured">
+        <div class="avis-stars">★★★★★</div>
+        <p class="avis-text-new">"Une perle rare pour nos boules de poils ! Mon bébé cocker s'est senti en totale confiance. Ce couple est juste merveilleux, attentionné et d'une douceur incroyable."</p>
+        <div class="avis-author"><div class="avis-avatar-new" style="background:rgba(255,255,255,.2);color:white;">CD</div><div><div class="avis-name-new">Chrystelle D.</div><div class="avis-date-new">il y a 2 semaines</div></div></div>
+        <div class="avis-source">Google ✓</div>
+      </div>
+      <div class="avis-card-new">
+        <div class="avis-stars">★★★★★</div>
+        <p class="avis-text-new">"Je recommande vivement ! Mon chien était comme chez lui. Les photos quotidiennes m'ont rassurée tout le séjour. Je ne cherche plus d'autre pension !"</p>
+        <div class="avis-author"><div class="avis-avatar-new">NR</div><div><div class="avis-name-new">Nathalie R.</div><div class="avis-date-new">il y a 1 mois</div></div></div>
+        <div class="avis-source">Google ✓</div>
+      </div>
+      <div class="avis-card-new">
+        <div class="avis-stars">★★★★★</div>
+        <p class="avis-text-new">"Accueil formidable, cadre magnifique. Mon golden retriever a adoré le grand terrain. Je reviens à chaque vacances les yeux fermés !"</p>
+        <div class="avis-author"><div class="avis-avatar-new">JM</div><div><div class="avis-name-new">Julien M.</div><div class="avis-date-new">il y a 3 semaines</div></div></div>
+        <div class="avis-source">Google ✓</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="preview-sep">⑥ COMPARAISON — Milou Dogs vs Chenil classique</div>
+
+<section style="background:white;padding:96px 32px;">
+  <div class="container">
+    <div class="section-header-new">
+      <div class="section-label-preview">🏆 Pourquoi nous choisir ?</div>
+      <h2 class="section-title-new">Milou Dogs vs Chenil classique</h2>
+      <p class="section-sub-new">Comparez et faites le bon choix pour votre chien</p>
+    </div>
+    <div style="margin-top:48px;overflow-x:auto;">
+      <table style="width:100%;border-collapse:separate;border-spacing:0;border-radius:20px;overflow:hidden;box-shadow:0 8px 40px rgba(107,91,149,.12);">
+        <thead>
+          <tr>
+            <th style="background:var(--lavande-light);padding:20px 24px;text-align:left;font-size:.8rem;letter-spacing:.1em;color:var(--text-muted);text-transform:uppercase;width:40%;">Critère</th>
+            <th style="background:var(--lavande-dark);color:white;padding:20px 24px;text-align:center;font-size:.95rem;font-weight:700;">🐾 Milou Dogs Provence</th>
+            <th style="background:#f5f5f5;color:#999;padding:20px 24px;text-align:center;font-size:.95rem;font-weight:700;">🏗️ Chenil classique</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:18px 24px;font-weight:600;color:var(--text);background:var(--cream);">🏠 Logement</td>
+            <td style="padding:18px 24px;text-align:center;color:var(--vert);font-weight:700;background:#F0FFF4;">Maison familiale, vie normale</td>
+            <td style="padding:18px 24px;text-align:center;color:#c0392b;background:white;">Box ou cage individuelle</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:18px 24px;font-weight:600;color:var(--text);background:var(--cream);">🌿 Espace extérieur</td>
+            <td style="padding:18px 24px;text-align:center;color:var(--vert);font-weight:700;background:#F0FFF4;">2 000 m² clôturé & sécurisé</td>
+            <td style="padding:18px 24px;text-align:center;color:#c0392b;background:white;">Sorties limitées et encadrées</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:18px 24px;font-weight:600;color:var(--text);background:var(--cream);">📱 Nouvelles de votre chien</td>
+            <td style="padding:18px 24px;text-align:center;color:var(--vert);font-weight:700;background:#F0FFF4;">Photos & vidéos WhatsApp / jour</td>
+            <td style="padding:18px 24px;text-align:center;color:#c0392b;background:white;">Aucune ou rare</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:18px 24px;font-weight:600;color:var(--text);background:var(--cream);">👥 Nombre de chiens</td>
+            <td style="padding:18px 24px;text-align:center;color:var(--vert);font-weight:700;background:#F0FFF4;">7 maximum — attention individuelle</td>
+            <td style="padding:18px 24px;text-align:center;color:#c0392b;background:white;">Dizaines à des centaines</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:18px 24px;font-weight:600;color:var(--text);background:var(--cream);">💰 Tarif nuit</td>
+            <td style="padding:18px 24px;text-align:center;color:var(--vert);font-weight:700;background:#F0FFF4;">20€/nuit · 1 nuit offerte dès 7</td>
+            <td style="padding:18px 24px;text-align:center;color:#c0392b;background:white;">25–40€/nuit sans bonus</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:18px 24px;font-weight:600;color:var(--text);background:var(--cream);">⭐ Avis Google</td>
+            <td style="padding:18px 24px;text-align:center;color:var(--vert);font-weight:700;background:#F0FFF4;">5/5 · 29 avis vérifiés</td>
+            <td style="padding:18px 24px;text-align:center;color:#777;background:white;">Variable</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:18px 24px;font-weight:600;color:var(--text);background:var(--cream);">😴 Nuits</td>
+            <td style="padding:18px 24px;text-align:center;color:var(--vert);font-weight:700;background:#F0FFF4;">Dans la maison, avec nous</td>
+            <td style="padding:18px 24px;text-align:center;color:#c0392b;background:white;">Dans un box isolé</td>
+          </tr>
+          <tr>
+            <td style="padding:18px 24px;font-weight:600;color:var(--text);background:var(--cream);">🎁 Offres fidélité</td>
+            <td style="padding:18px 24px;text-align:center;color:var(--vert);font-weight:700;background:#F0FFF4;">Parrainage 10€ + nuit offerte</td>
+            <td style="padding:18px 24px;text-align:center;color:#c0392b;background:white;">Aucune</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="text-align:center;margin-top:36px;">
+      <a class="btn-gold" href="#" style="text-decoration:none;display:inline-block;padding:16px 40px;background:var(--soleil);color:var(--lavande-dark);border-radius:50px;font-weight:900;font-size:.95rem;">📅 Réserver chez Milou Dogs →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="preview-sep">⑦ EMAIL + FOOTER — Formulaire intégré + footer pro à colonnes</div>
+
+<section id="nl-new">
+  <div class="nl-inner">
+    <div style="font-size:2.5rem;">🐾</div>
+    <h2 class="nl-title">Ne ratez aucune disponibilité</h2>
+    <p class="nl-sub">Recevez nos disponibilités et offres en avant-première. Aucun spam — juste l'essentiel.</p>
+    <div class="nl-form-new">
+      <input class="nl-input" type="email" placeholder="votre@email.fr">
+      <button class="nl-btn">S'inscrire →</button>
+    </div>
+    <p style="margin-top:14px;font-size:.72rem;color:rgba(255,255,255,.3);">Désinscription possible à tout moment · Vos données restent privées</p>
+  </div>
+</section>
+
+<footer id="footer-new">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo">🐾 Milou Dogs Provence</div>
+      <p>Pension familiale 5★ à Miramas. Terrain 2 000 m², pas de cage, photos quotidiennes. Maximum 7 chiens pour un accueil personnalisé.</p>
+      <div class="footer-social">
+        <a class="fs-btn" href="#">📘</a>
+        <a class="fs-btn" href="#">🎵</a>
+        <a class="fs-btn" href="#">📞</a>
+        <a class="fs-btn" href="#">📍</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Navigation</h4>
+      <ul>
+        <li><a href="#">Accueil</a></li>
+        <li><a href="#">Services & Tarifs</a></li>
+        <li><a href="#">Avis clients</a></li>
+        <li><a href="#">FAQ</a></li>
+        <li><a href="#">Parrainage</a></li>
+        <li><a href="#">Réservation</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="#">📞 07 77 23 40 88</a></li>
+        <li><a href="#">📍 Miramas 13140</a></li>
+        <li><a href="#">Lun–Dim 8h–19h</a></li>
+        <li><a href="#">Mentions légales</a></li>
+        <li><a href="#">Mon espace client</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Milou Dogs Provence · Tous droits réservés · Miramas, Bouches-du-Rhône</p>
+    <p>Site pensé avec ❤️ pour les chiens de Provence</p>
+  </div>
+</footer>
+
+</body>
+</html>

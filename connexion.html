@@ -1,0 +1,293 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Connexion – Milou Dogs Provence</title>
+<meta name="description" content="Connectez-vous à votre espace client Milou Dogs Provence.">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="effects.css">
+<style>
+.auth-page{
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  padding:100px 5% 60px;
+  background:linear-gradient(135deg,#F5EFEA 0%,#EDE5F5 40%,#F5EFEA 70%,#FDF3E0 100%);
+  background-size:300% 300%;
+  animation:herogradient 10s ease infinite;
+  position:relative;overflow:hidden;
+}
+@keyframes herogradient{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+.auth-page::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 60% 40%,rgba(123,111,160,0.07) 0%,transparent 65%);
+  pointer-events:none;
+}
+.auth-card{
+  background:white;border-radius:28px;
+  box-shadow:0 8px 60px rgba(74,63,114,0.14);
+  padding:50px 48px;width:100%;max-width:460px;
+  position:relative;z-index:1;
+  animation:cardIn .6s cubic-bezier(.23,1,.32,1) both;
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(28px) scale(.97);}to{opacity:1;transform:none;}}
+.auth-brand{text-align:center;margin-bottom:36px;}
+.auth-brand .paw{font-size:2.8rem;display:block;margin-bottom:8px;animation:pawspin 8s linear infinite;}
+.auth-brand h1{font-size:1.7rem;color:var(--lavande-dark);margin-bottom:4px;}
+.auth-brand p{font-size:.92rem;color:var(--text-muted);font-weight:300;}
+
+.form-group{margin-bottom:20px;}
+.form-group label{
+  display:block;font-size:.8rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;
+  color:var(--text-muted);margin-bottom:8px;
+}
+.form-group input{
+  width:100%;padding:13px 16px;border-radius:12px;
+  border:1.5px solid var(--border);
+  font-family:'Lato',sans-serif;font-size:.95rem;color:var(--text);
+  background:var(--cream);transition:border-color .2s,box-shadow .2s;
+  outline:none;
+}
+.form-group input:focus{
+  border-color:var(--lavande);
+  box-shadow:0 0 0 3px rgba(123,111,160,0.12);
+}
+.form-group input.error{border-color:#e74c3c;}
+
+.password-wrapper{position:relative;}
+.password-wrapper input{padding-right:44px;}
+.toggle-pwd{
+  position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;font-size:1.1rem;
+  color:var(--text-muted);padding:4px;
+}
+
+.remember-row{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:28px;
+}
+.remember-row label{
+  display:flex;align-items:center;gap:8px;
+  font-size:.88rem;color:var(--text-muted);cursor:pointer;font-weight:400;
+  text-transform:none;letter-spacing:0;
+}
+.remember-row input[type=checkbox]{
+  width:16px;height:16px;accent-color:var(--lavande);cursor:pointer;
+}
+.forgot-link{
+  font-size:.85rem;color:var(--lavande);text-decoration:none;font-weight:700;
+  transition:color .2s;
+}
+.forgot-link:hover{color:var(--lavande-dark);}
+
+.btn-auth{
+  width:100%;padding:15px;border-radius:40px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--lavande),var(--lavande-dark));
+  color:white;font-family:'Lato',sans-serif;font-size:1rem;font-weight:700;
+  letter-spacing:.05em;text-transform:uppercase;
+  box-shadow:0 6px 24px rgba(123,111,160,0.4);
+  transition:transform .25s,box-shadow .25s;
+  position:relative;overflow:hidden;
+}
+.btn-auth:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(123,111,160,0.55);}
+.btn-auth:disabled{opacity:.7;cursor:not-allowed;transform:none;}
+.btn-auth .spinner{
+  display:none;width:18px;height:18px;border:2.5px solid rgba(255,255,255,.4);
+  border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;
+  margin:0 auto;
+}
+.btn-auth.loading .btn-text{display:none;}
+.btn-auth.loading .spinner{display:block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.auth-divider{
+  text-align:center;margin:24px 0;
+  font-size:.82rem;color:var(--text-muted);
+  position:relative;
+}
+.auth-divider::before,.auth-divider::after{
+  content:'';position:absolute;top:50%;width:40%;height:1px;
+  background:var(--border);
+}
+.auth-divider::before{left:0;}.auth-divider::after{right:0;}
+
+.auth-switch{
+  text-align:center;font-size:.9rem;color:var(--text-muted);
+}
+.auth-switch a{color:var(--lavande);font-weight:700;text-decoration:none;transition:color .2s;}
+.auth-switch a:hover{color:var(--lavande-dark);}
+
+.alert{
+  padding:12px 16px;border-radius:12px;font-size:.88rem;
+  margin-bottom:20px;display:none;line-height:1.5;
+}
+.alert-error{background:#fdf2f2;color:#c0392b;border:1px solid #f5c6cb;}
+.alert-success{background:#f0fdf4;color:#276749;border:1px solid #b7e4c7;}
+.alert.show{display:block;}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html"><span class="paw">🐾</span><span>Milou Dogs Provence</span></a>
+  <button class="hamburger" onclick="toggleMenu(this)"><span></span><span></span><span></span></button>
+  <ul class="nav-links" id="navlinks">
+    <li><a href="index.html" data-icon="🏠">Accueil</a></li>
+    <li><a href="services.html" data-icon="🐾">Services &amp; Tarifs</a></li>
+    <li><a href="avis.html" data-icon="⭐">Avis</a></li>
+    <li><a href="faq.html" data-icon="❓">FAQ</a></li>
+    <li><a href="parrainage.html" data-icon="🎁">Parrainage</a></li>
+    <li><a href="reservation.html" data-icon="📅">Réservation</a></li>
+    <li id="nav-auth-item"></li>
+    <li class="nav-mobile-cta" style="padding:14px 20px;border:none;"><a href="reservation.html" class="btn-primary" style="display:block;text-align:center;">📅 Réserver maintenant</a></li>
+  </ul>
+  <span id="nav-desktop-auth"></span>
+  <a class="nav-cta" href="reservation.html">Réserver</a>
+</nav>
+
+<main class="auth-page">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <span class="paw">🐾</span>
+      <h1>Bon retour !</h1>
+      <p>Connectez-vous à votre espace client</p>
+    </div>
+
+    <div class="alert alert-error" id="alert-error"></div>
+    <div class="alert alert-success" id="alert-success"></div>
+
+    <form id="login-form" novalidate>
+      <div class="form-group">
+        <label for="email">Adresse e-mail</label>
+        <input type="email" id="email" placeholder="votre@email.fr" autocomplete="email" required>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <div class="password-wrapper">
+          <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
+          <button type="button" class="toggle-pwd" onclick="togglePwd('password',this)" aria-label="Afficher/masquer">👁</button>
+        </div>
+      </div>
+
+      <div class="remember-row">
+        <label>
+          <input type="checkbox" id="remember">
+          Se souvenir de moi
+        </label>
+        <a href="#" class="forgot-link" onclick="sendReset();return false;">Mot de passe oublié ?</a>
+      </div>
+
+      <button type="submit" class="btn-auth" id="btn-login">
+        <span class="btn-text">Se connecter</span>
+        <div class="spinner"></div>
+      </button>
+    </form>
+
+    <div class="auth-divider">ou</div>
+
+    <p class="auth-switch">
+      Pas encore de compte ?
+      <a href="inscription.html">Créer mon compte →</a>
+    </p>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-logo">🐾 Milou Dogs Provence</div>
+  <p style="margin-top:12px;font-size:.75rem;opacity:.5;">© 2025 Milou Dogs Provence · <a href="mentions-legales.html" style="color:rgba(255,255,255,.4);text-decoration:underline;">Mentions légales</a></p>
+</footer>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-auth.js"></script>
+
+<script>
+// Redirige si déjà connecté
+redirectIfLoggedIn('espace-client.html');
+
+function toggleMenu(btn){document.getElementById('navlinks').classList.toggle('open');btn.classList.toggle('open');}
+
+function togglePwd(id, btn) {
+  const inp = document.getElementById(id);
+  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+  else { inp.type = 'password'; btn.textContent = '👁'; }
+}
+
+function showError(msg) {
+  const el = document.getElementById('alert-error');
+  el.textContent = msg; el.classList.add('show');
+  document.getElementById('alert-success').classList.remove('show');
+}
+function showSuccess(msg) {
+  const el = document.getElementById('alert-success');
+  el.textContent = msg; el.classList.add('show');
+  document.getElementById('alert-error').classList.remove('show');
+}
+function setLoading(on) {
+  const btn = document.getElementById('btn-login');
+  btn.classList.toggle('loading', on);
+  btn.disabled = on;
+}
+
+// Traduction des codes d'erreur Firebase
+function firebaseError(code) {
+  const map = {
+    'auth/user-not-found'      : 'Aucun compte trouvé avec cet e-mail.',
+    'auth/wrong-password'      : 'Mot de passe incorrect.',
+    'auth/invalid-email'       : 'Adresse e-mail invalide.',
+    'auth/too-many-requests'   : 'Trop de tentatives. Réessayez dans quelques minutes.',
+    'auth/user-disabled'       : 'Ce compte a été désactivé.',
+    'auth/invalid-credential'  : 'E-mail ou mot de passe incorrect.',
+  };
+  return map[code] || 'Une erreur est survenue. Réessayez.';
+}
+
+document.getElementById('login-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const email    = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const remember = document.getElementById('remember').checked;
+
+  if (!email || !password) { showError('Veuillez remplir tous les champs.'); return; }
+
+  setLoading(true);
+  document.getElementById('alert-error').classList.remove('show');
+
+  try {
+    const persistence = remember
+      ? firebase.auth.Auth.Persistence.LOCAL
+      : firebase.auth.Auth.Persistence.SESSION;
+    await firebase.auth().setPersistence(persistence);
+    await firebase.auth().signInWithEmailAndPassword(email, password);
+    // onAuthStateChanged dans firebase-auth.js s'en occupe
+    window.location.href = 'espace-client.html';
+  } catch (err) {
+    showError(firebaseError(err.code));
+    setLoading(false);
+  }
+});
+
+async function sendReset() {
+  const email = document.getElementById('email').value.trim();
+  if (!email) { showError('Entrez votre e-mail pour recevoir le lien de réinitialisation.'); return; }
+  try {
+    await firebase.auth().sendPasswordResetEmail(email);
+    showSuccess('E-mail de réinitialisation envoyé ! Vérifiez votre boîte mail.');
+  } catch (err) {
+    showError(firebaseError(err.code));
+  }
+}
+</script>
+<script src="chatbot.js"></script>
+<script src="effects-extra.js"></script>
+</body>
+</html>
+
