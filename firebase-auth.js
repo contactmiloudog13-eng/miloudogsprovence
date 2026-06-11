@@ -17,6 +17,10 @@ if (!firebase.apps.length) firebase.initializeApp(_firebaseConfig);
 const _auth = firebase.auth();
 const _db   = firebase.database();
 
+// Persistance LOCAL par défaut : la session reste valide même après quelques
+// secondes / un rafraîchissement (évite les déconnexions intempestives).
+_auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
+
 // ── Mise à jour de la navbar selon l'état de connexion ──────────────────────
 function _updateNav(user) {
   const mobileItem   = document.getElementById('nav-auth-item');
