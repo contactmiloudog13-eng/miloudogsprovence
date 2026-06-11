@@ -1,0 +1,18 @@
+{
+  "name": "Milou Dogs Provence",
+  "short_name": "Milou Dogs",
+  "description": "Pension et garde pour chiens à Miramas — réservations, profils et carnet de santé de vos compagnons.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FAF6F0",
+  "theme_color": "#4A3F72",
+  "categories": ["lifestyle", "pets"],
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}
