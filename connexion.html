@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -262,10 +262,10 @@ document.getElementById('login-form').addEventListener('submit', async e => {
   document.getElementById('alert-error').classList.remove('show');
 
   try {
-    const persistence = remember
-      ? firebase.auth.Auth.Persistence.LOCAL
-      : firebase.auth.Auth.Persistence.SESSION;
-    await firebase.auth().setPersistence(persistence);
+    // Persistance LOCAL dans tous les cas : la session reste stable et ne se
+    // coupe pas au bout de quelques secondes (la persistance SESSION pouvait
+    // retomber en mémoire et perdre le jeton après navigation).
+    await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     await firebase.auth().signInWithEmailAndPassword(email, password);
     // onAuthStateChanged dans firebase-auth.js s'en occupe
     window.location.href = 'espace-client.html';
