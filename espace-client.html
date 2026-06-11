@@ -497,7 +497,19 @@ body:not(.auth-ready) footer{visibility:hidden;}
             </div>
             <div class="form-group">
               <label for="f-adresse">Adresse</label>
-              <input type="text" id="f-adresse" placeholder="12 rue des Mimosas, Miramas" autocomplete="street-address" readonly>
+              <input type="text" id="f-adresse" placeholder="12 rue des Mimosas" autocomplete="street-address" readonly>
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="f-codepostal">Code postal</label>
+              <input type="text" id="f-codepostal" placeholder="13140" autocomplete="postal-code" inputmode="numeric" maxlength="5" oninput="onCodePostalInput(this)" readonly>
+            </div>
+            <div class="form-group">
+              <label for="f-ville">Ville</label>
+              <input type="text" id="f-ville" placeholder="Miramas" autocomplete="address-level2" list="ville-suggestions" readonly>
+              <datalist id="ville-suggestions"></datalist>
             </div>
           </div>
 
@@ -960,6 +972,8 @@ firebase.auth().onAuthStateChanged(async user => {
     document.getElementById('f-email').value     = user.email;
     document.getElementById('f-telephone').value = data.telephone || '';
     document.getElementById('f-adresse').value   = data.adresse   || '';
+    document.getElementById('f-codepostal').value = data.codePostal || '';
+    document.getElementById('f-ville').value      = data.ville      || '';
     // Si le profil n'est pas encore rempli → mode édition direct
     if (!data.prenom || !data.telephone) enableProfileEdit();
   } catch(e) {
@@ -974,7 +988,7 @@ firebase.auth().onAuthStateChanged(async user => {
 
 // ── Mode édition profil ─────────────────────────────────────────────────────
 function enableProfileEdit() {
-  ['f-prenom','f-nom','f-telephone','f-adresse'].forEach(id => {
+  ['f-prenom','f-nom','f-telephone','f-adresse','f-codepostal','f-ville'].forEach(id => {
     document.getElementById(id).removeAttribute('readonly');
   });
   document.getElementById('btn-edit-profile').style.display = 'none';
@@ -983,12 +997,57 @@ function enableProfileEdit() {
 }
 
 function lockProfileEdit() {
-  ['f-prenom','f-nom','f-telephone','f-adresse'].forEach(id => {
+  ['f-prenom','f-nom','f-telephone','f-adresse','f-codepostal','f-ville'].forEach(id => {
     document.getElementById(id).setAttribute('readonly', true);
   });
   document.getElementById('btn-edit-profile').style.display = '';
   document.getElementById('btn-save-profile').style.display = 'none';
 }
+
+// ── Code postal → proposition automatique de la ville (API geo.api.gouv.fr) ──
+let _cpTimer = null;
+function onCodePostalInput(input) {
+  const cp = (input.value || '').replace(/\D/g, '').slice(0, 5);
+  if (cp !== input.value) input.value = cp;
+  if (cp.length !== 5) return;
+  clearTimeout(_cpTimer);
+  _cpTimer = setTimeout(() => {
+    fetch('https://geo.api.gouv.fr/communes?codePostal=' + cp + '&fields=nom&format=json')
+      .then(r => r.ok ? r.json() : [])
+      .then(list => {
+        if (!Array.isArray(list) || !list.length) return;
+        const dl = document.getElementById('ville-suggestions');
+        const villeInput = document.getElementById('f-ville');
+        dl.innerHTML = list.map(c => '<option value="' + c.nom + '"></option>').join('');
+        // Une seule commune, ou ville encore vide → on remplit automatiquement
+        if (list.length === 1 || !villeInput.value.trim()) villeInput.value = list[0].nom;
+      })
+      .catch(() => {});
+  }, 250);
+}
+
+// ── Âge du chien calculé automatiquement depuis la date de naissance ─────────
+function computeAge(naissance) {
+  if (!naissance) return '';
+  const d = new Date(naissance);
+  if (isNaN(d.getTime())) return '';
+  const now = new Date();
+  let mois = (now.getFullYear() - d.getFullYear()) * 12 + (now.getMonth() - d.getMonth());
+  if (now.getDate() < d.getDate()) mois--;
+  if (mois < 0) return '';
+  if (mois < 12) return mois + ' mois';
+  const ans = Math.floor(mois / 12), reste = mois % 12;
+  return reste ? ans + ' an' + (ans > 1 ? 's' : '') + ' et ' + reste + ' mois'
+               : ans + ' an' + (ans > 1 ? 's' : '');
+}
+(function attachAgeAuto() {
+  const nais = document.getElementById('c-naissance');
+  if (!nais) return;
+  nais.addEventListener('change', function () {
+    const age = computeAge(this.value);
+    if (age) document.getElementById('c-age').value = age;
+  });
+})();
 
 // ── Sauvegarde profil ───────────────────────────────────────────────────────
 document.getElementById('profile-form').addEventListener('submit', async e => {
@@ -999,7 +1058,9 @@ document.getElementById('profile-form').addEventListener('submit', async e => {
   const prenom    = document.getElementById('f-prenom').value.trim();
   const nom       = document.getElementById('f-nom').value.trim();
   const telephone = document.getElementById('f-telephone').value.trim();
-  const adresse   = document.getElementById('f-adresse').value.trim();
+  const adresse    = document.getElementById('f-adresse').value.trim();
+  const codePostal = document.getElementById('f-codepostal').value.trim();
+  const ville      = document.getElementById('f-ville').value.trim();
 
   if (!prenom || !nom) {
     showFeedback(fb, 'Prénom et nom sont obligatoires.', false); return;
@@ -1010,7 +1071,7 @@ document.getElementById('profile-form').addEventListener('submit', async e => {
 
   try {
     await firebase.database().ref('users/' + _currentUser.uid).update({
-      prenom, nom, telephone, adresse
+      prenom, nom, telephone, adresse, codePostal, ville
     });
     await _currentUser.updateProfile({ displayName: prenom });
 
