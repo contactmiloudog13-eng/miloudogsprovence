@@ -893,12 +893,24 @@ function showTab(name, btn) {
 
 // ── Chargement profil ───────────────────────────────────────────────────────
 let _currentUser = null;
+let _logoutTimer = null;   // délai de grâce avant de conclure à une déconnexion
 
 firebase.auth().onAuthStateChanged(async user => {
   const loader  = document.getElementById('auth-loading');
   const content = document.getElementById('dashboard-content');
 
-  if (!user) { window.location.href = 'connexion.html'; return; }
+  if (!user) {
+    // Firebase peut émettre un « null » transitoire pendant un rafraîchissement
+    // de jeton. On ne redirige QUE si l'utilisateur est toujours absent après 3 s.
+    if (_logoutTimer) return;
+    _logoutTimer = setTimeout(() => {
+      if (!firebase.auth().currentUser) window.location.href = 'connexion.html';
+      _logoutTimer = null;
+    }, 3000);
+    return;
+  }
+  // Un utilisateur est présent → on annule toute redirection en attente
+  if (_logoutTimer) { clearTimeout(_logoutTimer); _logoutTimer = null; }
   _currentUser = user;
 
   // ── Onglet Admin visible uniquement pour le propriétaire ──
