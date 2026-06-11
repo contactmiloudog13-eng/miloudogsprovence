@@ -516,7 +516,7 @@ function loadGoogleAvis() {
     }
 
     const items = [];
-    snap.forEach(c => items.push(c.val()));
+    snap.forEach(c => { items.push(c.val()); });
     items.reverse();
 
     const total = items.length;

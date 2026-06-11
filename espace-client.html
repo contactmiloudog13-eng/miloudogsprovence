@@ -359,6 +359,12 @@ body:not(.auth-ready) footer{visibility:hidden;}
 .carnet-preview img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--border);}
 .carnet-preview a{font-size:.82rem;color:var(--lavande-dark);font-weight:700;text-decoration:none;}
 .carnet-preview a:hover{text-decoration:underline;}
+.carnet-grid{margin-top:12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;}
+.carnet-item{position:relative;border-radius:10px;overflow:hidden;border:1px solid var(--border);background:var(--lavande-light);aspect-ratio:1;}
+.carnet-item img{width:100%;height:100%;object-fit:cover;display:block;}
+.carnet-item .carnet-pdf{display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:.78rem;font-weight:700;color:var(--lavande-dark);text-decoration:none;text-align:center;padding:6px;}
+.carnet-item .carnet-del{position:absolute;top:4px;right:4px;width:26px;height:26px;border:none;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;cursor:pointer;font-size:.85rem;line-height:1;display:flex;align-items:center;justify-content:center;}
+.carnet-item .carnet-del:hover{background:#c0392b;}
 .upload-progress{height:6px;border-radius:4px;background:var(--border);margin-top:10px;overflow:hidden;display:none;}
 .upload-progress-bar{height:100%;background:linear-gradient(90deg,var(--lavande),var(--lavande-dark));width:0%;transition:width .3s;}
 
@@ -723,10 +729,10 @@ body:not(.auth-ready) footer{visibility:hidden;}
           <div class="form-group" style="margin-top:8px;">
             <label>📎 Carnet de santé / vaccins</label>
             <div class="upload-zone" onclick="document.getElementById('carnet-input').click()">
-              <input type="file" id="carnet-input" accept="image/*,.pdf" onchange="uploadCarnet(this)">
+              <input type="file" id="carnet-input" accept="image/*,.pdf" multiple onchange="uploadCarnet(this)">
               <span class="upload-icon">📄</span>
-              <p>Cliquez pour ajouter une photo ou PDF du carnet de santé</p>
-              <p style="font-size:.75rem;margin-top:4px;">Photos compressées automatiquement · PDF max 2 Mo</p>
+              <p>Cliquez pour ajouter une ou plusieurs photos / PDF du carnet de santé</p>
+              <p style="font-size:.75rem;margin-top:4px;">Vous pouvez en ajouter plusieurs · Photos compressées automatiquement · PDF max 2 Mo</p>
             </div>
             <div class="upload-progress" id="carnet-progress"><div class="upload-progress-bar" id="carnet-bar"></div></div>
             <div id="carnet-preview"></div>
@@ -1158,8 +1164,8 @@ function selectChien(id) {
     emoji.style.display = '';
     const img = circle.querySelector('img'); if (img) img.remove();
   }
-  // Carnet
-  showCarnetPreview(d.carnetUrl || null, (d.carnetUrl||'').startsWith('data:image'));
+  // Carnet (liste de photos/PDF)
+  showCarnetPreview(getCarnetList(d));
   // Si le chien n'a pas encore de nom → mode édition direct, sinon lecture
   if (!d.nom) {
     enableChienEdit();
@@ -1288,49 +1294,79 @@ function lockChienEdit() {
   document.getElementById('btn-save-chien').style.display = 'none';
 }
 
-// ── Carnet de santé upload ────────────────────────────────────────────────────
-function showCarnetPreview(data, isImage) {
-  const el = document.getElementById('carnet-preview');
-  if (!data) { el.innerHTML = ''; return; }
-  el.innerHTML = '<div class="carnet-preview">'
-    + (isImage ? '<img src="' + data + '" alt="Carnet">' : '<span style="font-size:2rem;">📄</span>')
-    + '<div><a href="' + data + '" target="_blank" download>📎 Voir le carnet de santé</a>'
-    + '<p style="font-size:.75rem;color:var(--text-muted);margin:2px 0 0;">Cliquez pour ouvrir</p></div>'
-    + '<button onclick="deleteCarnet()" style="margin-left:auto;background:none;border:none;cursor:pointer;font-size:1.1rem;color:#c0392b;" title="Supprimer">🗑️</button>'
-    + '</div>';
+// ── Carnet de santé upload (multi-photos) ─────────────────────────────────────
+// Le carnet est désormais une LISTE de photos/PDF (champ `carnetUrls`). On garde
+// la rétro-compatibilité avec l'ancien champ unique `carnetUrl`.
+function getCarnetList(d) {
+  d = d || {};
+  let list = Array.isArray(d.carnetUrls) ? d.carnetUrls.slice() : [];
+  if (d.carnetUrl && list.indexOf(d.carnetUrl) === -1) list.unshift(d.carnetUrl);
+  return list.filter(Boolean);
+}
+function _isCarnetImg(u) {
+  return /^data:image/.test(u||'') || /\.(jpe?g|png|webp|gif|heic)(\?|$)/i.test(u||'');
 }
 
-async function deleteCarnet() {
-  if (!confirm('Supprimer le carnet de santé ?')) return;
+function showCarnetPreview(list) {
+  const el = document.getElementById('carnet-preview');
+  list = Array.isArray(list) ? list.filter(Boolean) : [];
+  if (!list.length) { el.innerHTML = ''; return; }
+  el.innerHTML = '<div class="carnet-grid">' + list.map(function(data, i){
+    return '<div class="carnet-item">'
+      + (_isCarnetImg(data)
+          ? '<a href="'+data+'" target="_blank"><img src="'+data+'" alt="Carnet '+(i+1)+'"></a>'
+          : '<a href="'+data+'" target="_blank" class="carnet-pdf">📄 PDF '+(i+1)+'</a>')
+      + '<button type="button" onclick="deleteCarnet('+i+')" class="carnet-del" title="Supprimer">🗑️</button>'
+      + '</div>';
+  }).join('') + '</div>';
+}
+
+async function deleteCarnet(index) {
   if (!_selectedChienId) return;
-  await firebase.database().ref('users/' + _currentUser.uid + '/chiens/' + _selectedChienId + '/carnetUrl').remove();
-  _chiens[_selectedChienId].carnetUrl = null;
-  showCarnetPreview(null);
+  if (!confirm('Supprimer cette photo du carnet ?')) return;
+  const d = _chiens[_selectedChienId] || {};
+  const list = getCarnetList(d);
+  list.splice(index, 1);
+  await firebase.database().ref('users/' + _currentUser.uid + '/chiens/' + _selectedChienId)
+    .update({ carnetUrls: list, carnetUrl: null });
+  d.carnetUrls = list; d.carnetUrl = null;
+  _chiens[_selectedChienId] = d;
+  showCarnetPreview(list);
 }
 
 async function uploadCarnet(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const isImage = file.type.startsWith('image/');
-  // Les PDF ne sont pas compressibles → on garde une limite. Les images sont compressées.
-  if (!isImage && file.size > 2 * 1024 * 1024) {
-    alert('PDF trop lourd (max 2 Mo). Réduisez-le, ou prenez une photo du carnet (compressée automatiquement).');
+  const files = Array.from(input.files || []);
+  if (!files.length) return;
+  if (!_selectedChienId) {
+    alert('Enregistrez d\'abord le profil du chien, puis ajoutez les photos du carnet.');
     input.value = '';
     return;
   }
   const prog = document.getElementById('carnet-progress');
   const bar  = document.getElementById('carnet-bar');
-  prog.style.display = 'block'; bar.style.width = '30%';
+  prog.style.display = 'block'; bar.style.width = '10%';
   try {
-    const base64 = isImage ? await compressImage(file, 1400, 0.8) : await fileToDataURL(file);
-    bar.style.width = '70%';
-    if (_selectedChienId) {
-      await firebase.database().ref('users/' + _currentUser.uid + '/chiens/' + _selectedChienId).update({ carnetUrl: base64 });
-      _chiens[_selectedChienId].carnetUrl = base64;
+    const d = _chiens[_selectedChienId] || {};
+    const list = getCarnetList(d);
+    for (let k = 0; k < files.length; k++) {
+      const file = files[k];
+      const isImage = file.type.startsWith('image/');
+      // Les PDF ne sont pas compressibles → limite. Les images sont compressées.
+      if (!isImage && file.size > 2 * 1024 * 1024) {
+        alert('PDF « ' + file.name + ' » trop lourd (max 2 Mo) — ignoré.');
+        continue;
+      }
+      const base64 = isImage ? await compressImage(file, 1400, 0.8) : await fileToDataURL(file);
+      list.push(base64);
+      bar.style.width = Math.round(10 + ((k+1)/files.length)*80) + '%';
     }
+    await firebase.database().ref('users/' + _currentUser.uid + '/chiens/' + _selectedChienId)
+      .update({ carnetUrls: list, carnetUrl: null });
+    d.carnetUrls = list; d.carnetUrl = null;
+    _chiens[_selectedChienId] = d;
     bar.style.width = '100%';
-    setTimeout(() => { prog.style.display = 'none'; }, 400);
-    showCarnetPreview(base64, isImage);
+    setTimeout(() => { prog.style.display = 'none'; bar.style.width = '0%'; }, 400);
+    showCarnetPreview(list);
   } catch(err) {
     alert('Erreur : ' + err.message);
     prog.style.display = 'none';
@@ -1374,7 +1410,8 @@ document.getElementById('chien-form').addEventListener('submit', async e => {
     updatedAt       : Date.now(),
   };
   if (existing.photoUrl)  chienData.photoUrl  = existing.photoUrl;
-  if (existing.carnetUrl) chienData.carnetUrl = existing.carnetUrl;
+  const _carnetList = getCarnetList(existing);
+  if (_carnetList.length) chienData.carnetUrls = _carnetList;
 
   btn.classList.add('loading'); btn.disabled = true;
   fb.style.display = 'none';
@@ -1762,7 +1799,7 @@ function loadAdminAvis() {
       return;
     }
     const items = [];
-    snap.forEach(c => items.push({ key: c.key, ...c.val() }));
+    snap.forEach(c => { items.push({ key: c.key, ...c.val() }); });
     items.reverse(); // plus récents en premier
     count.textContent = items.length;
     list.innerHTML = items.map(a => `
