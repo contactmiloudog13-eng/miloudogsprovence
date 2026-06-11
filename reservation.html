@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"><script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Milou Dogs Provence","description":"Garde de chien à domicile à Miramas. Pension familiale 5 étoiles, terrain 2000m², photos quotidiennes.","telephone":"+33777234088","url":"https://miloudogsprovence.fr","address":{"@type":"PostalAddress","addressLocality":"Miramas","addressRegion":"Bouches-du-Rhône","addressCountry":"FR"},"geo":{"@type":"GeoCoordinates","latitude":43.5833,"longitude":5.0},"openingHours":"Mo-Su 08:00-19:00","aggregateRating":{"@type":"AggregateRating","ratingValue":"5","reviewCount":"41"},"priceRange":"€€"}</script>
@@ -738,8 +738,19 @@ async function submitReservation() {
         const uid = document.getElementById('hidden-userid').value;
         if (uid) {
           try {
-            const snap = await firebase.database().ref('users/' + uid + '/chien').get();
-            if (snap.exists()) return Object.assign(base, snap.val());
+            // Profil complet enregistré dans l'espace client : users/{uid}/chiens/{id}
+            // (photo, carnet, vaccins, allergies…). On récupère le chien dont le
+            // nom correspond à celui saisi, sinon le premier chien du compte.
+            const snap = await firebase.database().ref('users/' + uid + '/chiens').get();
+            if (snap.exists()) {
+              const dogs = Object.values(snap.val() || {});
+              const saisi = (base.nom || '').trim().toLowerCase();
+              const match = dogs.find(d => (d.nom || '').trim().toLowerCase() === saisi) || dogs[0];
+              if (match) return Object.assign(base, match);
+            }
+            // Compatibilité ancien format (objet unique users/{uid}/chien)
+            const old = await firebase.database().ref('users/' + uid + '/chien').get();
+            if (old.exists()) return Object.assign(base, old.val());
           } catch(e) {}
         }
         return base;
