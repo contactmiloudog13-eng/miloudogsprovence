@@ -893,23 +893,33 @@ function showTab(name, btn) {
 
 // ── Chargement profil ───────────────────────────────────────────────────────
 let _currentUser = null;
-let _logoutTimer = null;   // délai de grâce avant de conclure à une déconnexion
+let _logoutTimer = null;       // délai de grâce avant de conclure à une déconnexion
+let _hasAuthenticated = false; // true dès qu'une session valide a été vue sur cette page
 
 firebase.auth().onAuthStateChanged(async user => {
   const loader  = document.getElementById('auth-loading');
   const content = document.getElementById('dashboard-content');
 
   if (!user) {
-    // Firebase peut émettre un « null » transitoire pendant un rafraîchissement
-    // de jeton. On ne redirige QUE si l'utilisateur est toujours absent après 3 s.
+    // Si on a DÉJÀ été connecté sur cette page, un « null » est forcément
+    // transitoire (rafraîchissement de jeton, changement d'onglet, horloge…).
+    // On ne déconnecte JAMAIS automatiquement : seul le bouton « Se déconnecter »
+    // redirige. La session sera ré-émise par Firebase juste après.
+    if (_hasAuthenticated) return;
+
+    // Premier chargement sans session → on laisse un court délai (le temps que
+    // Firebase restaure la session LOCAL) puis on renvoie vers la connexion.
     if (_logoutTimer) return;
     _logoutTimer = setTimeout(() => {
-      if (!firebase.auth().currentUser) window.location.href = 'connexion.html';
+      if (!firebase.auth().currentUser && !_hasAuthenticated) {
+        window.location.href = 'connexion.html';
+      }
       _logoutTimer = null;
-    }, 3000);
+    }, 4000);
     return;
   }
-  // Un utilisateur est présent → on annule toute redirection en attente
+  // Un utilisateur est présent → on mémorise et on annule toute redirection
+  _hasAuthenticated = true;
   if (_logoutTimer) { clearTimeout(_logoutTimer); _logoutTimer = null; }
   _currentUser = user;
 
