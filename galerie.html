@@ -4,15 +4,15 @@
 <meta charset="UTF-8"><script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Milou Dogs Provence","description":"Garde de chien à domicile à Miramas. Pension familiale 5 étoiles, terrain 2000m², photos quotidiennes.","telephone":"+33777234088","url":"https://miloudogsprovence.fr","address":{"@type":"PostalAddress","addressLocality":"Miramas","addressRegion":"Bouches-du-Rhône","addressCountry":"FR"},"geo":{"@type":"GeoCoordinates","latitude":43.5833,"longitude":5.0},"openingHours":"Mo-Su 08:00-19:00","aggregateRating":{"@type":"AggregateRating","ratingValue":"5","reviewCount":"41"},"priceRange":"€€"}</script>
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_FR">
-<meta property="og:url" content="https://miloudogsprovence.fr/avis.html">
-<meta property="og:title" content="Avis clients – Milou Dogs Provence">
-<meta property="og:description" content="Note parfaite 5/5 sur Google. Témoignages de nos familles satisfaites.">
+<meta property="og:url" content="https://miloudogsprovence.fr/galerie.html">
+<meta property="og:title" content="Galerie photos – Milou Dogs Provence">
+<meta property="og:description" content="Découvrez en photos nos pensionnaires à 4 pattes, choyés à la pension Milou Dogs Provence à Miramas.">
 <meta property="og:image" content="https://miloudogsprovence.fr/hero-banner.png">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Avis clients – Garde de chien 5★ Miramas | Milou Dogs Provence</title>
-<meta name="description" content="41 avis 5★ sur Google. Témoignages de familles satisfaites de la pension pour chien Milou Dogs Provence à Miramas. Note parfaite 5.0/5.">
+<title>Galerie photos – Pension pour chien à Miramas | Milou Dogs Provence</title>
+<meta name="description" content="Galerie photos de la pension Milou Dogs Provence à Miramas : nos pensionnaires choyés, terrain 2000m², pas de cage. Photos publiées régulièrement.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
-<link rel="canonical" href="https://miloudogsprovence.fr/avis.html">
+<link rel="canonical" href="https://miloudogsprovence.fr/galerie.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="style.css">
@@ -290,113 +290,45 @@
   <a class="nav-cta" href="reservation.html">Réserver</a>
 </nav>
 
-<!-- ══ HERO ══ -->
-<header class="avis-hero">
-  <div class="hero-label">⭐ Avis clients vérifiés</div>
-  <h1>Ils nous font confiance</h1>
-  <p>Note parfaite 5.0 sur Google · Découvrez ce que disent nos familles</p>
-  <div class="hero-note-card">
-    <div class="hero-note-big">5.0</div>
-    <div class="hero-stars-row">★★★★★</div>
-    <div class="hero-note-sub"><span class="avis-count-live" id="total-count">41</span> avis Google · Milou Dogs Provence</div>
-  </div>
+<style>
+.gal-hero{background:linear-gradient(135deg,#2d1f4e 0%,#4A3F72 100%);padding:120px 5% 70px;text-align:center;color:#fff;position:relative;overflow:hidden;}
+.gal-hero .hero-label{display:inline-block;background:rgba(255,255,255,.12);color:#fff;padding:7px 18px;border-radius:30px;font-size:.82rem;font-weight:700;letter-spacing:.04em;margin-bottom:18px;}
+.gal-hero h1{font-size:2.4rem;margin-bottom:12px;color:#fff;}
+.gal-hero p{font-size:1rem;opacity:.88;font-weight:300;max-width:520px;margin:0 auto;}
+.gal-page-body{background:#f8f6ff;min-height:40vh;}
+#galerie-grid img{width:100%;border-radius:12px;margin-bottom:14px;display:block;cursor:zoom-in;transition:transform .25s,box-shadow .25s;}
+#galerie-grid img:hover{transform:scale(1.03);box-shadow:0 10px 30px rgba(0,0,0,.15);}
+.gal-item{break-inside:avoid;margin-bottom:0;position:relative;}
+.gal-caption{font-size:.75rem;color:#888;text-align:center;margin-top:-8px;margin-bottom:14px;}
+@media(max-width:760px){#galerie-grid{columns:2;}}
+@media(max-width:480px){#galerie-grid{columns:1;}}
+</style>
+
+<!-- ══ HERO GALERIE ══ -->
+<header class="gal-hero">
+  <div class="hero-label">📸 En ce moment chez Milou Dogs</div>
+  <h1>Notre galerie photos</h1>
+  <p>Photos fraîches de nos pensionnaires à 4 pattes, choyés comme à la maison 🐾</p>
 </header>
 
-<!-- vague -->
-<div class="avis-hero-wave">
-  <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" height="60">
-    <path d="M0,60 C360,0 1080,60 1440,20 L1440,60 Z" fill="#f8f6ff"/>
-  </svg>
-</div>
-
-<!-- ══ STATS STRIP ══ -->
-<div class="avis-stats">
-  <div class="avis-stats-inner">
-    <div class="a-stat">
-      <div class="a-stat-icon">⭐</div>
-      <div class="a-stat-num" id="count-note">5.0</div>
-      <div class="a-stat-label">Note Google</div>
-    </div>
-    <div class="a-stat">
-      <div class="a-stat-icon">💬</div>
-      <div class="a-stat-num"><span id="count-avis">0</span></div>
-      <div class="a-stat-label">Avis publiés</div>
-    </div>
-    <div class="a-stat">
-      <div class="a-stat-icon">✅</div>
-      <div class="a-stat-num"><span id="count-satisf">0</span>%</div>
-      <div class="a-stat-label">Clients satisfaits</div>
-    </div>
-    <div class="a-stat">
-      <div class="a-stat-icon">🏆</div>
-      <div class="a-stat-num">#1</div>
-      <div class="a-stat-label">Pension de la région</div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ CORPS DE PAGE ══ -->
-<main class="avis-page-body">
-  <div class="avis-page-inner">
-
-    <!-- Bandeau confiance -->
-    <div class="trust-strip fade-in">
-      <div class="trust-item"><div class="trust-val">2 000 m²</div><div class="trust-lbl">Terrain clôturé</div></div>
-      <div class="trust-item"><div class="trust-val">0 cage</div><div class="trust-lbl">Liberté totale</div></div>
-      <div class="trust-item"><div class="trust-val">7 max</div><div class="trust-lbl">Petits groupes</div></div>
-      <div class="trust-item"><div class="trust-val">📸 Quotidien</div><div class="trust-lbl">Photos chaque jour</div></div>
-      <div class="trust-item"><div class="trust-val">5 ans</div><div class="trust-lbl">D'expérience</div></div>
-    </div>
-
-    <!-- ─── Avis récents espace client ─── -->
-    <div id="fb-avis-section" style="display:none;margin-bottom:48px;">
-      <div class="avis-section-header">
-        <div class="avis-section-title">
-          <span style="font-size:1.5rem;">🐾</span>
-          <h2>Avis de nos clients</h2>
-        </div>
-        <span class="avis-section-badge">Témoignages récents</span>
+<!-- ══ GALERIE ══ -->
+<main class="gal-page-body">
+  <section style="padding:60px 5%;">
+    <div class="container">
+      <div id="galerie-loading" style="text-align:center;padding:40px;color:#888;font-size:.9rem;">Chargement des photos…</div>
+      <div id="galerie-grid" style="display:none;columns:3;column-gap:14px;"></div>
+      <div id="galerie-empty" style="display:none;text-align:center;padding:60px 20px;">
+        <div style="font-size:3.5rem;margin-bottom:16px;">📸</div>
+        <p style="font-size:1.05rem;font-weight:700;color:var(--lavande-dark);margin-bottom:8px;">Les photos arrivent bientôt !</p>
+        <p style="font-size:.88rem;color:var(--text-muted);max-width:380px;margin:0 auto 24px;">Nous partageons régulièrement des photos des chiens que nous gardons. Revenez nous voir !</p>
+        <a href="reservation.html" class="btn-primary" style="font-size:.88rem;">📅 Réserver une garde</a>
       </div>
-      <div class="avis-masonry" id="fb-avis-grid"></div>
-    </div>
-
-    <!-- ─── Avis Google ─── -->
-    <div>
-      <div class="avis-section-header">
-        <div class="avis-section-title">
-          <span style="font-size:1.5rem;">⭐</span>
-          <h2>Avis Google vérifiés</h2>
-        </div>
-        <span class="avis-section-badge google">Google · <span class="avis-count-live">41</span> avis</span>
-      </div>
-
-      <!-- Loading -->
-      <div id="google-avis-loading" class="avis-loading">
-        <div class="spin">🐾</div>
-        <p>Chargement des avis…</p>
-      </div>
-
-      <!-- Grille -->
-      <div class="avis-masonry" id="google-avis-grid" style="display:none;"></div>
-
-      <!-- Vide -->
-      <div id="google-avis-empty" class="avis-empty" style="display:none;">
-        <p style="font-size:2rem;">💬</p>
-        <p>Les avis arrivent bientôt !</p>
+      <div id="galerie-lightbox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;align-items:center;justify-content:center;cursor:zoom-out;" onclick="closeLightbox()">
+        <img id="galerie-lightbox-img" src="" style="max-width:92vw;max-height:90vh;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.5);">
+        <div id="galerie-lightbox-caption" style="position:absolute;bottom:24px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.75);font-size:.85rem;text-align:center;pointer-events:none;"></div>
       </div>
     </div>
-
-    <!-- ─── CTA ─── -->
-    <div class="avis-cta fade-in">
-      <h3>Votre chien mérite le meilleur 🐾</h3>
-      <p>Rejoignez nos familles satisfaites et offrez à votre compagnon un séjour inoubliable dans un cadre familial unique.</p>
-      <div class="avis-cta-btns">
-        <a class="btn-white" href="reservation.html">📅 Réserver maintenant</a>
-        <a class="btn-google-new" href="https://g.page/r/CdAXjNRBp4_VEBM/review" target="_blank" rel="noopener">⭐ Laisser un avis Google</a>
-      </div>
-    </div>
-
-  </div>
+  </section>
 </main>
 
 <footer id="footer-pro">
@@ -451,159 +383,39 @@
 <script>
 function toggleMenu(btn){document.getElementById('navlinks').classList.toggle('open');btn.classList.toggle('open');}
 
-/* ─── Animation compteur ─── */
-function animCount(id, target, duration) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  let start = 0;
-  const step = () => {
-    start += target / 60;
-    if (start >= target) { el.textContent = target; return; }
-    el.textContent = Math.floor(start);
-    requestAnimationFrame(step);
-  };
-  step();
-}
-
-/* ─── Helpers ─── */
-const AVATAR_COLORS = ['av1','av2','av3','av4','av5'];
-function getInitiales(nom) {
-  const p = (nom||'A').trim().split(' ');
-  return ((p[0]||'A')[0] + ((p[1]||'')[0]||'')).toUpperCase();
-}
-function renderStars(n) {
-  const nb = Math.max(1, Math.min(5, n||5));
-  return '<span style="color:#F5C84A;">' + '★'.repeat(nb) + '</span>'
-       + '<span style="color:#d0c8e0;">' + '★'.repeat(5-nb) + '</span>';
-}
-function buildCard(a, i, source) {
-  const cl = AVATAR_COLORS[i % AVATAR_COLORS.length];
-  // Toujours recalculer les initiales depuis le nom (certaines anciennes valeurs
-  // enregistrées valaient « Xundefined » pour les noms en un seul mot).
-  const initiales = getInitiales(a.nom);
-  const isFeat = i === 0 && source === 'google';
-  return `
-    <div class="avis-card-new fade-in${isFeat ? ' featured' : ''}">
-      <div class="ac-header">
-        <div class="ac-avatar ${cl}">${initiales}</div>
-        <div class="ac-info">
-          <div class="ac-name">${a.nom||''}</div>
-          <div class="ac-date">${a.date||''}</div>
-        </div>
-      </div>
-      <div class="ac-stars">${renderStars(a.note)}</div>
-      <p class="ac-text">"${a.texte||''}"</p>
-      <div class="ac-source">
-        <div class="g-dot"></div>
-        <span>${source === 'google' ? 'Avis Google vérifié ✓' : '🐾 Client Milou Dogs vérifié'}</span>
-      </div>
-    </div>`;
-}
-
-/* ─── Chargement avis Google (admin) ─── */
-function loadGoogleAvis() {
-  firebase.database().ref('google_avis').orderByChild('ts').once('value', snap => {
-    const grid    = document.getElementById('google-avis-grid');
-    const loading = document.getElementById('google-avis-loading');
-    const empty   = document.getElementById('google-avis-empty');
+/* ─── Galerie photos ─── */
+(function loadGalerie(){
+  var grid    = document.getElementById('galerie-grid');
+  var loading = document.getElementById('galerie-loading');
+  var empty   = document.getElementById('galerie-empty');
+  if (!grid) return;
+  firebase.database().ref('gallery_photos').orderByChild('ts').once('value', function(snap){
+    var photos = [];
+    snap.forEach(function(ch){ photos.push(ch.val()); });
+    photos.reverse();
     loading.style.display = 'none';
-
-    if (!snap.exists()) {
-      empty.style.display = 'block';
-      animCount('count-avis', 0, 800);
-      animCount('count-satisf', 100, 1200);
-      return;
-    }
-
-    const items = [];
-    snap.forEach(c => items.push(c.val()));
-    items.reverse();
-
-    const total = items.length;
-    document.querySelectorAll('.avis-count-live').forEach(el => el.textContent = total);
-    document.getElementById('total-count').textContent = total;
-    animCount('count-avis', total, 800);
-    animCount('count-satisf', 100, 1200);
-
-    grid.style.display = '';
-    grid.innerHTML = items.map((a, i) => buildCard(a, i, 'google')).join('');
-
-    // Intersection observer fade-in
-    const obs = new IntersectionObserver(els => els.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
-    }), {threshold:.1});
-    grid.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
-  });
-}
-
-window.addEventListener('load', () => {
-  animCount('count-satisf', 100, 1200);
-  loadGoogleAvis();
-});
-
-/* ─── Avis espace client ─── */
-firebase.database().ref('avis').orderByChild('createdAt').on('value', snap => {
-  const list = [];
-  snap.forEach(c => { const a = c.val(); if (a.visible !== false) list.push(a); });
-  list.reverse();
-  if (!list.length) return;
-
-  const html = list.map((a, i) => {
-    const aObj = {
-      nom: (a.prenom||'?') + ' ' + ((a.nom||'?')[0]||'') + '.',
-      texte: a.texte||'',
-      note: a.note||5,
-      date: a.createdAt ? new Date(a.createdAt).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}) : '',
-      initiales: ((a.prenom||'?')[0] + ((a.nom||'?')[0]||'?')).toUpperCase()
-    };
-    return buildCard(aObj, i, 'client');
-  }).join('');
-
-  document.getElementById('fb-avis-grid').innerHTML = html;
-  document.getElementById('fb-avis-section').style.display = 'block';
-
-  const obsNew = new IntersectionObserver(els => els.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add('visible'); obsNew.unobserve(e.target); }
-  }), {threshold:.1});
-  document.querySelectorAll('#fb-avis-grid .fade-in').forEach(el => obsNew.observe(el));
-});
-
-/* ─── Fade-in général ─── */
-const obsGlobal = new IntersectionObserver(els => els.forEach(e => {
-  if (e.isIntersecting) { e.target.classList.add('visible'); obsGlobal.unobserve(e.target); }
-}), {threshold:.1});
-document.querySelectorAll('.fade-in').forEach(el => obsGlobal.observe(el));
-</script>
-
-<script>
-/* ─── Effets 3D hover ─── */
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.avis-card-new').forEach(card => {
-    card.addEventListener('mousemove', e => {
-      const r = card.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width - .5;
-      const y = (e.clientY - r.top) / r.height - .5;
-      card.style.transform = `perspective(900px) rotateY(${x*10}deg) rotateX(${-y*8}deg) translateY(-4px)`;
+    if (!photos.length) { empty.style.display = 'block'; return; }
+    grid.style.display = 'block';
+    photos.forEach(function(p){
+      var item = document.createElement('div');
+      item.className = 'gal-item';
+      item.innerHTML = '<img src="' + p.url + '" alt="' + (p.caption || 'Chien chez Milou Dogs Provence') + '" loading="lazy" onclick="openLightbox(\'' + p.url.replace(/'/g,"\\'") + '\',\'' + (p.caption||'').replace(/'/g,"\\'") + '\')">'
+        + (p.caption ? '<div class="gal-caption">' + p.caption + '</div>' : '');
+      grid.appendChild(item);
     });
-    card.addEventListener('mouseleave', () => { card.style.transform = ''; });
-  });
-  /* Paw particles */
-  const paws = ['🐾','🐾','🐾','🐕','🐶'];
-  function spawn() {
-    for (let i = 0; i < 2 + Math.floor(Math.random()*2); i++) {
-      setTimeout(() => {
-        const el = document.createElement('div');
-        el.className = 'paw-particle';
-        el.textContent = paws[Math.floor(Math.random()*paws.length)];
-        el.style.cssText = `left:${Math.random()*100}vw;animation-duration:${4+Math.random()*6}s;font-size:${.6+Math.random()*1.4}rem;opacity:${.12+Math.random()*.2};animation-delay:${Math.random()*.6}s`;
-        document.body.appendChild(el);
-        setTimeout(() => el.remove(), 11000);
-      }, i * 200);
-    }
-  }
-  spawn();
-  window.matchMedia('(hover:none)').matches ? setInterval(spawn,15000) : setInterval(spawn, 2000);
-});
+  }, function(){ loading.style.display='none'; empty.style.display='block'; });
+})();
+function openLightbox(url, caption){
+  var lb = document.getElementById('galerie-lightbox');
+  document.getElementById('galerie-lightbox-img').src = url;
+  document.getElementById('galerie-lightbox-caption').textContent = caption || '';
+  lb.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox(){
+  document.getElementById('galerie-lightbox').style.display = 'none';
+  document.body.style.overflow = '';
+}
 </script>
 
 <script src="chatbot.js"></script>
