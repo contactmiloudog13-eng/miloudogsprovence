@@ -77,8 +77,9 @@
       ) +
       row2(
         field('Date de naissance', '<input type="date" id="c-naissance" value="' + esc(d.naissance || '') + '" onchange="App.chienAge()"' + _lockAttr + '>'),
-        field('Âge', inp('c-age', d.age, 'auto'))
+        field('Âge (auto)', '<input type="text" id="c-age" value="' + esc(App.computeAge(d.naissance) || d.age || '') + '" placeholder="calculé automatiquement" readonly>')
       ) +
+      field('🎂 Me rappeler son anniversaire', sel('c-birthdayReminder', ['Oui', 'Non'], d.birthdayReminder || 'Oui')) +
       row2(
         field('Poids', inp('c-poids', d.poids, 'kg')),
         field('Couleur', inp('c-couleur', d.couleur, 'Fauve…'))
@@ -196,8 +197,10 @@
     const nom = v('c-nom');
     if (!nom) { App.toast('Le nom du chien est obligatoire'); return; }
     const existing = selId() ? (dogs()[selId()] || {}) : {};
+    const naissance = v('c-naissance');
     const data = {
-      nom, race: v('c-race'), sexe: v('c-sexe'), naissance: v('c-naissance'), age: v('c-age'),
+      nom, race: v('c-race'), sexe: v('c-sexe'), naissance: naissance, age: App.computeAge(naissance) || v('c-age'),
+      birthdayReminder: v('c-birthdayReminder') || 'Oui',
       poids: v('c-poids'), couleur: v('c-couleur'), sterilise: v('c-sterilise'),
       identification: v('c-identification'), numeroId: v('c-numeroId'), temperament: v('c-temperament'),
       entendChiens: v('c-entendChiens'), entendChats: v('c-entendChats'), energie: v('c-energie'),

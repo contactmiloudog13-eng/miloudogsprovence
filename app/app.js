@@ -57,6 +57,18 @@ const App = (function () {
     const a = Math.floor(m / 12), r = m % 12;
     return r ? a + ' an' + (a > 1 ? 's' : '') + ' et ' + r + ' mois' : a + ' an' + (a > 1 ? 's' : '');
   }
+  // Anniversaire du chien : jours restants + âge qu'il va fêter
+  function birthdayInfo(naissance) {
+    if (!naissance) return null;
+    const b = new Date(naissance); if (isNaN(b)) return null;
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    let next = new Date(now.getFullYear(), b.getMonth(), b.getDate());
+    if (next < today) next = new Date(now.getFullYear() + 1, b.getMonth(), b.getDate());
+    const days = Math.round((next - today) / 86400000);
+    return { days: days, isToday: days === 0, turning: next.getFullYear() - b.getFullYear() };
+  }
+
   function initials(p, n) { return ((String(p || '')[0] || '') + (String(n || '')[0] || '')).toUpperCase() || '🐾'; }
   function serviceClass(s) {
     s = (s || '').toLowerCase();
@@ -237,7 +249,29 @@ const App = (function () {
       .filter((r) => { const d = new Date(r.dateArrivee || r["Date d'arrivée"] || 0).getTime(); return d && d >= now - 86400000; })
       .sort((a, b) => new Date(a.dateArrivee || a["Date d'arrivée"]) - new Date(b.dateArrivee || b["Date d'arrivée"]))[0];
 
+    // Cartes anniversaire (chiens dont le rappel est activé)
+    let bday = '';
+    Object.entries(_chiens).forEach(([id, d]) => {
+      if ((d.birthdayReminder || 'Oui') === 'Non') return;
+      const info = birthdayInfo(d.naissance);
+      if (!info) return;
+      const nom = esc(d.nom || 'Votre chien');
+      const ans = info.turning + ' an' + (info.turning > 1 ? 's' : '');
+      if (info.isToday) {
+        bday += '<div class="bday-card"><div class="bday-emoji">🎂</div>' +
+          '<div style="flex:1;min-width:0;"><div class="bday-title">Joyeux anniversaire ' + nom + ' !</div>' +
+          '<div class="bday-sub">Aujourd\'hui, il/elle fête ses ' + ans + ' 🎉</div></div>' +
+          '<button class="btn btn-sm btn-soleil" style="width:auto;flex-shrink:0;" onclick="App.wishBirthday(\'' + id + '\')">🎉 Souhaiter</button></div>';
+      } else if (info.days <= 7) {
+        bday += '<div class="bday-card soft"><div class="bday-emoji">🎈</div>' +
+          '<div style="flex:1;min-width:0;"><div class="bday-title">' + nom + ' fêtera ses ' + ans + '</div>' +
+          '<div class="bday-sub">Dans ' + info.days + ' jour' + (info.days > 1 ? 's' : '') + '</div></div></div>';
+      }
+    });
+    if (bday) bday = '<div class="section-label">🎂 Anniversaires</div>' + bday;
+
     const host = $('home-next');
+    host.innerHTML = bday;
     if (upcoming) {
       const svc = upcoming.service || upcoming['Service souhaité'] || 'Séjour';
       const arr = upcoming.dateArrivee || upcoming["Date d'arrivée"];
@@ -247,23 +281,56 @@ const App = (function () {
       const stPill = st.includes('confirm') || st === 'confirmed' ? '<span class="pill ok">✅ Confirmée</span>'
         : st.includes('refus') ? '<span class="pill refus">❌ Refusée</span>'
           : '<span class="pill attente">⏳ En attente</span>';
-      host.innerHTML =
+      host.innerHTML +=
         '<div class="section-label">Prochain séjour</div>' +
         '<div class="card"><div class="card-title">📅 ' + esc(svc) + ' ' + stPill + '</div>' +
         (dog ? '<div style="font-size:.88rem;margin-bottom:6px;">🐕 ' + esc(dog) + '</div>' : '') +
         '<div style="font-size:.85rem;color:var(--text-muted);">Du <b style="color:var(--text)">' + fmtDate(arr) + '</b>' +
         (dep ? ' au <b style="color:var(--text)">' + fmtDate(dep) + '</b>' : '') + '</div></div>';
     } else {
-      host.innerHTML =
+      host.innerHTML +=
         '<div class="section-label">Prochain séjour</div>' +
         '<div class="card"><div class="empty">Aucune réservation à venir.<br><button class="btn btn-sm" style="margin-top:12px" onclick="App.go(\'reservation\')">📅 Réserver un séjour</button></div></div>';
     }
   }
 
+  // Animation festive « Joyeux anniversaire »
+  function showBirthdayOverlay(nom, turning, photoUrl) {
+    const old = document.getElementById('bday-overlay'); if (old) old.remove();
+    const ov = document.createElement('div');
+    ov.id = 'bday-overlay';
+    let confetti = '';
+    const colors = ['#E8A84C', '#7B6FA0', '#5A7A4A', '#F5C84A', '#C0392B', '#4A3F72'];
+    for (let i = 0; i < 60; i++) {
+      const c = colors[i % colors.length];
+      const left = Math.random() * 100;
+      const delay = (Math.random() * 1.2).toFixed(2);
+      const dur = (2.4 + Math.random() * 1.6).toFixed(2);
+      const size = (6 + Math.random() * 8).toFixed(0);
+      confetti += '<span class="confetti" style="left:' + left + '%;background:' + c + ';width:' + size + 'px;height:' + size + 'px;animation-delay:' + delay + 's;animation-duration:' + dur + 's;"></span>';
+    }
+    const ans = turning ? turning + ' an' + (turning > 1 ? 's' : '') : '';
+    ov.innerHTML = confetti +
+      '<div class="bday-pop">' +
+      (photoUrl ? '<div class="bday-photo"><img src="' + photoUrl + '"></div>' : '<div class="bday-photo">🐶</div>') +
+      '<div class="bday-pop-title">🎉 Joyeux anniversaire</div>' +
+      '<div class="bday-pop-name">' + esc(nom) + '</div>' +
+      (ans ? '<div class="bday-pop-sub">' + ans + ' aujourd\'hui 🎂</div>' : '') +
+      '<button class="btn btn-soleil" style="margin-top:18px;" onclick="document.getElementById(\'bday-overlay\').remove()">Merci 🐾</button>' +
+      '</div>';
+    ov.addEventListener('click', (e) => { if (e.target === ov) ov.remove(); });
+    document.body.appendChild(ov);
+  }
+  function wishBirthday(id) {
+    const d = _chiens[id] || {};
+    const info = birthdayInfo(d.naissance) || {};
+    showBirthdayOverlay(d.nom || 'votre chien', info.turning || '', d.photoUrl);
+  }
+
   // ── API publique ──────────────────────────────────────────
   return {
     boot, go, showAuthTab, login, signup, resetPwd, logout,
-    toast, openLightbox, closeLightbox, renderHome,
+    toast, openLightbox, closeLightbox, renderHome, wishBirthday,
     // utils exposés pour les phases suivantes
     _state: () => ({ user: _user, profile: _profile, chiens: _chiens, resaList: _resaList, get selectedChienId() { return _selectedChienId; }, set selectedChienId(v) { _selectedChienId = v; } }),
     _db: () => db, _auth: () => auth,
