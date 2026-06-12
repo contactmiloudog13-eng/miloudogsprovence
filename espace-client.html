@@ -406,6 +406,26 @@ body:not(.auth-ready) footer{visibility:hidden;}
   padding:10px 22px;border-radius:30px;cursor:pointer;transition:all .25s;
 }
 .btn-logout:hover{border-color:#e74c3c;color:#e74c3c;}
+
+/* ── Anniversaire ───────────────────────────────────────── */
+.bday-card{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#FDF3E0,#FCEAF0);border:1.5px solid #F2D7B8;border-radius:18px;padding:14px 18px;margin-bottom:20px;box-shadow:0 4px 24px rgba(123,111,160,.10);}
+.bday-card.soft{background:var(--lavande-light);border-color:#D9D2EC;}
+.bday-card .bday-emoji{font-size:2rem;line-height:1;flex-shrink:0;}
+.bday-card .bday-title{font-weight:800;color:var(--lavande-dark);font-size:1rem;}
+.bday-card .bday-sub{font-size:.84rem;color:var(--text-muted);margin-top:3px;}
+#bday-overlay{position:fixed;inset:0;z-index:10000;background:rgba(44,42,38,.55);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;overflow:hidden;animation:bday-fade .25s ease;}
+@keyframes bday-fade{from{opacity:0}to{opacity:1}}
+.bday-pop{position:relative;z-index:2;background:#fff;border-radius:26px;padding:32px 30px;text-align:center;max-width:340px;width:86%;box-shadow:0 12px 40px rgba(74,63,114,.28);animation:bday-pop .4s cubic-bezier(.2,1.3,.4,1);}
+@keyframes bday-pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+.bday-photo{width:96px;height:96px;border-radius:50%;margin:0 auto 16px;background:var(--lavande-light);display:flex;align-items:center;justify-content:center;font-size:2.4rem;overflow:hidden;border:3px solid var(--soleil);}
+.bday-photo img{width:100%;height:100%;object-fit:cover;}
+.bday-pop-title{font-size:1.05rem;color:var(--text-muted);font-weight:700;}
+.bday-pop-name{font-family:'Playfair Display',serif;font-size:1.9rem;color:var(--lavande-dark);line-height:1.1;margin:3px 0 7px;}
+.bday-pop-sub{font-size:.95rem;color:var(--soleil);font-weight:700;}
+.bday-pop-brand{font-size:.8rem;color:var(--text-muted);margin-top:12px;line-height:1.45;}
+.bday-pop button{margin-top:18px;background:linear-gradient(135deg,var(--soleil),#d98f2e);color:#fff;border:none;padding:11px 26px;border-radius:40px;font-family:'Lato',sans-serif;font-size:.92rem;font-weight:700;cursor:pointer;}
+.confetti{position:absolute;top:-20px;border-radius:2px;opacity:.9;animation-name:confetti-fall;animation-timing-function:linear;animation-iteration-count:infinite;}
+@keyframes confetti-fall{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(105vh) rotate(720deg);opacity:.85}}
 </style>
 </head>
 <body>
@@ -448,6 +468,9 @@ body:not(.auth-ready) footer{visibility:hidden;}
       </div>
       <span class="welcome-badge">✓ Compte actif</span>
     </div>
+
+    <!-- Zone anniversaire (remplie dynamiquement) -->
+    <div id="bday-zone"></div>
 
     <!-- Onglets -->
     <div class="dash-tabs">
@@ -1049,6 +1072,87 @@ function computeAge(naissance) {
   });
 })();
 
+// ── Anniversaire du chien (carte + animation festive Milou Dogs) ──────────────
+function birthdayInfo(naissance) {
+  if (!naissance) return null;
+  const b = new Date(naissance); if (isNaN(b.getTime())) return null;
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  let next = new Date(now.getFullYear(), b.getMonth(), b.getDate());
+  if (next < today) next = new Date(now.getFullYear() + 1, b.getMonth(), b.getDate());
+  const days = Math.round((next - today) / 86400000);
+  return { days: days, isToday: days === 0, turning: next.getFullYear() - b.getFullYear() };
+}
+
+function renderBirthday() {
+  const zone = document.getElementById('bday-zone');
+  if (!zone) return;
+  let html = '';
+  const todayDogs = [];
+  Object.keys(_chiens).forEach(function (id) {
+    const d = _chiens[id] || {};
+    if ((d.birthdayReminder || 'Oui') === 'Non') return;
+    const info = birthdayInfo(d.naissance);
+    if (!info) return;
+    const nom = (d.nom || 'Votre chien');
+    const ans = info.turning + ' an' + (info.turning > 1 ? 's' : '');
+    if (info.isToday) {
+      html += '<div class="bday-card" style="cursor:pointer;" onclick="showBirthdayOverlay(' + "'" + id + "'" + ')">'
+        + '<div class="bday-emoji">🎂</div><div style="flex:1;min-width:0;">'
+        + '<div class="bday-title">Joyeux anniversaire ' + nom + ' !</div>'
+        + '<div class="bday-sub">Toute l\'équipe Milou Dogs lui souhaite une belle journée 🎉 (' + ans + ')</div>'
+        + '</div></div>';
+      todayDogs.push(id);
+    } else if (info.days <= 7) {
+      html += '<div class="bday-card soft"><div class="bday-emoji">🎈</div><div style="flex:1;min-width:0;">'
+        + '<div class="bday-title">' + nom + ' fêtera bientôt ses ' + ans + '</div>'
+        + '<div class="bday-sub">Dans ' + info.days + ' jour' + (info.days > 1 ? 's' : '') + '</div></div></div>';
+    }
+  });
+  zone.innerHTML = html;
+
+  // Animation jouée automatiquement le jour J (une fois par chien par jour)
+  if (todayDogs.length) {
+    const dayKey = new Date().toISOString().slice(0, 10);
+    for (let i = 0; i < todayDogs.length; i++) {
+      const flag = 'bdayShown_' + todayDogs[i] + '_' + dayKey;
+      let seen = false; try { seen = !!localStorage.getItem(flag); } catch (e) {}
+      if (!seen) {
+        try { localStorage.setItem(flag, '1'); } catch (e) {}
+        (function (did) { setTimeout(function () { showBirthdayOverlay(did); }, 700); })(todayDogs[i]);
+        break;
+      }
+    }
+  }
+}
+
+function showBirthdayOverlay(id) {
+  const d = _chiens[id] || {};
+  const info = birthdayInfo(d.naissance) || {};
+  const old = document.getElementById('bday-overlay'); if (old) old.remove();
+  const ov = document.createElement('div');
+  ov.id = 'bday-overlay';
+  const colors = ['#E8A84C', '#7B6FA0', '#5A7A4A', '#F5C84A', '#C0392B', '#4A3F72'];
+  let confetti = '';
+  for (let i = 0; i < 60; i++) {
+    const c = colors[i % colors.length];
+    confetti += '<span class="confetti" style="left:' + (Math.random() * 100) + '%;background:' + c
+      + ';width:' + (6 + Math.random() * 8).toFixed(0) + 'px;height:' + (6 + Math.random() * 8).toFixed(0)
+      + 'px;animation-delay:' + (Math.random() * 1.2).toFixed(2) + 's;animation-duration:' + (2.4 + Math.random() * 1.6).toFixed(2) + 's;"></span>';
+  }
+  const ans = info.turning ? info.turning + ' an' + (info.turning > 1 ? 's' : '') : '';
+  const photo = d.photoUrl ? '<div class="bday-photo"><img src="' + d.photoUrl + '"></div>' : '<div class="bday-photo">🐶</div>';
+  ov.innerHTML = confetti + '<div class="bday-pop">' + photo
+    + '<div class="bday-pop-title">🎉 Joyeux anniversaire</div>'
+    + '<div class="bday-pop-name">' + (d.nom || 'votre chien') + '</div>'
+    + (ans ? '<div class="bday-pop-sub">' + ans + ' aujourd\'hui 🎂</div>' : '')
+    + '<div class="bday-pop-brand">🐾 De la part de toute l\'équipe Milou Dogs Provence</div>'
+    + '<button onclick="document.getElementById(\'bday-overlay\').remove()">Fermer 🎈</button>'
+    + '</div>';
+  ov.addEventListener('click', function (e) { if (e.target === ov) ov.remove(); });
+  document.body.appendChild(ov);
+}
+
 // ── Sauvegarde profil ───────────────────────────────────────────────────────
 document.getElementById('profile-form').addEventListener('submit', async e => {
   e.preventDefault();
@@ -1157,6 +1261,7 @@ async function loadChien(uid) {
       snap.forEach(c => { _chiens[c.key] = c.val(); });
     }
     renderChienSelector();
+    renderBirthday();
     // Sélectionner le premier chien ou afficher formulaire vide
     const ids = Object.keys(_chiens);
     if (ids.length > 0) selectChien(ids[0]);
