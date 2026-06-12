@@ -66,6 +66,12 @@
     </form>
 
     <div class="auth-msg" id="auth-msg"></div>
+
+    <div class="auth-or"><span>ou</span></div>
+    <button type="button" class="btn-google" onclick="App.loginGoogle()">
+      <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
+      Continuer avec Google
+    </button>
   </div>
 </div>
 
@@ -123,8 +129,24 @@
     <div style="font-weight:800;color:var(--lavande-dark);font-size:.86rem;">Installer l'application</div>
     <div id="install-sub" style="font-size:.74rem;color:var(--text-muted);">Accès rapide depuis votre écran d'accueil.</div>
   </div>
-  <button id="install-go" class="btn btn-sm btn-soleil" style="width:auto;">Installer</button>
+  <button id="install-go" class="btn btn-sm btn-soleil" style="width:auto;">📲 Installer</button>
   <button onclick="document.getElementById('install-banner').style.display='none'" style="font-size:1.2rem;color:var(--text-muted);padding:4px;">✕</button>
+</div>
+
+<!-- Guide d'installation iPhone (illustré, ultra-simple) -->
+<div id="ios-install" style="display:none;">
+  <div class="iim-card">
+    <button class="iim-x" onclick="document.getElementById('ios-install').style.display='none'">✕</button>
+    <img src="icons/icon.svg" class="iim-logo" alt="">
+    <div class="iim-title">Installer l'application</div>
+    <div class="iim-intro">C'est gratuit et ça prend 5 secondes 🐾</div>
+    <div class="iim-step"><span class="iim-num">1</span><div>Appuyez sur le bouton <b>Partager</b>
+      <svg width="17" height="17" viewBox="0 0 50 50" style="vertical-align:-3px;"><path fill="none" stroke="#1976D2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M25 33V7M16 16l9-9 9 9M13 23h-3v20h30V23h-3"/></svg>
+      <br><span class="iim-hint">en bas de l'écran Safari</span></div></div>
+    <div class="iim-step"><span class="iim-num">2</span><div>Descendez puis appuyez sur<br><b>« Sur l'écran d'accueil »</b> ➕</div></div>
+    <div class="iim-step"><span class="iim-num">3</span><div>Appuyez sur <b>« Ajouter »</b> ✅<br><span class="iim-hint">en haut à droite</span></div></div>
+    <button class="btn btn-soleil" style="margin-top:6px;" onclick="document.getElementById('ios-install').style.display='none'">J'ai compris 👍</button>
+  </div>
 </div>
 
 <!-- Firebase -->
@@ -149,28 +171,33 @@
     var standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
     if (standalone) return; // déjà installée
 
+    var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
     var deferred = null;
+
+    // Android / Chrome / Edge : installation native en 1 clic
     window.addEventListener('beforeinstallprompt', function (e) {
       e.preventDefault(); deferred = e;
+      sub.textContent = 'Un seul clic, et c\'est installé !';
       banner.style.display = 'flex';
-    });
-    btn.addEventListener('click', function () {
-      if (!deferred) return;
-      deferred.prompt();
-      deferred.userChoice.finally(function () { deferred = null; banner.style.display = 'none'; });
     });
     window.addEventListener('appinstalled', function () { banner.style.display = 'none'; });
 
-    // iOS : pas d'event beforeinstallprompt → instructions manuelles
-    var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    if (isIOS && !localStorage.getItem('iosInstallSeen')) {
+    btn.addEventListener('click', function () {
+      if (deferred) {                       // Android → vraie installation directe
+        deferred.prompt();
+        deferred.userChoice.finally(function () { deferred = null; banner.style.display = 'none'; });
+      } else if (isIOS) {                    // iPhone → guide illustré (Apple n'autorise pas le 1 clic)
+        document.getElementById('ios-install').style.display = 'flex';
+      }
+    });
+
+    // iPhone : affiche la bannière (1 fois par session) → le bouton ouvre le guide
+    if (isIOS && !sessionStorage.getItem('iosBannerSeen')) {
       setTimeout(function () {
-        if (banner.style.display === 'flex') return;
-        btn.style.display = 'none';
-        sub.innerHTML = 'Appuyez sur <b>Partager</b> ⬆️ puis <b>« Sur l\'écran d\'accueil »</b>.';
+        sub.textContent = 'Ajoutez-la à votre écran d\'accueil 🐾';
         banner.style.display = 'flex';
-        localStorage.setItem('iosInstallSeen', '1');
-      }, 3500);
+        sessionStorage.setItem('iosBannerSeen', '1');
+      }, 2500);
     }
   })();
 </script>

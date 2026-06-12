@@ -127,6 +127,26 @@ const App = (function () {
       .catch((err) => { authMsg(authError(err)); btn.disabled = false; });
     return false;
   }
+  function loginGoogle() {
+    authMsg('');
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      .then(() => auth.signInWithPopup(provider))
+      .then((res) => {
+        if (res && res.additionalUserInfo && res.additionalUserInfo.isNewUser && res.user) {
+          const u = res.user; const parts = (u.displayName || '').trim().split(' ');
+          return db.ref('users/' + u.uid).update({ prenom: parts.shift() || '', nom: parts.join(' '), email: u.email || '', createdAt: Date.now() });
+        }
+      })
+      .catch((err) => {
+        const c = (err && err.code) || '';
+        if (c.includes('popup-closed-by-user') || c.includes('cancelled-popup-request')) return;
+        if (c.includes('operation-not-allowed')) { authMsg('La connexion Google n\'est pas encore activée.'); return; }
+        if (c.includes('popup-blocked')) { auth.signInWithRedirect(provider); return; } // repli PWA
+        authMsg(authError(err));
+      });
+    return false;
+  }
   function resetPwd() {
     const email = ($('lg-email').value || '').trim();
     if (!email) { authMsg('Entrez votre e-mail puis recliquez.'); return false; }
@@ -149,6 +169,13 @@ const App = (function () {
 
   // ── Démarrage / état de connexion ─────────────────────────
   function boot() {
+    // Retour d'une connexion Google par redirection (repli PWA) → créer le profil si nouveau
+    auth.getRedirectResult().then((res) => {
+      if (res && res.user && res.additionalUserInfo && res.additionalUserInfo.isNewUser) {
+        const u = res.user; const parts = (u.displayName || '').trim().split(' ');
+        db.ref('users/' + u.uid).update({ prenom: parts.shift() || '', nom: parts.join(' '), email: u.email || '', createdAt: Date.now() });
+      }
+    }).catch(() => {});
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         _user = user;
@@ -345,7 +372,7 @@ const App = (function () {
 
   // ── API publique ──────────────────────────────────────────
   return {
-    boot, go, showAuthTab, login, signup, resetPwd, logout,
+    boot, go, showAuthTab, login, signup, resetPwd, logout, loginGoogle,
     toast, openLightbox, closeLightbox, renderHome, wishBirthday,
     // utils exposés pour les phases suivantes
     _state: () => ({ user: _user, profile: _profile, chiens: _chiens, resaList: _resaList, get selectedChienId() { return _selectedChienId; }, set selectedChienId(v) { _selectedChienId = v; } }),

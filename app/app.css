@@ -210,5 +210,24 @@ main#view-container{flex:1;padding:16px 16px calc(var(--tabbar-h) + var(--safe-b
 .bday-pop-name{font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--lavande-dark);line-height:1.1;margin:2px 0 6px;}
 .bday-pop-sub{font-size:.9rem;color:var(--soleil);font-weight:700;}
 .bday-pop-brand{font-size:.76rem;color:var(--text-muted);margin-top:10px;line-height:1.4;}
+
+/* ── Bouton Google ──────────────────────────────────────── */
+.auth-or{display:flex;align-items:center;text-align:center;gap:12px;margin:18px 0 14px;color:var(--text-muted);font-size:.8rem;}
+.auth-or::before,.auth-or::after{content:'';flex:1;height:1px;background:var(--border);}
+.btn-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px;border:1.5px solid var(--border);border-radius:14px;background:#fff;color:#3c4043;font-family:'Lato',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:background .2s,box-shadow .2s,border-color .2s;}
+.btn-google:hover{background:#f7f7f7;box-shadow:0 4px 14px rgba(0,0,0,.08);border-color:#cfcfcf;}
+.btn-google svg{flex-shrink:0;}
+
+/* ── Guide d'installation iPhone ────────────────────────── */
+#ios-install{position:fixed;inset:0;z-index:9995;background:rgba(44,42,38,.55);backdrop-filter:blur(3px);display:flex;align-items:flex-end;justify-content:center;}
+.iim-card{background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:460px;padding:26px 22px calc(26px + var(--safe-bottom));text-align:center;position:relative;box-shadow:var(--shadow-lg);animation:iim-up .35s cubic-bezier(.2,1,.3,1);}
+@keyframes iim-up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.iim-x{position:absolute;top:14px;right:16px;font-size:1.3rem;color:var(--text-muted);background:none;border:none;cursor:pointer;line-height:1;}
+.iim-logo{width:58px;height:58px;border-radius:15px;margin-bottom:10px;}
+.iim-title{font-family:'Playfair Display',serif;font-size:1.45rem;color:var(--lavande-dark);}
+.iim-intro{font-size:.85rem;color:var(--text-muted);margin:4px 0 18px;}
+.iim-step{display:flex;align-items:center;gap:14px;text-align:left;background:var(--cream);border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:10px;font-size:.93rem;color:var(--text);line-height:1.45;}
+.iim-num{flex-shrink:0;width:30px;height:30px;border-radius:50%;background:var(--lavande);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;}
+.iim-hint{font-size:.78rem;color:var(--text-muted);}
 .confetti{position:absolute;top:-20px;border-radius:2px;opacity:.9;animation-name:confetti-fall;animation-timing-function:linear;animation-iteration-count:infinite;}
 @keyframes confetti-fall{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(105vh) rotate(720deg);opacity:.85}}
