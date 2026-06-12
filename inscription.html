@@ -440,6 +440,7 @@ function validatePhone(tel) {
 async function registerGoogle() {
   document.getElementById('alert-error').classList.remove('show');
   setLoading(true);
+  window.__suppressAuthRedirect = true; // écrit le profil avant de rediriger
   try {
     await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     const provider = new firebase.auth.GoogleAuthProvider();
@@ -509,6 +510,7 @@ document.getElementById('register-form').addEventListener('submit', async e => {
   }
 
   try {
+    window.__suppressAuthRedirect = true; // empêche la redirection auto avant l'écriture du profil
     const cred = await firebase.auth().createUserWithEmailAndPassword(email, password);
     await cred.user.updateProfile({ displayName: prenom });
     await firebase.database().ref('users/' + cred.user.uid).set({

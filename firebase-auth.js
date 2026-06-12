@@ -81,9 +81,11 @@ function requireAuth() {
   });
 }
 
-// Redirige si déjà connecté (pages login/inscription)
+// Redirige si déjà connecté (pages login/inscription).
+// __suppressAuthRedirect : posé pendant une inscription en cours pour laisser le
+// temps d'écrire le profil avant la redirection manuelle (évite la double saisie).
 function redirectIfLoggedIn(dest) {
   _auth.onAuthStateChanged(user => {
-    if (user) window.location.href = dest || 'espace-client.html';
+    if (user && !window.__suppressAuthRedirect) window.location.href = dest || 'espace-client.html';
   });
 }

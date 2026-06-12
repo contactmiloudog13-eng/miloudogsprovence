@@ -294,6 +294,7 @@ document.getElementById('login-form').addEventListener('submit', async e => {
 async function loginGoogle() {
   document.getElementById('alert-error').classList.remove('show');
   setLoading(true);
+  window.__suppressAuthRedirect = true; // laisse le temps d'écrire le profil d'un nouveau compte Google
   try {
     await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     const provider = new firebase.auth.GoogleAuthProvider();
