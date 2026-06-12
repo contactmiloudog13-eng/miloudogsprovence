@@ -251,6 +251,7 @@ const App = (function () {
 
     // Cartes anniversaire (chiens dont le rappel est activé)
     let bday = '';
+    const todayDogs = [];
     Object.entries(_chiens).forEach(([id, d]) => {
       if ((d.birthdayReminder || 'Oui') === 'Non') return;
       const info = birthdayInfo(d.naissance);
@@ -258,13 +259,13 @@ const App = (function () {
       const nom = esc(d.nom || 'Votre chien');
       const ans = info.turning + ' an' + (info.turning > 1 ? 's' : '');
       if (info.isToday) {
-        bday += '<div class="bday-card"><div class="bday-emoji">🎂</div>' +
+        bday += '<div class="bday-card" onclick="App.wishBirthday(\'' + id + '\')" style="cursor:pointer;"><div class="bday-emoji">🎂</div>' +
           '<div style="flex:1;min-width:0;"><div class="bday-title">Joyeux anniversaire ' + nom + ' !</div>' +
-          '<div class="bday-sub">Aujourd\'hui, il/elle fête ses ' + ans + ' 🎉</div></div>' +
-          '<button class="btn btn-sm btn-soleil" style="width:auto;flex-shrink:0;" onclick="App.wishBirthday(\'' + id + '\')">🎉 Souhaiter</button></div>';
+          '<div class="bday-sub">Toute l\'équipe Milou Dogs lui souhaite une belle journée 🎉 (' + ans + ')</div></div></div>';
+        todayDogs.push(id);
       } else if (info.days <= 7) {
         bday += '<div class="bday-card soft"><div class="bday-emoji">🎈</div>' +
-          '<div style="flex:1;min-width:0;"><div class="bday-title">' + nom + ' fêtera ses ' + ans + '</div>' +
+          '<div style="flex:1;min-width:0;"><div class="bday-title">' + nom + ' fêtera bientôt ses ' + ans + '</div>' +
           '<div class="bday-sub">Dans ' + info.days + ' jour' + (info.days > 1 ? 's' : '') + '</div></div></div>';
       }
     });
@@ -272,6 +273,20 @@ const App = (function () {
 
     const host = $('home-next');
     host.innerHTML = bday;
+
+    // Animation festive jouée automatiquement le jour J (une fois par chien par jour)
+    if (todayDogs.length) {
+      const dayKey = new Date().toISOString().slice(0, 10);
+      for (let ti = 0; ti < todayDogs.length; ti++) {
+        const flag = 'bdayShown_' + todayDogs[ti] + '_' + dayKey;
+        let seen = false; try { seen = !!localStorage.getItem(flag); } catch (e) {}
+        if (!seen) {
+          try { localStorage.setItem(flag, '1'); } catch (e) {}
+          (function (did) { setTimeout(function () { wishBirthday(did); }, 600); })(todayDogs[ti]);
+          break;
+        }
+      }
+    }
     if (upcoming) {
       const svc = upcoming.service || upcoming['Service souhaité'] || 'Séjour';
       const arr = upcoming.dateArrivee || upcoming["Date d'arrivée"];
@@ -316,7 +331,8 @@ const App = (function () {
       '<div class="bday-pop-title">🎉 Joyeux anniversaire</div>' +
       '<div class="bday-pop-name">' + esc(nom) + '</div>' +
       (ans ? '<div class="bday-pop-sub">' + ans + ' aujourd\'hui 🎂</div>' : '') +
-      '<button class="btn btn-soleil" style="margin-top:18px;" onclick="document.getElementById(\'bday-overlay\').remove()">Merci 🐾</button>' +
+      '<div class="bday-pop-brand">🐾 De la part de toute l\'équipe Milou Dogs Provence</div>' +
+      '<button class="btn btn-soleil" style="margin-top:16px;" onclick="document.getElementById(\'bday-overlay\').remove()">Fermer 🎈</button>' +
       '</div>';
     ov.addEventListener('click', (e) => { if (e.target === ov) ov.remove(); });
     document.body.appendChild(ov);
