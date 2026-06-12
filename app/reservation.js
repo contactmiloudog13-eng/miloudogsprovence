@@ -50,7 +50,10 @@
       '</div>' +
 
       '<div class="section-label">Mes réservations</div>' +
-      '<div id="resa-list"></div>';
+      '<div id="resa-list"></div>' +
+
+      '<div class="section-label">🧾 Mes factures</div>' +
+      '<div id="factures-list"></div>';
 
     _svc = null;
     ['r-arr', 'r-dep'].forEach((id) => { const e = document.getElementById(id); if (e) e.addEventListener('change', updateEstimate); });
@@ -154,7 +157,7 @@
   App.renderReservationList = function () {
     const host = document.getElementById('resa-list'); if (!host) return;
     const list = App.getResaList();
-    if (!list.length) { host.innerHTML = '<div class="card"><div class="empty">Aucune réservation pour le moment.</div></div>'; return; }
+    if (!list.length) { host.innerHTML = '<div class="card"><div class="empty">Aucune réservation pour le moment.</div></div>'; App.renderFacturesList(); return; }
     host.innerHTML = list.map((r) => {
       const svc = r.service || r['Service souhaité'] || 'Séjour';
       const arr = r.dateArrivee || r["Date d'arrivée"];
@@ -169,6 +172,39 @@
         (dog ? '<div style="font-size:.85rem;margin-bottom:4px;">🐕 ' + esc(dog) + '</div>' : '') +
         '<div style="font-size:.82rem;color:var(--text-muted);">Du <b style="color:var(--text)">' + App.fmtDate(arr) + '</b>' +
         (dep ? ' au <b style="color:var(--text)">' + App.fmtDate(dep) + '</b>' : '') + '</div></div>';
+    }).join('');
+    App.renderFacturesList();
+  };
+
+  // Factures = réservations acceptées par Milou Dogs (statut « confirmé »)
+  App.renderFacturesList = function () {
+    const host = document.getElementById('factures-list'); if (!host) return;
+    const confirmed = App.getResaList().filter((r) => {
+      const st = (r.statut || r._statut || '').toLowerCase();
+      return st.includes('confirm') || st.includes('accept');
+    });
+    if (!confirmed.length) {
+      host.innerHTML = '<div class="card"><div class="empty">Vos factures apparaîtront ici une fois vos réservations acceptées.</div></div>';
+      return;
+    }
+    host.innerHTML = confirmed.map((r) => {
+      const svc = r.service || r['Service souhaité'] || 'Séjour';
+      const arr = r.dateArrivee || r["Date d'arrivée"];
+      const dep = r.dateDepart || r['Date de départ'];
+      const dog = (r.chien && r.chien.nom) || r['Nom du chien'] || '';
+      const prix = r.prix || r.montant || r.total || '';
+      const num = 'MDP-' + String(r.createdAt || r.key || Date.now()).replace(/[^0-9]/g, '').slice(-6);
+      return '<div class="card">' +
+        '<div class="card-title" style="justify-content:space-between;"><span>🧾 ' + esc(svc) + '</span>' +
+        '<span class="pill ok">✅ Acceptée</span></div>' +
+        '<div style="font-family:monospace;font-size:.74rem;color:var(--text-muted);margin-bottom:6px;">N° ' + esc(num) + '</div>' +
+        (dog ? '<div style="font-size:.85rem;margin-bottom:4px;">🐕 ' + esc(dog) + '</div>' : '') +
+        '<div style="font-size:.82rem;color:var(--text-muted);margin-bottom:8px;">Du <b style="color:var(--text)">' + App.fmtDate(arr) + '</b>' +
+        (dep ? ' au <b style="color:var(--text)">' + App.fmtDate(dep) + '</b>' : '') + '</div>' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:8px;">' +
+        '<span style="font-size:.78rem;color:var(--text-muted);">Montant</span>' +
+        '<span style="font-size:1.1rem;font-weight:800;color:var(--lavande-dark);">' + (prix ? esc(String(prix).replace(/€?$/, '')) + ' €' : '—') + '</span>' +
+        '</div></div>';
     }).join('');
   };
 })();

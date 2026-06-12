@@ -11,6 +11,9 @@
   function dogs() { return App.getChiens(); }
   function selId() { return App.getSelectedChien(); }
 
+  let _chienEdit = false; // mode édition d'un chien existant
+  let _lockAttr = '';     // ' disabled' quand les champs sont en lecture seule
+
   // Carnet : liste normalisée (champ carnetUrls[] + rétro-compat carnetUrl)
   function carnetList(d) {
     d = d || {};
@@ -22,13 +25,13 @@
 
   // Champ <select>
   function sel(id, options, cur) {
-    return '<select id="' + id + '">' +
+    return '<select id="' + id + '"' + _lockAttr + '>' +
       '<option value="">—</option>' +
       options.map((o) => '<option value="' + esc(o) + '"' + (cur === o ? ' selected' : '') + '>' + esc(o) + '</option>').join('') +
       '</select>';
   }
   function inp(id, val, ph, type) {
-    return '<input type="' + (type || 'text') + '" id="' + id + '" value="' + esc(val || '') + '" placeholder="' + esc(ph || '') + '">';
+    return '<input type="' + (type || 'text') + '" id="' + id + '" value="' + esc(val || '') + '" placeholder="' + esc(ph || '') + '"' + _lockAttr + '>';
   }
 
   // ── Rendu principal ───────────────────────────────────────
@@ -53,14 +56,19 @@
 
     const d = selId() ? (ds[selId()] || {}) : {};
     const isNew = !selId();
+    const locked = !isNew && !_chienEdit; // chien existant non édité → lecture seule
+    _lockAttr = locked ? ' disabled' : '';
 
     const form =
       '<div class="card">' +
+      // En-tête : bouton Modifier quand verrouillé
+      (locked ? '<div style="text-align:right;margin-bottom:6px;"><button class="btn btn-sm btn-ghost" style="width:auto;" onclick="App.chienEdit()">✏️ Modifier</button></div>' : '') +
       // Photo
       '<div class="photo-circle" id="dog-photo">' + (d.photoUrl ? '<img src="' + d.photoUrl + '">' : '🐕') + '</div>' +
-      '<div style="text-align:center;margin-bottom:14px;">' +
-      '<label class="btn btn-sm btn-ghost" style="display:inline-flex;">📷 ' + (d.photoUrl ? 'Changer la photo' : 'Ajouter une photo') +
-      '<input type="file" accept="image/*" hidden onchange="App.chienPhoto(this)"></label></div>' +
+      (locked ? '' :
+        '<div style="text-align:center;margin-bottom:14px;">' +
+        '<label class="btn btn-sm btn-ghost" style="display:inline-flex;">📷 ' + (d.photoUrl ? 'Changer la photo' : 'Ajouter une photo') +
+        '<input type="file" accept="image/*" hidden onchange="App.chienPhoto(this)"></label></div>') +
 
       field('Nom du chien', inp('c-nom', d.nom, 'Rex')) +
       row2(
@@ -68,7 +76,7 @@
         field('Sexe', sel('c-sexe', ['Mâle', 'Femelle'], d.sexe))
       ) +
       row2(
-        field('Date de naissance', '<input type="date" id="c-naissance" value="' + esc(d.naissance || '') + '" onchange="App.chienAge()">'),
+        field('Date de naissance', '<input type="date" id="c-naissance" value="' + esc(d.naissance || '') + '" onchange="App.chienAge()"' + _lockAttr + '>'),
         field('Âge', inp('c-age', d.age, 'auto'))
       ) +
       row2(
@@ -93,21 +101,23 @@
       field('Détail du traitement', inp('c-traitementDetail', d.traitementDetail, 'Si oui, lequel…')) +
       field('Allergies', sel('c-allergies', ['Oui', 'Non'], d.allergies)) +
       field('Détail des allergies', inp('c-allergiesDetail', d.allergiesDetail, 'Si oui, lesquelles…')) +
-      field('Infos complémentaires', '<textarea id="c-infos" rows="3" placeholder="Habitudes, peurs, alimentation…">' + esc(d.infos || '') + '</textarea>') +
+      field('Infos complémentaires', '<textarea id="c-infos" rows="3" placeholder="Habitudes, peurs, alimentation…"' + _lockAttr + '>' + esc(d.infos || '') + '</textarea>') +
 
       // Carnet de santé
       '<div class="section-label" style="margin:18px 0 8px;">📎 Carnet de santé</div>' +
-      '<label class="upload-zone" style="display:block;">Ajouter une ou plusieurs photos / PDF' +
-      '<input type="file" accept="image/*,.pdf" multiple hidden onchange="App.chienCarnet(this)"></label>' +
+      (locked ? '' :
+        '<label class="upload-zone" style="display:block;">Ajouter une ou plusieurs photos / PDF' +
+        '<input type="file" accept="image/*,.pdf" multiple hidden onchange="App.chienCarnet(this)"></label>') +
       '<div class="bar" id="carnet-bar"><i></i></div>' +
       '<div id="carnet-grid"></div>' +
 
-      '<button class="btn btn-soleil" style="margin-top:18px;" onclick="App.chienSave()">💾 ' + (isNew ? 'Enregistrer ce chien' : 'Enregistrer') + '</button>' +
+      (locked ? '' : '<button class="btn btn-soleil" style="margin-top:18px;" onclick="App.chienSave()">💾 ' + (isNew ? 'Enregistrer ce chien' : 'Enregistrer') + '</button>') +
       (isNew ? '' : '<button class="btn btn-danger" style="margin-top:10px;" onclick="App.chienDelete()">🗑️ Supprimer ce chien</button>') +
       '</div>';
 
     body.innerHTML = chips + form;
-    renderCarnet(carnetList(d));
+    renderCarnet(carnetList(d), locked);
+    _lockAttr = '';
   };
 
   function field(label, control) {
@@ -115,20 +125,21 @@
   }
   function row2(a, b) { return '<div class="row-2">' + a + b + '</div>'; }
 
-  function renderCarnet(list) {
+  function renderCarnet(list, locked) {
     const host = document.getElementById('carnet-grid');
     if (!host) return;
-    if (!list.length) { host.innerHTML = ''; return; }
+    if (!list.length) { host.innerHTML = locked ? '<div class="empty" style="padding:14px;">Aucun document.</div>' : ''; return; }
     host.innerHTML = '<div class="carnet-grid">' + list.map((u, i) =>
       '<div class="carnet-item">' +
       (isImg(u) ? '<img src="' + u + '" class="zoomable">' : '<a class="pdf" href="' + u + '" target="_blank">📄 PDF ' + (i + 1) + '</a>') +
-      '<button class="del" onclick="App.chienCarnetDel(' + i + ')">🗑️</button></div>'
+      (locked ? '' : '<button class="del" onclick="App.chienCarnetDel(' + i + ')">🗑️</button>') + '</div>'
     ).join('') + '</div>';
   }
 
   // ── Actions ───────────────────────────────────────────────
-  App.chienSelect = function (id) { App.setSelectedChien(id); App.renderChiens(); };
-  App.chienNew = function () { App.setSelectedChien(null); App.renderChiens(); document.getElementById('c-nom').focus(); };
+  App.chienSelect = function (id) { _chienEdit = false; App.setSelectedChien(id); App.renderChiens(); };
+  App.chienNew = function () { _chienEdit = false; App.setSelectedChien(null); App.renderChiens(); document.getElementById('c-nom').focus(); };
+  App.chienEdit = function () { _chienEdit = true; App.renderChiens(); };
   App.chienAge = function () {
     const age = App.computeAge(document.getElementById('c-naissance').value);
     if (age) document.getElementById('c-age').value = age;
@@ -206,6 +217,7 @@
         App.setSelectedChien(ref.key);
         App._pendingPhoto = null;
       }
+      _chienEdit = false; // reverrouille : le listener temps réel re-render en lecture seule
       App.toast('Profil de ' + nom + ' enregistré ✓');
     } catch (e) { App.toast('Erreur : ' + (e.message || 'enregistrement')); }
   };

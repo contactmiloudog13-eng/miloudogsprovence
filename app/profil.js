@@ -6,25 +6,32 @@
   const esc = App.esc;
   const db = App._db();
   let _cpTimer = null;
+  let _edit = false; // mode édition : verrouillé tant qu'on n'a pas cliqué « Modifier »
 
   App.renderProfil = function () {
     const p = App.getProfile(); const user = App.getUser();
     const body = document.getElementById('profil-body');
+    const lock = _edit ? '' : ' disabled'; // champs en lecture seule hors édition
     body.innerHTML =
       '<div class="card">' +
-      '<div class="card-title">👤 Mes informations</div>' +
+      '<div class="card-title" style="justify-content:space-between;"><span>👤 Mes informations</span>' +
+      (_edit ? '' : '<button class="btn btn-sm btn-ghost" style="width:auto;" onclick="App.profilEdit()">✏️ Modifier</button>') +
+      '</div>' +
       '<div class="row-2">' +
-      f('Prénom', '<input type="text" id="p-prenom" value="' + esc(p.prenom || '') + '">') +
-      f('Nom', '<input type="text" id="p-nom" value="' + esc(p.nom || '') + '">') +
+      f('Prénom', '<input type="text" id="p-prenom" value="' + esc(p.prenom || '') + '"' + lock + '>') +
+      f('Nom', '<input type="text" id="p-nom" value="' + esc(p.nom || '') + '"' + lock + '>') +
       '</div>' +
       f('E-mail', '<input type="email" value="' + esc(p.email || user.email || '') + '" readonly>') +
-      f('Téléphone', '<input type="tel" id="p-tel" inputmode="tel" value="' + esc(p.telephone || '') + '" placeholder="06 12 34 56 78">') +
-      f('Adresse', '<input type="text" id="p-adresse" value="' + esc(p.adresse || '') + '" placeholder="12 rue des Mimosas">') +
+      f('Téléphone', '<input type="tel" id="p-tel" inputmode="tel" value="' + esc(p.telephone || '') + '" placeholder="06 12 34 56 78"' + lock + '>') +
+      f('Adresse', '<input type="text" id="p-adresse" value="' + esc(p.adresse || '') + '" placeholder="12 rue des Mimosas"' + lock + '>') +
       '<div class="row-2">' +
-      f('Code postal', '<input type="text" id="p-cp" inputmode="numeric" maxlength="5" value="' + esc(p.codePostal || '') + '" placeholder="13140" oninput="App.cpLookup(this)">') +
-      f('Ville', '<input type="text" id="p-ville" list="ville-sugg" value="' + esc(p.ville || '') + '" placeholder="Miramas"><datalist id="ville-sugg"></datalist>') +
+      f('Code postal', '<input type="text" id="p-cp" inputmode="numeric" maxlength="5" value="' + esc(p.codePostal || '') + '" placeholder="13140" oninput="App.cpLookup(this)"' + lock + '>') +
+      f('Ville', '<input type="text" id="p-ville" list="ville-sugg" value="' + esc(p.ville || '') + '" placeholder="Miramas"' + lock + '><datalist id="ville-sugg"></datalist>') +
       '</div>' +
-      '<button class="btn btn-soleil" id="p-save" onclick="App.profilSave()">💾 Enregistrer</button>' +
+      (_edit
+        ? '<button class="btn btn-soleil" id="p-save" onclick="App.profilSave()">💾 Enregistrer</button>' +
+          '<button class="btn btn-ghost" style="margin-top:10px;" onclick="App.profilCancel()">Annuler</button>'
+        : '') +
       '<div class="auth-msg" id="p-out"></div>' +
       '</div>' +
 
@@ -36,6 +43,9 @@
       '<button class="btn btn-danger" onclick="App.logout()">🚪 Se déconnecter</button>' +
       '<div style="text-align:center;color:var(--text-muted);font-size:.72rem;margin-top:16px;">Milou Dogs Provence · v1.0</div>';
   };
+
+  App.profilEdit = function () { _edit = true; App.renderProfil(); };
+  App.profilCancel = function () { _edit = false; App.renderProfil(); };
 
   function f(label, control) { return '<div class="field"><label>' + esc(label) + '</label>' + control + '</div>'; }
 
@@ -74,8 +84,10 @@
       try { await App.getUser().updateProfile({ displayName: prenom }); } catch (e) {}
       App.setProfile(Object.assign({}, App.getProfile(), data));
       App.updateAvatar(); App.renderHome();
-      out.classList.add('ok'); out.textContent = '✓ Profil enregistré !';
       App.toast('Profil mis à jour ✓');
+      _edit = false; App.renderProfil(); // reverrouille en lecture seule
+      const o2 = document.getElementById('p-out'); if (o2) { o2.className = 'auth-msg ok'; o2.textContent = '✓ Profil enregistré !'; }
+      return;
     } catch (e) { out.classList.add('err'); out.textContent = 'Erreur : ' + (e.message || 'enregistrement'); }
     btn.disabled = false;
   };
