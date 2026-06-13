@@ -386,6 +386,65 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
   </div>
 </section>
 
+<!-- ── Comment ça marche ─────────────────────────────── -->
+<style>
+#hiw-home{padding:80px 5%;background:white;}
+.hiw-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:38px;}
+.hiw-card{position:relative;background:var(--cream);border:1.5px solid var(--border);border-radius:18px;padding:30px 22px 26px;text-align:center;transition:transform .25s,box-shadow .25s;}
+.hiw-card:hover{transform:translateY(-6px);box-shadow:0 14px 38px rgba(74,63,114,.13);}
+.hiw-num{position:absolute;top:14px;right:16px;font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--lavande-light);line-height:1;font-weight:700;}
+.hiw-ico{font-size:2.6rem;display:block;margin-bottom:14px;}
+.hiw-card h3{font-family:'Playfair Display',serif;font-size:1.12rem;color:var(--lavande-dark);margin:0 0 8px;}
+.hiw-card p{font-size:.86rem;color:var(--text-muted);line-height:1.6;margin:0;}
+.hiw-card.gift{background:linear-gradient(135deg,#FFF8E6,#FFF3CD);border-color:var(--soleil);}
+.hiw-card.gift h3{color:#8B6020;}
+.hiw-arrow{position:absolute;top:50%;right:-13px;transform:translateY(-50%);font-size:1.3rem;color:var(--lavande);z-index:2;}
+.hiw-cta{text-align:center;margin-top:34px;}
+@media(max-width:860px){.hiw-grid{grid-template-columns:1fr 1fr;}.hiw-arrow{display:none;}}
+@media(max-width:480px){.hiw-grid{grid-template-columns:1fr;}}
+</style>
+<section id="hiw-home">
+  <div class="container">
+    <div class="section-header fade-in">
+      <p class="section-label">🐾 Simple & rassurant</p>
+      <h2 class="section-title">Comment ça marche ?</h2>
+      <p class="section-sub">De la réservation aux câlins, en 4 étapes faciles — sans acompte, sans stress.</p>
+    </div>
+    <div class="hiw-grid">
+      <div class="hiw-card reveal-scale">
+        <span class="hiw-num">1</span>
+        <span class="hiw-ico">📅</span>
+        <h3>Vous réservez</h3>
+        <p>2 minutes en ligne, 24h/24. Réponse et confirmation sous 24h.</p>
+        <span class="hiw-arrow">→</span>
+      </div>
+      <div class="hiw-card reveal-scale">
+        <span class="hiw-num">2</span>
+        <span class="hiw-ico">🤝</span>
+        <h3>Visite offerte</h3>
+        <p>Votre chien découvre les lieux gratuitement avant son séjour.</p>
+        <span class="hiw-arrow">→</span>
+      </div>
+      <div class="hiw-card reveal-scale">
+        <span class="hiw-num">3</span>
+        <span class="hiw-ico">🏡</span>
+        <h3>Séjour en famille</h3>
+        <p>Terrain 2 000 m², câlins illimités, jamais en cage. Photos chaque jour sur WhatsApp.</p>
+        <span class="hiw-arrow">→</span>
+      </div>
+      <div class="hiw-card gift reveal-scale">
+        <span class="hiw-num">4</span>
+        <span class="hiw-ico">🎁</span>
+        <h3>Paiement à la fin</h3>
+        <p>Aucun acompte. Et la 1ʳᵉ nuit est offerte pour les nouveaux clients !</p>
+      </div>
+    </div>
+    <div class="hiw-cta">
+      <a class="hero-btn-main" href="reservation.html" style="display:inline-block;">📅 Réserver maintenant</a>
+    </div>
+  </div>
+</section>
+
 <!-- ── Comparaison Milou Dogs vs Chenil ─────────────── -->
 <section id="comparaison-home" style="background:var(--cream);padding:80px 5%;">
   <div class="container">
@@ -487,7 +546,7 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
     </div>
     <!-- Lightbox -->
     <div id="galerie-lightbox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;align-items:center;justify-content:center;cursor:zoom-out;" onclick="closeLightbox()">
-      <img id="galerie-lightbox-img" src="" style="max-width:92vw;max-height:90vh;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.5);">
+      <img id="galerie-lightbox-img" src="" alt="Photo d'un chien en pension familiale chez Milou Dogs Provence à Miramas" style="max-width:92vw;max-height:90vh;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.5);">
       <div id="galerie-lightbox-caption" style="position:absolute;bottom:24px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.75);font-size:.85rem;text-align:center;pointer-events:none;"></div>
     </div>
   </div>

@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
   <url>
     <loc>https://miloudogsprovence.fr/</loc>
-    <lastmod>2025-06-01</lastmod>
+    <lastmod>2026-06-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <image:image><image:loc>https://miloudogsprovence.fr/hero-banner.webp</image:loc><image:title>Pension familiale pour chien à Miramas — Milou Dogs Provence</image:title><image:caption>Garde de chien en famille à Miramas, terrain de 2000 m², jamais en cage.</image:caption></image:image>
+    <image:image><image:loc>https://miloudogsprovence.fr/IMG_0952.webp</image:loc><image:title>Chien heureux en pension à Miramas</image:title><image:caption>Pension canine familiale en Provence — chiens choyés et libres.</image:caption></image:image>
+    <image:image><image:loc>https://miloudogsprovence.fr/IMG_1073.webp</image:loc><image:title>Garde de chien sur grand terrain en Provence</image:title><image:caption>Terrain sécurisé de 2000 m² pour que votre chien se dépense.</image:caption></image:image>
+    <image:image><image:loc>https://miloudogsprovence.fr/IMG_1078.webp</image:loc><image:title>Chien en garderie journée à Miramas</image:title><image:caption>Garderie pour chien à la journée, ambiance familiale et câlins.</image:caption></image:image>
+    <image:image><image:loc>https://miloudogsprovence.fr/IMG_1130.webp</image:loc><image:title>Pension pour chien sans cage en Provence</image:title><image:caption>Vos compagnons vivent librement à la maison, sans box ni cage.</image:caption></image:image>
+    <image:image><image:loc>https://miloudogsprovence.fr/IMG_1138.webp</image:loc><image:title>Chiens en pension familiale Milou Dogs Provence</image:title><image:caption>Accueil chaleureux pour chiens à Miramas, Istres, Salon-de-Provence.</image:caption></image:image>
+    <image:image><image:loc>https://miloudogsprovence.fr/IMG_1146.webp</image:loc><image:title>Garde de chien à domicile en Provence</image:title><image:caption>Garde de chien attentionnée près de Salon-de-Provence et Vitrolles.</image:caption></image:image>
+    <image:image><image:loc>https://miloudogsprovence.fr/IMG_1191.webp</image:loc><image:title>Promenade de chien en pleine nature en Provence</image:title><image:caption>Promenades et grands espaces pour le bien-être de votre chien.</image:caption></image:image>
+    <image:image><image:loc>https://miloudogsprovence.fr/IMG_1240.webp</image:loc><image:title>Toilettage et soins du chien à Miramas</image:title><image:caption>Chiens propres, heureux et bien soignés chez Milou Dogs Provence.</image:caption></image:image>
+    <image:image><image:loc>https://miloudogsprovence.fr/IMG_3307.webp</image:loc><image:title>Chien épanoui en pension familiale Provence</image:title><image:caption>Une vraie famille d'accueil pour votre chien pendant vos vacances.</image:caption></image:image>
   </url>
 
   <url>
