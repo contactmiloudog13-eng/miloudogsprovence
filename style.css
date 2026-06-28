@@ -143,7 +143,13 @@ footer p{font-size:.85rem;color:rgba(255,255,255,.6);line-height:1.8;}
 @media(max-width:760px){.nav-links .nav-mobile-cta{display:block;}}
 /* auth item : mobile only (desktop handled by #nav-desktop-auth) */
 #nav-auth-item{display:none;}
-@media(max-width:760px){#nav-auth-item{display:block;}}
+#nav-desktop-auth{display:inline-flex;align-items:center;}
+@media(max-width:760px){
+  #nav-auth-item{display:block;}
+  /* le badge MILAN + Déconnexion sont gérés dans le menu mobile → on masque
+     la version desktop sinon elle chevauche le logo et le hamburger */
+  #nav-desktop-auth{display:none!important;}
+}
 
 .wa-float{position:fixed;bottom:16px;right:12px;}
 .wa-float:hover .wa-tip{opacity:1!important;}

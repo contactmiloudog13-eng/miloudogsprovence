@@ -290,6 +290,21 @@ document.getElementById('login-form').addEventListener('submit', async e => {
   }
 });
 
+// Crée la fiche profil au premier login Google
+async function _afterGoogleLogin(res) {
+  if (res && res.additionalUserInfo && res.additionalUserInfo.isNewUser && res.user) {
+    const u = res.user;
+    const parts = (u.displayName || '').trim().split(' ');
+    const prenom = parts.shift() || '';
+    await firebase.database().ref('users/' + u.uid).update({
+      prenom: prenom, nom: parts.join(' '), email: u.email || '', createdAt: Date.now()
+    });
+  }
+  window.location.href = 'espace-client.html';
+}
+
+const _isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
 // Connexion / inscription via Google (1 clic)
 async function loginGoogle() {
   document.getElementById('alert-error').classList.remove('show');
@@ -298,24 +313,44 @@ async function loginGoogle() {
   try {
     await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     const provider = new firebase.auth.GoogleAuthProvider();
-    const res = await firebase.auth().signInWithPopup(provider);
-    // Premier login Google → on crée la fiche profil
-    if (res.additionalUserInfo && res.additionalUserInfo.isNewUser && res.user) {
-      const u = res.user;
-      const parts = (u.displayName || '').trim().split(' ');
-      const prenom = parts.shift() || '';
-      await firebase.database().ref('users/' + u.uid).update({
-        prenom: prenom, nom: parts.join(' '), email: u.email || '', createdAt: Date.now()
-      });
+    provider.setCustomParameters({ prompt: 'select_account' });
+    // Sur mobile, les popups Google sont souvent bloquées → on bascule en redirect
+    if (_isMobile) {
+      sessionStorage.setItem('googleRedirect', '1');
+      await firebase.auth().signInWithRedirect(provider);
+      return; // la page se recharge, voir getRedirectResult ci-dessous
     }
-    window.location.href = 'espace-client.html';
+    const res = await firebase.auth().signInWithPopup(provider);
+    await _afterGoogleLogin(res);
   } catch (err) {
     setLoading(false);
     if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') return;
+    // Popup bloquée / non supportée par le navigateur → on retente en redirect
+    if (err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment' || err.code === 'auth/cancelled-popup-request') {
+      try {
+        sessionStorage.setItem('googleRedirect', '1');
+        await firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider());
+        return;
+      } catch (e2) {}
+    }
     if (err.code === 'auth/operation-not-allowed') { showError('La connexion Google n\'est pas encore activée. Réessayez bientôt.'); return; }
+    if (err.code === 'auth/unauthorized-domain') { showError('Domaine non autorisé pour la connexion Google. Contactez l\'administrateur.'); return; }
     showError('Connexion Google impossible. Réessayez ou utilisez votre e-mail.');
   }
 }
+
+// Au chargement : récupère le résultat d'une connexion Google par redirection
+firebase.auth().getRedirectResult().then(res => {
+  if (res && res.user) {
+    window.__suppressAuthRedirect = true;
+    setLoading(true);
+    _afterGoogleLogin(res);
+  }
+}).catch(err => {
+  sessionStorage.removeItem('googleRedirect');
+  if (err && err.code === 'auth/unauthorized-domain') showError('Domaine non autorisé pour la connexion Google. Contactez l\'administrateur.');
+  else if (err && err.code) showError('Connexion Google impossible. Réessayez ou utilisez votre e-mail.');
+});
 
 async function sendReset() {
   const email = document.getElementById('email').value.trim();

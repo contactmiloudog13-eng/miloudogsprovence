@@ -36,7 +36,8 @@
 @media(max-width:560px){
   .form-row{grid-template-columns:1fr;}
   .resa-form{padding:24px 16px;}
-  .form-group>div[style*="display:flex"]{flex-direction:column;gap:8px;}
+  /* les sélecteurs heure (HH) et minutes (MM) restent côte à côte */
+  .form-group>div[style*="display:flex"]{flex-direction:row;gap:8px;}
   label[style*="display:flex;align-items:center;gap:8px;padding"]{width:100%;font-size:.85rem!important;padding:10px 14px!important;}
 }
 .form-group{margin-bottom:18px;}
@@ -875,6 +876,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   const dateFin=document.getElementById('date-fin');
   dateDebut.min=today;
   if(dateFin)dateFin.min=today;
+  // Pré-sélectionne automatiquement le jour présent (modifiable)
+  if(!dateDebut.value){dateDebut.value=today;}
   // Quand date début change → date fin minimum = lendemain
   dateDebut.addEventListener('change',()=>{
     if(!dateFin)return;
