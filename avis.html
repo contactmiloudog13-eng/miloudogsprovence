@@ -558,16 +558,50 @@ function toggleMore(btn){
 var AVIS_SORT = 'featured';
 var GOOGLE_ITEMS = [];
 var CLIENT_ITEMS = [];
+
+/* Convertit une date relative FR (« il y a 2 semaines », « hier »…) en
+   nombre de jours écoulés. Plus le nombre est petit, plus l'avis est récent. */
+function relDaysFr(str){
+  if(!str) return null;
+  var s = str.toLowerCase();
+  if(s.indexOf("aujourd") >= 0) return 0;
+  if(s.indexOf("hier") >= 0) return 1;
+  // Date absolue JJ/MM/AAAA (ex : 28/06/2026)
+  var abs = s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if(abs){ return Math.max(0,(Date.now() - new Date(+abs[3], +abs[2]-1, +abs[1]))/86400000); }
+  // Date absolue « 12 juin 2026 »
+  var MOIS = {janvier:0,'février':1,fevrier:1,mars:2,avril:3,mai:4,juin:5,juillet:6,'août':7,aout:7,septembre:8,octobre:9,novembre:10,'décembre':11,decembre:11};
+  var ab2 = s.match(/(\d{1,2})\s+([a-zûéô]+)\s+(\d{4})/);
+  if(ab2 && MOIS[ab2[2]] != null){ return Math.max(0,(Date.now() - new Date(+ab2[3], MOIS[ab2[2]], +ab2[1]))/86400000); }
+  var m = s.match(/(\d+|une?|deux|trois|quatre|cinq|six|sept|huit|neuf|dix)\s*(minute|heure|jour|semaine|mois|ans?|ann)/);
+  if(!m) return null;
+  var words = {un:1, une:1, deux:2, trois:3, quatre:4, cinq:5, six:6, sept:7, huit:8, neuf:9, dix:10};
+  var n = parseInt(m[1], 10); if(isNaN(n)) n = words[m[1]] || 1;
+  var u = m[2];
+  if(u === 'minute') return n/1440;
+  if(u === 'heure')  return n/24;
+  if(u === 'jour')   return n;
+  if(u === 'semaine')return n*7;
+  if(u === 'mois')   return n*30;
+  return n*365; // an / ans / année
+}
+/* Ancienneté en jours (petit = récent), commune aux avis Google et clients */
+function recencyOf(a){
+  var d = relDaysFr(a.date);
+  if(d != null) return d;
+  if(a._ts) return (Date.now() - a._ts) / 86400000; // fallback : date d'ajout
+  return 1e9; // inconnue → tout en bas
+}
 function sortItems(arr){
   var a = arr.slice();
   if(AVIS_SORT === 'best'){
-    a.sort(function(x,y){ return (y.note||0)-(x.note||0) || (y._ts||0)-(x._ts||0); });
+    a.sort(function(x,y){ return (y.note||0)-(x.note||0) || recencyOf(x)-recencyOf(y); });
   } else if(AVIS_SORT === 'recent'){
-    a.sort(function(x,y){ return (y._ts||0)-(x._ts||0); });
+    a.sort(function(x,y){ return recencyOf(x)-recencyOf(y); }); // ancienneté croissante = + récent d'abord
   } else { // featured : coups de cœur d'abord, puis les plus récents
     a.sort(function(x,y){
       var fx = x.featured?1:0, fy = y.featured?1:0;
-      return fy-fx || (y._ts||0)-(x._ts||0);
+      return fy-fx || recencyOf(x)-recencyOf(y);
     });
   }
   return a;
