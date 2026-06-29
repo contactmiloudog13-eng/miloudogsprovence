@@ -60,7 +60,9 @@ window.SITE_IMAGE_PAGE = (function(){
         return;
       }
       if (ov.url) {
-        var rule = '.' + s.cls + "{background-image:url('" + ov.url + "')!important;}";
+        // on force cover/centre/no-repeat pour un cadrage impeccable quelle que soit la photo
+        var decl = "background-image:url('" + ov.url + "')!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;";
+        var rule = '.' + s.cls + '{' + decl + '}';
         if (s.kind === 'hero-desktop')      css += '@media(min-width:761px){' + rule + '}\n';
         else if (s.kind === 'hero-mobile')  css += '@media(max-width:760px){' + rule + '}\n';
         else                                css += rule + '\n';
