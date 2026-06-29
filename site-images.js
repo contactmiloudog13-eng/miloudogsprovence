@@ -45,6 +45,9 @@ window.SITE_IMAGE_PAGE = (function(){
 
 (function applySiteImages(){
   var page = window.SITE_IMAGE_PAGE;
+  // Sécurité absolue : le hero ne doit jamais rester invisible
+  setTimeout(function(){ var els=document.querySelectorAll('.hero-bg'); for(var i=0;i<els.length;i++) els[i].style.opacity='1'; }, 1200);
+
   if (!page || !window.SITE_IMAGE_REGISTRY[page]) return;
   if (typeof firebase === 'undefined' || !firebase.database) return;
 
@@ -68,10 +71,30 @@ window.SITE_IMAGE_PAGE = (function(){
         else                                css += rule + '\n';
       }
     });
-    if (!css) return;
-    var style = document.createElement('style');
-    style.id = 'site-images-overrides';
-    style.textContent = css;
-    document.head.appendChild(style);
-  }).catch(function(){ /* silencieux : on garde les images d'origine */ });
+    if (css) {
+      var style = document.createElement('style');
+      style.id = 'site-images-overrides';
+      style.textContent = css;
+      document.head.appendChild(style);
+    }
+    // Hero : on met en cache l'image perso et on révèle (anti-flash)
+    if (page === 'home') {
+      var hd = data['home__hero'], hm = data['home__hero-mobile'];
+      try {
+        if ((hd && hd.url) || (hm && hm.url)) {
+          localStorage.setItem('siHero', JSON.stringify({ desktop:(hd&&hd.url)||'', mobile:(hm&&hm.url)||'' }));
+        } else {
+          localStorage.removeItem('siHero');
+        }
+      } catch(e) {}
+    }
+    revealHero();
+  }).catch(function(){ revealHero(); /* on garde les images d'origine */ });
+
+  function revealHero(){
+    var els = document.querySelectorAll('.hero-bg');
+    for (var i=0;i<els.length;i++){ els[i].classList.add('si-ready'); els[i].style.opacity='1'; }
+  }
+  // Sécurité : on révèle le hero au plus tard après 1s même si Firebase tarde
+  setTimeout(function(){ var els=document.querySelectorAll('.hero-bg'); for(var i=0;i<els.length;i++) els[i].style.opacity='1'; }, 1000);
 })();

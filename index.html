@@ -18,8 +18,21 @@
 <link rel="canonical" href="https://miloudogsprovence.fr/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" href="hero-banner.webp" as="image" type="image/webp" media="(min-width:761px)">
-<link rel="preload" href="hero-mobile.webp" as="image" type="image/webp" media="(max-width:760px)">
+<!-- Hero piloté depuis l'admin : on évite le flash ancienne→nouvelle image.
+     Pour les visites suivantes, on applique l'image en cache avant le rendu. -->
+<script>
+(function(){
+  try{
+    var h=JSON.parse(localStorage.getItem('siHero')||'null');
+    var css='';
+    if(h && h.desktop) css+='@media(min-width:761px){.hero-bg{background-image:url(\''+h.desktop+'\')!important;background-size:cover!important;background-position:center center!important;}}';
+    if(h && h.mobile)  css+='@media(max-width:760px){.hero-bg{background-image:url(\''+h.mobile+'\')!important;background-size:cover!important;background-position:center center!important;}}';
+    // si on a un cache hero → on l'affiche direct (déjà bon), sinon on masque jusqu'au verdict de Firebase
+    css+= (h ? '.hero-bg{opacity:1!important;}' : '.hero-bg{opacity:0;}');
+    var s=document.createElement('style'); s.textContent=css; document.head.appendChild(s);
+  }catch(e){}
+})();
+</script>
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="effects.css">
 <style>
@@ -43,7 +56,9 @@
   animation:zoomin 8s ease forwards;
   will-change:transform;
   transform-origin:center top;
+  transition:opacity .4s ease;
 }
+.hero-bg.si-ready{opacity:1;}
 nav{transition:height .3s ease,box-shadow .3s ease;}
 @keyframes zoomin{from{transform:scale(1.04);}to{transform:scale(1);}}
 .hero-overlay{
