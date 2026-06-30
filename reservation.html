@@ -270,7 +270,7 @@
                   <input type="radio" name="nb-chiens" value="1" onchange="calcPrice()" checked style="accent-color:var(--lavande);width:16px;height:16px;"> 1 chien
                 </label>
                 <label style="display:flex;align-items:center;gap:8px;padding:10px 18px;border:1px solid var(--border);border-radius:12px;cursor:pointer;background:white;font-size:.9rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--text);">
-                  <input type="radio" name="nb-chiens" value="2" onchange="calcPrice()" style="accent-color:var(--lavande);width:16px;height:16px;"> 2 chiens <span style="font-size:.75rem;background:var(--vert-light);color:var(--vert);padding:2px 7px;border-radius:20px;font-weight:700;margin-left:4px;">−15%</span>
+                  <input type="radio" name="nb-chiens" value="2" onchange="calcPrice()" style="accent-color:var(--lavande);width:16px;height:16px;"> 2 chiens <span style="font-size:.75rem;background:var(--vert-light);color:var(--vert);padding:2px 7px;border-radius:20px;font-weight:700;margin-left:4px;">−10%</span>
                 </label>
                 <label style="display:flex;align-items:center;gap:8px;padding:10px 18px;border:1px solid var(--border);border-radius:12px;cursor:pointer;background:white;font-size:.9rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--text);">
                   <input type="radio" name="nb-chiens" value="3" onchange="calcPrice()" style="accent-color:var(--lavande);width:16px;height:16px;"> 3 chiens <span style="font-size:.75rem;background:var(--vert-light);color:var(--vert);padding:2px 7px;border-radius:20px;font-weight:700;margin-left:4px;">−15%</span>
@@ -571,7 +571,8 @@ function calcPrice(){
   const hFH=parseInt(document.getElementById('heure-fin-h').value)||0;
   const nbChiens=parseInt(document.querySelector('input[name="nb-chiens"]:checked')?.value||1);
   const discount=nbChiens>=2;
-  const disc=v=>discount?Math.round(v*0.85):v;
+  const discRate=nbChiens>=3?0.15:(nbChiens===2?0.10:0); // 2 chiens = -10%, 3+ = -15%
+  const disc=v=>discount?Math.round(v*(1-discRate)):v;
 
   // Nombre de nuits (diff jours calendaires)
   let nuits=0;
@@ -638,7 +639,7 @@ function calcPrice(){
   if(!lines.length){box.style.display='none';return;}
   document.getElementById('price-detail').innerHTML=lines.join('<br>');
   let totalLabel='Total : '+total+'€';
-  if(discount) totalLabel+=' (−15% multi-chiens inclus)';
+  if(discount) totalLabel+=' (−'+Math.round(discRate*100)+'% multi-chiens inclus)';
   document.getElementById('price-total').textContent=totalLabel;
   box.style.display='block';
 }

@@ -74,16 +74,17 @@ _auth.onAuthStateChanged(_updateNav);
   function applyMaxChiens(n) {
     if (!n || n < 1) return;
     var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
-    var re = /(\bMaximum\s+|\bMax\s+|\bmaximum\s+de\s+)(\d+)(\s+chiens\b)|(\b)(\d+)(\s+chiens\s+maximum\b)/gi;
-    var node, changed = [];
-    while ((node = walker.nextNode())) {
-      if (re.test(node.nodeValue)) changed.push(node);
-      re.lastIndex = 0;
-    }
-    changed.forEach(function (t) {
-      t.nodeValue = t.nodeValue.replace(re, function (m, p1, p2, p3, q1, q2, q3) {
-        return p1 != null ? (p1 + n + p3) : (q1 + n + q3);
-      });
+    var nodes = [], node;
+    while ((node = walker.nextNode())) nodes.push(node);
+    nodes.forEach(function (t) {
+      var v = t.nodeValue, o = v;
+      // « Maximum N chiens » / « Max N chiens » / « maximum de N chiens »
+      v = v.replace(/(\bMaximum\s+|\bMax\s+|\bmaximum\s+de\s+)\d+(\s+chiens\b)/gi, function (m, a, b) { return a + n + b; });
+      // « N chiens maximum »
+      v = v.replace(/\b\d+(\s+chiens\s+maximum\b)/gi, function (m, b) { return n + b; });
+      // « N max » (stat du hero)
+      v = v.replace(/\b\d+(\s+max\b)/gi, function (m, b) { return n + b; });
+      if (v !== o) t.nodeValue = v;
     });
   }
   function start() {
