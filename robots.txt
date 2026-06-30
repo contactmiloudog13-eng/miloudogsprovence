@@ -7,4 +7,4 @@ Disallow: /connexion.html
 Disallow: /inscription.html
 Disallow: /merci.html
 
-Sitemap: https://contactmiloudog13-eng.github.io/miloudogsprovence/sitemap.xml
+Sitemap: https://miloudogsprovence.fr/sitemap.xml
