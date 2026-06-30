@@ -68,6 +68,36 @@ function _updateNav(user) {
 
 _auth.onAuthStateChanged(_updateNav);
 
+// ── Capacité max chiens : pilotée depuis l'admin (site_config/maxChiens) ──────
+// Met à jour partout le texte « Max N chiens » / « Maximum N chiens » / « N chiens maximum ».
+(function () {
+  function applyMaxChiens(n) {
+    if (!n || n < 1) return;
+    var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+    var re = /(\bMaximum\s+|\bMax\s+|\bmaximum\s+de\s+)(\d+)(\s+chiens\b)|(\b)(\d+)(\s+chiens\s+maximum\b)/gi;
+    var node, changed = [];
+    while ((node = walker.nextNode())) {
+      if (re.test(node.nodeValue)) changed.push(node);
+      re.lastIndex = 0;
+    }
+    changed.forEach(function (t) {
+      t.nodeValue = t.nodeValue.replace(re, function (m, p1, p2, p3, q1, q2, q3) {
+        return p1 != null ? (p1 + n + p3) : (q1 + n + q3);
+      });
+    });
+  }
+  function start() {
+    try {
+      _db.ref('site_config/maxChiens').on('value', function (snap) {
+        var n = snap.val();
+        if (n) applyMaxChiens(parseInt(n));
+      });
+    } catch (e) {}
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+})();
+
 // ── Fonctions globales ───────────────────────────────────────────────────────
 
 function logoutUser() {

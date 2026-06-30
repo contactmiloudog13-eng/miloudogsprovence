@@ -444,6 +444,13 @@ function _validateStep2() {
   const dateEl = document.getElementById('date-debut');
   if (!dateEl.value) { dateEl.style.borderColor = '#c0392b'; err = true; }
   else dateEl.style.borderColor = '';
+  // Bloque si la période tombe sur un jour de congé
+  if (window.__congeBlocked) {
+    dateEl.style.borderColor = '#c0392b';
+    const m = document.getElementById('error-msg');
+    if (m) { m.style.display = 'block'; m.textContent = '🏖️ Nous sommes en congés sur cette période. Merci de choisir d\'autres dates.'; document.getElementById('step-panel-2').appendChild(m); setTimeout(()=>m.style.display='none',4500); }
+    return false;
+  }
   const hH = document.getElementById('heure-debut-h');
   if (!hH.value) { hH.style.borderColor = '#c0392b'; err = true; }
   else hH.style.borderColor = '';
@@ -685,6 +692,7 @@ function validateParrainCode(val) {
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxq0PSvFOunFHokWiDbyj3u6Z9w7XPemx6WQQOJ0O7W2ejJ2VJFiZCDSm6BUG-Amyzqew/exec';
 
 async function submitReservation() {
+  if (window.__congeBlocked) { alert('🏖️ Nous sommes en congés sur les dates choisies. Merci de sélectionner une autre période.'); return; }
   if (!prepareSubmit()) return;
 
   const btn = document.getElementById('btn-submit');
@@ -897,6 +905,42 @@ document.addEventListener('DOMContentLoaded',()=>{
     if(isToday&&heureH.value&&parseInt(heureH.value)<nowH){heureH.value='';heureM.value='00';}
     calcPrice();
   });
+
+  // ── Congés : bloque les dates fermées (nœud Firebase "closures", géré depuis l'admin) ──
+  let _closures = {};
+  const _closKey = iso => { const p = iso.split('-'); return parseInt(p[0])+'-'+parseInt(p[1])+'-'+parseInt(p[2]); };
+  const _isClosed = iso => !!_closures[_closKey(iso)];
+  const _iso = dt => dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0');
+  function _rangeClosed(d1,d2){ if(!d1) return null; const s=new Date(d1), e=new Date(d2||d1); for(let dt=new Date(s);dt<=e;dt.setDate(dt.getDate()+1)){ if(_isClosed(_iso(dt))) return _iso(dt); } return null; }
+  const _fmtFr = iso => new Date(iso).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+  const _fmtShort = d => d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+  let _congeMsg=document.createElement('div');
+  _congeMsg.id='conge-msg';
+  _congeMsg.style.cssText='display:none;margin:6px 0 14px;background:#FDECEA;border:1px solid var(--rouge,#e74c3c);border-radius:10px;padding:11px 15px;font-size:.84rem;color:#9a2a1a;line-height:1.55;font-weight:600;';
+  (function(){ const row=document.getElementById('date-debut').closest('.form-row'); if(row&&row.parentNode) row.parentNode.insertBefore(_congeMsg, row.nextSibling); })();
+  window.__congeBlocked=false;
+  function _checkConge(){
+    const bad=_rangeClosed(dateDebut.value, dateFin?dateFin.value:null);
+    if(bad){ window.__congeBlocked=true; _congeMsg.innerHTML='🏖️ <strong>Nous sommes en congés</strong> le '+_fmtFr(bad)+'. La réservation est bloquée à ces dates — merci de choisir une autre période.'; _congeMsg.style.display='block'; }
+    else { window.__congeBlocked=false; _congeMsg.style.display='none'; }
+  }
+  dateDebut.addEventListener('change',_checkConge); dateDebut.addEventListener('input',_checkConge);
+  if(dateFin){ dateFin.addEventListener('change',_checkConge); dateFin.addEventListener('input',_checkConge); }
+  function _renderCongeBanner(){
+    const today=new Date(); today.setHours(0,0,0,0);
+    const up=Object.keys(_closures).filter(k=>_closures[k]).map(k=>{const p=k.split('-');return new Date(+p[0],+p[1]-1,+p[2]);}).filter(d=>d>=today).sort((a,b)=>a-b);
+    let banner=document.getElementById('conge-banner');
+    if(!up.length){ if(banner) banner.style.display='none'; return; }
+    const ranges=[]; let st=up[0], prev=up[0];
+    for(let i=1;i<up.length;i++){ if((up[i]-prev)/86400000===1){prev=up[i];} else {ranges.push([st,prev]); st=up[i]; prev=up[i];} }
+    ranges.push([st,prev]);
+    const txt=ranges.slice(0,5).map(r=> r[0].getTime()===r[1].getTime()? _fmtShort(r[0]) : ('du '+_fmtShort(r[0])+' au '+_fmtShort(r[1]))).join(' · ');
+    if(!banner){ banner=document.createElement('div'); banner.id='conge-banner'; banner.style.cssText='margin:0 0 18px;background:#FDF3E0;border:1px solid var(--soleil);border-radius:12px;padding:12px 16px;font-size:.85rem;color:#7a5a1a;line-height:1.5;'; const form=document.getElementById('reservation-form'); if(form) form.insertBefore(banner, form.firstChild); }
+    banner.innerHTML='🏖️ <strong>Périodes de congés à venir :</strong> '+txt+'. Ces dates ne sont pas réservables.';
+    banner.style.display='block';
+  }
+  try{ firebase.database().ref('closures').on('value', s=>{ _closures=s.val()||{}; _renderCongeBanner(); _checkConge(); }); }catch(e){}
+
   document.querySelectorAll('.avis-card,.service-card,.faq-item').forEach(card=>{
     if(!card.classList.contains('faq-item')){
       card.addEventListener('mousemove',e=>{
