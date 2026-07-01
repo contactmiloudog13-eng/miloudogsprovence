@@ -526,6 +526,29 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
 </section>
 
 
+<!-- ── Vidéo de présentation ──────────────────── -->
+<section id="video-section" style="background:var(--cream);padding:64px 5% 72px;">
+  <div class="container" style="text-align:center;">
+    <div class="section-header fade-in">
+      <p class="section-label">🎬 En vidéo</p>
+      <h2 class="section-title">Bienvenue chez Milou Dogs Provence</h2>
+      <p class="section-sub">Découvrez notre univers et nos pensionnaires en quelques secondes 🐾</p>
+    </div>
+    <div class="video-wrap fade-in">
+      <video controls preload="none" playsinline poster="presentation-poster.jpg"
+             aria-label="Vidéo de présentation de Milou Dogs Provence, pension familiale à Miramas">
+        <source src="presentation.mp4" type="video/mp4">
+        Votre navigateur ne peut pas lire la vidéo.
+      </video>
+    </div>
+  </div>
+</section>
+<style>
+#video-section .video-wrap{max-width:340px;margin:34px auto 0;border-radius:22px;overflow:hidden;box-shadow:0 18px 50px rgba(74,63,114,.28);background:#000;line-height:0;}
+#video-section .video-wrap video{width:100%;height:auto;display:block;aspect-ratio:9/16;object-fit:cover;background:#000;}
+@media(max-width:400px){#video-section .video-wrap{max-width:88vw;}}
+</style>
+
 <section id="mini-avis">
   <div class="container">
     <div class="section-header fade-in">

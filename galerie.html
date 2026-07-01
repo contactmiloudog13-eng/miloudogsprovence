@@ -314,6 +314,24 @@
 
 <!-- ══ GALERIE ══ -->
 <main class="gal-page-body">
+  <section style="padding:56px 5% 0;text-align:center;">
+    <div class="container">
+      <div class="gal-video-wrap">
+        <video controls preload="none" playsinline poster="presentation-poster.jpg"
+               aria-label="Vidéo de présentation de Milou Dogs Provence">
+          <source src="presentation.mp4" type="video/mp4">
+          Votre navigateur ne peut pas lire la vidéo.
+        </video>
+      </div>
+      <p style="font-size:.85rem;color:var(--text-muted);margin-top:12px;">🎬 Bienvenue chez Milou Dogs Provence — en vidéo</p>
+    </div>
+  </section>
+  <style>
+    .gal-video-wrap{max-width:330px;margin:0 auto;border-radius:22px;overflow:hidden;box-shadow:0 18px 50px rgba(74,63,114,.28);background:#000;line-height:0;}
+    .gal-video-wrap video{width:100%;height:auto;display:block;aspect-ratio:9/16;object-fit:cover;background:#000;}
+    @media(max-width:400px){.gal-video-wrap{max-width:88vw;}}
+  </style>
+
   <section style="padding:60px 5%;">
     <div class="container">
       <div id="galerie-loading" style="text-align:center;padding:40px;color:#888;font-size:.9rem;">Chargement des photos…</div>
