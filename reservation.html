@@ -382,6 +382,17 @@
                 <select id="heure-debut-m" name="Heure arrivée M" style="flex:1" required onchange="autoDepart();calcPrice()"><option value="">MM</option><option selected>00</option><option>15</option><option>30</option><option>45</option></select>
               </div><small style="color:var(--text-muted);font-size:.75rem;">Ouvert de 8h à 19h</small></div>
             </div>
+            <!-- Disponibilités en direct (publiées depuis l'admin) -->
+            <details id="dispo-cal" style="background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:12px 16px;margin:2px 0 14px;">
+              <summary style="cursor:pointer;font-weight:800;font-size:.9rem;color:var(--lavande-dark);list-style-position:inside;">📅 Voir les disponibilités en direct</summary>
+              <div id="dispo-cal-body" style="margin-top:12px;"><span style="font-size:.82rem;color:var(--text-muted);">Chargement du calendrier…</span></div>
+              <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:.72rem;color:var(--text-muted);">
+                <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#DCEFD8;border:1px solid #9CC48F;vertical-align:middle;"></span> Disponible</span>
+                <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#FDEBC8;border:1px solid #E8A84C;vertical-align:middle;"></span> Dernières places</span>
+                <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#F8D3CE;border:1px solid #D9695B;vertical-align:middle;"></span> Complet</span>
+                <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#3a3530;vertical-align:middle;"></span> Congés</span>
+              </div>
+            </details>
             <div id="row-date-fin" style="display:none">
               <div class="form-row">
                 <div id="col-date-fin" class="form-group"><label>Date de fin</label><input id="date-fin" name="Date départ" type="date" oninput="calcPrice()"></div>
@@ -652,6 +663,57 @@ var HOME_COORDS=[5.013373,43.570176];
 window.__pickup={active:false,km:null,price:0,address:'',coords:null};
 window.__clientAddr='';
 var _pickupTimer=null, _pickupFeats=[];
+
+// ===== Calendrier de disponibilités en direct =====
+// Lit availability (publié par l'admin : nb de chiens confirmés/jour + capacité) et closures (congés).
+window.addEventListener('load', function(){
+  try{
+    if(!window.firebase || !firebase.database) return;
+    var db=firebase.database();
+    Promise.all([
+      db.ref('availability').once('value').then(function(s){return s.val()||{};}).catch(function(){return {};}),
+      db.ref('closures').once('value').then(function(s){return s.val()||{};}).catch(function(){return {};})
+    ]).then(function(res){
+      var avail=res[0], closures=res[1];
+      var cap=avail.capacity||7, days=avail.days||{};
+      var body=document.getElementById('dispo-cal-body'); if(!body) return;
+      var today=new Date(); today.setHours(0,0,0,0);
+      var monthsFr=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+      var html='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;">';
+      for(var m=0;m<2;m++){
+        var ref=new Date(today.getFullYear(), today.getMonth()+m, 1);
+        var y=ref.getFullYear(), mo=ref.getMonth();
+        var nDays=new Date(y,mo+1,0).getDate();
+        var startW=(new Date(y,mo,1).getDay()+6)%7;
+        html+='<div><div style="font-weight:800;font-size:.85rem;color:var(--lavande-dark);margin-bottom:6px;text-align:center;">'+monthsFr[mo]+' '+y+'</div>';
+        html+='<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;">';
+        ['L','M','M','J','V','S','D'].forEach(function(j){ html+='<div style="text-align:center;font-size:.62rem;color:var(--text-muted);font-weight:700;">'+j+'</div>'; });
+        for(var e=0;e<startW;e++) html+='<div></div>';
+        for(var d=1;d<=nDays;d++){
+          var date=new Date(y,mo,d);
+          var key=y+'-'+(mo+1)+'-'+d;
+          var style, title;
+          if(date<today){ style='background:#f3f0ea;color:#c9c2b8;'; title='Passé'; }
+          else if(closures[key]){ style='background:#3a3530;color:#fff;'; title='Congés — fermé'; }
+          else {
+            var booked=days[key]||0, left=cap-booked;
+            if(left<=0){ style='background:#F8D3CE;color:#a03325;border:1px solid #D9695B;'; title='Complet'; }
+            else if(left<=2){ style='background:#FDEBC8;color:#8B6020;border:1px solid #E8A84C;'; title='Plus que '+left+' place'+(left>1?'s':''); }
+            else { style='background:#DCEFD8;color:#2f5a24;border:1px solid #9CC48F;'; title=left+' places disponibles'; }
+          }
+          html+='<div title="'+title+'" style="text-align:center;font-size:.72rem;font-weight:700;border-radius:6px;padding:5px 0;'+style+'">'+d+'</div>';
+        }
+        html+='</div></div>';
+      }
+      html+='</div>';
+      if(avail.updated){
+        var u=new Date(avail.updated);
+        html+='<p style="font-size:.68rem;color:var(--text-muted);margin:8px 0 0;text-align:right;">Mis à jour le '+u.toLocaleDateString('fr-FR')+' à '+u.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})+'</p>';
+      }
+      body.innerHTML=html;
+    });
+  }catch(e){}
+});
 
 // Pré-remplissage : si le client est connecté, on récupère son adresse enregistrée.
 // (exécuté APRÈS le chargement complet, car firebase-auth.js se charge en bas de page)

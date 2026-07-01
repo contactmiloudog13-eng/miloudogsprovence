@@ -59,6 +59,15 @@ body:not(.auth-ready) footer{visibility:hidden;}
   font-size:.72rem;box-shadow:0 2px 6px rgba(0,0,0,.25);transition:transform .15s;
 }
 .welcome-avatar-wrap:hover .avatar-cam{transform:scale(1.12);}
+/* Journal de séjour (photos + notes envoyées par la pension) */
+.resa-journal{margin:0 16px 14px;background:linear-gradient(135deg,#FFFDF5,#FFF6E3);border:1.5px solid var(--soleil,#E8A84C);border-radius:14px;padding:14px 16px;}
+.resa-journal .jr-head{font-weight:800;font-size:.92rem;color:#8B6020;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+.resa-journal .jr-count{font-size:.7rem;background:var(--soleil,#E8A84C);color:#1a0e00;border-radius:14px;padding:2px 10px;font-weight:800;}
+.resa-journal .jr-entry{border-top:1px dashed rgba(139,96,32,.25);padding:10px 0 4px;}
+.resa-journal .jr-entry:first-of-type{border-top:none;}
+.resa-journal .jr-date{font-size:.72rem;color:#a07830;font-weight:700;margin-bottom:6px;text-transform:capitalize;}
+.resa-journal img{width:100%;max-height:320px;object-fit:cover;border-radius:12px;display:block;cursor:zoom-in;box-shadow:0 4px 14px rgba(139,96,32,.15);}
+.resa-journal p{font-size:.88rem;color:#5a4520;line-height:1.6;margin:8px 0 4px;}
 .welcome-text h2{font-size:1.5rem;color:white;margin-bottom:4px;}
 .welcome-text p{font-size:.9rem;color:rgba(255,255,255,.7);font-weight:300;}
 .welcome-badge{
@@ -1729,7 +1738,46 @@ function loadReservations(user) {
     _checkNotifBadge(list);
     window._resaList = list;
     renderCalendar();
+    loadJournals(list);
   });
+}
+
+// ── Journal de séjour : photos + notes publiées par la pension pendant la garde ──
+function loadJournals(list) {
+  list.forEach(r => {
+    if ((r.statut || '') !== 'confirmé') return;
+    firebase.database().ref('sejour_journal/' + r.id).orderByChild('ts').once('value').then(snap => {
+      const entries = [];
+      snap.forEach(c => { entries.push(c.val()); });
+      const box = document.getElementById('jr-' + r.id);
+      if (!box || !entries.length) return;
+      entries.reverse();
+      box.style.display = 'block';
+      box.innerHTML = `<div class="jr-head">📔 Journal de séjour <span class="jr-count">${entries.length} moment${entries.length>1?'s':''} partagé${entries.length>1?'s':''}</span></div>`
+        + entries.map(e => {
+          const d = new Date(e.ts || 0);
+          return `<div class="jr-entry">
+            <div class="jr-date">${d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})} · ${d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</div>
+            ${e.url ? `<img src="${e.url}" alt="Photo du séjour" loading="lazy" onclick="openJournalPhoto('${e.url}')">` : ''}
+            ${e.note ? `<p>${e.note}</p>` : ''}
+          </div>`;
+        }).join('');
+    }).catch(() => {});
+  });
+}
+function openJournalPhoto(url) {
+  let lb = document.getElementById('jr-lightbox');
+  if (!lb) {
+    lb = document.createElement('div');
+    lb.id = 'jr-lightbox';
+    lb.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center;cursor:zoom-out;';
+    lb.onclick = () => { lb.style.display = 'none'; document.body.style.overflow=''; };
+    lb.innerHTML = '<img style="max-width:94vw;max-height:92vh;border-radius:12px;">';
+    document.body.appendChild(lb);
+  }
+  lb.querySelector('img').src = url;
+  lb.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
 }
 
 function renderReservations(list) {
@@ -1775,6 +1823,7 @@ function renderReservations(list) {
         <span class="resa-status ${s.cls}">${s.label}</span>
       </div>
       ${details.length ? `<div class="resa-card-body">${details.map(d => `<span>${d}</span>`).join('')}</div>` : ''}
+      ${statut === 'confirmé' ? `<div class="resa-journal" id="jr-${r.id}" style="display:none;"></div>` : ''}
       ${r.messageRefus ? `<div class="resa-card-footer" style="background:#fdecea;border-radius:0 0 14px 14px;padding:10px 16px;">
         <span style="font-size:.82rem;color:#c0392b;font-weight:700;">💬 Message : </span><span style="font-size:.82rem;color:#c0392b;">${r.messageRefus}</span>
       </div>` : ''}
