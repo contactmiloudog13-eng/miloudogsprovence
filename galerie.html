@@ -316,21 +316,39 @@
 <main class="gal-page-body">
   <section style="padding:56px 5% 0;text-align:center;">
     <div class="container">
-      <div class="gal-video-wrap">
-        <video controls preload="none" playsinline poster="presentation-poster.jpg"
+      <div class="gal-video-wrap" data-video-wrap>
+        <video controls controlsList="nofullscreen" preload="none" playsinline poster="presentation-poster.jpg"
                aria-label="Vidéo de présentation de Milou Dogs Provence">
           <source src="presentation.mp4" type="video/mp4">
           Votre navigateur ne peut pas lire la vidéo.
         </video>
+        <button type="button" class="vid-full-btn" onclick="vidFull(this)" aria-label="Plein écran vertical" title="Plein écran">⛶</button>
       </div>
       <p style="font-size:.85rem;color:var(--text-muted);margin-top:12px;">🎬 Bienvenue chez Milou Dogs Provence — en vidéo</p>
     </div>
   </section>
   <style>
-    .gal-video-wrap{max-width:330px;margin:0 auto;border-radius:22px;overflow:hidden;box-shadow:0 18px 50px rgba(74,63,114,.28);background:#000;line-height:0;}
+    .gal-video-wrap{position:relative;max-width:330px;margin:0 auto;border-radius:22px;overflow:hidden;box-shadow:0 18px 50px rgba(74,63,114,.28);background:#000;line-height:0;}
     .gal-video-wrap video{width:100%;height:auto;display:block;aspect-ratio:9/16;object-fit:cover;background:#000;}
     @media(max-width:400px){.gal-video-wrap{max-width:88vw;}}
+    .vid-full-btn{position:absolute;top:10px;right:10px;z-index:4;width:36px;height:36px;border:none;border-radius:9px;background:rgba(0,0,0,.5);color:#fff;font-size:1rem;line-height:1;cursor:pointer;backdrop-filter:blur(4px);transition:background .2s;}
+    .vid-full-btn:hover{background:rgba(0,0,0,.75);}
+    [data-video-wrap]:fullscreen{width:100vw;height:100vh;max-width:none;border-radius:0;display:flex;align-items:center;justify-content:center;background:#000;}
+    [data-video-wrap]:-webkit-full-screen{width:100vw;height:100vh;max-width:none;border-radius:0;display:flex;align-items:center;justify-content:center;background:#000;}
+    [data-video-wrap]:fullscreen video{width:auto;height:100%;max-height:100vh;aspect-ratio:auto;object-fit:contain;}
+    [data-video-wrap]:-webkit-full-screen video{width:auto;height:100%;max-height:100vh;aspect-ratio:auto;object-fit:contain;}
+    [data-video-wrap]:fullscreen .vid-full-btn,[data-video-wrap]:-webkit-full-screen .vid-full-btn{top:16px;right:16px;}
   </style>
+  <script>
+  function vidFull(btn){
+    var w=btn.closest('[data-video-wrap]'); if(!w) return;
+    var fsEl=document.fullscreenElement||document.webkitFullscreenElement;
+    if(fsEl){ (document.exitFullscreen||document.webkitExitFullscreen).call(document); return; }
+    if(w.requestFullscreen){ w.requestFullscreen(); }
+    else if(w.webkitRequestFullscreen){ w.webkitRequestFullscreen(); }
+    else { var v=w.querySelector('video'); if(v&&v.webkitEnterFullscreen){ v.webkitEnterFullscreen(); } }
+  }
+  </script>
 
   <section style="padding:60px 5%;">
     <div class="container">
