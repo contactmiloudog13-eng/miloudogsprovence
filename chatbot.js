@@ -309,6 +309,38 @@ function loadGA() {
   });
 })();
 
+// ── Barre CTA sticky (mobile) : Réserver + Appeler ────────────
+(function(){
+  const page=(location.pathname.split('/').pop()||'index.html');
+  const skip=['reservation.html','espace-client.html','connexion.html','inscription.html','merci.html'];
+  if(skip.indexOf(page)!==-1) return;
+  const css=`
+  #mdp-cta-bar{position:fixed;bottom:0;left:0;right:0;z-index:9990;display:none;gap:0;background:rgba(26,22,37,.97);backdrop-filter:blur(10px);padding:10px 12px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -4px 24px rgba(0,0,0,.28);}
+  #mdp-cta-bar a{flex:1;text-align:center;padding:13px 8px;border-radius:12px;font-family:'Lato',sans-serif;font-weight:800;font-size:.9rem;text-decoration:none;}
+  #mdp-cta-bar .cta-resa{background:linear-gradient(135deg,#F5C84A,#E8A030);color:#1a0e00;margin-right:8px;}
+  #mdp-cta-bar .cta-tel{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);}
+  @media(max-width:760px){
+    #mdp-cta-bar.show{display:flex;}
+    body.mdp-cta-on #mdp-btn{bottom:86px;}
+    body.mdp-cta-on #mdp-top{bottom:158px;}
+    body.mdp-cta-on #mdp-notif,body.mdp-cta-on #mdp-box{bottom:156px;}
+  }`;
+  const st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
+  const bar=document.createElement('div');
+  bar.id='mdp-cta-bar';
+  bar.innerHTML='<a class="cta-resa" href="reservation.html">📅 Réserver</a><a class="cta-tel" href="tel:0777234088">📞 Appeler</a>';
+  document.body.appendChild(bar);
+  let shown=false;
+  window.addEventListener('scroll',function(){
+    const want=window.scrollY>420;
+    if(want!==shown){
+      shown=want;
+      bar.classList.toggle('show',want);
+      document.body.classList.toggle('mdp-cta-on',want);
+    }
+  },{passive:true});
+})();
+
 // ── Bouton retour en haut ─────────────────────────────────────
 (function(){
   const css2=`#mdp-top{position:fixed;bottom:96px;right:24px;z-index:9998;width:42px;height:42px;border-radius:50%;background:white;border:1.5px solid var(--border,#E5E0D8);color:#4A3F72;font-size:1.1rem;display:none;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(74,63,114,0.18);transition:all .3s;}

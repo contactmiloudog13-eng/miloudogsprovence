@@ -4,7 +4,7 @@
 
   <url>
     <loc>https://miloudogsprovence.fr/</loc>
-    <lastmod>2026-06-13</lastmod>
+    <lastmod>2026-07-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image><image:loc>https://miloudogsprovence.fr/hero-banner.webp</image:loc><image:title>Pension familiale pour chien à Miramas — Milou Dogs Provence</image:title><image:caption>Garde de chien en famille à Miramas, terrain de 2000 m², jamais en cage.</image:caption></image:image>
@@ -21,7 +21,7 @@
 
   <url>
     <loc>https://miloudogsprovence.fr/services.html</loc>
-    <lastmod>2025-06-01</lastmod>
+    <lastmod>2026-07-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -35,14 +35,14 @@
 
   <url>
     <loc>https://miloudogsprovence.fr/galerie.html</loc>
-    <lastmod>2026-06-29</lastmod>
+    <lastmod>2026-07-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
     <loc>https://miloudogsprovence.fr/reservation.html</loc>
-    <lastmod>2025-06-01</lastmod>
+    <lastmod>2026-07-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -124,4 +124,5 @@
     <priority>0.3</priority>
   </url>
 
+  <url><loc>https://miloudogsprovence.fr/garde-animaux-domicile-miramas.html</loc><lastmod>2026-07-01</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
 </urlset>

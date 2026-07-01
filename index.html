@@ -11,14 +11,18 @@
 <meta property="og:image:height" content="630">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Garde de chien Miramas – Pension familiale 5★ | Milou Dogs Provence</title>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Milou Dogs Provence","description":"Garde de chien à domicile à Miramas. Pension familiale 5 étoiles, terrain 2000m², photos quotidiennes. 25€/nuit.","telephone":"+33777234088","url":"https://miloudogsprovence.fr/","address":{"@type":"PostalAddress","streetAddress":"Miramas","addressLocality":"Miramas","postalCode":"13140","addressRegion":"Bouches-du-Rhône","addressCountry":"FR"},"geo":{"@type":"GeoCoordinates","latitude":43.5833,"longitude":5.0},"openingHours":"Mo-Su 08:00-19:00","aggregateRating":{"@type":"AggregateRating","ratingValue":"5","reviewCount":"41"},"priceRange":"€€","areaServed":[{"@type":"City","name":"Miramas"},{"@type":"City","name":"Istres"},{"@type":"City","name":"Salon-de-Provence"},{"@type":"City","name":"Vitrolles"},{"@type":"City","name":"Martigues"},{"@type":"City","name":"Berre-l'Étang"}],"hasOfferCatalog":{"@type":"OfferCatalog","name":"Services de garde","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":"Pension nuit"},"price":"25","priceCurrency":"EUR"},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Garderie journée"},"price":"20","priceCurrency":"EUR"},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Promenade"},"price":"15","priceCurrency":"EUR"}]},"sameAs":["https://facebook.com/miloudogsprovence","https://tiktok.com/@miloudogs_provence"]}</script>
-<meta name="description" content="Garde de chien à Miramas dès 25€/nuit. Pension familiale 5★ Google, terrain 2000m², pas de cage, photos quotidiennes. Salon-de-Provence, Istres, Vitrolles. ☎ 07 77 23 40 88">
-<meta name="keywords" content="garde chien Miramas, pension chien Miramas, garde chien Istres, garde chien Salon-de-Provence, pension chien Provence, dog sitter Miramas">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Milou Dogs Provence","description":"Garde de chien à domicile à Miramas. Pension familiale 5 étoiles, terrain 2000m², photos quotidiennes. 25€/nuit.","telephone":"+33777234088","url":"https://miloudogsprovence.fr/","address":{"@type":"PostalAddress","streetAddress":"Miramas","addressLocality":"Miramas","postalCode":"13140","addressRegion":"Bouches-du-Rhône","addressCountry":"FR"},"geo":{"@type":"GeoCoordinates","latitude":43.5833,"longitude":5.0},"openingHours":"Mo-Su 08:00-19:00","aggregateRating":{"@type":"AggregateRating","ratingValue":"5","reviewCount":"41"},"priceRange":"€€","areaServed":[{"@type":"City","name":"Miramas"},{"@type":"City","name":"Istres"},{"@type":"City","name":"Salon-de-Provence"},{"@type":"City","name":"Vitrolles"},{"@type":"City","name":"Martigues"},{"@type":"City","name":"Fos-sur-Mer"},{"@type":"City","name":"Berre-l'Étang"},{"@type":"City","name":"Port-de-Bouc"},{"@type":"City","name":"Saint-Chamas"},{"@type":"City","name":"Marseille"},{"@type":"City","name":"Aix-en-Provence"},{"@type":"City","name":"Arles"},{"@type":"City","name":"Avignon"}],"hasOfferCatalog":{"@type":"OfferCatalog","name":"Services de garde","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":"Pension nuit"},"price":"25","priceCurrency":"EUR"},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Garderie journée"},"price":"20","priceCurrency":"EUR"},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Promenade"},"price":"15","priceCurrency":"EUR"},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Visite à domicile tous animaux (chien, chat, lapin, poules, rongeurs…)"},"price":"8","priceCurrency":"EUR"},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Récupération du chien à domicile"},"price":"10","priceCurrency":"EUR"}]},"sameAs":["https://facebook.com/miloudogsprovence","https://tiktok.com/@miloudogs_provence"]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Milou Dogs Provence","url":"https://miloudogsprovence.fr/","inLanguage":"fr-FR"}</script>
+<meta name="description" content="Garde de chien à Miramas dès 25€/nuit + visites à domicile tous animaux (chat, lapin, poules…) dès 8€. Pension familiale 5★ Google, terrain 2000m², pas de cage, photos quotidiennes. ☎ 07 77 23 40 88">
+<meta name="keywords" content="garde chien Miramas, pension chien Miramas, garde chat Miramas, visite animaux à domicile, pet sitter Miramas, garde chien Istres, garde chien Salon-de-Provence, pension chien Provence, dog sitter Miramas">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="canonical" href="https://miloudogsprovence.fr/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- LCP : précharge de l'image hero (desktop / mobile) -->
+<link rel="preload" as="image" href="hero-banner.webp" media="(min-width:761px)">
+<link rel="preload" as="image" href="hero-mobile.webp" media="(max-width:760px)">
 <!-- Hero piloté depuis l'admin : on évite le flash ancienne→nouvelle image.
      Pour les visites suivantes, on applique l'image en cache avant le rendu. -->
 <script>
@@ -406,16 +410,17 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
           <li>Laisse & sécurité</li>
         </ul>
       </div>
-      <div class="svc-mini-card fade-in">
+      <div class="svc-mini-card fade-in" onclick="location.href='garde-animaux-domicile-miramas.html'" style="cursor:pointer;">
         <span class="svc-mini-icon">🏡</span>
-        <div class="svc-mini-name">Visite à domicile</div>
-        <p class="svc-mini-desc">On vient chez vous : repas, câlins et un vrai moment avec votre chien, qui reste dans son environnement.</p>
-        <div class="svc-mini-price">15€<small>/visite</small></div>
+        <div class="svc-mini-name">Visite à domicile <span style="font-size:.65rem;background:var(--soleil);color:#1a0e00;border-radius:12px;padding:2px 8px;vertical-align:middle;font-family:'Lato',sans-serif;font-weight:800;">TOUS ANIMAUX</span></div>
+        <p class="svc-mini-desc">On vient chez vous : repas, soins et un vrai moment avec votre animal — chien, chat, lapin, poules, furet, rongeur, oiseau, tortue, poissons…</p>
+        <div class="svc-mini-price">dès 8€<small>/visite</small></div>
         <ul class="svc-mini-perks">
-          <li>Repas & gamelle d'eau</li>
+          <li>Repas, eau fraîche & soins</li>
           <li>Moment de jeu & câlins</li>
-          <li>Votre chien reste chez lui</li>
+          <li>Votre animal reste chez lui</li>
         </ul>
+        <a href="garde-animaux-domicile-miramas.html" style="display:inline-block;margin-top:12px;font-size:.8rem;color:var(--lavande);font-weight:700;text-decoration:none;" onclick="event.stopPropagation()">Tout savoir sur les visites →</a>
       </div>
     </div>
     <div class="fidelite-banner fade-in">
@@ -757,6 +762,7 @@ function nlSubmit(e){
       <a href="garde-chien-aix-en-provence.html" class="btn-outline" style="font-size:.85rem;padding:8px 16px;">Aix-en-Provence</a>
       <a href="garde-chien-arles.html" class="btn-outline" style="font-size:.85rem;padding:8px 16px;">Arles</a>
       <a href="garde-chien-avignon.html" class="btn-outline" style="font-size:.85rem;padding:8px 16px;">Avignon</a>
+      <a href="garde-animaux-domicile-miramas.html" class="btn-outline" style="font-size:.85rem;padding:8px 16px;background:var(--soleil-light,#FFF8E6);border-color:var(--soleil);">🏡 Visites à domicile — tous animaux</a>
     </div>
   </div>
 </section>

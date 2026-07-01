@@ -336,8 +336,20 @@
             <!-- Panneau Visite à domicile -->
             <div id="visite-panel" class="addon-card checked" style="display:none;">
               <span class="addon-title">🏡 Détails de la visite à domicile</span>
-              <span class="addon-sub">On passe chez vous : repas, eau fraîche et un vrai moment avec votre chien.</span>
+              <span class="addon-sub">On passe chez vous : repas, eau fraîche, soins et un vrai moment avec votre animal. Chiens, chats, lapins, poules, furets, rongeurs, oiseaux, tortues, poissons… (pas de serpents 🙂)</span>
               <div class="addon-panel" style="border-top:none;padding-top:14px;">
+                <label class="addon-flabel">Quel animal ?</label>
+                <select id="visite-animal" class="addon-select" onchange="visiteSetAnimal()" style="margin-bottom:12px;">
+                  <option value="chien">🐶 Chien — dès 15€</option>
+                  <option value="chat">🐱 Chat — dès 12€</option>
+                  <option value="furet">🦡 Furet — dès 13€</option>
+                  <option value="poules">🐔 Poules / basse-cour — dès 13€</option>
+                  <option value="lapin">🐰 Lapin — dès 10€</option>
+                  <option value="rongeur">🐹 Rongeur (hamster, cochon d'Inde…) — dès 10€</option>
+                  <option value="oiseau">🦜 Oiseau (perruche, perroquet…) — dès 10€</option>
+                  <option value="tortue">🐢 Tortue / reptile (hors serpent) — dès 10€</option>
+                  <option value="poisson">🐠 Poissons (aquarium) — dès 8€</option>
+                </select>
                 <label class="addon-flabel">Durée par visite</label>
                 <div class="vdur-row">
                   <button type="button" class="vdur-btn active" data-min="30" onclick="visiteSetDur(30)">30 min — 15€</button>
@@ -761,8 +773,27 @@ function _pickupFinish(meters){
 }
 
 // ===== Visite à domicile : durée, nb visites, jours, adresse + déplacement =====
-window.__visite={active:false,dur:30,price:15,perDay:1,days:1,km:null,city:'',postcode:'',address:'',coords:null,travelPerDay:0,travelTotal:0};
+var VISITE_ANIMALS={
+  chien:{n:'🐶 Chien',p:15}, chat:{n:'🐱 Chat',p:12}, furet:{n:'🦡 Furet',p:13},
+  poules:{n:'🐔 Poules / basse-cour',p:13}, lapin:{n:'🐰 Lapin',p:10},
+  rongeur:{n:'🐹 Rongeur',p:10}, oiseau:{n:'🦜 Oiseau',p:10},
+  tortue:{n:'🐢 Tortue / reptile',p:10}, poisson:{n:'🐠 Poissons (aquarium)',p:8}
+};
+window.__visite={active:false,animal:'chien',animalBase:15,animalLabel:'🐶 Chien',dur:30,price:15,perDay:1,days:1,km:null,city:'',postcode:'',address:'',coords:null,travelPerDay:0,travelTotal:0};
 var _vTimer=null,_vFeats=[];
+
+function visiteSetAnimal(){
+  var id=document.getElementById('visite-animal').value, a=VISITE_ANIMALS[id]||VISITE_ANIMALS.chien;
+  window.__visite.animal=id; window.__visite.animalBase=a.p; window.__visite.animalLabel=a.n;
+  window.__visite.price=a.p+(window.__visite.dur===60?5:0);
+  _visiteUpdateDurLabels(); calcPrice();
+}
+function _visiteUpdateDurLabels(){
+  var base=window.__visite.animalBase||15;
+  var b30=document.querySelector('.vdur-btn[data-min="30"]'), b60=document.querySelector('.vdur-btn[data-min="60"]');
+  if(b30) b30.textContent='30 min — '+base+'€';
+  if(b60) b60.textContent='1 heure — '+(base+5)+'€';
+}
 
 function computeRoadKm(coords, cb){ // distance routière ALLER (km), fallback vol d'oiseau ×1.3
   var url='https://router.project-osrm.org/route/v1/driving/'+HOME_COORDS[0]+','+HOME_COORDS[1]+';'+coords[0]+','+coords[1]+'?overview=false';
@@ -790,7 +821,8 @@ function toggleVisitePanel(){
   calcPrice();
 }
 function visiteSetDur(min){
-  window.__visite.dur=min; window.__visite.price=(min===60?20:15);
+  window.__visite.dur=min;
+  window.__visite.price=(window.__visite.animalBase||15)+(min===60?5:0);
   [].slice.call(document.querySelectorAll('.vdur-btn')).forEach(function(b){ b.classList.toggle('active', parseInt(b.dataset.min)===min); });
   calcPrice();
 }
@@ -930,7 +962,7 @@ function calcPrice(){
     const v=window.__visite;
     const totalVisits=Math.max(1,v.perDay*v.days);
     const visitesCost=v.price*totalVisits;
-    lines.push('🏡 Visite à domicile — '+v.price+'€ × '+totalVisits+' visite'+(totalVisits>1?'s':'')+' <small style="color:var(--text-muted);">('+v.perDay+'/jour × '+v.days+' j, '+(v.dur===60?'1h':'30 min')+')</small> = <strong>'+visitesCost+'€</strong>');
+    lines.push('🏡 Visite à domicile <small style="color:var(--text-muted);">('+(v.animalLabel||'🐶 Chien')+')</small> — '+v.price+'€ × '+totalVisits+' visite'+(totalVisits>1?'s':'')+' <small style="color:var(--text-muted);">('+v.perDay+'/jour × '+v.days+' j, '+(v.dur===60?'1h':'30 min')+')</small> = <strong>'+visitesCost+'€</strong>');
     total+=visitesCost;
     if(v.km!=null && v.travelTotal>0){
       lines.push('🚗 Déplacement visites — <strong>'+v.travelTotal.toString().replace('.',',')+'€</strong> <small style="color:var(--text-muted);">('+v.travelPerDay.toString().replace('.',',')+'€ / jour × '+v.days+' j)</small>');
@@ -980,7 +1012,7 @@ function prepareSubmit(){
       devis+=' | 🚗 Récupération à : '+window.__pickup.address+(window.__pickup.km?(' ('+window.__pickup.km+' km)'):'');
     }
     if(window.__visite && window.__visite.active && window.__visite.address){
-      devis+=' | 🏡 Visite à : '+window.__visite.address+' ('+(window.__visite.dur===60?'1h':'30 min')+', '+window.__visite.perDay+'/jour × '+window.__visite.days+' j)';
+      devis+=' | 🏡 Visite ('+(window.__visite.animalLabel||'Chien')+') à : '+window.__visite.address+' ('+(window.__visite.dur===60?'1h':'30 min')+', '+window.__visite.perDay+'/jour × '+window.__visite.days+' j)';
     }
     document.getElementById('hidden-devis').value=devis;
   }
