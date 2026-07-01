@@ -630,11 +630,18 @@ function pickupAddrInput(){
   calcPrice();
 }
 
+function _pickupSetFeature(f){
+  window.__pickup.address=f.properties.label;
+  window.__pickup.coords=f.geometry.coordinates;
+  window.__pickup.city=f.properties.city||'';
+  window.__pickup.postcode=f.properties.postcode||'';
+}
+
 function pickupPick(i){
   var f=_pickupFeats[i]; if(!f)return;
   document.getElementById('pickup-addr').value=f.properties.label;
   document.getElementById('pickup-suggest').style.display='none';
-  window.__pickup.address=f.properties.label; window.__pickup.coords=f.geometry.coordinates;
+  _pickupSetFeature(f);
   pickupDistance(f.geometry.coordinates);
 }
 
@@ -642,9 +649,8 @@ function pickupGeocode(addr){
   fetch('https://api-adresse.data.gouv.fr/search/?limit=1&q='+encodeURIComponent(addr))
    .then(function(r){return r.json();}).then(function(j){
      if(j&&j.features&&j.features[0]){
-       var f=j.features[0];
-       window.__pickup.address=f.properties.label; window.__pickup.coords=f.geometry.coordinates;
-       pickupDistance(f.geometry.coordinates);
+       _pickupSetFeature(j.features[0]);
+       pickupDistance(j.features[0].geometry.coordinates);
      }
    }).catch(function(){});
 }
@@ -667,11 +673,21 @@ function pickupDistance(coords){
 }
 
 function _pickupFinish(meters){
-  var km=Math.round(meters/1000*10)/10;
-  var price=km<=10?10:Math.round((10+(km-10)*0.5)*100)/100;
+  var km=Math.round(meters/1000*10)/10;                 // distance aller (une fois)
+  var isMiramas = /miramas/i.test(window.__pickup.city||'') || window.__pickup.postcode==='13140';
+  var res=document.getElementById('pickup-result');
+  var price, html;
+  if(isMiramas){
+    price=10;
+    html='✅ <strong>Miramas</strong> → récupération <strong>10€</strong> <small style="color:var(--text-muted);">(forfait)</small>';
+  } else {
+    var aller_retour=Math.round(km*2*10)/10;            // aller + retour
+    price=Math.round((10+aller_retour*0.5)*100)/100;
+    html='✅ Distance : <strong>'+km.toString().replace('.',',')+' km</strong> (aller-retour '+aller_retour.toString().replace('.',',')+' km) → récupération <strong>'+price.toString().replace('.',',')+'€</strong>'
+       + ' <small style="color:var(--text-muted);">(10€ + '+aller_retour.toString().replace('.',',')+' km × 0,50€)</small>';
+  }
   window.__pickup.km=km; window.__pickup.price=price;
-  document.getElementById('pickup-result').innerHTML='✅ Distance : <strong>'+km.toString().replace('.',',')+' km</strong> → récupération <strong>'+price.toString().replace('.',',')+'€</strong>'
-    + (km>10?' <small style="color:var(--text-muted);">(10€ + '+((km-10).toFixed(1)).replace('.',',')+' km × 0,50€)</small>':' <small style="color:var(--text-muted);">(forfait ≤ 10 km)</small>');
+  res.innerHTML=html;
   calcPrice();
 }
 
