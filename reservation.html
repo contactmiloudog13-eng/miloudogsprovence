@@ -49,6 +49,8 @@
 .form-service-tags{display:flex;flex-wrap:wrap;gap:8px;}
 .service-tag{padding:8px 16px;border:1px solid var(--border);border-radius:20px;font-size:.85rem;cursor:pointer;transition:all .2s;background:white;color:var(--text-muted);}
 .service-tag.active,.service-tag:hover{background:var(--lavande-light);border-color:var(--lavande);color:var(--lavande-dark);}
+.vdur-btn{flex:1;padding:10px;border:1.5px solid var(--border);border-radius:10px;background:white;color:var(--text-muted);font-family:inherit;font-weight:700;font-size:.83rem;cursor:pointer;transition:all .2s;}
+.vdur-btn.active{background:var(--lavande);border-color:var(--lavande);color:white;}
 .tag-close{margin-left:6px;font-size:.7rem;opacity:.7;line-height:1;vertical-align:middle;background:rgba(74,63,114,0.15);border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,opacity .2s;}
 .tag-close:hover{background:rgba(74,63,114,0.35);opacity:1;}
 .form-submit{width:100%;padding:16px;background:var(--lavande);color:white;border:none;border-radius:40px;font-family:'Lato',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:all .2s;margin-top:8px;}
@@ -284,7 +286,7 @@
                 <span class="service-tag" data-price="25" data-unit="nuit" onclick="toggleTag(this)">🏠 Pension complète nuit &amp; journée</span>
                 <span class="service-tag" data-price="20" data-unit="jour" data-sameday="1" onclick="toggleTag(this)">☀️ Garderie journée</span>
                 <span class="service-tag" data-price="10" data-unit="jour" data-sameday="1" onclick="toggleTag(this)">🌤️ Garderie demi-journée</span>
-                <span class="service-tag" data-price="15" data-unit="fixe" data-sameday="1" onclick="toggleTag(this)">🏡 Visite à domicile (par visite)</span>
+                <span class="service-tag" data-price="15" data-unit="fixe" data-sameday="1" data-visite="1" onclick="toggleTag(this);toggleVisitePanel()">🏡 Visite à domicile</span>
                 <span class="service-tag" data-price="10" data-unit="fixe" data-sameday="1" onclick="toggleTag(this)">🐣 Test demi-journée</span>
                 <span class="service-tag" data-price="15" data-unit="fixe" data-sameday="1" data-duration="60" onclick="toggleTag(this)">🦮 Promenade</span>
                 <span class="service-tag" data-price="30" data-unit="fixe" data-sameday="1" onclick="toggleTag(this)">🛁 Toilettage</span>
@@ -302,6 +304,31 @@
                 <div id="pickup-suggest" style="position:absolute;z-index:30;left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:10px;margin-top:2px;box-shadow:0 8px 24px rgba(0,0,0,.12);display:none;max-height:210px;overflow:auto;"></div>
                 <div id="pickup-result" style="margin-top:8px;font-size:.85rem;color:var(--text);"></div>
               </div>
+            </div>
+
+            <!-- Panneau Visite à domicile -->
+            <div id="visite-panel" style="display:none;background:var(--cream);border:1px solid var(--border);border-radius:12px;padding:14px;margin-top:4px;">
+              <div style="font-weight:700;font-size:.9rem;margin-bottom:10px;">🏡 Détails de la visite à domicile</div>
+              <label style="font-size:.8rem;font-weight:600;">Durée par visite</label>
+              <div style="display:flex;gap:8px;margin:6px 0 12px;">
+                <button type="button" class="vdur-btn active" data-min="30" onclick="visiteSetDur(30)">30 min — 15€</button>
+                <button type="button" class="vdur-btn" data-min="60" onclick="visiteSetDur(60)">1 heure — 20€</button>
+              </div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <div style="flex:1;min-width:120px;"><label style="font-size:.8rem;font-weight:600;">Visites par jour</label>
+                  <select id="visite-perday" onchange="visiteRecalc()" style="width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:10px;font-size:.88rem;">
+                    <option value="1">1 visite</option><option value="2">2 visites</option><option value="3">3 visites</option><option value="4">4 visites</option>
+                  </select></div>
+                <div style="flex:1;min-width:120px;"><label style="font-size:.8rem;font-weight:600;">Nombre de jours</label>
+                  <input id="visite-days" type="number" min="1" max="60" value="1" oninput="visiteRecalc()" style="width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:10px;font-size:.88rem;"></div>
+              </div>
+              <div style="position:relative;margin-top:10px;">
+                <label style="font-size:.8rem;font-weight:600;">Adresse de la visite</label>
+                <input id="visite-addr" type="text" autocomplete="off" placeholder="Ex : 5 rue des Écoles, 13300 Salon-de-Provence" oninput="visiteAddrInput()"
+                       style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:.88rem;">
+                <div id="visite-suggest" style="position:absolute;z-index:30;left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:10px;margin-top:2px;box-shadow:0 8px 24px rgba(0,0,0,.12);display:none;max-height:210px;overflow:auto;"></div>
+              </div>
+              <div id="visite-result" style="margin-top:8px;font-size:.85rem;color:var(--text);"></div>
             </div>
             <div class="form-row">
               <div class="form-group"><label>Date *</label><input id="date-debut" name="Date arrivée" type="date" required oninput="calcPrice()"></div>
@@ -582,18 +609,26 @@ window.__clientAddr='';
 var _pickupTimer=null, _pickupFeats=[];
 
 // Pré-remplissage : si le client est connecté, on récupère son adresse enregistrée.
-try{
-  if(typeof _auth!=='undefined'){
-    _auth.onAuthStateChanged(function(u){
-      if(!u)return;
-      _db.ref('users/'+u.uid).get().then(function(s){
+// (exécuté APRÈS le chargement complet, car firebase-auth.js se charge en bas de page)
+window.addEventListener('load', function(){
+  try{
+    if(!window.firebase || !firebase.auth) return;
+    firebase.auth().onAuthStateChanged(function(u){
+      if(!u) return;
+      firebase.database().ref('users/'+u.uid).get().then(function(s){
         var d=s.val()||{};
         var parts=[d.adresse,d.codePostal,d.ville].filter(Boolean);
-        if(parts.length) window.__clientAddr=parts.join(' ');
+        if(!parts.length) return;
+        window.__clientAddr=parts.join(' ');
+        // si une case adresse est déjà cochée et vide → on préremplit + calcule
+        var pk=document.getElementById('pickup-addr');
+        if(window.__pickup && window.__pickup.active && pk && !pk.value){ pk.value=window.__clientAddr; pickupGeocode(window.__clientAddr); }
+        var va=document.getElementById('visite-addr');
+        if(window.__visite && window.__visite.active && va && !va.value){ va.value=window.__clientAddr; visiteGeocode(window.__clientAddr); }
       }).catch(function(){});
     });
-  }
-}catch(e){}
+  }catch(e){}
+});
 
 function togglePickup(cb){
   window.__pickup.active=cb.checked;
@@ -691,6 +726,87 @@ function _pickupFinish(meters){
   calcPrice();
 }
 
+// ===== Visite à domicile : durée, nb visites, jours, adresse + déplacement =====
+window.__visite={active:false,dur:30,price:15,perDay:1,days:1,km:null,city:'',postcode:'',address:'',coords:null,travelPerDay:0,travelTotal:0};
+var _vTimer=null,_vFeats=[];
+
+function computeRoadKm(coords, cb){ // distance routière ALLER (km), fallback vol d'oiseau ×1.3
+  var url='https://router.project-osrm.org/route/v1/driving/'+HOME_COORDS[0]+','+HOME_COORDS[1]+';'+coords[0]+','+coords[1]+'?overview=false';
+  fetch(url).then(function(r){return r.json();}).then(function(j){
+    var m=(j&&j.routes&&j.routes[0])?j.routes[0].distance:_haversineKm(HOME_COORDS,coords)*1000*1.3;
+    cb(Math.round(m/1000*10)/10);
+  }).catch(function(){ cb(Math.round(_haversineKm(HOME_COORDS,coords)*1.3*10)/10); });
+}
+
+function toggleVisitePanel(){
+  var tag=[].slice.call(document.querySelectorAll('.service-tag')).filter(function(t){return t.dataset.visite==='1';})[0];
+  var active=tag && tag.classList.contains('active');
+  window.__visite.active=!!active;
+  document.getElementById('visite-panel').style.display=active?'block':'none';
+  if(active){
+    var inp=document.getElementById('visite-addr');
+    if(inp && !inp.value && window.__clientAddr){ inp.value=window.__clientAddr; visiteGeocode(window.__clientAddr); }
+  }
+  calcPrice();
+}
+function visiteSetDur(min){
+  window.__visite.dur=min; window.__visite.price=(min===60?20:15);
+  [].slice.call(document.querySelectorAll('.vdur-btn')).forEach(function(b){ b.classList.toggle('active', parseInt(b.dataset.min)===min); });
+  calcPrice();
+}
+function visiteRecalc(){
+  window.__visite.perDay=parseInt(document.getElementById('visite-perday').value)||1;
+  window.__visite.days=Math.max(1,parseInt(document.getElementById('visite-days').value)||1);
+  _visiteApplyTravel(); calcPrice();
+}
+function visiteAddrInput(){
+  var q=document.getElementById('visite-addr').value.trim();
+  window.__visite.km=null; window.__visite.travelTotal=0; document.getElementById('visite-result').innerHTML='';
+  clearTimeout(_vTimer);
+  var box=document.getElementById('visite-suggest');
+  if(q.length<4){ box.style.display='none'; calcPrice(); return; }
+  _vTimer=setTimeout(function(){
+    fetch('https://api-adresse.data.gouv.fr/search/?limit=5&q='+encodeURIComponent(q))
+     .then(function(r){return r.json();}).then(function(j){
+       _vFeats=(j&&j.features)||[];
+       if(!_vFeats.length){ box.style.display='none'; return; }
+       box.innerHTML=_vFeats.map(function(f,i){ return '<div onclick="visitePick('+i+')" style="padding:9px 12px;cursor:pointer;font-size:.83rem;border-bottom:1px solid var(--border);">📍 '+f.properties.label+'</div>'; }).join('');
+       box.style.display='block';
+     }).catch(function(){});
+  },300);
+  calcPrice();
+}
+function _visiteSetFeature(f){
+  window.__visite.address=f.properties.label; window.__visite.coords=f.geometry.coordinates;
+  window.__visite.city=f.properties.city||''; window.__visite.postcode=f.properties.postcode||'';
+}
+function visitePick(i){
+  var f=_vFeats[i]; if(!f)return;
+  document.getElementById('visite-addr').value=f.properties.label;
+  document.getElementById('visite-suggest').style.display='none';
+  _visiteSetFeature(f); visiteDistance(f.geometry.coordinates);
+}
+function visiteGeocode(addr){
+  fetch('https://api-adresse.data.gouv.fr/search/?limit=1&q='+encodeURIComponent(addr))
+   .then(function(r){return r.json();}).then(function(j){ if(j&&j.features&&j.features[0]){ _visiteSetFeature(j.features[0]); visiteDistance(j.features[0].geometry.coordinates); } }).catch(function(){});
+}
+function visiteDistance(coords){
+  document.getElementById('visite-result').innerHTML='⏳ Calcul du déplacement…';
+  computeRoadKm(coords, function(km){ window.__visite.km=km; _visiteApplyTravel(); calcPrice(); });
+}
+function _visiteApplyTravel(){
+  var v=window.__visite, res=document.getElementById('visite-result');
+  if(v.km==null){ v.travelPerDay=0; v.travelTotal=0; return; }
+  var isMiramas=/miramas/i.test(v.city||'')||v.postcode==='13140';
+  if(isMiramas){ v.travelPerDay=0; if(res) res.innerHTML='✅ <strong>Miramas</strong> — aucun frais de déplacement'; }
+  else {
+    var ar=Math.round(v.km*2*10)/10;
+    v.travelPerDay=Math.round((10+ar*0.5)*100)/100;
+    if(res) res.innerHTML='✅ '+(v.city||'Hors Miramas')+' — déplacement <strong>'+v.travelPerDay.toString().replace('.',',')+'€ / jour</strong> <small style="color:var(--text-muted);">(10€ + '+ar.toString().replace('.',',')+' km aller-retour × 0,50€)</small>';
+  }
+  v.travelTotal=Math.round(v.travelPerDay*v.days*100)/100;
+}
+
 function calcPrice(){
   const tags=[...document.querySelectorAll('.service-tag.active')];
   const box=document.getElementById('price-box');
@@ -724,6 +840,7 @@ function calcPrice(){
   let lines=[],total=0;
 
   tags.forEach(t=>{
+    if(t.dataset.visite==='1') return; // géré séparément (panneau visite)
     const price=parseInt(t.dataset.price);
     const unit=t.dataset.unit;
     const name=t.textContent.trim();
@@ -768,6 +885,21 @@ function calcPrice(){
     }
   });
 
+  // Visite à domicile (durée × nb visites × jours + déplacement)
+  if(window.__visite && window.__visite.active){
+    const v=window.__visite;
+    const totalVisits=Math.max(1,v.perDay*v.days);
+    const visitesCost=v.price*totalVisits;
+    lines.push('🏡 Visite à domicile — '+v.price+'€ × '+totalVisits+' visite'+(totalVisits>1?'s':'')+' <small style="color:var(--text-muted);">('+v.perDay+'/jour × '+v.days+' j, '+(v.dur===60?'1h':'30 min')+')</small> = <strong>'+visitesCost+'€</strong>');
+    total+=visitesCost;
+    if(v.km!=null && v.travelTotal>0){
+      lines.push('🚗 Déplacement visites — <strong>'+v.travelTotal.toString().replace('.',',')+'€</strong> <small style="color:var(--text-muted);">('+v.travelPerDay.toString().replace('.',',')+'€ / jour × '+v.days+' j)</small>');
+      total=Math.round((total+v.travelTotal)*100)/100;
+    } else if(v.km==null){
+      lines.push('🚗 <small style="color:var(--text-muted);">Saisissez l\'adresse de la visite pour le déplacement</small>');
+    }
+  }
+
   // Récupération à domicile (distance calculée automatiquement)
   if(window.__pickup && window.__pickup.active && window.__pickup.price>0){
     lines.push('🚗 Récupération à domicile'+(window.__pickup.km?(' ('+window.__pickup.km.toString().replace('.',',')+' km)'):'')+' — <strong>'+window.__pickup.price.toString().replace('.',',')+'€</strong>');
@@ -806,6 +938,9 @@ function prepareSubmit(){
     let devis=detail+' | '+total;
     if(window.__pickup && window.__pickup.active && window.__pickup.address){
       devis+=' | 🚗 Récupération à : '+window.__pickup.address+(window.__pickup.km?(' ('+window.__pickup.km+' km)'):'');
+    }
+    if(window.__visite && window.__visite.active && window.__visite.address){
+      devis+=' | 🏡 Visite à : '+window.__visite.address+' ('+(window.__visite.dur===60?'1h':'30 min')+', '+window.__visite.perDay+'/jour × '+window.__visite.days+' j)';
     }
     document.getElementById('hidden-devis').value=devis;
   }
