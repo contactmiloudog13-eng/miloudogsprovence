@@ -26,6 +26,12 @@ nav{
   padding:0 5%;height:70px;
   transition:height .3s,box-shadow .3s;
 }
+/* Fil d'ariane : ne doit PAS hériter du header fixe (sinon bloc blanc qui chevauche le hero) */
+nav[aria-label="Fil d'ariane"]{
+  position:static;top:auto;z-index:auto;width:auto;
+  background:none;backdrop-filter:none;-webkit-backdrop-filter:none;
+  border-bottom:none;height:auto;display:block;
+}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
 .nav-logo .paw{font-size:28px;animation:pawspin 8s linear infinite;}
 @keyframes pawspin{0%,90%{transform:rotate(0);}95%{transform:rotate(-20deg);}100%{transform:rotate(0);}}
