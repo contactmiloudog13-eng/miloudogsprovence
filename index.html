@@ -267,7 +267,7 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
 .avis-text{font-size:.9rem;color:var(--text-muted);line-height:1.7;font-weight:300;font-style:italic;}
 .google-badge span{font-size:.75rem;color:var(--text-muted);}
 
-.mosaic-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr;grid-template-rows:1fr 1fr;height:420px;gap:6px;border-radius:20px;overflow:hidden;box-shadow:0 8px 40px rgba(74,63,114,0.15);}
+.mosaic-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr;grid-template-rows:1fr 1fr;height:480px;gap:6px;border-radius:20px;overflow:hidden;box-shadow:0 8px 40px rgba(74,63,114,0.15);}
 .mc{background-size:cover;background-position:center;transition:transform .4s;}
 .mc:hover{transform:scale(1.03);}
 .mc1{grid-row:1/3;background-image:url('IMG_0952.webp');}
@@ -336,6 +336,22 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
   <span id="urgence-txt">Places limitées — Maximum 7 chiens acceptés simultanément · <a href="reservation.html" style="color:#F5C84A;text-decoration:underline;font-weight:800;">Vérifier les disponibilités →</a></span>
 </div>
 <style>@keyframes urgpulse{0%,100%{opacity:1;}50%{opacity:.3;}}</style>
+
+<!-- ── Bandeau confiance (pro déclarée / ACACED / RC Pro) ── -->
+<section id="trust-bar" style="background:white;border-bottom:1px solid var(--border);padding:18px 5%;">
+  <div style="max-width:1000px;margin:0 auto;display:flex;flex-wrap:wrap;gap:14px 34px;justify-content:center;align-items:center;">
+    <span class="trust-item">✅ <strong>Micro-entreprise déclarée</strong><small>SIRET vérifié</small></span>
+    <span class="trust-item">🎓 <strong>Certifiée ACACED</strong><small>Aptitude animaux de compagnie</small></span>
+    <span class="trust-item">🛡️ <strong>Assurée RC Pro</strong><small>Responsabilité civile pro</small></span>
+    <span class="trust-item">⭐ <strong>5.0 sur Google</strong><small>41 avis vérifiés</small></span>
+  </div>
+</section>
+<style>
+#trust-bar .trust-item{display:inline-flex;flex-direction:column;line-height:1.25;font-size:.82rem;color:var(--text);align-items:flex-start;position:relative;padding-left:2px;}
+#trust-bar .trust-item strong{font-weight:800;color:var(--lavande-dark);}
+#trust-bar .trust-item small{font-size:.68rem;color:var(--text-muted);font-weight:400;letter-spacing:.01em;}
+@media(max-width:600px){#trust-bar{padding:14px 5%;}#trust-bar > div{gap:12px 20px;}#trust-bar .trust-item{font-size:.76rem;}#trust-bar .trust-item small{font-size:.64rem;}}
+</style>
 
 <section id="services-mini">
   <div class="container">
