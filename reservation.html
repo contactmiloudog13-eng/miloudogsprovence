@@ -49,8 +49,31 @@
 .form-service-tags{display:flex;flex-wrap:wrap;gap:8px;}
 .service-tag{padding:8px 16px;border:1px solid var(--border);border-radius:20px;font-size:.85rem;cursor:pointer;transition:all .2s;background:white;color:var(--text-muted);}
 .service-tag.active,.service-tag:hover{background:var(--lavande-light);border-color:var(--lavande);color:var(--lavande-dark);}
-.vdur-btn{flex:1;padding:10px;border:1.5px solid var(--border);border-radius:10px;background:white;color:var(--text-muted);font-family:inherit;font-weight:700;font-size:.83rem;cursor:pointer;transition:all .2s;}
-.vdur-btn.active{background:var(--lavande);border-color:var(--lavande);color:white;}
+/* ── Options additionnelles (récupération / visite) : rendu pro ── */
+.addon-card{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:15px 16px;margin-top:12px;transition:border-color .2s,box-shadow .2s;}
+.addon-card.checked{border-color:var(--lavande);box-shadow:0 6px 20px rgba(123,111,160,.12);}
+.addon-card.disabled{opacity:.5;pointer-events:none;}
+.addon-check{display:flex;align-items:flex-start;gap:12px;cursor:pointer;margin:0;}
+.addon-check input[type=checkbox]{margin-top:2px;width:20px;height:20px;flex-shrink:0;accent-color:var(--lavande);cursor:pointer;}
+.addon-check .ac-txt{flex:1;}
+.addon-title{display:block;font-family:'Lato',sans-serif;font-weight:800;font-size:.94rem;color:var(--text);text-transform:none;letter-spacing:0;margin:0;}
+.addon-sub{display:block;font-size:.82rem;color:var(--text-muted);font-weight:400;margin-top:3px;line-height:1.5;text-transform:none;letter-spacing:0;}
+.addon-panel{margin-top:14px;padding-top:14px;border-top:1px dashed var(--border);}
+.addon-flabel{display:block;font-size:.78rem;font-weight:700;color:var(--lavande-dark);text-transform:none;letter-spacing:0;margin-bottom:6px;}
+.addon-input,.addon-select,.addon-num{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;font-family:'Lato',sans-serif;font-size:.9rem;color:var(--text);background:#fff;box-sizing:border-box;}
+.addon-input:focus,.addon-select:focus,.addon-num:focus{outline:none;border-color:var(--lavande);}
+.addon-suggest{position:absolute;z-index:30;left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:10px;margin-top:4px;box-shadow:0 12px 30px rgba(74,63,114,.15);display:none;max-height:220px;overflow:auto;}
+.addon-suggest div{padding:10px 13px;cursor:pointer;font-size:.85rem;color:var(--text);border-bottom:1px solid var(--border);}
+.addon-suggest div:last-child{border-bottom:none;}
+.addon-suggest div:hover{background:var(--lavande-light);}
+.addon-result{margin-top:10px;font-size:.85rem;color:var(--text);background:var(--cream);border-radius:8px;padding:9px 12px;line-height:1.5;}
+.addon-result:empty{display:none;padding:0;}
+.addon-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;}
+.addon-row > div{flex:1;min-width:130px;}
+.vdur-row{display:flex;gap:8px;margin:4px 0 0;}
+.vdur-btn{flex:1;padding:11px;border:1.5px solid var(--border);border-radius:10px;background:#fff;color:var(--text-muted);font-family:'Lato',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;transition:all .2s;}
+.vdur-btn:hover{border-color:var(--lavande);}
+.vdur-btn.active{background:var(--lavande);border-color:var(--lavande);color:#fff;}
 .tag-close{margin-left:6px;font-size:.7rem;opacity:.7;line-height:1;vertical-align:middle;background:rgba(74,63,114,0.15);border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,opacity .2s;}
 .tag-close:hover{background:rgba(74,63,114,0.35);opacity:1;}
 .form-submit{width:100%;padding:16px;background:var(--lavande);color:white;border:none;border-radius:40px;font-family:'Lato',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:all .2s;margin-top:8px;}
@@ -292,43 +315,53 @@
                 <span class="service-tag" data-price="30" data-unit="fixe" data-sameday="1" onclick="toggleTag(this)">🛁 Toilettage</span>
               </div>
             </div>
-            <div class="form-group" style="margin-top:2px;">
-              <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-weight:400;background:var(--cream);border:1px solid var(--border);border-radius:12px;padding:12px 14px;">
-                <input type="checkbox" id="pickup-home" onchange="togglePickup(this)" style="margin-top:2px;width:18px;height:18px;flex-shrink:0;accent-color:var(--lavande);">
-                <span style="font-size:.88rem;">🚗 <strong>Récupération à domicile</strong> — on vient chercher votre chien chez vous<br><small style="color:var(--text-muted);">Le prix est calculé automatiquement selon la distance.</small></span>
+            <div class="addon-card" id="pickup-card">
+              <label class="addon-check">
+                <input type="checkbox" id="pickup-home" onchange="togglePickup(this)">
+                <span class="ac-txt">
+                  <span class="addon-title">🚗 Récupération à domicile</span>
+                  <span class="addon-sub">On vient chercher votre chien chez vous — le prix est calculé automatiquement selon la distance.</span>
+                </span>
               </label>
-              <div id="pickup-panel" style="display:none;margin-top:10px;position:relative;">
-                <label style="font-size:.8rem;">Votre adresse de récupération</label>
-                <input id="pickup-addr" type="text" autocomplete="off" placeholder="Ex : 12 rue des Lilas, 13800 Istres" oninput="pickupAddrInput()"
-                       style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:.88rem;">
-                <div id="pickup-suggest" style="position:absolute;z-index:30;left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:10px;margin-top:2px;box-shadow:0 8px 24px rgba(0,0,0,.12);display:none;max-height:210px;overflow:auto;"></div>
-                <div id="pickup-result" style="margin-top:8px;font-size:.85rem;color:var(--text);"></div>
+              <div id="pickup-panel" class="addon-panel" style="display:none;">
+                <label class="addon-flabel">Votre adresse de récupération</label>
+                <div style="position:relative;">
+                  <input id="pickup-addr" class="addon-input" type="text" autocomplete="off" placeholder="Ex : 12 rue des Lilas, 13800 Istres" oninput="pickupAddrInput()">
+                  <div id="pickup-suggest" class="addon-suggest"></div>
+                </div>
+                <div id="pickup-result" class="addon-result"></div>
               </div>
             </div>
 
             <!-- Panneau Visite à domicile -->
-            <div id="visite-panel" style="display:none;background:var(--cream);border:1px solid var(--border);border-radius:12px;padding:14px;margin-top:4px;">
-              <div style="font-weight:700;font-size:.9rem;margin-bottom:10px;">🏡 Détails de la visite à domicile</div>
-              <label style="font-size:.8rem;font-weight:600;">Durée par visite</label>
-              <div style="display:flex;gap:8px;margin:6px 0 12px;">
-                <button type="button" class="vdur-btn active" data-min="30" onclick="visiteSetDur(30)">30 min — 15€</button>
-                <button type="button" class="vdur-btn" data-min="60" onclick="visiteSetDur(60)">1 heure — 20€</button>
+            <div id="visite-panel" class="addon-card checked" style="display:none;">
+              <span class="addon-title">🏡 Détails de la visite à domicile</span>
+              <span class="addon-sub">On passe chez vous : repas, eau fraîche et un vrai moment avec votre chien.</span>
+              <div class="addon-panel" style="border-top:none;padding-top:14px;">
+                <label class="addon-flabel">Durée par visite</label>
+                <div class="vdur-row">
+                  <button type="button" class="vdur-btn active" data-min="30" onclick="visiteSetDur(30)">30 min — 15€</button>
+                  <button type="button" class="vdur-btn" data-min="60" onclick="visiteSetDur(60)">1 heure — 20€</button>
+                </div>
+                <div class="addon-row">
+                  <div>
+                    <label class="addon-flabel">Visites par jour</label>
+                    <select id="visite-perday" class="addon-select" onchange="visiteRecalc()">
+                      <option value="1">1 visite</option><option value="2">2 visites</option><option value="3">3 visites</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="addon-flabel">Nombre de jours</label>
+                    <input id="visite-days" class="addon-num" type="number" min="1" max="60" value="1" oninput="visiteRecalc()">
+                  </div>
+                </div>
+                <div style="position:relative;margin-top:12px;">
+                  <label class="addon-flabel">Adresse de la visite</label>
+                  <input id="visite-addr" class="addon-input" type="text" autocomplete="off" placeholder="Ex : 5 rue des Écoles, 13300 Salon-de-Provence" oninput="visiteAddrInput()">
+                  <div id="visite-suggest" class="addon-suggest"></div>
+                </div>
+                <div id="visite-result" class="addon-result"></div>
               </div>
-              <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                <div style="flex:1;min-width:120px;"><label style="font-size:.8rem;font-weight:600;">Visites par jour</label>
-                  <select id="visite-perday" onchange="visiteRecalc()" style="width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:10px;font-size:.88rem;">
-                    <option value="1">1 visite</option><option value="2">2 visites</option><option value="3">3 visites</option><option value="4">4 visites</option>
-                  </select></div>
-                <div style="flex:1;min-width:120px;"><label style="font-size:.8rem;font-weight:600;">Nombre de jours</label>
-                  <input id="visite-days" type="number" min="1" max="60" value="1" oninput="visiteRecalc()" style="width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:10px;font-size:.88rem;"></div>
-              </div>
-              <div style="position:relative;margin-top:10px;">
-                <label style="font-size:.8rem;font-weight:600;">Adresse de la visite</label>
-                <input id="visite-addr" type="text" autocomplete="off" placeholder="Ex : 5 rue des Écoles, 13300 Salon-de-Provence" oninput="visiteAddrInput()"
-                       style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:.88rem;">
-                <div id="visite-suggest" style="position:absolute;z-index:30;left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:10px;margin-top:2px;box-shadow:0 8px 24px rgba(0,0,0,.12);display:none;max-height:210px;overflow:auto;"></div>
-              </div>
-              <div id="visite-result" style="margin-top:8px;font-size:.85rem;color:var(--text);"></div>
             </div>
             <div class="form-row">
               <div class="form-group"><label>Date *</label><input id="date-debut" name="Date arrivée" type="date" required oninput="calcPrice()"></div>
@@ -633,6 +666,7 @@ window.addEventListener('load', function(){
 function togglePickup(cb){
   window.__pickup.active=cb.checked;
   var panel=document.getElementById('pickup-panel');
+  document.getElementById('pickup-card').classList.toggle('checked', cb.checked);
   if(cb.checked){
     panel.style.display='block';
     var inp=document.getElementById('pickup-addr');
@@ -657,7 +691,7 @@ function pickupAddrInput(){
        var box=document.getElementById('pickup-suggest');
        if(!_pickupFeats.length){ box.style.display='none'; return; }
        box.innerHTML=_pickupFeats.map(function(f,i){
-         return '<div onclick="pickupPick('+i+')" style="padding:9px 12px;cursor:pointer;font-size:.83rem;border-bottom:1px solid var(--border);">📍 '+f.properties.label+'</div>';
+         return '<div onclick="pickupPick('+i+')">📍 '+f.properties.label+'</div>';
        }).join('');
        box.style.display='block';
      }).catch(function(){});
@@ -743,9 +777,15 @@ function toggleVisitePanel(){
   var active=tag && tag.classList.contains('active');
   window.__visite.active=!!active;
   document.getElementById('visite-panel').style.display=active?'block':'none';
+  // Exclusivité : visite à domicile ⇄ récupération à domicile
+  var pk=document.getElementById('pickup-home'), pkCard=document.getElementById('pickup-card');
   if(active){
+    if(pk.checked){ pk.checked=false; togglePickup(pk); }
+    pk.disabled=true; pkCard.classList.add('disabled');
     var inp=document.getElementById('visite-addr');
     if(inp && !inp.value && window.__clientAddr){ inp.value=window.__clientAddr; visiteGeocode(window.__clientAddr); }
+  } else {
+    pk.disabled=false; pkCard.classList.remove('disabled');
   }
   calcPrice();
 }
@@ -770,7 +810,7 @@ function visiteAddrInput(){
      .then(function(r){return r.json();}).then(function(j){
        _vFeats=(j&&j.features)||[];
        if(!_vFeats.length){ box.style.display='none'; return; }
-       box.innerHTML=_vFeats.map(function(f,i){ return '<div onclick="visitePick('+i+')" style="padding:9px 12px;cursor:pointer;font-size:.83rem;border-bottom:1px solid var(--border);">📍 '+f.properties.label+'</div>'; }).join('');
+       box.innerHTML=_vFeats.map(function(f,i){ return '<div onclick="visitePick('+i+')">📍 '+f.properties.label+'</div>'; }).join('');
        box.style.display='block';
      }).catch(function(){});
   },300);
