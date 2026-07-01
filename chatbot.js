@@ -1,4 +1,4 @@
-﻿(function(){
+(function(){
 
 const REPONSES = [
   // ── NOMBRE DE CHIENS ─────────────────────────────────────
@@ -292,10 +292,10 @@ function loadGA() {
   const bar = document.createElement('div');
   bar.id = 'mdp-rgpd';
   bar.innerHTML = `
-    <p>🍪 Nous utilisons des cookies pour analyser notre trafic et améliorer votre expérience. Vos données ne sont pas vendues. <a href="mentions-legales.html">En savoir plus</a></p>
+    <p>🍪 Nous utilisons des cookies pour mesurer l'audience et améliorer votre expérience. Vos données ne sont jamais vendues. <a href="mentions-legales.html">En savoir plus</a></p>
     <div class="rgpd-btns">
+      <button id="rgpd-refuse">Uniquement les nécessaires</button>
       <button id="rgpd-accept">✓ Tout accepter</button>
-      <button id="rgpd-refuse">Refuser</button>
     </div>`;
   document.body.appendChild(bar);
 

@@ -284,9 +284,23 @@
                 <span class="service-tag" data-price="25" data-unit="nuit" onclick="toggleTag(this)">🏠 Pension complète nuit &amp; journée</span>
                 <span class="service-tag" data-price="20" data-unit="jour" data-sameday="1" onclick="toggleTag(this)">☀️ Garderie journée</span>
                 <span class="service-tag" data-price="10" data-unit="jour" data-sameday="1" onclick="toggleTag(this)">🌤️ Garderie demi-journée</span>
+                <span class="service-tag" data-price="15" data-unit="fixe" data-sameday="1" onclick="toggleTag(this)">🏡 Visite à domicile (par visite)</span>
                 <span class="service-tag" data-price="10" data-unit="fixe" data-sameday="1" onclick="toggleTag(this)">🐣 Test demi-journée</span>
                 <span class="service-tag" data-price="15" data-unit="fixe" data-sameday="1" data-duration="60" onclick="toggleTag(this)">🦮 Promenade</span>
                 <span class="service-tag" data-price="30" data-unit="fixe" data-sameday="1" onclick="toggleTag(this)">🛁 Toilettage</span>
+              </div>
+            </div>
+            <div class="form-group" style="margin-top:2px;">
+              <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-weight:400;background:var(--cream);border:1px solid var(--border);border-radius:12px;padding:12px 14px;">
+                <input type="checkbox" id="pickup-home" onchange="togglePickup(this)" style="margin-top:2px;width:18px;height:18px;flex-shrink:0;accent-color:var(--lavande);">
+                <span style="font-size:.88rem;">🚗 <strong>Récupération à domicile</strong> — on vient chercher votre chien chez vous<br><small style="color:var(--text-muted);">Le prix est calculé automatiquement selon la distance.</small></span>
+              </label>
+              <div id="pickup-panel" style="display:none;margin-top:10px;position:relative;">
+                <label style="font-size:.8rem;">Votre adresse de récupération</label>
+                <input id="pickup-addr" type="text" autocomplete="off" placeholder="Ex : 12 rue des Lilas, 13800 Istres" oninput="pickupAddrInput()"
+                       style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:.88rem;">
+                <div id="pickup-suggest" style="position:absolute;z-index:30;left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:10px;margin-top:2px;box-shadow:0 8px 24px rgba(0,0,0,.12);display:none;max-height:210px;overflow:auto;"></div>
+                <div id="pickup-result" style="margin-top:8px;font-size:.85rem;color:var(--text);"></div>
               </div>
             </div>
             <div class="form-row">
@@ -560,6 +574,107 @@ function autoDepart(){
   }
 }
 
+// ===== Récupération à domicile : distance + prix automatiques =====
+// Coordonnées [lon,lat] du point de départ (adresse privée, JAMAIS affichée).
+var HOME_COORDS=[5.013373,43.570176];
+window.__pickup={active:false,km:null,price:0,address:'',coords:null};
+window.__clientAddr='';
+var _pickupTimer=null, _pickupFeats=[];
+
+// Pré-remplissage : si le client est connecté, on récupère son adresse enregistrée.
+try{
+  if(typeof _auth!=='undefined'){
+    _auth.onAuthStateChanged(function(u){
+      if(!u)return;
+      _db.ref('users/'+u.uid).get().then(function(s){
+        var d=s.val()||{};
+        var parts=[d.adresse,d.codePostal,d.ville].filter(Boolean);
+        if(parts.length) window.__clientAddr=parts.join(' ');
+      }).catch(function(){});
+    });
+  }
+}catch(e){}
+
+function togglePickup(cb){
+  window.__pickup.active=cb.checked;
+  var panel=document.getElementById('pickup-panel');
+  if(cb.checked){
+    panel.style.display='block';
+    var inp=document.getElementById('pickup-addr');
+    if(!inp.value && window.__clientAddr){ inp.value=window.__clientAddr; pickupGeocode(window.__clientAddr); }
+  }else{
+    panel.style.display='none';
+    window.__pickup.price=0; window.__pickup.km=null; window.__pickup.coords=null; window.__pickup.address='';
+    document.getElementById('pickup-result').innerHTML='';
+  }
+  calcPrice();
+}
+
+function pickupAddrInput(){
+  var q=document.getElementById('pickup-addr').value.trim();
+  window.__pickup.price=0; window.__pickup.km=null; document.getElementById('pickup-result').innerHTML='';
+  clearTimeout(_pickupTimer);
+  if(q.length<4){ document.getElementById('pickup-suggest').style.display='none'; calcPrice(); return; }
+  _pickupTimer=setTimeout(function(){
+    fetch('https://api-adresse.data.gouv.fr/search/?limit=5&q='+encodeURIComponent(q))
+     .then(function(r){return r.json();}).then(function(j){
+       _pickupFeats=(j&&j.features)||[];
+       var box=document.getElementById('pickup-suggest');
+       if(!_pickupFeats.length){ box.style.display='none'; return; }
+       box.innerHTML=_pickupFeats.map(function(f,i){
+         return '<div onclick="pickupPick('+i+')" style="padding:9px 12px;cursor:pointer;font-size:.83rem;border-bottom:1px solid var(--border);">📍 '+f.properties.label+'</div>';
+       }).join('');
+       box.style.display='block';
+     }).catch(function(){});
+  },300);
+  calcPrice();
+}
+
+function pickupPick(i){
+  var f=_pickupFeats[i]; if(!f)return;
+  document.getElementById('pickup-addr').value=f.properties.label;
+  document.getElementById('pickup-suggest').style.display='none';
+  window.__pickup.address=f.properties.label; window.__pickup.coords=f.geometry.coordinates;
+  pickupDistance(f.geometry.coordinates);
+}
+
+function pickupGeocode(addr){
+  fetch('https://api-adresse.data.gouv.fr/search/?limit=1&q='+encodeURIComponent(addr))
+   .then(function(r){return r.json();}).then(function(j){
+     if(j&&j.features&&j.features[0]){
+       var f=j.features[0];
+       window.__pickup.address=f.properties.label; window.__pickup.coords=f.geometry.coordinates;
+       pickupDistance(f.geometry.coordinates);
+     }
+   }).catch(function(){});
+}
+
+function _haversineKm(a,b){ // [lon,lat]
+  var R=6371, dLat=(b[1]-a[1])*Math.PI/180, dLon=(b[0]-a[0])*Math.PI/180;
+  var la1=a[1]*Math.PI/180, la2=b[1]*Math.PI/180;
+  var h=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(la1)*Math.cos(la2)*Math.sin(dLon/2)*Math.sin(dLon/2);
+  return 2*R*Math.asin(Math.sqrt(h));
+}
+
+function pickupDistance(coords){
+  var res=document.getElementById('pickup-result');
+  res.innerHTML='⏳ Calcul de la distance…';
+  var url='https://router.project-osrm.org/route/v1/driving/'+HOME_COORDS[0]+','+HOME_COORDS[1]+';'+coords[0]+','+coords[1]+'?overview=false';
+  fetch(url).then(function(r){return r.json();}).then(function(j){
+    var m=(j&&j.routes&&j.routes[0])?j.routes[0].distance:_haversineKm(HOME_COORDS,coords)*1000*1.3;
+    _pickupFinish(m);
+  }).catch(function(){ _pickupFinish(_haversineKm(HOME_COORDS,coords)*1000*1.3); });
+}
+
+function _pickupFinish(meters){
+  var km=Math.round(meters/1000*10)/10;
+  var price=km<=10?10:Math.round((10+(km-10)*0.5)*100)/100;
+  window.__pickup.km=km; window.__pickup.price=price;
+  document.getElementById('pickup-result').innerHTML='✅ Distance : <strong>'+km.toString().replace('.',',')+' km</strong> → récupération <strong>'+price.toString().replace('.',',')+'€</strong>'
+    + (km>10?' <small style="color:var(--text-muted);">(10€ + '+((km-10).toFixed(1)).replace('.',',')+' km × 0,50€)</small>':' <small style="color:var(--text-muted);">(forfait ≤ 10 km)</small>');
+  calcPrice();
+}
+
 function calcPrice(){
   const tags=[...document.querySelectorAll('.service-tag.active')];
   const box=document.getElementById('price-box');
@@ -637,6 +752,14 @@ function calcPrice(){
     }
   });
 
+  // Récupération à domicile (distance calculée automatiquement)
+  if(window.__pickup && window.__pickup.active && window.__pickup.price>0){
+    lines.push('🚗 Récupération à domicile'+(window.__pickup.km?(' ('+window.__pickup.km.toString().replace('.',',')+' km)'):'')+' — <strong>'+window.__pickup.price.toString().replace('.',',')+'€</strong>');
+    total=Math.round((total+window.__pickup.price)*100)/100;
+  } else if(window.__pickup && window.__pickup.active){
+    lines.push('🚗 Récupération à domicile — <small style="color:var(--text-muted);">saisissez votre adresse pour le calcul</small>');
+  }
+
   if(!lines.length){box.style.display='none';return;}
   document.getElementById('price-detail').innerHTML=lines.join('<br>');
   let totalLabel='Total : '+total+'€';
@@ -664,7 +787,11 @@ function prepareSubmit(){
   if(box.style.display!=='none'){
     const detail=document.getElementById('price-detail').innerText;
     const total=document.getElementById('price-total').textContent;
-    document.getElementById('hidden-devis').value=detail+' | '+total;
+    let devis=detail+' | '+total;
+    if(window.__pickup && window.__pickup.active && window.__pickup.address){
+      devis+=' | 🚗 Récupération à : '+window.__pickup.address+(window.__pickup.km?(' ('+window.__pickup.km+' km)'):'');
+    }
+    document.getElementById('hidden-devis').value=devis;
   }
   return true;
 }
