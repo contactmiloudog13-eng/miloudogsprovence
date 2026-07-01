@@ -48,9 +48,17 @@ body:not(.auth-ready) footer{visibility:hidden;}
 .welcome-avatar{
   width:72px;height:72px;border-radius:50%;flex-shrink:0;
   background:rgba(255,255,255,0.2);border:3px solid rgba(255,255,255,0.4);
-  display:flex;align-items:center;justify-content:center;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
   font-family:'Playfair Display',serif;font-size:1.8rem;color:white;font-weight:700;
 }
+.welcome-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.welcome-avatar-wrap{position:relative;cursor:pointer;flex-shrink:0;}
+.welcome-avatar-wrap .avatar-cam{
+  position:absolute;bottom:-2px;right:-2px;width:26px;height:26px;border-radius:50%;
+  background:white;border:2px solid var(--lavande,#7B6FA0);display:flex;align-items:center;justify-content:center;
+  font-size:.72rem;box-shadow:0 2px 6px rgba(0,0,0,.25);transition:transform .15s;
+}
+.welcome-avatar-wrap:hover .avatar-cam{transform:scale(1.12);}
 .welcome-text h2{font-size:1.5rem;color:white;margin-bottom:4px;}
 .welcome-text p{font-size:.9rem;color:rgba(255,255,255,.7);font-weight:300;}
 .welcome-badge{
@@ -463,7 +471,11 @@ body:not(.auth-ready) footer{visibility:hidden;}
 
     <!-- Bienvenue -->
     <div class="welcome-header">
-      <div class="welcome-avatar" id="avatar-initials">?</div>
+      <div class="welcome-avatar-wrap" onclick="document.getElementById('client-photo-input').click()" title="Ajouter / changer ma photo de profil">
+        <div class="welcome-avatar" id="avatar-initials">?</div>
+        <span class="avatar-cam">📷</span>
+        <input type="file" id="client-photo-input" accept="image/*" style="display:none;" onchange="uploadClientPhoto(this)">
+      </div>
       <div class="welcome-text">
         <h2 id="welcome-name">Bonjour !</h2>
         <p id="welcome-email"></p>
@@ -520,9 +532,11 @@ body:not(.auth-ready) footer{visibility:hidden;}
               <label for="f-telephone">Téléphone</label>
               <input type="tel" id="f-telephone" placeholder="06 12 34 56 78" autocomplete="tel" readonly>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="position:relative;">
               <label for="f-adresse">Adresse</label>
-              <input type="text" id="f-adresse" placeholder="12 rue des Mimosas" autocomplete="street-address" readonly>
+              <input type="text" id="f-adresse" placeholder="Tapez votre adresse…" autocomplete="off" oninput="onAdresseInput(this)" readonly>
+              <div id="adresse-suggest" style="display:none;position:absolute;z-index:40;left:0;right:0;background:#fff;border:1px solid var(--border,#e5e0d8);border-radius:10px;margin-top:2px;box-shadow:0 8px 24px rgba(0,0,0,.12);max-height:210px;overflow:auto;"></div>
+              <div style="font-size:.72rem;color:var(--text-muted);margin-top:4px;">Choisissez une suggestion, ou saisissez-la à la main si elle n'apparaît pas.</div>
             </div>
           </div>
 
@@ -987,7 +1001,7 @@ firebase.auth().onAuthStateChanged(async user => {
 
     // Header
     const initiales = ((prenom[0]||'') + (nom[0]||'')).toUpperCase() || '?';
-    document.getElementById('avatar-initials').textContent  = initiales;
+    setClientAvatar(data.photoUrl, initiales);
     document.getElementById('welcome-name').textContent     = 'Bonjour ' + (prenom || 'vous') + ' !';
     document.getElementById('welcome-email').textContent    = user.email;
 
@@ -1027,6 +1041,35 @@ function lockProfileEdit() {
   });
   document.getElementById('btn-edit-profile').style.display = '';
   document.getElementById('btn-save-profile').style.display = 'none';
+}
+
+// ── Adresse → suggestions automatiques (Base Adresse Nationale) ──────────────
+let _adrTimer = null, _adrFeats = [];
+function onAdresseInput(input){
+  const q = (input.value||'').trim();
+  clearTimeout(_adrTimer);
+  const box = document.getElementById('adresse-suggest');
+  if(q.length < 4){ box.style.display='none'; return; }
+  _adrTimer = setTimeout(function(){
+    fetch('https://api-adresse.data.gouv.fr/search/?limit=5&q=' + encodeURIComponent(q))
+      .then(r => r.json()).then(function(j){
+        _adrFeats = (j && j.features) || [];
+        if(!_adrFeats.length){ box.style.display='none'; return; }
+        box.innerHTML = _adrFeats.map(function(f,i){
+          return '<div onclick="pickAdresse('+i+')" style="padding:9px 12px;cursor:pointer;font-size:.85rem;border-bottom:1px solid var(--border,#eee);">📍 '+f.properties.label+'</div>';
+        }).join('');
+        box.style.display='block';
+      }).catch(function(){});
+  }, 300);
+}
+function pickAdresse(i){
+  const f = _adrFeats[i]; if(!f) return;
+  const p = f.properties;
+  // "name" = numéro + rue ; on remplit aussi CP + ville
+  document.getElementById('f-adresse').value = p.name || p.label;
+  if(p.postcode) document.getElementById('f-codepostal').value = p.postcode;
+  if(p.city) document.getElementById('f-ville').value = p.city;
+  document.getElementById('adresse-suggest').style.display='none';
 }
 
 // ── Code postal → proposition automatique de la ville (API geo.api.gouv.fr) ──
@@ -1398,6 +1441,28 @@ function fileToDataURL(file) {
     reader.onload = e => resolve(e.target.result);
     reader.readAsDataURL(file);
   });
+}
+
+// ── Photo de profil CLIENT ───────────────────────────────────────────────────
+function setClientAvatar(url, initiales){
+  const box = document.getElementById('avatar-initials');
+  if(!box) return;
+  if(url){ box.innerHTML = '<img src="'+url+'" alt="Ma photo">'; }
+  else { box.textContent = initiales || '?'; }
+}
+async function uploadClientPhoto(input){
+  const file = input.files[0];
+  if(!file) return;
+  if(!file.type.startsWith('image/')){ alert('Veuillez choisir une image (JPEG, PNG…).'); input.value=''; return; }
+  let base64;
+  try { base64 = await compressImage(file, 512, 0.85); }   // compression auto
+  catch(err){ alert('Impossible de traiter cette image. Réessayez.'); input.value=''; return; }
+  setClientAvatar(base64);
+  if(_currentUser){
+    try { await firebase.database().ref('users/'+_currentUser.uid).update({ photoUrl: base64 }); }
+    catch(err){ console.error('Photo profil', err); alert('Erreur lors de l\'enregistrement de la photo.'); }
+  }
+  input.value='';
 }
 
 // ── Photo de profil chien ────────────────────────────────────────────────────
