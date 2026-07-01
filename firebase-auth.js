@@ -120,3 +120,25 @@ function redirectIfLoggedIn(dest) {
     if (user && !window.__suppressAuthRedirect) window.location.href = dest || 'espace-client.html';
   });
 }
+
+// ── Affluence du site (compteur maison, lu depuis Milou Admin) ──────────────
+// Écrit dans analytics/{total, daily/YYYY-MM-DD, dailyUnique/YYYY-MM-DD, pages/<page>}.
+(function trackVisit(){
+  try {
+    var inc = firebase.database.ServerValue && firebase.database.ServerValue.increment
+              ? firebase.database.ServerValue.increment(1) : null;
+    if (inc === null) return;                       // SDK trop ancien → on ne casse rien
+    var d = new Date();
+    var day = d.getFullYear() + '-' + ('0'+(d.getMonth()+1)).slice(-2) + '-' + ('0'+d.getDate()).slice(-2);
+    var page = (location.pathname.split('/').pop() || 'index.html').replace(/[.#$\[\]]/g, '_') || 'index_html';
+    var A = _db.ref('analytics');
+    A.child('total').set(inc);
+    A.child('daily/' + day).set(inc);
+    A.child('pages/' + page).set(inc);
+    // visiteur unique par jour (approx via localStorage)
+    try {
+      var vk = 'mdp_visit_' + day;
+      if (!localStorage.getItem(vk)) { localStorage.setItem(vk, '1'); A.child('dailyUnique/' + day).set(inc); }
+    } catch(e){}
+  } catch(e){}
+})();

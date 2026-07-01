@@ -342,11 +342,24 @@
   <script>
   function vidFull(btn){
     var w=btn.closest('[data-video-wrap]'); if(!w) return;
-    var fsEl=document.fullscreenElement||document.webkitFullscreenElement;
-    if(fsEl){ (document.exitFullscreen||document.webkitExitFullscreen).call(document); return; }
-    if(w.requestFullscreen){ w.requestFullscreen(); }
-    else if(w.webkitRequestFullscreen){ w.webkitRequestFullscreen(); }
-    else { var v=w.querySelector('video'); if(v&&v.webkitEnterFullscreen){ v.webkitEnterFullscreen(); } }
+    var v=w.querySelector('video'); if(!v) return;
+    var ov=document.createElement('div');
+    ov.style.cssText='position:fixed;inset:0;z-index:100000;background:#000;display:flex;align-items:center;justify-content:center;';
+    var ph=document.createElement('span'); v.parentNode.insertBefore(ph,v);
+    var prev=v.getAttribute('style')||'';
+    v.style.cssText='height:100%;width:auto;max-width:100vw;max-height:100vh;object-fit:contain;background:#000;aspect-ratio:auto;';
+    v.setAttribute('controls','');
+    var close=document.createElement('button');
+    close.textContent='✕';
+    close.style.cssText='position:absolute;top:16px;right:16px;z-index:2;width:44px;height:44px;border:none;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;font-size:1.3rem;cursor:pointer;';
+    ov.appendChild(v); ov.appendChild(close); document.body.appendChild(ov);
+    document.body.style.overflow='hidden';
+    function exit(){ v.setAttribute('style',prev); ph.parentNode.insertBefore(v,ph); ph.remove(); ov.remove(); document.body.style.overflow=''; document.removeEventListener('keydown',onKey); }
+    function onKey(e){ if(e.key==='Escape') exit(); }
+    close.onclick=exit;
+    ov.addEventListener('click',function(e){ if(e.target===ov) exit(); });
+    document.addEventListener('keydown',onKey);
+    try{ if(v.paused) v.play(); }catch(e){}
   }
   </script>
 
