@@ -490,6 +490,12 @@ function goStep(n) {
     if (_currentStep === 1 && !_validateStep1()) return;
     if (_currentStep === 2 && !_validateStep2()) return;
   }
+  // Incitation forte à créer un compte (une fois par session, invités seulement)
+  if (_currentStep === 1 && n === 2 && !window.__acctOk) {
+    var _u = null; try { _u = firebase.auth().currentUser; } catch(e){}
+    var _seen = false; try { _seen = sessionStorage.getItem('mdp_acct') === '1'; } catch(e){}
+    if (!_u && !_seen) { showAcctModal(); return; }
+  }
   document.getElementById('step-panel-' + _currentStep).style.display = 'none';
   document.getElementById('step-panel-' + n).style.display = '';
   // Progress bar
@@ -509,6 +515,42 @@ function goStep(n) {
   document.getElementById('resa-form').scrollIntoView({behavior:'smooth', block:'start'});
   // Forcer calcul prix à l'étape 3
   if (n === 3) calcPrice();
+}
+
+// ── Modale « Créez votre compte » (forte incitation, 1 fois par session) ──
+function showAcctModal(){
+  var m=document.getElementById('acct-modal');
+  if(!m){
+    m=document.createElement('div');
+    m.id='acct-modal';
+    m.style.cssText='position:fixed;inset:0;z-index:100001;background:rgba(20,12,40,.72);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:18px;';
+    m.innerHTML='<div style="background:#fff;border-radius:22px;max-width:430px;width:100%;padding:30px 26px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.35);animation:acctIn .35s cubic-bezier(.23,1,.32,1);">'
+      +'<div style="font-size:2.6rem;margin-bottom:10px;">🐾</div>'
+      +'<h3 style="font-family:\'Playfair Display\',serif;color:var(--lavande-dark);font-size:1.35rem;margin:0 0 8px;">Créez votre compte en 1 minute</h3>'
+      +'<p style="font-size:.88rem;color:var(--text-muted);line-height:1.65;margin:0 0 18px;">C\'est <strong>fortement recommandé</strong> pour profiter du meilleur de Milou Dogs :</p>'
+      +'<div style="text-align:left;font-size:.86rem;color:var(--text);display:flex;flex-direction:column;gap:9px;margin-bottom:22px;">'
+      +'<span>📔 <strong>Journal de séjour</strong> — photos de votre chien pendant la garde</span>'
+      +'<span>📅 <strong>Suivi en direct</strong> de vos réservations</span>'
+      +'<span>⚡ <strong>Réservation express</strong> la prochaine fois (tout est pré-rempli)</span>'
+      +'<span>🎁 Accès au <strong>parrainage</strong> (−10€ par ami)</span>'
+      +'</div>'
+      +'<a href="inscription.html?next=reservation.html" style="display:block;background:linear-gradient(135deg,var(--lavande),var(--lavande-dark));color:#fff;padding:14px;border-radius:40px;font-weight:800;font-size:.95rem;text-decoration:none;margin-bottom:10px;">✨ Créer mon compte</a>'
+      +'<a href="connexion.html?next=reservation.html" style="display:block;background:var(--lavande-light);color:var(--lavande-dark);padding:12px;border-radius:40px;font-weight:700;font-size:.88rem;text-decoration:none;margin-bottom:14px;">J\'ai déjà un compte</a>'
+      +'<button onclick="acctSkip()" style="background:none;border:none;color:var(--text-muted);font-size:.78rem;text-decoration:underline;cursor:pointer;font-family:inherit;">Continuer sans compte</button>'
+      +'</div>';
+    var st=document.createElement('style'); st.textContent='@keyframes acctIn{from{opacity:0;transform:translateY(22px) scale(.96);}to{opacity:1;transform:translateY(0) scale(1);}}';
+    document.head.appendChild(st);
+    document.body.appendChild(m);
+  }
+  m.style.display='flex';
+  document.body.style.overflow='hidden';
+}
+function acctSkip(){
+  try{ sessionStorage.setItem('mdp_acct','1'); }catch(e){}
+  window.__acctOk=true;
+  var m=document.getElementById('acct-modal'); if(m) m.style.display='none';
+  document.body.style.overflow='';
+  goStep(2);
 }
 
 function _validateStep1() {

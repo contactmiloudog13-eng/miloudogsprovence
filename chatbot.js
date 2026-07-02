@@ -170,6 +170,14 @@ const css=`
 #mdp-input:focus{border-color:#7B6FA0;box-shadow:0 0 0 3px rgba(123,111,160,0.12);}
 #mdp-send{background:linear-gradient(135deg,#7B6FA0,#4A3F72);border:none;border-radius:50%;width:36px;height:36px;flex-shrink:0;cursor:pointer;color:white;font-size:.9rem;}
 @media(max-width:400px){#mdp-box,#mdp-notif{right:12px;width:calc(100vw - 24px);}#mdp-btn{right:12px;bottom:16px;}}
+/* Mobile : robot discret — petit, sans pulsation ni bulle intrusive */
+@media(max-width:760px){
+  #mdp-btn{width:44px;height:44px;font-size:1.05rem;bottom:14px;right:12px;animation:none;box-shadow:0 4px 14px rgba(232,160,48,0.4);opacity:.92;}
+  #mdp-notif{display:none!important;}
+  #mdp-box{bottom:70px;}
+  body.mdp-cta-on #mdp-btn{bottom:76px;}
+  body.mdp-cta-on #mdp-box{bottom:130px;}
+}
 `;
 const st=document.createElement('style');
 st.textContent=css;

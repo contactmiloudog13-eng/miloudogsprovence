@@ -365,7 +365,21 @@
 <script src="firebase-auth.js"></script>
 
 <script>
-redirectIfLoggedIn('espace-client.html');
+// Destination après inscription : ?next=page.html (ex : retour à la réservation), sinon espace client
+var _NEXT = (function(){
+  try { var n = new URLSearchParams(location.search).get('next') || ''; if(/^[a-z0-9-]+\.html$/.test(n)) return n; } catch(e){}
+  return 'espace-client.html';
+})();
+redirectIfLoggedIn(_NEXT);
+
+// Propage ?next= vers les liens connexion/inscription (parcours réservation)
+document.addEventListener('DOMContentLoaded', function(){
+  if(!/next=/.test(location.search)) return;
+  document.querySelectorAll('a[href^="inscription.html"],a[href^="connexion.html"]').forEach(function(a){
+    if(!/next=/.test(a.getAttribute('href'))) a.href += (a.href.indexOf('?')>-1?'&':'?')+'next='+encodeURIComponent(_NEXT);
+  });
+});
+
 
 function toggleMenu(btn){document.getElementById('navlinks').classList.toggle('open');btn.classList.toggle('open');}
 
@@ -455,7 +469,7 @@ async function registerGoogle() {
       });
     }
     if (u && u.email) await mergeGuestReservations(u.uid, u.email);
-    window.location.href = 'espace-client.html';
+    window.location.href = (typeof _NEXT!=='undefined'?_NEXT:'espace-client.html');
   } catch (err) {
     setLoading(false);
     if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') return;
@@ -576,7 +590,7 @@ document.getElementById('chien-form').addEventListener('submit', async e => {
       infos    : document.getElementById('c-infos').value.trim(),
       createdAt: Date.now(),
     });
-    window.location.href = 'espace-client.html';
+    window.location.href = (typeof _NEXT!=='undefined'?_NEXT:'espace-client.html');
   } catch(err) {
     alert('Erreur : ' + err.message);
     btn.classList.remove('loading'); btn.disabled = false;
@@ -584,7 +598,7 @@ document.getElementById('chien-form').addEventListener('submit', async e => {
 });
 
 function skipChien() {
-  window.location.href = 'espace-client.html';
+  window.location.href = (typeof _NEXT!=='undefined'?_NEXT:'espace-client.html');
 }
 </script>
 <script src="chatbot.js"></script>

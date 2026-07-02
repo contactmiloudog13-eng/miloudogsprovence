@@ -853,13 +853,14 @@ window.addEventListener('scroll',()=>{
     setTimeout(()=>el.remove(),11000);
   }
   const isMobile=window.matchMedia("(hover:none)").matches;
+  if(isMobile) return; // mobile : pas de particules (lisibilité + performance)
   // Spawn plusieurs pattes au démarrage
   for(var k=0;k<6;k++) setTimeout(spawn, k*300);
-  setInterval(spawn, isMobile?5000:800);
+  setInterval(spawn, 800);
   // Burst toutes les 8 secondes
   setInterval(function(){
     for(var j=0;j<3;j++) setTimeout(spawn, j*200);
-  }, isMobile?20000:8000);
+  }, 8000);
 })();
 </script>
 

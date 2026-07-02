@@ -227,8 +227,22 @@
 <script src="firebase-auth.js"></script>
 
 <script>
+// Destination après connexion : ?next=page.html (ex : retour à la réservation), sinon espace client
+var _NEXT = (function(){
+  try { var n = new URLSearchParams(location.search).get('next') || ''; if(/^[a-z0-9-]+\.html$/.test(n)) return n; } catch(e){}
+  return 'espace-client.html';
+})();
 // Redirige si déjà connecté
-redirectIfLoggedIn('espace-client.html');
+redirectIfLoggedIn(_NEXT);
+
+// Propage ?next= vers les liens connexion/inscription (parcours réservation)
+document.addEventListener('DOMContentLoaded', function(){
+  if(!/next=/.test(location.search)) return;
+  document.querySelectorAll('a[href^="inscription.html"],a[href^="connexion.html"]').forEach(function(a){
+    if(!/next=/.test(a.getAttribute('href'))) a.href += (a.href.indexOf('?')>-1?'&':'?')+'next='+encodeURIComponent(_NEXT);
+  });
+});
+
 
 function toggleMenu(btn){document.getElementById('navlinks').classList.toggle('open');btn.classList.toggle('open');}
 
@@ -285,7 +299,7 @@ document.getElementById('login-form').addEventListener('submit', async e => {
     await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     await firebase.auth().signInWithEmailAndPassword(email, password);
     // onAuthStateChanged dans firebase-auth.js s'en occupe
-    window.location.href = 'espace-client.html';
+    window.location.href = (typeof _NEXT!=='undefined'?_NEXT:'espace-client.html');
   } catch (err) {
     showError(firebaseError(err.code));
     setLoading(false);
@@ -302,7 +316,7 @@ async function _afterGoogleLogin(res) {
       prenom: prenom, nom: parts.join(' '), email: u.email || '', createdAt: Date.now()
     });
   }
-  window.location.href = 'espace-client.html';
+  window.location.href = (typeof _NEXT!=='undefined'?_NEXT:'espace-client.html');
 }
 
 const _isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
