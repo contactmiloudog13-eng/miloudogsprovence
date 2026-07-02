@@ -254,6 +254,25 @@
         <div class="field-hint">Format : 06 ou 07 + 8 chiffres</div>
       </div>
 
+      <div class="form-group" style="position:relative;">
+        <label for="adresse">Adresse</label>
+        <input type="text" id="adresse" placeholder="Tapez votre adresse…" autocomplete="off" oninput="onAdresseInput(this)">
+        <div id="adresse-suggest" style="display:none;position:absolute;z-index:40;left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:10px;margin-top:2px;box-shadow:0 8px 24px rgba(0,0,0,.12);max-height:210px;overflow:auto;"></div>
+        <div class="field-hint">Choisissez une suggestion, ou saisissez-la à la main.</div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label for="codepostal">Code postal</label>
+          <input type="text" id="codepostal" placeholder="13140" inputmode="numeric" maxlength="5" autocomplete="postal-code" oninput="onCodePostalInput(this)">
+        </div>
+        <div class="form-group">
+          <label for="ville">Ville</label>
+          <input type="text" id="ville" placeholder="Miramas" autocomplete="address-level2" list="ville-suggestions">
+          <datalist id="ville-suggestions"></datalist>
+        </div>
+      </div>
+
       <div class="form-group">
         <label for="password">Mot de passe</label>
         <div class="password-wrapper">
@@ -570,13 +589,17 @@ document.getElementById('register-form').addEventListener('submit', async e => {
     window.__suppressAuthRedirect = true; // empêche la redirection auto avant l'écriture du profil
     const cred = await firebase.auth().createUserWithEmailAndPassword(email, password);
     await cred.user.updateProfile({ displayName: prenom });
+    const adresse    = document.getElementById('adresse').value.trim();
+    const codePostal = document.getElementById('codepostal').value.trim();
+    const ville      = document.getElementById('ville').value.trim();
     await firebase.database().ref('users/' + cred.user.uid).set({
-      prenom, nom, email, telephone, photoUrl: _regPhoto || '', createdAt: Date.now()
+      prenom, nom, email, telephone, adresse, codePostal, ville,
+      photoUrl: _regPhoto || '', createdAt: Date.now()
     });
     // Fiche client indépendante (persiste même si réservation supprimée)
     const telKey = (telephone||'').replace(/\s/g,'') || cred.user.uid;
     await firebase.database().ref('clients/' + telKey).set({
-      prenom, nom, email, telephone,
+      prenom, nom, email, telephone, adresse, codePostal, ville,
       createdAt: Date.now(), updatedAt: Date.now(), nbResas: 0,
     });
     await mergeGuestReservations(cred.user.uid, email);
@@ -588,6 +611,50 @@ document.getElementById('register-form').addEventListener('submit', async e => {
     setLoading(false);
   }
 });
+
+// ── Adresse → suggestions (Base Adresse Nationale) + CP → ville ─────────────
+var _adrTimer = null, _adrFeats = [];
+function onAdresseInput(input){
+  var q = (input.value||'').trim();
+  clearTimeout(_adrTimer);
+  var box = document.getElementById('adresse-suggest');
+  if(q.length < 4){ box.style.display='none'; return; }
+  _adrTimer = setTimeout(function(){
+    fetch('https://api-adresse.data.gouv.fr/search/?limit=5&q=' + encodeURIComponent(q))
+      .then(function(r){return r.json();}).then(function(j){
+        _adrFeats = (j && j.features) || [];
+        if(!_adrFeats.length){ box.style.display='none'; return; }
+        box.innerHTML = _adrFeats.map(function(f,i){
+          return '<div onclick="pickAdresse('+i+')" style="padding:9px 12px;cursor:pointer;font-size:.85rem;border-bottom:1px solid var(--border);">📍 '+f.properties.label+'</div>';
+        }).join('');
+        box.style.display='block';
+      }).catch(function(){});
+  }, 300);
+}
+function pickAdresse(i){
+  var f = _adrFeats[i]; if(!f) return;
+  var p = f.properties;
+  document.getElementById('adresse').value = p.name || p.label;
+  if(p.postcode) document.getElementById('codepostal').value = p.postcode;
+  if(p.city) document.getElementById('ville').value = p.city;
+  document.getElementById('adresse-suggest').style.display='none';
+}
+var _cpTimer = null;
+function onCodePostalInput(input){
+  var cp = (input.value||'').replace(/\D/g,'').slice(0,5);
+  if(cp !== input.value) input.value = cp;
+  if(cp.length !== 5) return;
+  clearTimeout(_cpTimer);
+  _cpTimer = setTimeout(function(){
+    fetch('https://geo.api.gouv.fr/communes?codePostal=' + cp + '&fields=nom&format=json')
+      .then(function(r){return r.ok?r.json():[];}).then(function(list){
+        if(!Array.isArray(list) || !list.length) return;
+        document.getElementById('ville-suggestions').innerHTML = list.map(function(c){return '<option value="'+c.nom+'"></option>';}).join('');
+        var v = document.getElementById('ville');
+        if(list.length === 1 || !v.value.trim()) v.value = list[0].nom;
+      }).catch(function(){});
+  }, 250);
+}
 
 // ── Photos de profil (client + chien) : compression auto ────────────────────
 var _regPhoto = '', _dogPhoto = '';
