@@ -372,6 +372,18 @@ var _NEXT = (function(){
 })();
 redirectIfLoggedIn(_NEXT);
 
+// Pré-remplissage depuis la réservation (infos déjà saisies par le visiteur)
+document.addEventListener('DOMContentLoaded', function(){
+  var pf; try{ pf=JSON.parse(sessionStorage.getItem('mdp_prefill')||'null'); }catch(e){}
+  if(!pf) return;
+  var set=function(id,val){ var e=document.getElementById(id); if(e && val && !e.value) e.value=val; };
+  set('prenom',pf.prenom); set('nom',pf.nom); set('email',pf.email); set('telephone',pf.tel);
+  set('c-nom',pf.chien); set('c-race',pf.race); set('c-poids',pf.poids);
+  // petit rappel visuel rassurant
+  var brand=document.querySelector('.auth-brand p');
+  if(brand && (pf.prenom||pf.chien)) brand.innerHTML='✅ Vos infos sont déjà reprises — finalisez juste votre mot de passe.';
+});
+
 // Propage ?next= vers les liens connexion/inscription (parcours réservation)
 document.addEventListener('DOMContentLoaded', function(){
   if(!/next=/.test(location.search)) return;

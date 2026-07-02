@@ -519,6 +519,14 @@ function goStep(n) {
 
 // ── Modale « Créez votre compte » (forte incitation, 1 fois par session) ──
 function showAcctModal(){
+  // On mémorise les infos déjà saisies pour les reporter sur l'inscription
+  try{
+    var v=function(id){ var e=document.getElementById(id); return e?e.value.trim():''; };
+    sessionStorage.setItem('mdp_prefill', JSON.stringify({
+      prenom:v('prenom'), nom:v('nom'), email:v('email'), tel:v('tel'),
+      chien:v('chien'), race:v('race'), poids:v('poids-chien')
+    }));
+  }catch(e){}
   var m=document.getElementById('acct-modal');
   if(!m){
     m=document.createElement('div');
