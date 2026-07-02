@@ -435,6 +435,7 @@
 function toggleMenu(btn){document.getElementById('navlinks').classList.toggle('open');btn.classList.toggle('open');}
 
 /* ─── Galerie photos ─── */
+function cldOpt(u,w){ try{ if(u.indexOf('/upload/')===-1 || u.indexOf('res.cloudinary.com')===-1) return u; if(u.indexOf('f_auto')!==-1) return u; return u.replace('/upload/','/upload/f_auto,q_auto,w_'+(w||900)+'/'); }catch(e){ return u; } }
 (function loadGalerie(){
   var grid    = document.getElementById('galerie-grid');
   var loading = document.getElementById('galerie-loading');
@@ -450,7 +451,7 @@ function toggleMenu(btn){document.getElementById('navlinks').classList.toggle('o
     photos.forEach(function(p){
       var item = document.createElement('div');
       item.className = 'gal-item';
-      item.innerHTML = '<img src="' + p.url + '" alt="' + (p.caption || 'Chien chez Milou Dogs Provence') + '" loading="lazy" onclick="openLightbox(\'' + p.url.replace(/'/g,"\\'") + '\',\'' + (p.caption||'').replace(/'/g,"\\'") + '\')">'
+      item.innerHTML = '<img src="' + cldOpt(p.url,900) + '" alt="' + (p.caption || 'Chien chez Milou Dogs Provence') + '" loading="lazy" onclick="openLightbox(\'' + p.url.replace(/'/g,"\\'") + '\',\'' + (p.caption||'').replace(/'/g,"\\'") + '\')">'
         + (p.caption ? '<div class="gal-caption">' + p.caption + '</div>' : '');
       grid.appendChild(item);
     });

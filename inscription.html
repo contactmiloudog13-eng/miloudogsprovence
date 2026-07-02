@@ -153,10 +153,10 @@
 
 /* Avatar photo uploadable (client + chien) */
 .up-photo{display:flex;flex-direction:column;align-items:center;gap:8px;margin:0 auto 22px;}
-.up-avatar{position:relative;width:88px;height:88px;border-radius:50%;background:var(--lavande-light);border:3px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--lavande-dark);cursor:pointer;overflow:hidden;transition:border-color .2s;}
+.up-avatar{position:relative;width:88px;height:88px;border-radius:50%;background:var(--lavande-light);border:3px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--lavande-dark);cursor:pointer;transition:border-color .2s;}
 .up-avatar:hover{border-color:var(--lavande);}
-.up-avatar img{width:100%;height:100%;object-fit:cover;}
-.up-avatar .up-cam{position:absolute;bottom:-2px;right:-2px;width:30px;height:30px;border-radius:50%;background:#fff;border:2px solid var(--lavande);display:flex;align-items:center;justify-content:center;font-size:.85rem;box-shadow:0 2px 6px rgba(0,0,0,.2);}
+.up-avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.up-avatar .up-cam{position:absolute;bottom:0;right:0;width:28px;height:28px;border-radius:50%;background:#fff;border:2px solid var(--lavande);display:flex;align-items:center;justify-content:center;font-size:.8rem;box-shadow:0 2px 6px rgba(0,0,0,.2);z-index:2;}
 .up-hint{font-size:.76rem;color:var(--text-muted);text-align:center;}
 /* Alerte vaccins */
 .vaccins-warn{display:none;align-items:flex-start;gap:10px;background:#fdf2f2;border:1.5px solid #f0b4ae;border-radius:12px;padding:12px 14px;margin-top:10px;font-size:.83rem;color:#a03325;line-height:1.5;}

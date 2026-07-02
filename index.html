@@ -283,6 +283,8 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
 @media(max-width:600px){.mosaic-grid{grid-template-columns:1fr 1fr;height:300px;}.mc3,.mc4,.mc5{display:none;}.mc1{grid-row:1/3;}}
 
 </style>
+<style>/* Images allégées sur mobile */
+@media(max-width:760px){.mc1{background-image:url('IMG_0952-800.webp');}.mc2{background-image:url('IMG_1073-800.webp');}.mc3{background-image:url('IMG_1130-800.webp');}.mc4{background-image:url('IMG_3307-800.webp');}.mc5{background-image:url('IMG_1078-800.webp');}}</style>
 </head>
 <body>
 <nav>
@@ -433,6 +435,47 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
     </div>
   </div>
 </section>
+
+<!-- ── Simulateur de prix express ─────────────────────── -->
+<section id="simu" style="background:linear-gradient(135deg,#2d1f4e 0%,#4A3F72 100%);padding:56px 5%;">
+  <div class="container" style="max-width:760px;text-align:center;">
+    <p class="section-label" style="color:var(--gold);">💶 Estimation instantanée</p>
+    <h2 class="section-title" style="color:white;">Combien coûte la garde de votre chien ?</h2>
+    <p style="color:rgba(255,255,255,.65);font-size:.92rem;margin:6px 0 26px;">Réponse en 5 secondes — sans engagement, paiement seulement à la fin du séjour.</p>
+    <div style="background:rgba(255,255,255,.08);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.18);border-radius:22px;padding:26px 24px;box-shadow:0 20px 60px rgba(0,0,0,.25);">
+      <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;">
+        <div style="flex:1;min-width:150px;text-align:left;">
+          <label style="display:block;color:rgba(255,255,255,.8);font-size:.78rem;font-weight:700;margin-bottom:6px;">Nombre de nuits</label>
+          <select id="simu-nuits" onchange="simuCalc()" style="width:100%;padding:12px 14px;border-radius:12px;border:none;font-family:'Lato',sans-serif;font-size:.95rem;font-weight:700;color:var(--lavande-dark);">
+            <option value="1">1 nuit</option><option value="2" selected>2 nuits</option><option value="3">3 nuits</option><option value="4">4 nuits</option><option value="5">5 nuits</option><option value="6">6 nuits</option><option value="7">1 semaine (7 nuits)</option><option value="10">10 nuits</option><option value="14">2 semaines (14 nuits)</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:150px;text-align:left;">
+          <label style="display:block;color:rgba(255,255,255,.8);font-size:.78rem;font-weight:700;margin-bottom:6px;">Nombre de chiens</label>
+          <select id="simu-chiens" onchange="simuCalc()" style="width:100%;padding:12px 14px;border-radius:12px;border:none;font-family:'Lato',sans-serif;font-size:.95rem;font-weight:700;color:var(--lavande-dark);">
+            <option value="1" selected>1 chien</option><option value="2">2 chiens (−10%)</option><option value="3">3 chiens (−15%)</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin:22px 0 4px;">
+        <span id="simu-total" style="font-family:'Playfair Display',serif;font-size:3rem;color:var(--gold);font-weight:700;line-height:1;">50€</span>
+        <div id="simu-detail" style="color:rgba(255,255,255,.6);font-size:.8rem;margin-top:6px;">25€ × 2 nuits · photos quotidiennes incluses</div>
+      </div>
+      <a class="hero-btn-main" href="reservation.html" style="display:inline-block;margin-top:18px;">📅 Réserver à ce prix</a>
+      <p style="color:rgba(255,255,255,.4);font-size:.7rem;margin-top:12px;">Pension complète nuit &amp; journée · Sans acompte · Annulation gratuite</p>
+    </div>
+  </div>
+</section>
+<script>
+function simuCalc(){
+  var nuits=parseInt(document.getElementById('simu-nuits').value)||1;
+  var nb=parseInt(document.getElementById('simu-chiens').value)||1;
+  var rate=nb>=3?0.15:(nb===2?0.10:0);
+  var total=Math.round(25*nuits*nb*(1-rate));
+  document.getElementById('simu-total').textContent=total+'€';
+  document.getElementById('simu-detail').textContent='25€ × '+nuits+' nuit'+(nuits>1?'s':'')+(nb>1?' × '+nb+' chiens (−'+Math.round(rate*100)+'%)':'')+' · photos quotidiennes incluses';
+}
+</script>
 
 <!-- ── Comment ça marche ─────────────────────────────── -->
 <style>
@@ -892,6 +935,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 <script>
 // ── Galerie photos ──────────────────────────────────────────
+function cldOpt(u,w){ try{ if(u.indexOf('/upload/')===-1 || u.indexOf('res.cloudinary.com')===-1) return u; if(u.indexOf('f_auto')!==-1) return u; return u.replace('/upload/','/upload/f_auto,q_auto,w_'+(w||900)+'/'); }catch(e){ return u; } }
 (function loadGalerie() {
   var grid    = document.getElementById('galerie-grid');
   var loading = document.getElementById('galerie-loading');
@@ -913,11 +957,43 @@ document.addEventListener('DOMContentLoaded',()=>{
     photos.forEach(function(p) {
       var item = document.createElement('div');
       item.className = 'gal-item';
-      item.innerHTML = '<img src="' + p.url + '" alt="' + (p.caption || 'Chien chez Milou Dogs Provence') + '" loading="lazy" onclick="openLightbox(\'' + p.url.replace(/'/g,"\\'") + '\',\'' + (p.caption||'').replace(/'/g,"\\'") + '\')">'
+      item.innerHTML = '<img src="' + cldOpt(p.url,900) + '" alt="' + (p.caption || 'Chien chez Milou Dogs Provence') + '" loading="lazy" onclick="openLightbox(\'' + p.url.replace(/'/g,"\\'") + '\',\'' + (p.caption||'').replace(/'/g,"\\'") + '\')">'
         + (p.caption ? '<div class="gal-caption">' + p.caption + '</div>' : '');
       grid.appendChild(item);
     });
   });
+})();
+
+// ── Urgence dynamique : vraies places restantes sur les 7 prochains jours ──
+(function(){
+  try{
+    var el = document.getElementById('urgence-txt'); if(!el) return;
+    Promise.all([
+      firebase.database().ref('availability').once('value').then(function(s){return s.val()||{};}),
+      firebase.database().ref('closures').once('value').then(function(s){return s.val()||{};})
+    ]).then(function(res){
+      var av=res[0], cl=res[1];
+      if(!av.updated) return;                 // pas encore publié → on garde le texte statique
+      var cap=av.capacity||7, days=av.days||{};
+      var today=new Date(); today.setHours(0,0,0,0);
+      var minLeft=cap, allClosed=true;
+      for(var i=0;i<7;i++){
+        var d=new Date(today.getTime()+i*86400000);
+        var k=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+        if(cl[k]) continue;
+        allClosed=false;
+        var left=cap-(days[k]||0);
+        if(left<minLeft) minLeft=left;
+      }
+      var link=' · <a href="reservation.html" style="color:#F5C84A;text-decoration:underline;font-weight:800;">Réserver →</a>';
+      var msg;
+      if(allClosed)      msg='🏖️ Nous sommes en congés cette semaine — réservez pour les prochaines dates'+link;
+      else if(minLeft<=0) msg='🔴 Certains jours sont <strong>COMPLETS</strong> cette semaine — vérifiez vite vos dates'+link;
+      else if(minLeft<=2) msg='🔥 Plus que <strong>'+minLeft+' place'+(minLeft>1?'s':'')+'</strong> sur certains jours cette semaine'+link;
+      else               msg='🟢 <strong>'+minLeft+' places disponibles</strong> cette semaine · Maximum '+cap+' chiens choyés à la fois'+link;
+      el.innerHTML=msg;
+    });
+  }catch(e){}
 })();
 
 function openLightbox(url, caption) {
