@@ -1,5 +1,5 @@
 /* Milou Dogs — Service Worker (offline app shell) */
-const CACHE = 'milou-app-v9';
+const CACHE = 'milou-app-v10';
 const SHELL = [
   './',
   './index.html',
@@ -10,7 +10,9 @@ const SHELL = [
   './profil.js',
   './avis.js',
   './manifest.webmanifest',
-  './icons/icon.svg'
+  './icons/icon.svg',
+  './icons/icon-192.png',
+  './icons/icon-512.png'
 ];
 
 self.addEventListener('install', (e) => {
