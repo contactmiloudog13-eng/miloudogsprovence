@@ -309,12 +309,17 @@ document.getElementById('login-form').addEventListener('submit', async e => {
 // Crée la fiche profil au premier login Google
 async function _afterGoogleLogin(res) {
   if (res && res.additionalUserInfo && res.additionalUserInfo.isNewUser && res.user) {
+    // NOUVEAU compte Google → on ne saute plus : direction le parcours d'inscription
+    // pour remplir le profil obligatoire puis le/les chien(s).
     const u = res.user;
     const parts = (u.displayName || '').trim().split(' ');
     const prenom = parts.shift() || '';
     await firebase.database().ref('users/' + u.uid).update({
       prenom: prenom, nom: parts.join(' '), email: u.email || '', createdAt: Date.now()
     });
+    var nx = (typeof _NEXT!=='undefined' ? _NEXT : 'espace-client.html');
+    window.location.href = 'inscription.html?complete=1&next=' + encodeURIComponent(nx);
+    return;
   }
   window.location.href = (typeof _NEXT!=='undefined'?_NEXT:'espace-client.html');
 }

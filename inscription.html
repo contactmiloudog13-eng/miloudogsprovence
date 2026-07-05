@@ -418,7 +418,28 @@ var _NEXT = (function(){
   try { var n = new URLSearchParams(location.search).get('next') || ''; if(/^[a-z0-9-]+\.html$/.test(n)) return n; } catch(e){}
   return 'espace-client.html';
 })();
-redirectIfLoggedIn(_NEXT);
+// Compte Google déjà connecté qui doit compléter son profil (venu de connexion.html)
+var _COMPLETE = /[?&]complete=1/.test(location.search);
+if (!_COMPLETE) {
+  redirectIfLoggedIn(_NEXT);
+} else {
+  window.__suppressAuthRedirect = true;
+  firebase.auth().onAuthStateChanged(function(u){
+    if (!u || window._googleMode) return;
+    firebase.database().ref('users/' + u.uid).once('value').then(function(s){
+      var d = s.val() || {};
+      // Profil déjà complet → inutile de refaire le parcours
+      if (d.telephone && d.adresse) { window.location.href = _NEXT; return; }
+      window._googleMode = true; window._newUid = u.uid;
+      var parts = (u.displayName || '').trim().split(' ');
+      var setv = function(id,val){ var e=document.getElementById(id); if(e) e.value = val || ''; };
+      setv('prenom', d.prenom || parts.shift() || '');
+      setv('nom', d.nom || parts.join(' '));
+      setv('email', d.email || u.email || '');
+      if (typeof enterGoogleProfileMode === 'function') enterGoogleProfileMode();
+    });
+  });
+}
 
 // Pré-remplissage depuis la réservation (infos déjà saisies par le visiteur)
 document.addEventListener('DOMContentLoaded', function(){
@@ -522,14 +543,30 @@ async function registerGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
     const res = await firebase.auth().signInWithPopup(provider);
     const u = res.user;
-    if (res.additionalUserInfo && res.additionalUserInfo.isNewUser && u) {
-      const parts = (u.displayName || '').trim().split(' ');
-      await firebase.database().ref('users/' + u.uid).update({
-        prenom: parts.shift() || '', nom: parts.join(' '), email: u.email || '', createdAt: Date.now()
-      });
+    // Compte Google DÉJÀ existant → on suppose le profil rempli, on redirige
+    const isNew = res.additionalUserInfo && res.additionalUserInfo.isNewUser;
+    if (!isNew) {
+      if (u && u.email) await mergeGuestReservations(u.uid, u.email);
+      window.location.href = (typeof _NEXT!=='undefined'?_NEXT:'espace-client.html');
+      return;
     }
+    // NOUVEAU compte Google → on NE saute PLUS : on force le parcours profil → chien
+    window._googleMode = true;
+    window._newUid = u.uid;
+    const parts = (u.displayName || '').trim().split(' ');
+    document.getElementById('prenom').value = parts.shift() || '';
+    document.getElementById('nom').value = parts.join(' ');
+    document.getElementById('email').value = u.email || '';
+    // Trace minimale pour que le compte existe même si abandon en cours de route
+    await firebase.database().ref('users/' + u.uid).update({
+      prenom: document.getElementById('prenom').value,
+      nom: document.getElementById('nom').value,
+      email: u.email || '', createdAt: Date.now()
+    });
     if (u && u.email) await mergeGuestReservations(u.uid, u.email);
-    window.location.href = (typeof _NEXT!=='undefined'?_NEXT:'espace-client.html');
+    enterGoogleProfileMode();
+    setLoading(false);
+    return;
   } catch (err) {
     setLoading(false);
     if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') return;
@@ -541,6 +578,9 @@ async function registerGoogle() {
 document.getElementById('register-form').addEventListener('submit', async e => {
   e.preventDefault();
   document.getElementById('alert-error').classList.remove('show');
+
+  // Parcours Google : le compte est déjà créé, on complète juste le profil obligatoire
+  if (window._googleMode) { submitGoogleProfile(); return; }
 
   const prenom    = document.getElementById('prenom').value.trim();
   const nom       = document.getElementById('nom').value.trim();
@@ -698,6 +738,64 @@ function vaccinsChange(){
 }
 
 // ── Étape 2 : afficher le formulaire chien ──────────────────────────────────
+// ── Parcours Google : bascule le formulaire en "complétion de profil" ──────────
+function enterGoogleProfileMode() {
+  // Email verrouillé (vient de Google)
+  var em = document.getElementById('email');
+  if (em) { em.readOnly = true; em.style.background = '#f4f4f6'; em.style.opacity = '.8'; }
+  // Masque les champs mot de passe (compte déjà créé via Google) + retire "required"
+  ['password','password2'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) { el.required = false; el.value = ''; var g = el.closest('.form-group'); if (g) g.style.display = 'none'; }
+  });
+  // Masque le séparateur + le bouton Google
+  document.querySelectorAll('.auth-divider, .btn-google, .auth-switch').forEach(function(el){ el.style.display = 'none'; });
+  // Libellé du bouton
+  var bt = document.querySelector('#btn-register .btn-text'); if (bt) bt.textContent = 'Continuer →';
+  // Message d'info en haut du formulaire
+  if (!document.getElementById('google-info')) {
+    var box = document.createElement('div');
+    box.id = 'google-info';
+    box.style.cssText = 'background:#EAF7EE;border:1px solid #9CD8AC;border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:.9rem;color:#1c6b38;font-weight:600;line-height:1.5;';
+    box.innerHTML = '✅ Connecté avec Google. Complétez maintenant vos informations pour finaliser votre inscription.';
+    var form = document.getElementById('register-form');
+    form.insertBefore(box, form.firstChild);
+  }
+  document.getElementById('telephone').focus();
+}
+
+// ── Enregistre le profil client (parcours Google) puis passe à l'étape chien ────
+async function submitGoogleProfile() {
+  document.getElementById('alert-error').classList.remove('show');
+  var prenom    = document.getElementById('prenom').value.trim();
+  var nom       = document.getElementById('nom').value.trim();
+  var email     = document.getElementById('email').value.trim();
+  var telephone = document.getElementById('telephone').value.trim();
+  var adresse    = document.getElementById('adresse').value.trim();
+  var codePostal = document.getElementById('codepostal').value.trim();
+  var ville      = document.getElementById('ville').value.trim();
+  if (!prenom || !nom || !telephone || !adresse || !codePostal || !ville) {
+    showError('Veuillez remplir toutes vos informations (prénom, nom, téléphone et adresse complète).'); return;
+  }
+  if (!validatePhone(telephone)) { showError('Numéro de téléphone invalide (ex : 06 12 34 56 78).'); return; }
+  if (!document.getElementById('cgu').checked) { showError('Veuillez accepter les mentions légales.'); return; }
+  setLoading(true);
+  try {
+    var uid = window._newUid;
+    var prof = { prenom:prenom, nom:nom, email:email, telephone:telephone, adresse:adresse, codePostal:codePostal, ville:ville, updatedAt: Date.now() };
+    if (_regPhoto) prof.photoUrl = _regPhoto;
+    await firebase.database().ref('users/' + uid).update(prof);
+    var telKey = (telephone||'').replace(/\s/g,'') || uid;
+    await firebase.database().ref('clients/' + telKey).set({
+      prenom:prenom, nom:nom, email:email, telephone:telephone, adresse:adresse, codePostal:codePostal, ville:ville,
+      createdAt: Date.now(), updatedAt: Date.now(), nbResas: 0
+    });
+    showStep2(prenom);
+  } catch (err) {
+    showError('Erreur : ' + err.message); setLoading(false);
+  }
+}
+
 function showStep2(prenom) {
   document.getElementById('register-form').style.display = 'none';
   document.getElementById('step1-brand').style.display = 'none';
