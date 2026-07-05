@@ -310,33 +310,123 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
 <section id="hero">
   <div class="hero-bg"></div>
   <div class="hero-overlay"></div>
+  <div class="hero-grain" aria-hidden="true"></div>
   <div class="hero-content">
     <!-- TITRE EN HAUT PLEINE LARGEUR -->
     <div class="hero-top">
-      <div class="hero-badge">🌿 Miramas & Provence · 5★ Google</div>
-      <h1>La pension où votre chien vit <em>comme en famille</em> — <em>jamais en cage</em></h1>
+      <div class="hero-eyebrow">
+        <span class="he-dot" aria-hidden="true"></span>
+        <span>Miramas &amp; Provence</span>
+        <span class="he-sep" aria-hidden="true"></span>
+        <span class="he-stars" aria-hidden="true">★★★★★</span>
+        <span class="he-rate">5,0 sur Google</span>
+      </div>
+      <h1>La pension où votre chien vit<br><em>comme en famille</em>, jamais en cage.</h1>
     </div>
     <!-- RESTE EN BAS -->
     <div class="hero-bottom">
-      <p>Accueil familial, terrain de 2 000 m², câlins illimités. Pas de cage, jamais. À Miramas & environs.</p>
+      <p>Accueil familial chaleureux, terrain clôturé de <strong>2 000 m²</strong>, câlins illimités et <strong>photos chaque jour</strong>. Votre compagnon en de bonnes mains, à Miramas &amp; alentours.</p>
       <div class="hero-btns">
-        <a class="hero-btn-main" href="reservation.html">📅 Réserver maintenant</a>
-        <a class="hero-btn-ghost" href="services.html">Voir les services</a>
+        <a class="hero-btn-main" href="reservation.html">
+          <span>Réserver une garde</span>
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="hero-btn-ghost" href="services.html">Voir les services &amp; tarifs</a>
       </div>
-      <div style="margin-top:14px;animation:fadeup .8s .65s both;">
-        <a href="tel:0777234088" style="color:rgba(255,255,255,.7);font-size:.88rem;text-decoration:none;letter-spacing:.03em;">📞 <span style="text-decoration:underline;text-underline-offset:3px;">07 77 23 40 88</span> · Réponse sous 24h</a>
+      <div class="hero-reassure">
+        <a href="tel:0777234088" class="hr-phone"><span class="hr-live" aria-hidden="true"></span> 07 77 23 40 88 <span class="hr-soft">· Réponse sous 24 h</span></a>
       </div>
       <div class="hero-stats">
-        <div class="hero-stat"><strong>5.0★</strong><span>Note Google</span></div>
-        <div class="hero-stat"><strong>25€</strong><span>La nuit</span></div>
-        <div class="hero-stat"><strong>2 000m²</strong><span>De terrain</span></div>
-        <div class="hero-stat"><strong>7 max</strong><span>Chiens</span></div>
+        <div class="hero-stat"><strong>5,0<span class="hs-star">★</span></strong><span>Note Google</span></div>
+        <div class="hero-stat"><strong>25€</strong><span>Dès / nuit</span></div>
+        <div class="hero-stat"><strong>2 000<small>m²</small></strong><span>De terrain</span></div>
+        <div class="hero-stat"><strong>7<small>max</small></strong><span>Chiens à la fois</span></div>
       </div>
     </div>
   </div>
 
   <div class="hero-scroll"><div class="hero-scroll-line"></div>Découvrir</div>
 </section>
+
+<!-- ═══ Hero premium — raffinements visuels ═══ -->
+<style>
+/* Overlay plus riche : dégradé chaud + vignette douce pour la profondeur */
+#hero .hero-overlay{
+  background:
+    radial-gradient(120% 90% at 78% 15%, rgba(0,0,0,0) 0%, rgba(10,6,2,.28) 62%, rgba(6,4,1,.62) 100%),
+    linear-gradient(98deg, rgba(8,5,2,.86) 0%, rgba(34,21,7,.60) 38%, rgba(20,12,4,.20) 66%, rgba(0,0,0,.06) 100%);
+}
+/* Grain subtil = rendu premium (sur-couche discrète) */
+.hero-grain{
+  position:absolute; inset:0; z-index:2; pointer-events:none; opacity:.05; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+#hero .hero-content{z-index:3;}
+/* Eyebrow raffiné */
+.hero-eyebrow{
+  display:inline-flex; align-items:center; gap:11px; flex-wrap:wrap;
+  background:rgba(20,14,6,.30); backdrop-filter:blur(10px);
+  border:1px solid rgba(245,200,74,.34);
+  padding:9px 18px; border-radius:40px;
+  font-size:.76rem; font-weight:600; letter-spacing:.06em; color:rgba(255,255,255,.92);
+  margin-bottom:26px; box-shadow:0 2px 24px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.08);
+  animation:fadeup .8s .1s both; text-transform:uppercase;
+}
+.hero-eyebrow .he-dot{width:7px;height:7px;border-radius:50%;background:#5ED89A;box-shadow:0 0 0 4px rgba(94,216,154,.22);animation:hpulse 2.2s ease-in-out infinite;}
+.hero-eyebrow .he-sep{width:1px;height:13px;background:rgba(255,255,255,.28);}
+.hero-eyebrow .he-stars{color:#F5C84A;letter-spacing:2px;font-size:.82rem;}
+.hero-eyebrow .he-rate{color:#F5C84A;font-weight:700;letter-spacing:.03em;}
+@keyframes hpulse{0%,100%{box-shadow:0 0 0 3px rgba(94,216,154,.28);}50%{box-shadow:0 0 0 7px rgba(94,216,154,0);}}
+/* Titre : Playfair, plus serré, swash doré sous l'emphase */
+#hero h1{
+  font-family:'Playfair Display',serif; font-weight:700;
+  font-size:clamp(2.15rem,4.6vw,5rem); line-height:1.06; letter-spacing:-.015em;
+  max-width:16ch; text-shadow:0 2px 50px rgba(0,0,0,.55);
+}
+#hero h1 em{position:relative; color:#F7CE58; font-style:italic; white-space:nowrap;}
+#hero h1 em::after{content:""; position:absolute; left:2%; right:2%; bottom:.02em; height:.09em; border-radius:2px; background:linear-gradient(90deg,rgba(245,200,74,0),#F5C84A 20%,#E8A030 80%,rgba(232,160,48,0)); opacity:.7;}
+/* Sous-titre */
+.hero-bottom > p{font-size:clamp(1.02rem,1.5vw,1.2rem); max-width:52ch; color:rgba(255,255,255,.9);}
+.hero-bottom > p strong{color:#fff;font-weight:600;}
+/* CTA principal : dégradé or + reflet animé + flèche */
+.hero-btn-main{
+  display:inline-flex; align-items:center; gap:10px; position:relative; overflow:hidden;
+  padding:16px 30px; font-size:1rem; letter-spacing:.01em;
+  box-shadow:0 10px 34px rgba(232,160,48,.42), inset 0 1px 0 rgba(255,255,255,.4);
+}
+.hero-btn-main svg{transition:transform .25s;}
+.hero-btn-main:hover svg{transform:translateX(4px);}
+.hero-btn-main::before{content:""; position:absolute; top:0; left:-120%; width:60%; height:100%; background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent); transform:skewX(-18deg); animation:shine 4.5s ease-in-out 1.5s infinite;}
+@keyframes shine{0%,100%{left:-120%;}18%,40%{left:130%;}}
+.hero-btn-ghost{border-color:rgba(255,255,255,.3);}
+/* Ligne de réassurance : point "en direct" */
+.hero-reassure{margin-top:16px; animation:fadeup .8s .65s both;}
+.hero-reassure .hr-phone{color:rgba(255,255,255,.9); font-size:.9rem; text-decoration:none; letter-spacing:.02em; font-weight:600; display:inline-flex; align-items:center; gap:9px;}
+.hero-reassure .hr-phone:hover{color:#F5C84A;}
+.hero-reassure .hr-soft{color:rgba(255,255,255,.6); font-weight:400;}
+.hero-reassure .hr-live{width:8px;height:8px;border-radius:50%;background:#5ED89A;box-shadow:0 0 0 4px rgba(94,216,154,.2);animation:hpulse 2.2s ease-in-out infinite;}
+/* Stats : pastilles verre séparées, chiffres Playfair or */
+#hero .hero-stats{background:none; border:none; backdrop-filter:none; overflow:visible; gap:12px; max-width:600px; border-radius:0;}
+#hero .hero-stat{
+  flex:1; border:1px solid rgba(245,200,74,.24); border-right:1px solid rgba(245,200,74,.24);
+  background:rgba(14,9,4,.36); backdrop-filter:blur(14px);
+  border-radius:16px; padding:16px 8px; box-shadow:inset 0 1px 0 rgba(255,255,255,.07), 0 8px 24px rgba(0,0,0,.22);
+  transition:transform .25s, border-color .25s;
+}
+@media(hover:hover){#hero .hero-stat:hover{transform:translateY(-4px); border-color:rgba(245,200,74,.55);}}
+#hero .hero-stat strong{font-size:1.65rem; letter-spacing:-.01em; display:flex; align-items:baseline; justify-content:center; gap:2px;}
+#hero .hero-stat strong small{font-size:.62rem; color:rgba(255,255,255,.55); font-family:'Lato',sans-serif; font-weight:700; letter-spacing:.04em;}
+#hero .hero-stat .hs-star{font-size:.9rem; color:#F5C84A;}
+#hero .hero-stat span{font-size:.64rem;}
+@media(prefers-reduced-motion:reduce){.hero-btn-main::before,.hero-eyebrow .he-dot,.hero-reassure .hr-live{animation:none;}}
+@media(max-width:760px){
+  .hero-eyebrow{font-size:.66rem; gap:8px; padding:7px 13px; margin-bottom:16px;}
+  #hero h1{max-width:100%;}
+  #hero .hero-stats{gap:8px;}
+  #hero .hero-stat{padding:12px 5px;}
+  #hero .hero-stat strong{font-size:1.3rem;}
+}
+</style>
 
 <div id="urgence-bar" style="background:linear-gradient(90deg,#2d1f4e,#4A3F72);padding:10px 5%;text-align:center;font-size:.85rem;font-weight:700;color:white;letter-spacing:.02em;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;">
   <span style="animation:urgpulse 1.5s ease-in-out infinite;display:inline-block;">🔴</span>
