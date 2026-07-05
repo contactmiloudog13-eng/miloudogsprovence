@@ -130,19 +130,29 @@ const App = (function () {
   function loginGoogle() {
     authMsg('');
     const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    // Sur mobile OU en PWA installée, les popups Google ne fonctionnent pas
+    // (bloquées / non supportées en mode standalone) → on utilise la REDIRECTION.
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const useRedirect = isStandalone || isMobile;
+    authMsg('⏳ Connexion Google…');
     auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-      .then(() => auth.signInWithPopup(provider))
-      .then((res) => {
-        if (res && res.additionalUserInfo && res.additionalUserInfo.isNewUser && res.user) {
-          const u = res.user; const parts = (u.displayName || '').trim().split(' ');
-          return db.ref('users/' + u.uid).update({ prenom: parts.shift() || '', nom: parts.join(' '), email: u.email || '', createdAt: Date.now() });
-        }
+      .then(() => {
+        if (useRedirect) return auth.signInWithRedirect(provider); // la page se recharge → getRedirectResult() dans boot()
+        return auth.signInWithPopup(provider).then((res) => {
+          if (res && res.additionalUserInfo && res.additionalUserInfo.isNewUser && res.user) {
+            const u = res.user; const parts = (u.displayName || '').trim().split(' ');
+            return db.ref('users/' + u.uid).update({ prenom: parts.shift() || '', nom: parts.join(' '), email: u.email || '', createdAt: Date.now() });
+          }
+        });
       })
       .catch((err) => {
         const c = (err && err.code) || '';
-        if (c.includes('popup-closed-by-user') || c.includes('cancelled-popup-request')) return;
-        if (c.includes('operation-not-allowed')) { authMsg('La connexion Google n\'est pas encore activée.'); return; }
-        if (c.includes('popup-blocked')) { auth.signInWithRedirect(provider); return; } // repli PWA
+        if (c.includes('popup-closed-by-user') || c.includes('cancelled-popup-request')) { authMsg(''); return; }
+        if (c.includes('operation-not-allowed')) { authMsg('La connexion Google n\'est pas encore activée dans Firebase.'); return; }
+        // Popup impossible dans ce contexte → on bascule en redirection
+        if (c.includes('popup-blocked') || c.includes('operation-not-supported')) { auth.signInWithRedirect(provider).catch((e2) => authMsg(authError(e2))); return; }
         authMsg(authError(err));
       });
     return false;
