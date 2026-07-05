@@ -416,6 +416,16 @@
                 <select id="heure-debut-m" name="Heure arrivée M" style="flex:1" required onchange="autoDepart();calcPrice()"><option value="">MM</option><option selected>00</option><option>15</option><option>30</option><option>45</option></select>
               </div><small style="color:var(--text-muted);font-size:.75rem;">Ouvert de 8h à 19h</small></div>
             </div>
+            <div id="row-date-fin" style="display:none">
+              <div class="form-row">
+                <div id="col-date-fin" class="form-group"><label>Date de fin *</label><input id="date-fin" name="Date départ" type="date" oninput="calcPrice()"></div>
+                <div class="form-group" id="col-heure-fin"><label id="label-heure-fin">Heure de départ *</label><div style="display:flex;gap:8px;">
+                  <select id="heure-fin-h" name="Heure départ H" style="flex:1" onchange="calcPrice()"><option value="">HH</option><option>08</option><option>09</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option></select>
+                  <select id="heure-fin-m" name="Heure départ M" style="flex:1"><option value="">MM</option><option selected>00</option><option>15</option><option>30</option><option>45</option></select>
+                </div><small style="color:var(--text-muted);font-size:.75rem;">Ouvert de 8h à 19h</small></div>
+              </div>
+              <small id="msg-depart" style="display:none;margin-top:-8px;margin-bottom:14px;background:#FDF3E0;border:1px solid var(--soleil);border-radius:8px;padding:7px 10px;font-size:.78rem;color:#7a5a1a;line-height:1.5;">⏰ <strong>Heure limite de récupération.</strong> Vous pouvez venir avant, mais pas après — merci de respecter ce créneau ❤️</small>
+            </div>
             <!-- Disponibilités en direct (publiées depuis l'admin) -->
             <details id="dispo-cal" style="background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:12px 16px;margin:2px 0 14px;">
               <summary style="cursor:pointer;font-weight:800;font-size:.9rem;color:var(--lavande-dark);list-style-position:inside;">📅 Voir les disponibilités en direct</summary>
@@ -427,16 +437,6 @@
                 <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#3a3530;vertical-align:middle;"></span> Congés</span>
               </div>
             </details>
-            <div id="row-date-fin" style="display:none">
-              <div class="form-row">
-                <div id="col-date-fin" class="form-group"><label>Date de fin</label><input id="date-fin" name="Date départ" type="date" oninput="calcPrice()"></div>
-                <div class="form-group" id="col-heure-fin"><label id="label-heure-fin">Heure de départ</label><div style="display:flex;gap:8px;">
-                  <select id="heure-fin-h" name="Heure départ H" style="flex:1" onchange="calcPrice()"><option value="">HH</option><option>08</option><option>09</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option></select>
-                  <select id="heure-fin-m" name="Heure départ M" style="flex:1"><option value="">MM</option><option selected>00</option><option>15</option><option>30</option><option>45</option></select>
-                </div><small style="color:var(--text-muted);font-size:.75rem;">Ouvert de 8h à 19h</small></div>
-              </div>
-              <small id="msg-depart" style="display:none;margin-top:-8px;margin-bottom:14px;background:#FDF3E0;border:1px solid var(--soleil);border-radius:8px;padding:7px 10px;font-size:.78rem;color:#7a5a1a;line-height:1.5;">⏰ <strong>Heure limite de récupération.</strong> Vous pouvez venir avant, mais pas après — merci de respecter ce créneau ❤️</small>
-            </div>
 
             <div class="step-panel-nav">
               <button type="button" class="step-back-btn" onclick="goStep(1)">← Retour</button>
@@ -636,10 +636,26 @@ function _validateStep2() {
   const hH = document.getElementById('heure-debut-h');
   if (!hH.value) { hH.style.borderColor = '#c0392b'; err = true; }
   else hH.style.borderColor = '';
+  // Date & heure de fin obligatoires dès que la section de fin est affichée
+  let errFin = false;
+  const rowFin = document.getElementById('row-date-fin');
+  if (rowFin && rowFin.style.display !== 'none') {
+    const dFinEl = document.getElementById('date-fin');
+    const colDateFin = document.getElementById('col-date-fin');
+    if (colDateFin && colDateFin.style.display !== 'none') {
+      if (!dFinEl.value) { dFinEl.style.borderColor = '#c0392b'; err = true; errFin = true; }
+      else dFinEl.style.borderColor = '';
+    }
+    const hFinEl = document.getElementById('heure-fin-h');
+    if (!hFinEl.value) { hFinEl.style.borderColor = '#c0392b'; err = true; errFin = true; }
+    else hFinEl.style.borderColor = '';
+  }
   if (err) {
     const msg = document.getElementById('error-msg');
     msg.style.display = 'block';
-    msg.textContent = '⚠️ Merci de choisir un service, une date et une heure d\'arrivée.';
+    msg.textContent = errFin
+      ? '⚠️ Merci d\'indiquer la date et l\'heure de fin de la garde.'
+      : '⚠️ Merci de choisir un service, une date et une heure d\'arrivée.';
     document.getElementById('step-panel-2').appendChild(msg);
     setTimeout(() => msg.style.display = 'none', 4000);
   }
@@ -905,13 +921,13 @@ function _pickupFinish(meters){
   var res=document.getElementById('pickup-result');
   var price, html;
   if(isMiramas){
-    price=10;
-    html='✅ <strong>Miramas</strong> → récupération <strong>10€</strong> <small style="color:var(--text-muted);">(forfait)</small>';
+    price=5;
+    html='✅ <strong>Miramas</strong> → récupération <strong>5€</strong> <small style="color:var(--text-muted);">(forfait)</small>';
   } else {
     var aller_retour=Math.round(km*2*10)/10;            // aller + retour
-    price=Math.round((10+aller_retour*0.5)*100)/100;
+    price=Math.round((5+aller_retour*0.5)*100)/100;
     html='✅ Distance : <strong>'+km.toString().replace('.',',')+' km</strong> (aller-retour '+aller_retour.toString().replace('.',',')+' km) → récupération <strong>'+price.toString().replace('.',',')+'€</strong>'
-       + ' <small style="color:var(--text-muted);">(10€ + '+aller_retour.toString().replace('.',',')+' km × 0,50€)</small>';
+       + ' <small style="color:var(--text-muted);">(5€ + '+aller_retour.toString().replace('.',',')+' km × 0,50€)</small>';
   }
   window.__pickup.km=km; window.__pickup.price=price;
   res.innerHTML=html;
@@ -1093,8 +1109,8 @@ function _visiteApplyTravel(){
   if(isMiramas){ v.travelPerDay=0; if(res) res.innerHTML='✅ <strong>Miramas</strong> — aucun frais de déplacement'; }
   else {
     var ar=Math.round(v.km*2*10)/10;
-    v.travelPerDay=Math.round((10+ar*0.5)*100)/100;
-    if(res) res.innerHTML='✅ '+(v.city||'Hors Miramas')+' — déplacement <strong>'+v.travelPerDay.toString().replace('.',',')+'€ / jour</strong> <small style="color:var(--text-muted);">(10€ + '+ar.toString().replace('.',',')+' km aller-retour × 0,50€)</small>';
+    v.travelPerDay=Math.round((5+ar*0.5)*100)/100;
+    if(res) res.innerHTML='✅ '+(v.city||'Hors Miramas')+' — déplacement <strong>'+v.travelPerDay.toString().replace('.',',')+'€ / jour</strong> <small style="color:var(--text-muted);">(5€ + '+ar.toString().replace('.',',')+' km aller-retour × 0,50€)</small>';
   }
   v.travelTotal=Math.round(v.travelPerDay*v.days*100)/100;
 }
