@@ -501,7 +501,7 @@ body:not(.auth-ready) footer{visibility:hidden;}
         <span class="tab-icon">👤</span> Mon profil
       </button>
       <button class="dash-tab" onclick="showTab('chien',this)">
-        <span class="tab-icon">🐕</span> Mon chien
+        <span class="tab-icon">🐾</span> Mes animaux
       </button>
       <button class="dash-tab" id="tab-resa" onclick="showTab('reservations',this)">
         <span class="tab-icon">📅</span> Mes réservations<span class="notif-dot" id="resa-notif-dot" style="display:none;"></span>
@@ -631,7 +631,7 @@ body:not(.auth-ready) footer{visibility:hidden;}
       </div>
 
       <div class="panel-card" id="chien-card">
-        <h3>🐕 <span id="chien-card-title">Profil du chien</span></h3>
+        <h3><span id="chien-head-emoji">🐕</span> <span id="chien-card-title">Profil de l'animal</span></h3>
 
         <div class="save-feedback" id="chien-alert" style="margin-bottom:16px;"></div>
 
@@ -646,11 +646,29 @@ body:not(.auth-ready) footer{visibility:hidden;}
 
         <form id="chien-form" novalidate>
 
+          <!-- ── Type d'animal ── -->
+          <div class="fiche-section-title">🐾 Type d'animal</div>
+          <div class="form-group">
+            <label for="c-espece">Quel animal ?</label>
+            <select id="c-espece" onchange="especeChange()" disabled style="width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:var(--cream);font-family:'Lato',sans-serif;font-size:.95rem;color:var(--text);">
+              <option value="chien">🐶 Chien</option>
+              <option value="chat">🐱 Chat</option>
+              <option value="lapin">🐰 Lapin</option>
+              <option value="furet">🦡 Furet</option>
+              <option value="poules">🐔 Poules / basse-cour</option>
+              <option value="rongeur">🐹 Rongeur (hamster, cochon d'Inde…)</option>
+              <option value="oiseau">🦜 Oiseau</option>
+              <option value="tortue">🐢 Tortue / reptile</option>
+              <option value="poisson">🐠 Poisson</option>
+              <option value="autre">🐾 Autre</option>
+            </select>
+          </div>
+
           <!-- ── Infos de base ── -->
           <div class="fiche-section-title">📋 Informations de base</div>
           <div class="form-row-2">
             <div class="form-group">
-              <label for="c-nom">Nom du chien *</label>
+              <label for="c-nom">Nom de l'animal *</label>
               <input type="text" id="c-nom" placeholder="Rex" readonly>
             </div>
             <div class="form-group">
@@ -1324,6 +1342,18 @@ async function loadChien(uid) {
 }
 
 // ── Rendu du sélecteur ───────────────────────────────────────────────────────
+// Emoji selon l'espèce de l'animal
+var ESPECE_EMOJI = {chien:'🐶',chat:'🐱',lapin:'🐰',furet:'🦡',poules:'🐔',rongeur:'🐹',oiseau:'🦜',tortue:'🐢',poisson:'🐠',autre:'🐾'};
+function especeEmoji(e){ return ESPECE_EMOJI[e] || '🐾'; }
+// Met à jour les emojis quand on change l'espèce
+function especeChange(){
+  var e = document.getElementById('c-espece').value;
+  var em = especeEmoji(e);
+  var head = document.getElementById('chien-head-emoji'); if(head) head.textContent = em;
+  var circle = document.getElementById('dog-photo-circle');
+  var img = circle && circle.querySelector('img');
+  if(!img){ var pe = document.getElementById('dog-photo-emoji'); if(pe) pe.textContent = em; }
+}
 function renderChienSelector() {
   const sel = document.getElementById('chiens-selector');
   const ids = Object.keys(_chiens);
@@ -1332,7 +1362,7 @@ function renderChienSelector() {
     const isActive = id === _selectedChienId;
     const photoHtml = d.photoUrl
       ? `<div class="chien-mini-avatar"><img src="${d.photoUrl}" alt="${d.nom||''}"></div>`
-      : `<div class="chien-mini-avatar">🐕</div>`;
+      : `<div class="chien-mini-avatar">${especeEmoji(d.espece)}</div>`;
     return `<div class="chien-mini-card${isActive?' active':''}" onclick="selectChien('${id}')">
       ${photoHtml}
       <div class="chien-mini-name">${d.nom||'—'}</div>
@@ -1349,7 +1379,9 @@ function renderChienSelector() {
 function selectChien(id) {
   _selectedChienId = id;
   const d = _chiens[id] || {};
-  document.getElementById('chien-card-title').textContent = d.nom || 'Profil du chien';
+  document.getElementById('chien-card-title').textContent = d.nom || 'Profil de l\'animal';
+  document.getElementById('c-espece').value          = d.espece        || 'chien';
+  especeChange();
   document.getElementById('c-nom').value             = d.nom           || '';
   document.getElementById('c-race').value            = d.race          || '';
   document.getElementById('c-age').value             = d.age           || '';
@@ -1513,6 +1545,7 @@ function enableChienEdit() {
     if (el.tagName === 'TEXTAREA') { el.style.resize = 'vertical'; el.style.borderColor = ''; }
   });
   document.getElementById('c-identification').disabled = false;
+  document.getElementById('c-espece').disabled = false;
   _chienRadios.forEach(name => {
     document.querySelectorAll('input[name="'+name+'"]').forEach(r => r.disabled = false);
   });
@@ -1529,6 +1562,7 @@ function lockChienEdit() {
     if (el.tagName === 'TEXTAREA') { el.style.resize = 'none'; el.style.borderColor = 'transparent'; }
   });
   document.getElementById('c-identification').disabled = true;
+  document.getElementById('c-espece').disabled = true;
   _chienRadios.forEach(name => {
     document.querySelectorAll('input[name="'+name+'"]').forEach(r => r.disabled = true);
   });
@@ -1630,6 +1664,7 @@ document.getElementById('chien-form').addEventListener('submit', async e => {
 
   const chienData = {
     nom,
+    espece          : document.getElementById('c-espece').value,
     race            : document.getElementById('c-race').value.trim(),
     age             : document.getElementById('c-age').value.trim(),
     poids           : document.getElementById('c-poids').value.trim(),

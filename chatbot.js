@@ -8,8 +8,28 @@ const REPONSES = [
   },
   // ── TARIFS ───────────────────────────────────────────────
   {
-    mots: ['tarif','prix','cout','coute','cher','combien','nuit','journee','demi','promenade','toilettage','pension','euro','20','15','10','30','semaine','seance'],
-    rep: `🐾 Voici nos tarifs :\n\n🏠 Pension nuit complète : 20€/nuit\n☀️ Garderie journée : 20€\n🌤️ Garderie demi-journée : 10€\n🐣 Test demi-journée (1ère fois) : 10€\n🦮 Promenade : 15€\n🛁 Toilettage : 30€ (bientôt)\n\n💡 2 chiens de la même famille = réduction !`
+    mots: ['tarif','prix','cout','coute','cher','combien','nuit','journee','demi','promenade','toilettage','pension','euro','25','20','15','10','30','semaine','seance'],
+    rep: `🐾 Nos tarifs :\n\n🏠 Pension (nuit + journée) : 25€/nuit\n☀️ Garderie journée : 20€\n🌤️ Garderie demi-journée : 10€\n🦮 Promenade : 15€\n🛁 Toilettage : 30€\n🏡 Visite à domicile : dès 8€/passage (selon l'animal)\n\n💡 Réductions : 2 chiens −10%, 3 chiens et + −15%\n🎟️ Carnet Malin : 10 nuits prépayées à prix réduit\n\nUn devis instantané est calculé sur la page Réservation !`
+  },
+  // ── CARNET MALIN (prépayé) ───────────────────────────────
+  {
+    mots: ['carnet','malin','prepaye','prepayer','abonnement','forfait','pack nuit','10 nuits','fidelite','avance','credit'],
+    rep: `🎟️ Le Carnet Malin :\n\nVous achetez 10 nuits d'avance à prix réduit, à utiliser quand vous voulez sur 1 an. Zéro paperasse à chaque garde, et c'est cumulable avec la réduction multi-chiens.\n\n⚠️ Une fois réglé, le carnet est ferme et définitif (pas de remboursement) — mais rien ne se perd tant qu'il vous reste des nuits.`
+  },
+  // ── VISITE À DOMICILE (tous animaux) ─────────────────────
+  {
+    mots: ['domicile','maison','chez moi','passage','passer','chat','lapin','furet','poule','rongeur','oiseau','tortue','poisson','nourrir','garder mon chat','visite chat','animaux'],
+    rep: `🏡 La visite à domicile :\n\nVotre animal reste chez lui, je passe m'en occuper (repas, eau, soins, câlins). Chiens, chats, lapins, poules, furets, rongeurs, oiseaux, tortues, poissons — pas de serpents 🙂\n\nSur la page Réservation, vous choisissez : l'animal, les dates (du… au…), et la fréquence (ex : 2 passages par semaine, ou 2 par jour). Le total et le déplacement se calculent tout seuls. Dès 8€/passage.`
+  },
+  // ── RÉCUPÉRATION À DOMICILE ──────────────────────────────
+  {
+    mots: ['recuperation','recuperer','chercher','venir chercher','deplacement','kilometre','transport','ramener','emmener','conduire'],
+    rep: `🚗 Récupération à domicile :\n\nJe peux venir chercher (et ramener) votre chien. Tarif : 5€ de forfait + 0,50€/km en aller-retour, calculé automatiquement selon votre adresse sur la page Réservation.`
+  },
+  // ── PACK DUO ─────────────────────────────────────────────
+  {
+    mots: ['pack','duo','deux animaux','2 animaux','plusieurs animaux','chien et chat','combiner','ensemble'],
+    rep: `🎁 Le Pack Duo :\n\nVotre chien est en pension chez nous, et je passe aussi à domicile pour votre 2ᵉ animal (chat, lapin…). Vous profitez de −33% sur toutes les visites du 2ᵉ animal. Tout se réserve d'un coup sur la page Réservation.`
   },
   // ── RÉSERVATION ──────────────────────────────────────────
   {
@@ -128,7 +148,7 @@ const REPONSES = [
   },
 ];
 
-const DEFAUT = `Hmm, je n'ai pas bien compris 😊\n\nVous pouvez me demander par exemple :\n• Les tarifs\n• Comment réserver\n• Les vaccins requis\n• Les conditions d'accueil\n• Le parrainage\n\nOu appelez-nous directement 📞 07 77 23 40 88 !`;
+const DEFAUT = `Hmm, je n'ai pas bien compris 😊\n\nVous pouvez me demander par exemple :\n• Les tarifs\n• Le Carnet Malin (nuits prépayées)\n• La visite à domicile (chat, lapin…)\n• La récupération à domicile\n• Comment réserver\n• Les vaccins requis\n• Le parrainage\n\nOu appelez-nous directement 📞 07 77 23 40 88 !`;
 
 function normalise(t){
   return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,' ');
@@ -377,4 +397,41 @@ function loadGA() {
   socialLinks.appendChild(a);
 })();
 
+})();
+
+/* ── MENU MOBILE SIMPLIFIÉ : on garde 4 liens clés, le reste sous « Plus » ──── */
+(function(){
+  try{
+    var ul=document.getElementById('navlinks');
+    if(!ul || ul.dataset.simpl) return;
+    ul.dataset.simpl='1';
+    // Liens principaux toujours visibles (par nom de fichier)
+    var primary=['index.html','','services.html','avis.html','reservation.html'];
+    var lis=[].slice.call(ul.children).filter(function(li){return li.tagName==='LI';});
+    var extras=lis.filter(function(li){
+      if(li.classList.contains('nav-mobile-cta')) return false;
+      var a=li.querySelector('a'); if(!a) return false;
+      var href=(a.getAttribute('href')||'').split('/').pop().split('#')[0];
+      return primary.indexOf(href)===-1;
+    });
+    if(extras.length<3) return;              // pas assez d'items pour valoir le coup
+    extras.forEach(function(li){ li.classList.add('nav-extra'); });
+    var toggle=document.createElement('li');
+    toggle.className='nav-more-toggle';
+    var link=document.createElement('a');
+    link.href='javascript:void(0)'; link.setAttribute('data-icon','⋯'); link.textContent='Plus ▾';
+    link.addEventListener('click',function(e){
+      e.preventDefault();
+      var open=ul.classList.toggle('show-extra');
+      link.textContent=open?'Moins ▴':'Plus ▾';
+    });
+    toggle.appendChild(link);
+    ul.insertBefore(toggle, extras[0]);      // insère « Plus » juste avant les liens secondaires
+    // Styles (injectés une fois)
+    if(!document.getElementById('nav-simpl-css')){
+      var st=document.createElement('style'); st.id='nav-simpl-css';
+      st.textContent='.nav-more-toggle{display:none;}@media(max-width:760px){.nav-more-toggle{display:block;}#navlinks .nav-extra{display:none!important;}#navlinks.show-extra .nav-extra{display:flex!important;}}';
+      document.head.appendChild(st);
+    }
+  }catch(e){}
 })();

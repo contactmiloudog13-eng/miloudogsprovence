@@ -99,6 +99,33 @@ _auth.onAuthStateChanged(_updateNav);
   else start();
 })();
 
+// ── Nombre d'avis Google : piloté depuis l'admin (site_config/reviews) ─────────
+// Remplace partout « N avis » / « N AVIS » par le vrai nombre saisi dans l'admin.
+(function () {
+  function applyReviewCount(n) {
+    if (!n || n < 1) return;
+    var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+    var nodes = [], node;
+    while ((node = walker.nextNode())) nodes.push(node);
+    nodes.forEach(function (t) {
+      var v = t.nodeValue, o = v;
+      // « 41 avis », « 41 AVIS », « 41 Avis » (préserve la casse du mot "avis")
+      v = v.replace(/\b\d+(\s+)(avis)\b/gi, function (m, sp, word) { return n + sp + word; });
+      if (v !== o) t.nodeValue = v;
+    });
+  }
+  function start() {
+    try {
+      _db.ref('site_config/reviews').on('value', function (snap) {
+        var r = snap.val() || {};
+        if (r.count) applyReviewCount(parseInt(r.count));
+      });
+    } catch (e) {}
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+})();
+
 // ── Fonctions globales ───────────────────────────────────────────────────────
 
 function logoutUser() {
