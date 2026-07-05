@@ -957,9 +957,10 @@ function _pickupFinish(meters){
   var res=document.getElementById('pickup-result');
   var price, html;
   var fixe=(window.DEPL_FIXE!=null?window.DEPL_FIXE:5), perKm=(window.DEPL_KM!=null?window.DEPL_KM:0.5);
+  var miramasFlat=(window.DEPL_MIRAMAS!=null?window.DEPL_MIRAMAS:10);
   if(isMiramas){
-    price=fixe;
-    html='✅ <strong>Miramas</strong> → récupération <strong>'+fixe.toString().replace('.',',')+'€</strong> <small style="color:var(--text-muted);">(forfait)</small>';
+    price=miramasFlat;
+    html='✅ <strong>Miramas</strong> → récupération <strong>'+miramasFlat.toString().replace('.',',')+'€</strong> <small style="color:var(--text-muted);">(forfait)</small>';
   } else {
     var aller_retour=Math.round(km*2*10)/10;            // aller + retour
     price=Math.round((fixe+aller_retour*perKm)*100)/100;
@@ -1034,7 +1035,8 @@ var PACK_DUO_RATE=0.33; // remise sur la partie visites (pilotée depuis l'admin
 // Remises multi-chiens (pilotées depuis l'admin, valeurs par défaut ici)
 window.MDP_REMISE2=10; window.MDP_REMISE3=15;
 // Frais de déplacement + supplément visite 1h (pilotés depuis l'admin)
-window.DEPL_FIXE=5; window.DEPL_KM=0.5; window.VISITE_SUPP1H=5;
+// DEPL_MIRAMAS = forfait fixe DANS Miramas ; ailleurs = DEPL_FIXE + DEPL_KM/km (aller-retour)
+window.DEPL_FIXE=5; window.DEPL_KM=0.5; window.DEPL_MIRAMAS=10; window.VISITE_SUPP1H=5;
 // Correspondance clé admin (vXxx) ⇄ animal du select visite
 var VISITE_KEYMAP={chien:'vChien',chat:'vChat',furet:'vFuret',poules:'vPoules',lapin:'vLapin',rongeur:'vRongeur',oiseau:'vOiseau',tortue:'vTortue',poisson:'vPoisson'};
 // ═══ Tarifs pilotables : lit site_config/tarifs et applique partout (temps réel) ═══
@@ -1076,6 +1078,7 @@ var VISITE_KEYMAP={chien:'vChien',chat:'vChat',furet:'vFuret',poules:'vPoules',l
       // 3) Frais de déplacement
       if(t.deplFixe!=null) window.DEPL_FIXE=Number(t.deplFixe);
       if(t.deplKm!=null) window.DEPL_KM=Number(t.deplKm);
+      if(t.deplMiramas!=null) window.DEPL_MIRAMAS=Number(t.deplMiramas);
       // Rafraîchit un déplacement déjà calculé (récup + visite)
       if(window.__pickup && window.__pickup.active && window.__pickup.km!=null && typeof _pickupFinish==='function') _pickupFinish(window.__pickup.km*1000);
       if(window.__visite && window.__visite.km!=null && typeof _visiteApplyTravel==='function') _visiteApplyTravel();
@@ -1209,7 +1212,8 @@ function _visiteApplyTravel(){
   var v=window.__visite, res=document.getElementById('visite-result');
   if(v.km==null){ v.travelPerDay=0; v.travelTotal=0; return; }
   var isMiramas=/miramas/i.test(v.city||'')||v.postcode==='13140';
-  if(isMiramas){ v.travelPerDay=0; if(res) res.innerHTML='✅ <strong>Miramas</strong> — aucun frais de déplacement'; }
+  var miramasFlat=(window.DEPL_MIRAMAS!=null?window.DEPL_MIRAMAS:10);
+  if(isMiramas){ v.travelPerDay=miramasFlat; if(res) res.innerHTML='✅ <strong>Miramas</strong> — déplacement <strong>'+miramasFlat.toString().replace('.',',')+'€</strong> <small style="color:var(--text-muted);">(forfait)</small>'; }
   else {
     var fixe=(window.DEPL_FIXE!=null?window.DEPL_FIXE:5), perKm=(window.DEPL_KM!=null?window.DEPL_KM:0.5);
     var ar=Math.round(v.km*2*10)/10;
