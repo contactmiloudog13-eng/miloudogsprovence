@@ -527,6 +527,26 @@ function notifyToilettage(){
 }
 </script>
 <script src="effects-extra.js"></script>
+<!-- Prix pilotés depuis l'admin (site_config/tarifs) — mise à jour en direct -->
+<script>
+(function(){
+  try{
+    firebase.database().ref('site_config/tarifs').on('value', function(s){
+      var t=s.val(); if(!t) return;
+      document.querySelectorAll('.t-price').forEach(function(el){
+        var row=el.closest('.t-price-row')||el.parentElement;
+        var unitEl=row&&row.querySelector('.t-unit');
+        var u=(unitEl?unitEl.textContent:'').toLowerCase(), k=null;
+        if(u.indexOf('nuit')>=0) k='pension';
+        else if(u.indexOf('demi')>=0) k='demi';
+        else if(u.indexOf('jour')>=0) k='garderie';
+        else if(u.indexOf('sortie')>=0||u.indexOf('promenade')>=0) k='promenade';
+        if(k && t[k]!=null) el.textContent=t[k]+'€';
+      });
+    });
+  }catch(e){}
+})();
+</script>
 </body>
 </html>
 

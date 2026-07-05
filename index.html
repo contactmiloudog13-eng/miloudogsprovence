@@ -1101,6 +1101,25 @@ document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeLigh
 </script>
 
 <script src="effects-extra.js"></script>
+<!-- Prix pilotés depuis l'admin (site_config/tarifs) — mise à jour en direct -->
+<script>
+(function(){
+  try{
+    firebase.database().ref('site_config/tarifs').on('value', function(s){
+      var t=s.val(); if(!t) return;
+      document.querySelectorAll('.svc-mini-price').forEach(function(el){
+        var sm=el.querySelector('small'); if(!sm||!el.firstChild) return;
+        var u=sm.textContent.toLowerCase(), k=null;
+        if(u.indexOf('nuit')>=0) k='pension';
+        else if(u.indexOf('demi')>=0) k='demi';
+        else if(u.indexOf('jour')>=0) k='garderie';
+        else if(u.indexOf('sortie')>=0) k='promenade';
+        if(k && t[k]!=null && el.firstChild.nodeType===3) el.firstChild.nodeValue=t[k]+'€';
+      });
+    });
+  }catch(e){}
+})();
+</script>
 </body>
 </html>
 

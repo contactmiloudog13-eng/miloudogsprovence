@@ -310,6 +310,7 @@
                 <span class="service-tag" data-price="20" data-unit="jour" data-sameday="1" onclick="toggleTag(this)">☀️ Garderie journée</span>
                 <span class="service-tag" data-price="10" data-unit="jour" data-sameday="1" onclick="toggleTag(this)">🌤️ Garderie demi-journée</span>
                 <span class="service-tag" data-price="15" data-unit="fixe" data-sameday="1" data-visite="1" onclick="toggleTag(this);toggleVisitePanel()">🏡 Visite à domicile</span>
+                <span class="service-tag" data-pack="duo" onclick="selectPackDuo(this)" style="background:linear-gradient(135deg,#FBEFD0,#FFF8EC);border-color:#E8A84C;color:#8a6d1f;font-weight:700;">🎁 Pack Duo Maison <small style="font-weight:400;opacity:.8;">pension chien + visites 2ᵉ animal</small></span>
                 <span class="service-tag" data-price="10" data-unit="fixe" data-sameday="1" onclick="toggleTag(this)">🐣 Test demi-journée</span>
                 <span class="service-tag" data-price="15" data-unit="fixe" data-sameday="1" data-duration="60" onclick="toggleTag(this)">🦮 Promenade</span>
                 <span class="service-tag" data-price="30" data-unit="fixe" data-sameday="1" onclick="toggleTag(this)">🛁 Toilettage</span>
@@ -334,8 +335,12 @@
             </div>
 
             <!-- Panneau Visite à domicile -->
+            <div id="pack-duo-banner" style="display:none;background:linear-gradient(135deg,#FBEFD0,#FFF8EC);border:1.5px solid #E8A84C;border-radius:14px;padding:14px 18px;margin-bottom:14px;">
+              <b style="color:#8a6d1f;">🎁 Pack Duo Maison activé</b>
+              <p style="font-size:.85rem;color:var(--text-muted);margin-top:6px;line-height:1.6;">Votre <b>chien</b> est en pension chez nous (indiquez ses infos et les dates plus bas). On passe aussi chez vous pour votre <b>2ᵉ animal</b> : renseignez-le ci-dessous, avec le nombre de visites souhaité. <b style="color:#159067;">−33 % sur toutes les visites</b> 🐾</p>
+            </div>
             <div id="visite-panel" class="addon-card checked" style="display:none;">
-              <span class="addon-title">🏡 Détails de la visite à domicile</span>
+              <span class="addon-title">🏡 Le 2ᵉ animal (visites à domicile)</span>
               <span class="addon-sub">On passe chez vous : repas, eau fraîche, soins et un vrai moment avec votre animal. Chiens, chats, lapins, poules, furets, rongeurs, oiseaux, tortues, poissons… (pas de serpents 🙂)</span>
               <div class="addon-panel" style="border-top:none;padding-top:14px;">
                 <label class="addon-flabel">Quel animal ?</label>
@@ -357,13 +362,13 @@
                 </div>
                 <div class="addon-row">
                   <div>
-                    <label class="addon-flabel">Visites par jour</label>
+                    <label class="addon-flabel">Passages / jour</label>
                     <select id="visite-perday" class="addon-select" onchange="visiteRecalc()">
                       <option value="1">1 visite</option><option value="2">2 visites</option><option value="3">3 visites</option>
                     </select>
                   </div>
                   <div>
-                    <label class="addon-flabel">Nombre de jours</label>
+                    <label class="addon-flabel">Nombre total de visites</label>
                     <input id="visite-days" class="addon-num" type="number" min="1" max="60" value="1" oninput="visiteRecalc()">
                   </div>
                 </div>
@@ -932,6 +937,59 @@ function toggleVisitePanel(){
   }
   calcPrice();
 }
+// ══ Pack Duo Maison : pension du chien + visites à domicile d'un 2e animal, −33% sur les visites ══
+window.__packDuo=false;
+var PACK_DUO_RATE=0.33; // remise sur la partie visites (pilotée depuis l'admin)
+// Remises multi-chiens (pilotées depuis l'admin, valeurs par défaut ici)
+window.MDP_REMISE2=10; window.MDP_REMISE3=15;
+// ═══ Tarifs pilotables : lit site_config/tarifs et applique partout (temps réel) ═══
+(function(){
+  try{
+    firebase.database().ref('site_config/tarifs').on('value', function(s){
+      var t=s.val(); if(!t) return;
+      // 1) Prix des boutons de service
+      [].slice.call(document.querySelectorAll('.service-tag')).forEach(function(tag){
+        var x=tag.textContent.toLowerCase();
+        if(tag.dataset.pack) return;
+        if(/test/.test(x)) return;                                   // "Test demi-journée" non piloté
+        if(/pension/.test(x) && t.pension!=null) tag.dataset.price=t.pension;
+        else if(/demi-journ/.test(x) && t.demi!=null) tag.dataset.price=t.demi;
+        else if(/garderie journ/.test(x) && t.garderie!=null) tag.dataset.price=t.garderie;
+        else if(/promenade/.test(x) && t.promenade!=null) tag.dataset.price=t.promenade;
+        else if(/toilettage/.test(x) && t.toilettage!=null) tag.dataset.price=t.toilettage;
+        else if(tag.dataset.visite==='1' && t.visite!=null) tag.dataset.price=t.visite;
+      });
+      // 2) Visite à domicile — base "chien"
+      if(t.visite!=null && window.VISITE_ANIMALS && VISITE_ANIMALS.chien){
+        VISITE_ANIMALS.chien.p=Number(t.visite);
+        var opt=document.querySelector('#visite-animal option[value="chien"]');
+        if(opt) opt.textContent='🐶 Chien — dès '+t.visite+'€';
+        if(window.__visite && window.__visite.animal==='chien'){ window.__visite.animalBase=Number(t.visite); window.__visite.price=Number(t.visite)+(window.__visite.dur===60?5:0); if(typeof _visiteUpdateDurLabels==='function') _visiteUpdateDurLabels(); }
+      }
+      // 3) Remises
+      if(t.remise2!=null) window.MDP_REMISE2=Number(t.remise2);
+      if(t.remise3!=null) window.MDP_REMISE3=Number(t.remise3);
+      if(t.packDuo!=null) PACK_DUO_RATE=Number(t.packDuo)/100;
+      if(typeof calcPrice==='function') calcPrice();
+    });
+  }catch(e){}
+})();
+function selectPackDuo(el){
+  var on=!el.classList.contains('active');
+  el.classList.toggle('active', on);
+  window.__packDuo=on;
+  var pension=[].slice.call(document.querySelectorAll('.service-tag')).filter(function(t){return t.dataset.unit==='nuit';})[0];
+  var visite =[].slice.call(document.querySelectorAll('.service-tag')).filter(function(t){return t.dataset.visite==='1';})[0];
+  if(on){
+    if(pension && !pension.classList.contains('active')) pension.classList.add('active');
+    if(visite && !visite.classList.contains('active')){ visite.classList.add('active'); }
+    toggleVisitePanel();
+  }
+  var b=document.getElementById('pack-duo-banner'); if(b) b.style.display=on?'block':'none';
+  calcPrice();
+}
+window.selectPackDuo=selectPackDuo;
+
 function visiteSetDur(min){
   window.__visite.dur=min;
   window.__visite.price=(window.__visite.animalBase||15)+(min===60?5:0);
@@ -1003,7 +1061,7 @@ function calcPrice(){
   const hFH=parseInt(document.getElementById('heure-fin-h').value)||0;
   const nbChiens=parseInt(document.querySelector('input[name="nb-chiens"]:checked')?.value||1);
   const discount=nbChiens>=2;
-  const discRate=nbChiens>=3?0.15:(nbChiens===2?0.10:0); // 2 chiens = -10%, 3+ = -15%
+  const discRate=nbChiens>=3?((window.MDP_REMISE3||15)/100):(nbChiens===2?((window.MDP_REMISE2||10)/100):0); // remises pilotées depuis l'admin
   const disc=v=>discount?Math.round(v*(1-discRate)):v;
 
   // Nombre de nuits (diff jours calendaires)
@@ -1025,6 +1083,7 @@ function calcPrice(){
 
   tags.forEach(t=>{
     if(t.dataset.visite==='1') return; // géré séparément (panneau visite)
+    if(t.dataset.pack) return;         // le bouton "Pack Duo" n'a pas de prix propre
     const price=parseInt(t.dataset.price);
     const unit=t.dataset.unit;
     const name=t.textContent.trim();
@@ -1073,8 +1132,13 @@ function calcPrice(){
   if(window.__visite && window.__visite.active){
     const v=window.__visite;
     const totalVisits=Math.max(1,v.perDay*v.days);
-    const visitesCost=v.price*totalVisits;
-    lines.push('🏡 Visite à domicile <small style="color:var(--text-muted);">('+(v.animalLabel||'🐶 Chien')+')</small> — '+v.price+'€ × '+totalVisits+' visite'+(totalVisits>1?'s':'')+' <small style="color:var(--text-muted);">('+v.perDay+'/jour × '+v.days+' j, '+(v.dur===60?'1h':'30 min')+')</small> = <strong>'+visitesCost+'€</strong>');
+    const visitesFull=v.price*totalVisits;
+    const isPack=!!window.__packDuo;
+    const visitesCost=isPack?Math.round(visitesFull*(1-PACK_DUO_RATE)):visitesFull;
+    const packSaving=visitesFull-visitesCost;
+    const visLabel=isPack?'🎁 Pack Duo — visites 2ᵉ animal':'🏡 Visite à domicile';
+    lines.push(visLabel+' <small style="color:var(--text-muted);">('+(v.animalLabel||'🐶 Chien')+')</small> — '+v.price+'€ × '+totalVisits+' visite'+(totalVisits>1?'s':'')+' <small style="color:var(--text-muted);">('+v.perDay+'/jour × '+v.days+' j, '+(v.dur===60?'1h':'30 min')+')</small>'+(isPack?' <span style="text-decoration:line-through;color:var(--text-muted);">'+visitesFull+'€</span> = <strong>'+visitesCost+'€</strong>':' = <strong>'+visitesCost+'€</strong>'));
+    if(isPack && packSaving>0) lines.push('<span style="color:#159067;font-weight:700;">🎁 Remise Pack Duo −'+Math.round(PACK_DUO_RATE*100)+'% sur les visites : −'+packSaving+'€</span>');
     total+=visitesCost;
     if(v.km!=null && v.travelTotal>0){
       lines.push('🚗 Déplacement visites — <strong>'+v.travelTotal.toString().replace('.',',')+'€</strong> <small style="color:var(--text-muted);">('+v.travelPerDay.toString().replace('.',',')+'€ / jour × '+v.days+' j)</small>');
