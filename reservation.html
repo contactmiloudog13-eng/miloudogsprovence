@@ -920,14 +920,15 @@ function _pickupFinish(meters){
   var isMiramas = /miramas/i.test(window.__pickup.city||'') || window.__pickup.postcode==='13140';
   var res=document.getElementById('pickup-result');
   var price, html;
+  var fixe=(window.DEPL_FIXE!=null?window.DEPL_FIXE:5), perKm=(window.DEPL_KM!=null?window.DEPL_KM:0.5);
   if(isMiramas){
-    price=5;
-    html='✅ <strong>Miramas</strong> → récupération <strong>5€</strong> <small style="color:var(--text-muted);">(forfait)</small>';
+    price=fixe;
+    html='✅ <strong>Miramas</strong> → récupération <strong>'+fixe.toString().replace('.',',')+'€</strong> <small style="color:var(--text-muted);">(forfait)</small>';
   } else {
     var aller_retour=Math.round(km*2*10)/10;            // aller + retour
-    price=Math.round((5+aller_retour*0.5)*100)/100;
+    price=Math.round((fixe+aller_retour*perKm)*100)/100;
     html='✅ Distance : <strong>'+km.toString().replace('.',',')+' km</strong> (aller-retour '+aller_retour.toString().replace('.',',')+' km) → récupération <strong>'+price.toString().replace('.',',')+'€</strong>'
-       + ' <small style="color:var(--text-muted);">(5€ + '+aller_retour.toString().replace('.',',')+' km × 0,50€)</small>';
+       + ' <small style="color:var(--text-muted);">('+fixe.toString().replace('.',',')+'€ + '+aller_retour.toString().replace('.',',')+' km × '+perKm.toString().replace('.',',')+'€)</small>';
   }
   window.__pickup.km=km; window.__pickup.price=price;
   res.innerHTML=html;
@@ -947,14 +948,14 @@ var _vTimer=null,_vFeats=[];
 function visiteSetAnimal(){
   var id=document.getElementById('visite-animal').value, a=VISITE_ANIMALS[id]||VISITE_ANIMALS.chien;
   window.__visite.animal=id; window.__visite.animalBase=a.p; window.__visite.animalLabel=a.n;
-  window.__visite.price=a.p+(window.__visite.dur===60?5:0);
+  window.__visite.price=a.p+(window.__visite.dur===60?(window.VISITE_SUPP1H||5):0);
   _visiteUpdateDurLabels(); calcPrice();
 }
 function _visiteUpdateDurLabels(){
-  var base=window.__visite.animalBase||15;
+  var base=window.__visite.animalBase||15, supp=(window.VISITE_SUPP1H||5);
   var b30=document.querySelector('.vdur-btn[data-min="30"]'), b60=document.querySelector('.vdur-btn[data-min="60"]');
   if(b30) b30.textContent='30 min — '+base+'€';
-  if(b60) b60.textContent='1 heure — '+(base+5)+'€';
+  if(b60) b60.textContent='1 heure — '+(base+supp)+'€';
 }
 
 function computeRoadKm(coords, cb){ // distance routière ALLER (km), fallback vol d'oiseau ×1.3
@@ -987,6 +988,10 @@ window.__packDuo=false;
 var PACK_DUO_RATE=0.33; // remise sur la partie visites (pilotée depuis l'admin)
 // Remises multi-chiens (pilotées depuis l'admin, valeurs par défaut ici)
 window.MDP_REMISE2=10; window.MDP_REMISE3=15;
+// Frais de déplacement + supplément visite 1h (pilotés depuis l'admin)
+window.DEPL_FIXE=5; window.DEPL_KM=0.5; window.VISITE_SUPP1H=5;
+// Correspondance clé admin (vXxx) ⇄ animal du select visite
+var VISITE_KEYMAP={chien:'vChien',chat:'vChat',furet:'vFuret',poules:'vPoules',lapin:'vLapin',rongeur:'vRongeur',oiseau:'vOiseau',tortue:'vTortue',poisson:'vPoisson'};
 // ═══ Tarifs pilotables : lit site_config/tarifs et applique partout (temps réel) ═══
 (function(){
   try{
@@ -1002,16 +1007,34 @@ window.MDP_REMISE2=10; window.MDP_REMISE3=15;
         else if(/garderie journ/.test(x) && t.garderie!=null) tag.dataset.price=t.garderie;
         else if(/promenade/.test(x) && t.promenade!=null) tag.dataset.price=t.promenade;
         else if(/toilettage/.test(x) && t.toilettage!=null) tag.dataset.price=t.toilettage;
-        else if(tag.dataset.visite==='1' && t.visite!=null) tag.dataset.price=t.visite;
+        else if(tag.dataset.visite==='1' && (t.vChien!=null||t.visite!=null)) tag.dataset.price=(t.vChien!=null?t.vChien:t.visite);
       });
-      // 2) Visite à domicile — base "chien"
-      if(t.visite!=null && window.VISITE_ANIMALS && VISITE_ANIMALS.chien){
-        VISITE_ANIMALS.chien.p=Number(t.visite);
-        var opt=document.querySelector('#visite-animal option[value="chien"]');
-        if(opt) opt.textContent='🐶 Chien — dès '+t.visite+'€';
-        if(window.__visite && window.__visite.animal==='chien'){ window.__visite.animalBase=Number(t.visite); window.__visite.price=Number(t.visite)+(window.__visite.dur===60?5:0); if(typeof _visiteUpdateDurLabels==='function') _visiteUpdateDurLabels(); }
+      // 2) Visite à domicile — prix par animal (clés vChien, vChat, …)
+      //    Rétro-compat : l'ancienne clé "visite" pilote encore le chien si vChien absent.
+      if(t.visite!=null && t.vChien==null) t.vChien=t.visite;
+      if(t.vSupp1h!=null) window.VISITE_SUPP1H=Number(t.vSupp1h);
+      if(window.VISITE_ANIMALS && window.VISITE_KEYMAP){
+        for(var an in VISITE_KEYMAP){
+          var key=VISITE_KEYMAP[an];
+          if(t[key]!=null && VISITE_ANIMALS[an]){
+            VISITE_ANIMALS[an].p=Number(t[key]);
+            var o=document.querySelector('#visite-animal option[value="'+an+'"]');
+            if(o){ var lbl=VISITE_ANIMALS[an].n.split(' —')[0]; o.textContent=lbl+' — dès '+Number(t[key])+'€'; }
+          }
+        }
+        // Recalcule l'animal actuellement sélectionné
+        if(window.__visite){
+          var cur=VISITE_ANIMALS[window.__visite.animal];
+          if(cur){ window.__visite.animalBase=cur.p; window.__visite.price=cur.p+(window.__visite.dur===60?(window.VISITE_SUPP1H||5):0); if(typeof _visiteUpdateDurLabels==='function') _visiteUpdateDurLabels(); }
+        }
       }
-      // 3) Remises
+      // 3) Frais de déplacement
+      if(t.deplFixe!=null) window.DEPL_FIXE=Number(t.deplFixe);
+      if(t.deplKm!=null) window.DEPL_KM=Number(t.deplKm);
+      // Rafraîchit un déplacement déjà calculé (récup + visite)
+      if(window.__pickup && window.__pickup.active && window.__pickup.km!=null && typeof _pickupFinish==='function') _pickupFinish(window.__pickup.km*1000);
+      if(window.__visite && window.__visite.km!=null && typeof _visiteApplyTravel==='function') _visiteApplyTravel();
+      // 4) Remises
       if(t.remise2!=null) window.MDP_REMISE2=Number(t.remise2);
       if(t.remise3!=null) window.MDP_REMISE3=Number(t.remise3);
       if(t.packDuo!=null) PACK_DUO_RATE=Number(t.packDuo)/100;
@@ -1108,9 +1131,10 @@ function _visiteApplyTravel(){
   var isMiramas=/miramas/i.test(v.city||'')||v.postcode==='13140';
   if(isMiramas){ v.travelPerDay=0; if(res) res.innerHTML='✅ <strong>Miramas</strong> — aucun frais de déplacement'; }
   else {
+    var fixe=(window.DEPL_FIXE!=null?window.DEPL_FIXE:5), perKm=(window.DEPL_KM!=null?window.DEPL_KM:0.5);
     var ar=Math.round(v.km*2*10)/10;
-    v.travelPerDay=Math.round((5+ar*0.5)*100)/100;
-    if(res) res.innerHTML='✅ '+(v.city||'Hors Miramas')+' — déplacement <strong>'+v.travelPerDay.toString().replace('.',',')+'€ / jour</strong> <small style="color:var(--text-muted);">(5€ + '+ar.toString().replace('.',',')+' km aller-retour × 0,50€)</small>';
+    v.travelPerDay=Math.round((fixe+ar*perKm)*100)/100;
+    if(res) res.innerHTML='✅ '+(v.city||'Hors Miramas')+' — déplacement <strong>'+v.travelPerDay.toString().replace('.',',')+'€ / jour</strong> <small style="color:var(--text-muted);">('+fixe.toString().replace('.',',')+'€ + '+ar.toString().replace('.',',')+' km aller-retour × '+perKm.toString().replace('.',',')+'€)</small>';
   }
   v.travelTotal=Math.round(v.travelPerDay*v.days*100)/100;
 }
