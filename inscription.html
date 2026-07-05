@@ -800,9 +800,8 @@ function showStep2(prenom) {
   document.getElementById('register-form').style.display = 'none';
   document.getElementById('step1-brand').style.display = 'none';
   document.getElementById('alert-error').classList.remove('show');
-  // Masquer le lien "Déjà un compte"
-  document.querySelector('.auth-divider').style.display = 'none';
-  document.querySelector('.auth-switch').style.display = 'none';
+  // Masquer tout ce qui appartient à l'étape 1 (séparateur, bouton Google, lien "Déjà un compte")
+  document.querySelectorAll('.auth-divider, .btn-google, .auth-switch').forEach(function(el){ el.style.display = 'none'; });
   // Indicateurs
   document.getElementById('sdot1').className = 'step-dot done';
   document.getElementById('slbl1').className = 'step-label';
