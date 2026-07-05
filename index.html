@@ -556,14 +556,51 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
     </div>
   </div>
 </section>
+
+<!-- ── Carnet prépayé (fidélité sans engagement) ── -->
+<section style="padding:60px 5%;background:var(--cream);">
+  <div class="container" style="max-width:920px;">
+    <div class="section-header" style="text-align:center;">
+      <p class="section-label">🎟️ Nouveau · sans engagement</p>
+      <h2 class="section-title">Le Carnet Malin</h2>
+      <p style="color:var(--text-muted);max-width:620px;margin:0 auto;font-weight:300;">Vous faites garder votre chien régulièrement ? Prépayez vos nuits et économisez — sans aucun engagement, valable 1 an.</p>
+    </div>
+    <div class="carnet-grid" style="display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:center;margin-top:34px;">
+      <div style="background:#fff;border:1px solid var(--border);border-radius:24px;padding:34px;box-shadow:0 14px 44px rgba(74,63,114,.12);position:relative;overflow:hidden;">
+        <span style="position:absolute;top:0;right:0;background:linear-gradient(135deg,#F5C84A,#E8A030);color:#1a0e00;font-weight:800;font-size:.8rem;padding:6px 18px;border-bottom-left-radius:16px;">−10 %</span>
+        <div style="font-weight:800;color:var(--lavande-dark);font-size:1.1rem;margin-bottom:6px;">🎟️ 10 nuits de pension</div>
+        <div style="display:flex;align-items:baseline;gap:12px;">
+          <span id="carnet-price" style="font-family:'Playfair Display',serif;font-size:2.9rem;color:var(--lavande);font-weight:800;line-height:1;">225€</span>
+          <span id="carnet-full" style="text-decoration:line-through;color:var(--text-muted);font-size:1.1rem;">250€</span>
+        </div>
+        <p style="color:var(--text-muted);font-size:.9rem;margin:8px 0 20px;">soit <b id="carnet-pernight">22,50€</b> la nuit au lieu de <span id="carnet-basenight">25€</span></p>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px;font-size:.94rem;color:var(--text-muted);">
+          <li style="display:flex;gap:10px;"><span style="color:var(--vert);">✓</span> 10 nuits à utiliser <b>quand vous voulez</b></li>
+          <li style="display:flex;gap:10px;"><span style="color:var(--vert);">✓</span> Valable 1 an · <b>sans engagement</b></li>
+          <li style="display:flex;gap:10px;"><span style="color:var(--vert);">✓</span> Cumulable avec la réduction multi-chiens</li>
+          <li style="display:flex;gap:10px;"><span style="color:var(--vert);">✓</span> Réglé une fois par virement — plus rien à sortir ensuite</li>
+        </ul>
+        <a class="hero-btn-main" href="reservation.html" style="display:inline-block;margin-top:24px;">🎟️ Je veux mon Carnet Malin</a>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:4.4rem;line-height:1;">🐾</div>
+        <p style="color:var(--text-muted);font-size:.95rem;line-height:1.8;margin-top:16px;">Idéal si vous partez souvent ou travaillez : vous réservez, on décompte une nuit de votre carnet, <b>zéro paperasse à chaque fois</b>. Vous gardez la main — <b>résiliable et remboursable au prorata</b> des nuits non utilisées.</p>
+        <p style="color:var(--text-muted);font-size:.82rem;margin-top:14px;">Une question ? <a href="tel:0777234088" style="color:var(--lavande);font-weight:700;">07 77 23 40 88</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+<style>@media(max-width:760px){.carnet-grid{grid-template-columns:1fr!important;}}</style>
 <script>
 function simuCalc(){
   var nuits=parseInt(document.getElementById('simu-nuits').value)||1;
   var nb=parseInt(document.getElementById('simu-chiens').value)||1;
-  var rate=nb>=3?0.15:(nb===2?0.10:0);
-  var total=Math.round(25*nuits*nb*(1-rate));
+  var pen=window.SIMU_PENSION||25;
+  var r2=window.SIMU_REMISE2!=null?window.SIMU_REMISE2:10, r3=window.SIMU_REMISE3!=null?window.SIMU_REMISE3:15;
+  var rate=nb>=3?(r3/100):(nb===2?(r2/100):0);
+  var total=Math.round(pen*nuits*nb*(1-rate));
   document.getElementById('simu-total').textContent=total+'€';
-  document.getElementById('simu-detail').textContent='25€ × '+nuits+' nuit'+(nuits>1?'s':'')+(nb>1?' × '+nb+' chiens (−'+Math.round(rate*100)+'%)':'')+' · photos quotidiennes incluses';
+  document.getElementById('simu-detail').textContent=pen+'€ × '+nuits+' nuit'+(nuits>1?'s':'')+(nb>1?' × '+nb+' chiens (−'+Math.round(rate*100)+'%)':'')+' · photos quotidiennes incluses';
 }
 </script>
 
@@ -1116,6 +1153,18 @@ document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeLigh
         else if(u.indexOf('sortie')>=0) k='promenade';
         if(k && t[k]!=null && el.firstChild.nodeType===3) el.firstChild.nodeValue=t[k]+'€';
       });
+      // Simulateur (prix + remises pilotés)
+      if(t.pension!=null) window.SIMU_PENSION=Number(t.pension);
+      if(t.remise2!=null) window.SIMU_REMISE2=Number(t.remise2);
+      if(t.remise3!=null) window.SIMU_REMISE3=Number(t.remise3);
+      if(typeof simuCalc==='function') try{ simuCalc(); }catch(e){}
+      // Carnet Malin : 10 nuits de pension −10%
+      if(t.pension!=null){
+        var pen=Number(t.pension), full=pen*10, price=Math.round(full*0.9), per=Math.round(full*0.9/10*100)/100;
+        var set=function(id,v){var e=document.getElementById(id); if(e) e.textContent=v;};
+        set('carnet-full', full+'€'); set('carnet-price', price+'€');
+        set('carnet-pernight', per.toFixed(2).replace('.',',')+'€'); set('carnet-basenight', pen+'€');
+      }
     });
   }catch(e){}
 })();
