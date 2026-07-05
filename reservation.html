@@ -47,6 +47,15 @@
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--lavande);}
 .form-group textarea{min-height:90px;resize:vertical;}
 .form-service-tags{display:flex;flex-wrap:wrap;gap:8px;}
+.svc-groups{display:flex;flex-direction:column;gap:18px;}
+.svc-group-title{font-size:.76rem;font-weight:800;color:var(--lavande-dark);text-transform:uppercase;letter-spacing:.04em;margin-bottom:9px;}
+.svc-group-title small{display:inline;font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted);font-size:.78rem;margin-left:6px;}
+.svc-group-pack{background:linear-gradient(135deg,#FFF8EC,#FBEFD0);border:1.5px solid #E8A84C;border-radius:16px;padding:14px 16px;}
+.svc-group-pack .svc-group-title{color:#8a6d1f;}
+.svc-pack{display:flex!important;flex-direction:column;align-items:flex-start;gap:3px;background:#fff!important;border:1.5px solid #E8A84C!important;color:#8a6d1f!important;font-weight:800!important;padding:13px 18px!important;width:100%;box-sizing:border-box;}
+.svc-pack small{font-weight:400;color:var(--text-muted);font-size:.76rem;line-height:1.4;}
+.svc-pack.active{background:linear-gradient(135deg,#F5C84A,#E8A030)!important;color:#1a0e00!important;border-color:#E8A030!important;}
+.svc-pack.active small{color:#4a3410;}
 .service-tag{padding:8px 16px;border:1px solid var(--border);border-radius:20px;font-size:.85rem;cursor:pointer;transition:all .2s;background:white;color:var(--text-muted);}
 .service-tag.active,.service-tag:hover{background:var(--lavande-light);border-color:var(--lavande);color:var(--lavande-dark);}
 /* ── Options additionnelles (récupération / visite) : rendu pro ── */
@@ -305,15 +314,35 @@
             </div>
             <div class="form-group">
               <label>Service souhaité *</label>
-              <div class="form-service-tags">
-                <span class="service-tag" data-price="25" data-unit="nuit" onclick="toggleTag(this)">🏠 Pension complète nuit &amp; journée</span>
-                <span class="service-tag" data-price="20" data-unit="jour" data-sameday="1" onclick="toggleTag(this)">☀️ Garderie journée</span>
-                <span class="service-tag" data-price="10" data-unit="jour" data-sameday="1" onclick="toggleTag(this)">🌤️ Garderie demi-journée</span>
-                <span class="service-tag" data-price="15" data-unit="fixe" data-sameday="1" data-visite="1" onclick="toggleTag(this);toggleVisitePanel()">🏡 Visite à domicile</span>
-                <span class="service-tag" data-pack="duo" onclick="selectPackDuo(this)" style="background:linear-gradient(135deg,#FBEFD0,#FFF8EC);border-color:#E8A84C;color:#8a6d1f;font-weight:700;">🎁 Pack Duo Maison <small style="font-weight:400;opacity:.8;">pension chien + visites 2ᵉ animal</small></span>
-                <span class="service-tag" data-price="10" data-unit="fixe" data-sameday="1" onclick="toggleTag(this)">🐣 Test demi-journée</span>
-                <span class="service-tag" data-price="15" data-unit="fixe" data-sameday="1" data-duration="60" onclick="toggleTag(this)">🦮 Promenade</span>
-                <span class="service-tag" data-price="30" data-unit="fixe" data-sameday="1" onclick="toggleTag(this)">🛁 Toilettage</span>
+              <div class="svc-groups">
+                <div class="svc-group">
+                  <div class="svc-group-title">🏠 Garde de votre chien <small>chez nous, en famille</small></div>
+                  <div class="form-service-tags">
+                    <span class="service-tag" data-price="25" data-unit="nuit" onclick="toggleTag(this)">🏠 Pension nuit &amp; journée</span>
+                    <span class="service-tag" data-price="20" data-unit="jour" data-sameday="1" onclick="toggleTag(this)">☀️ Garderie journée</span>
+                    <span class="service-tag" data-price="10" data-unit="jour" data-sameday="1" onclick="toggleTag(this)">🌤️ Garderie demi-journée</span>
+                    <span class="service-tag" data-price="10" data-unit="fixe" data-sameday="1" onclick="toggleTag(this)">🐣 Test demi-journée</span>
+                  </div>
+                </div>
+                <div class="svc-group">
+                  <div class="svc-group-title">🏡 Visite à domicile <small>chien, chat, lapin, poules…</small></div>
+                  <div class="form-service-tags">
+                    <span class="service-tag" data-price="15" data-unit="fixe" data-sameday="1" data-visite="1" onclick="toggleTag(this);toggleVisitePanel()">🏡 Visite à domicile</span>
+                  </div>
+                </div>
+                <div class="svc-group">
+                  <div class="svc-group-title">✨ Services en plus</div>
+                  <div class="form-service-tags">
+                    <span class="service-tag" data-price="15" data-unit="fixe" data-sameday="1" data-duration="60" onclick="toggleTag(this)">🦮 Promenade</span>
+                    <span class="service-tag" data-price="30" data-unit="fixe" data-sameday="1" onclick="toggleTag(this)">🛁 Toilettage</span>
+                  </div>
+                </div>
+                <div class="svc-group svc-group-pack">
+                  <div class="svc-group-title">🎁 Formule avantageuse</div>
+                  <div class="form-service-tags">
+                    <span class="service-tag svc-pack" data-pack="duo" onclick="selectPackDuo(this)">🎁 Pack Duo Maison<small>Votre chien en pension + on passe chez vous pour un 2ᵉ animal · −33 % sur les visites</small></span>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="addon-card" id="pickup-card">
@@ -976,16 +1005,37 @@ window.MDP_REMISE2=10; window.MDP_REMISE3=15;
 })();
 function selectPackDuo(el){
   var on=!el.classList.contains('active');
-  el.classList.toggle('active', on);
-  window.__packDuo=on;
   var pension=[].slice.call(document.querySelectorAll('.service-tag')).filter(function(t){return t.dataset.unit==='nuit';})[0];
   var visite =[].slice.call(document.querySelectorAll('.service-tag')).filter(function(t){return t.dataset.visite==='1';})[0];
+  var row=document.getElementById('row-date-fin');
+  var colDate=document.getElementById('col-date-fin');
+  var banner=document.getElementById('pack-duo-banner');
   if(on){
-    if(pension && !pension.classList.contains('active')) pension.classList.add('active');
-    if(visite && !visite.classList.contains('active')){ visite.classList.add('active'); }
-    toggleVisitePanel();
+    // Nettoie les autres services de garde (le pack gère pension + visite)
+    document.querySelectorAll('.service-tag.active').forEach(function(t){
+      if(t===el) return; t.classList.remove('active'); var x=t.querySelector('.tag-close'); if(x) x.remove();
+    });
+    el.classList.add('active'); window.__packDuo=true;
+    if(pension) pension.classList.add('active');
+    if(visite){ visite.classList.add('active'); window.__visite.active=true; }
+    document.getElementById('visite-panel').style.display='block';   // 2e animal
+    // Le chien est en PENSION → il faut une date de début ET de fin
+    if(row) row.style.display='';
+    if(colDate) colDate.style.display='';
+    if(banner) banner.style.display='block';
+    // exclusivité visite ⇄ récupération à domicile (comme toggleVisitePanel)
+    var pk=document.getElementById('pickup-home'); if(pk){ if(pk.checked){ pk.checked=false; togglePickup(pk); } pk.disabled=true; var pc=document.getElementById('pickup-card'); if(pc) pc.classList.add('disabled'); }
+    var inp=document.getElementById('visite-addr'); if(inp && !inp.value && window.__clientAddr){ inp.value=window.__clientAddr; visiteGeocode(window.__clientAddr); }
+  } else {
+    el.classList.remove('active'); window.__packDuo=false;
+    if(pension) pension.classList.remove('active');
+    if(visite) visite.classList.remove('active');
+    window.__visite.active=false;
+    document.getElementById('visite-panel').style.display='none';
+    if(banner) banner.style.display='none';
+    if(row) row.style.display='none';
+    var pk=document.getElementById('pickup-home'); if(pk){ pk.disabled=false; var pc=document.getElementById('pickup-card'); if(pc) pc.classList.remove('disabled'); }
   }
-  var b=document.getElementById('pack-duo-banner'); if(b) b.style.display=on?'block':'none';
   calcPrice();
 }
 window.selectPackDuo=selectPackDuo;
