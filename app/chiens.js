@@ -11,8 +11,17 @@
   function dogs() { return App.getChiens(); }
   function selId() { return App.getSelectedChien(); }
 
-  let _chienEdit = false; // mode édition d'un chien existant
+  let _chienEdit = false; // mode édition d'un animal existant
   let _lockAttr = '';     // ' disabled' quand les champs sont en lecture seule
+
+  // Espèces d'animaux (comme sur le site)
+  const ESPECES = [
+    ['chien', '🐶 Chien'], ['chat', '🐱 Chat'], ['lapin', '🐰 Lapin'], ['furet', '🦡 Furet'],
+    ['poules', '🐔 Poules / basse-cour'], ['rongeur', '🐹 Rongeur'], ['oiseau', '🦜 Oiseau'],
+    ['tortue', '🐢 Tortue / reptile'], ['poisson', '🐠 Poisson'], ['autre', '🐾 Autre']
+  ];
+  const EMOJI = { chien: '🐶', chat: '🐱', lapin: '🐰', furet: '🦡', poules: '🐔', rongeur: '🐹', oiseau: '🦜', tortue: '🐢', poisson: '🐠', autre: '🐾' };
+  const emo = (e) => EMOJI[e] || '🐕';
 
   // Carnet : liste normalisée (champ carnetUrls[] + rétro-compat carnetUrl)
   function carnetList(d) {
@@ -48,8 +57,8 @@
     let chips = '<div class="dog-chips">';
     ids.forEach((id) => {
       const d = ds[id];
-      const av = d.photoUrl ? '<span class="av"><img src="' + d.photoUrl + '"></span>' : '<span class="av">🐕</span>';
-      chips += '<button class="dog-chip' + (id === selId() ? ' active' : '') + '" onclick="App.chienSelect(\'' + id + '\')">' + av + esc(d.nom || 'Chien') + '</button>';
+      const av = d.photoUrl ? '<span class="av"><img src="' + d.photoUrl + '"></span>' : '<span class="av">' + emo(d.espece) + '</span>';
+      chips += '<button class="dog-chip' + (id === selId() ? ' active' : '') + '" onclick="App.chienSelect(\'' + id + '\')">' + av + esc(d.nom || 'Animal') + '</button>';
     });
     chips += '<button class="dog-chip add" onclick="App.chienNew()">＋ Ajouter</button>';
     chips += '</div>';
@@ -64,13 +73,15 @@
       // En-tête : bouton Modifier quand verrouillé
       (locked ? '<div style="text-align:right;margin-bottom:6px;"><button class="btn btn-sm btn-ghost" style="width:auto;" onclick="App.chienEdit()">✏️ Modifier</button></div>' : '') +
       // Photo
-      '<div class="photo-circle" id="dog-photo">' + (d.photoUrl ? '<img src="' + d.photoUrl + '">' : '🐕') + '</div>' +
+      '<div class="photo-circle" id="dog-photo">' + (d.photoUrl ? '<img src="' + d.photoUrl + '">' : emo(d.espece)) + '</div>' +
       (locked ? '' :
         '<div style="text-align:center;margin-bottom:14px;">' +
         '<label class="btn btn-sm btn-ghost" style="display:inline-flex;">📷 ' + (d.photoUrl ? 'Changer la photo' : 'Ajouter une photo') +
         '<input type="file" accept="image/*" hidden onchange="App.chienPhoto(this)"></label></div>') +
 
-      field('Nom du chien', inp('c-nom', d.nom, 'Rex')) +
+      field('Type d\'animal', '<select id="c-espece"' + _lockAttr + '>' +
+        ESPECES.map((e) => '<option value="' + e[0] + '"' + ((d.espece || 'chien') === e[0] ? ' selected' : '') + '>' + e[1] + '</option>').join('') + '</select>') +
+      field('Nom de l\'animal', inp('c-nom', d.nom, 'Rex')) +
       row2(
         field('Race', inp('c-race', d.race, 'Berger…')),
         field('Sexe', sel('c-sexe', ['Mâle', 'Femelle'], d.sexe))
@@ -112,8 +123,8 @@
       '<div class="bar" id="carnet-bar"><i></i></div>' +
       '<div id="carnet-grid"></div>' +
 
-      (locked ? '' : '<button class="btn btn-soleil" style="margin-top:18px;" onclick="App.chienSave()">💾 ' + (isNew ? 'Enregistrer ce chien' : 'Enregistrer') + '</button>') +
-      (isNew ? '' : '<button class="btn btn-danger" style="margin-top:10px;" onclick="App.chienDelete()">🗑️ Supprimer ce chien</button>') +
+      (locked ? '' : '<button class="btn btn-soleil" style="margin-top:18px;" onclick="App.chienSave()">💾 ' + (isNew ? 'Enregistrer cet animal' : 'Enregistrer') + '</button>') +
+      (isNew ? '' : '<button class="btn btn-danger" style="margin-top:10px;" onclick="App.chienDelete()">🗑️ Supprimer cet animal</button>') +
       '</div>';
 
     body.innerHTML = chips + form;
@@ -195,11 +206,12 @@
   App.chienSave = async function () {
     const v = (id) => { const e = document.getElementById(id); return e ? e.value.trim() : ''; };
     const nom = v('c-nom');
-    if (!nom) { App.toast('Le nom du chien est obligatoire'); return; }
+    if (!nom) { App.toast('Le nom de l\'animal est obligatoire'); return; }
     const existing = selId() ? (dogs()[selId()] || {}) : {};
     const naissance = v('c-naissance');
     const data = {
-      nom, race: v('c-race'), sexe: v('c-sexe'), naissance: naissance, age: App.computeAge(naissance) || v('c-age'),
+      nom, espece: v('c-espece') || 'chien',
+      race: v('c-race'), sexe: v('c-sexe'), naissance: naissance, age: App.computeAge(naissance) || v('c-age'),
       birthdayReminder: v('c-birthdayReminder') || 'Oui',
       poids: v('c-poids'), couleur: v('c-couleur'), sterilise: v('c-sterilise'),
       identification: v('c-identification'), numeroId: v('c-numeroId'), temperament: v('c-temperament'),
@@ -227,7 +239,7 @@
 
   App.chienDelete = async function () {
     if (!selId()) return;
-    const nom = (dogs()[selId()] || {}).nom || 'ce chien';
+    const nom = (dogs()[selId()] || {}).nom || 'cet animal';
     if (!confirm('Supprimer définitivement ' + nom + ' ?')) return;
     await db.ref('users/' + uid() + '/chiens/' + selId()).remove();
     App.setSelectedChien(null);

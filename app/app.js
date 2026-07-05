@@ -239,7 +239,7 @@ const App = (function () {
   }
 
   // ── Navigation ────────────────────────────────────────────
-  const TITLES = { home: 'Accueil', reservation: 'Réservation', chiens: 'Mes chiens', avis: 'Avis', profil: 'Mon profil' };
+  const TITLES = { home: 'Accueil', reservation: 'Réservation', chiens: 'Mes animaux', avis: 'Avis', profil: 'Mon profil' };
   function go(view) {
     _currentView = view;
     document.querySelectorAll('.view').forEach((v) => v.classList.remove('active'));
