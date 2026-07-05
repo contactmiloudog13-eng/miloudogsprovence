@@ -369,10 +369,10 @@
               <p style="font-size:.85rem;color:var(--text-muted);margin-top:6px;line-height:1.6;">Votre <b>chien</b> est en pension chez nous (indiquez ses infos et les dates plus bas). On passe aussi chez vous pour votre <b>2ᵉ animal</b> : renseignez-le ci-dessous, avec le nombre de visites souhaité. <b style="color:#159067;">−33 % sur toutes les visites</b> 🐾</p>
             </div>
             <div id="visite-panel" class="addon-card checked" style="display:none;">
-              <span class="addon-title">🏡 Le 2ᵉ animal (visites à domicile)</span>
-              <span class="addon-sub">On passe chez vous : repas, eau fraîche, soins et un vrai moment avec votre animal. Chiens, chats, lapins, poules, furets, rongeurs, oiseaux, tortues, poissons… (pas de serpents 🙂)</span>
+              <span class="addon-title">🏡 Visite à domicile</span>
+              <span class="addon-sub">Votre animal reste chez lui, je passe m'en occuper : repas, eau fraîche, soins, câlins et un vrai moment ensemble. Chiens, chats, lapins, poules, furets, rongeurs, oiseaux, tortues, poissons… (pas de serpents 🙂)</span>
               <div class="addon-panel" style="border-top:none;padding-top:14px;">
-                <label class="addon-flabel">Quel animal ?</label>
+                <label class="addon-flabel" id="visite-animal-lbl">Quel animal dois-je garder ?</label>
                 <select id="visite-animal" class="addon-select" onchange="visiteSetAnimal()" style="margin-bottom:12px;">
                   <option value="chien">🐶 Chien — dès 15€</option>
                   <option value="chat">🐱 Chat — dès 12€</option>
@@ -384,32 +384,50 @@
                   <option value="tortue">🐢 Tortue / reptile (hors serpent) — dès 10€</option>
                   <option value="poisson">🐠 Poissons (aquarium) — dès 8€</option>
                 </select>
-                <label class="addon-flabel">Durée par visite</label>
+                <label class="addon-flabel">Durée par passage</label>
                 <div class="vdur-row">
                   <button type="button" class="vdur-btn active" data-min="30" onclick="visiteSetDur(30)">30 min — 15€</button>
                   <button type="button" class="vdur-btn" data-min="60" onclick="visiteSetDur(60)">1 heure — 20€</button>
                 </div>
+                <!-- Période de la garde à domicile -->
+                <div class="addon-row" id="visite-period-row">
+                  <div>
+                    <label class="addon-flabel">Du (1ᵉʳ passage)</label>
+                    <input id="visite-start" class="addon-input" type="date" oninput="visiteRecalc()">
+                  </div>
+                  <div>
+                    <label class="addon-flabel">Au (dernier passage)</label>
+                    <input id="visite-end" class="addon-input" type="date" oninput="visiteRecalc()">
+                  </div>
+                </div>
+                <!-- Fréquence des passages -->
+                <label class="addon-flabel">À quelle fréquence dois-je passer ?</label>
                 <div class="addon-row">
                   <div>
-                    <label class="addon-flabel">Passages / jour</label>
-                    <select id="visite-perday" class="addon-select" onchange="visiteRecalc()">
-                      <option value="1">1 visite</option><option value="2">2 visites</option><option value="3">3 visites</option>
+                    <select id="visite-freq" class="addon-select" onchange="visiteRecalc()">
+                      <option value="1">1 passage</option>
+                      <option value="2">2 passages</option>
+                      <option value="3">3 passages</option>
+                      <option value="4">4 passages</option>
                     </select>
                   </div>
                   <div>
-                    <label class="addon-flabel">Nombre total de visites</label>
-                    <input id="visite-days" class="addon-num" type="number" min="1" max="60" value="1" oninput="visiteRecalc()">
+                    <select id="visite-unit" class="addon-select" onchange="visiteRecalc()">
+                      <option value="jour">par jour</option>
+                      <option value="semaine">par semaine</option>
+                    </select>
                   </div>
                 </div>
+                <div id="visite-summary" style="display:none;background:var(--lavande-light);border-radius:10px;padding:10px 12px;margin-top:10px;font-size:.85rem;color:var(--lavande-dark);font-weight:700;line-height:1.5;"></div>
                 <div style="position:relative;margin-top:12px;">
-                  <label class="addon-flabel">Adresse de la visite</label>
+                  <label class="addon-flabel">Adresse où je dois passer</label>
                   <input id="visite-addr" class="addon-input" type="text" autocomplete="off" placeholder="Ex : 5 rue des Écoles, 13300 Salon-de-Provence" oninput="visiteAddrInput()">
                   <div id="visite-suggest" class="addon-suggest"></div>
                 </div>
                 <div id="visite-result" class="addon-result"></div>
               </div>
             </div>
-            <div class="form-row">
+            <div class="form-row" id="row-date-debut">
               <div class="form-group"><label>Date *</label><input id="date-debut" name="Date arrivée" type="date" required oninput="calcPrice()"></div>
               <div class="form-group"><label>Heure d'arrivée *</label><div style="display:flex;gap:8px;">
                 <select id="heure-debut-h" name="Heure arrivée H" style="flex:1" required onchange="autoDepart();calcPrice()"><option value="">HH</option><option>08</option><option>09</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option></select>
@@ -622,6 +640,24 @@ function _validateStep2() {
     err = true;
   } else {
     document.querySelector('.form-service-tags').style.outline = '';
+  }
+  // ── Cas VISITE À DOMICILE seule (hors Pack Duo) : on valide la période + l'adresse ──
+  if (window.__visite && window.__visite.active && !window.__packDuo) {
+    var vs = document.getElementById('visite-start'), ve = document.getElementById('visite-end');
+    var va = document.getElementById('visite-addr');
+    var vErr = false;
+    if (!vs.value) { vs.style.borderColor = '#c0392b'; vErr = true; } else vs.style.borderColor = '';
+    if (!ve.value || _daysBetween(vs.value, ve.value) < 1) { ve.style.borderColor = '#c0392b'; vErr = true; } else ve.style.borderColor = '';
+    if (!va.value.trim() || window.__visite.km == null) { va.style.borderColor = '#c0392b'; vErr = true; } else va.style.borderColor = '';
+    if (vErr || err) {
+      const msg = document.getElementById('error-msg');
+      msg.style.display = 'block';
+      msg.textContent = err ? '⚠️ Merci de choisir un service.' : '⚠️ Indiquez les dates de début/fin et l\'adresse (attendez le calcul du déplacement).';
+      document.getElementById('step-panel-2').appendChild(msg);
+      setTimeout(() => msg.style.display = 'none', 4500);
+      return false;
+    }
+    return true;
   }
   const dateEl = document.getElementById('date-debut');
   if (!dateEl.value) { dateEl.style.borderColor = '#c0392b'; err = true; }
@@ -942,7 +978,7 @@ var VISITE_ANIMALS={
   rongeur:{n:'🐹 Rongeur',p:10}, oiseau:{n:'🦜 Oiseau',p:10},
   tortue:{n:'🐢 Tortue / reptile',p:10}, poisson:{n:'🐠 Poissons (aquarium)',p:8}
 };
-window.__visite={active:false,animal:'chien',animalBase:15,animalLabel:'🐶 Chien',dur:30,price:15,perDay:1,days:1,km:null,city:'',postcode:'',address:'',coords:null,travelPerDay:0,travelTotal:0};
+window.__visite={active:false,animal:'chien',animalBase:15,animalLabel:'🐶 Chien',dur:30,price:15,freq:1,unit:'jour',start:'',end:'',days:1,passages:1,travelDays:1,km:null,city:'',postcode:'',address:'',coords:null,travelPerDay:0,travelTotal:0};
 var _vTimer=null,_vFeats=[];
 
 function visiteSetAnimal(){
@@ -973,13 +1009,22 @@ function toggleVisitePanel(){
   document.getElementById('visite-panel').style.display=active?'block':'none';
   // Exclusivité : visite à domicile ⇄ récupération à domicile
   var pk=document.getElementById('pickup-home'), pkCard=document.getElementById('pickup-card');
+  // Visite SEULE (hors Pack Duo) : la période est gérée DANS le panneau → on masque
+  // les dates/heures globales de la réservation pour éviter la confusion.
+  var rowDeb=document.getElementById('row-date-debut'), rowFin=document.getElementById('row-date-fin');
   if(active){
     if(pk.checked){ pk.checked=false; togglePickup(pk); }
     pk.disabled=true; pkCard.classList.add('disabled');
     var inp=document.getElementById('visite-addr');
     if(inp && !inp.value && window.__clientAddr){ inp.value=window.__clientAddr; visiteGeocode(window.__clientAddr); }
+    if(!window.__packDuo){
+      if(rowDeb) rowDeb.style.display='none';
+      if(rowFin) rowFin.style.display='none';
+      visiteRecalc();
+    }
   } else {
     pk.disabled=false; pkCard.classList.remove('disabled');
+    if(rowDeb) rowDeb.style.display='';
   }
   calcPrice();
 }
@@ -1085,11 +1130,46 @@ function visiteSetDur(min){
   [].slice.call(document.querySelectorAll('.vdur-btn')).forEach(function(b){ b.classList.toggle('active', parseInt(b.dataset.min)===min); });
   calcPrice();
 }
+function _daysBetween(a,b){ // nb de jours calendaires inclus entre 2 dates YYYY-MM-DD
+  if(!a||!b) return 0;
+  var d1=new Date(a+'T00:00:00'), d2=new Date(b+'T00:00:00');
+  if(isNaN(d1)||isNaN(d2)||d2<d1) return 0;
+  return Math.round((d2-d1)/86400000)+1;
+}
 function visiteRecalc(){
-  window.__visite.perDay=parseInt(document.getElementById('visite-perday').value)||1;
-  window.__visite.days=Math.max(1,parseInt(document.getElementById('visite-days').value)||1);
+  var v=window.__visite;
+  v.freq=parseInt(document.getElementById('visite-freq').value)||1;
+  v.unit=document.getElementById('visite-unit').value||'jour';
+  v.start=document.getElementById('visite-start').value||'';
+  v.end=document.getElementById('visite-end').value||'';
+  var days=_daysBetween(v.start,v.end);
+  v.days=days;
+  if(v.unit==='jour'){
+    v.passages=v.freq*Math.max(1,days);        // freq visites chaque jour
+    v.travelDays=Math.max(1,days);             // je viens chaque jour (frais/jour)
+  } else { // par semaine
+    var weeks=Math.max(1,Math.ceil(Math.max(1,days)/7));
+    v.passages=v.freq*weeks;                    // freq visites / semaine
+    v.travelDays=v.passages;                    // 1 déplacement par passage
+  }
+  // Résumé clair pour le client
+  var sum=document.getElementById('visite-summary');
+  if(sum){
+    if(days>0){
+      var per=v.unit==='jour'?'par jour':'par semaine';
+      sum.style.display='block';
+      sum.innerHTML='📅 Du <b>'+_frDate(v.start)+'</b> au <b>'+_frDate(v.end)+'</b> ('+days+' jour'+(days>1?'s':'')+')<br>🔁 '+v.freq+' passage'+(v.freq>1?'s':'')+' '+per+' → <b>'+v.passages+' passage'+(v.passages>1?'s':'')+' au total</b>';
+    } else { sum.style.display='none'; }
+  }
+  // On aligne les dates globales de la réservation sur la période de visite
+  if(v.active && !window.__packDuo){
+    var dd=document.getElementById('date-debut'), df=document.getElementById('date-fin');
+    if(dd && v.start) dd.value=v.start;
+    if(df && v.end) df.value=v.end;
+  }
   _visiteApplyTravel(); calcPrice();
 }
+function _frDate(s){ if(!s) return '—'; var p=s.split('-'); return p.length===3?(p[2]+'/'+p[1]+'/'+p[0]):s; }
 function visiteAddrInput(){
   var q=document.getElementById('visite-addr').value.trim();
   window.__visite.km=null; window.__visite.travelTotal=0; document.getElementById('visite-result').innerHTML='';
@@ -1136,7 +1216,7 @@ function _visiteApplyTravel(){
     v.travelPerDay=Math.round((fixe+ar*perKm)*100)/100;
     if(res) res.innerHTML='✅ '+(v.city||'Hors Miramas')+' — déplacement <strong>'+v.travelPerDay.toString().replace('.',',')+'€ / jour</strong> <small style="color:var(--text-muted);">('+fixe.toString().replace('.',',')+'€ + '+ar.toString().replace('.',',')+' km aller-retour × '+perKm.toString().replace('.',',')+'€)</small>';
   }
-  v.travelTotal=Math.round(v.travelPerDay*v.days*100)/100;
+  v.travelTotal=Math.round(v.travelPerDay*(v.travelDays||1)*100)/100;
 }
 
 function calcPrice(){
@@ -1221,20 +1301,21 @@ function calcPrice(){
   // Visite à domicile (durée × nb visites × jours + déplacement)
   if(window.__visite && window.__visite.active){
     const v=window.__visite;
-    const totalVisits=Math.max(1,v.perDay*v.days);
+    const totalVisits=Math.max(1,v.passages||1);
     const visitesFull=v.price*totalVisits;
     const isPack=!!window.__packDuo;
     const visitesCost=isPack?Math.round(visitesFull*(1-PACK_DUO_RATE)):visitesFull;
     const packSaving=visitesFull-visitesCost;
     const visLabel=isPack?'🎁 Pack Duo — visites 2ᵉ animal':'🏡 Visite à domicile';
-    lines.push(visLabel+' <small style="color:var(--text-muted);">('+(v.animalLabel||'🐶 Chien')+')</small> — '+v.price+'€ × '+totalVisits+' visite'+(totalVisits>1?'s':'')+' <small style="color:var(--text-muted);">('+v.perDay+'/jour × '+v.days+' j, '+(v.dur===60?'1h':'30 min')+')</small>'+(isPack?' <span style="text-decoration:line-through;color:var(--text-muted);">'+visitesFull+'€</span> = <strong>'+visitesCost+'€</strong>':' = <strong>'+visitesCost+'€</strong>'));
+    const freqTxt=v.freq+'× '+(v.unit==='jour'?'/jour':'/semaine');
+    lines.push(visLabel+' <small style="color:var(--text-muted);">('+(v.animalLabel||'🐶 Chien')+')</small> — '+v.price+'€ × '+totalVisits+' passage'+(totalVisits>1?'s':'')+' <small style="color:var(--text-muted);">('+freqTxt+', '+(v.dur===60?'1h':'30 min')+')</small>'+(isPack?' <span style="text-decoration:line-through;color:var(--text-muted);">'+visitesFull+'€</span> = <strong>'+visitesCost+'€</strong>':' = <strong>'+visitesCost+'€</strong>'));
     if(isPack && packSaving>0) lines.push('<span style="color:#159067;font-weight:700;">🎁 Remise Pack Duo −'+Math.round(PACK_DUO_RATE*100)+'% sur les visites : −'+packSaving+'€</span>');
     total+=visitesCost;
     if(v.km!=null && v.travelTotal>0){
-      lines.push('🚗 Déplacement visites — <strong>'+v.travelTotal.toString().replace('.',',')+'€</strong> <small style="color:var(--text-muted);">('+v.travelPerDay.toString().replace('.',',')+'€ / jour × '+v.days+' j)</small>');
+      lines.push('🚗 Déplacement — <strong>'+v.travelTotal.toString().replace('.',',')+'€</strong> <small style="color:var(--text-muted);">('+v.travelPerDay.toString().replace('.',',')+'€ × '+(v.travelDays||1)+' déplacement'+((v.travelDays||1)>1?'s':'')+')</small>');
       total=Math.round((total+v.travelTotal)*100)/100;
     } else if(v.km==null){
-      lines.push('🚗 <small style="color:var(--text-muted);">Saisissez l\'adresse de la visite pour le déplacement</small>');
+      lines.push('🚗 <small style="color:var(--text-muted);">Saisissez l\'adresse pour calculer le déplacement</small>');
     }
   }
 
@@ -1278,7 +1359,8 @@ function prepareSubmit(){
       devis+=' | 🚗 Récupération à : '+window.__pickup.address+(window.__pickup.km?(' ('+window.__pickup.km+' km)'):'');
     }
     if(window.__visite && window.__visite.active && window.__visite.address){
-      devis+=' | 🏡 Visite ('+(window.__visite.animalLabel||'Chien')+') à : '+window.__visite.address+' ('+(window.__visite.dur===60?'1h':'30 min')+', '+window.__visite.perDay+'/jour × '+window.__visite.days+' j)';
+      var _v=window.__visite;
+      devis+=' | 🏡 Visite ('+(_v.animalLabel||'Chien')+') à : '+_v.address+' — du '+_frDate(_v.start)+' au '+_frDate(_v.end)+', '+_v.freq+'× '+(_v.unit==='jour'?'par jour':'par semaine')+' = '+_v.passages+' passage'+(_v.passages>1?'s':'')+' ('+(_v.dur===60?'1h':'30 min')+')';
     }
     document.getElementById('hidden-devis').value=devis;
   }
