@@ -6,6 +6,11 @@
 <title>Milou Dogs</title>
 <meta name="description" content="Application Milou Dogs Provence — réservations, profils et carnet de santé de vos chiens.">
 <meta name="theme-color" content="#4A3F72">
+<!-- Perf : préconnexion aux domaines critiques -->
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://milou-dogs-default-rtdb.europe-west1.firebasedatabase.app" crossorigin>
+<link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
+<link rel="dns-prefetch" href="https://res.cloudinary.com">
 <link rel="manifest" href="manifest.webmanifest">
 <!-- iOS PWA -->
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -95,15 +100,19 @@
       <div class="quick-grid">
         <button class="quick" onclick="App.go('reservation')"><span class="qic">📅</span><span class="qt">Réserver</span><span class="qs">Nouveau séjour</span></button>
         <button class="quick" onclick="App.go('chiens')"><span class="qic">🐾</span><span class="qt">Mes animaux</span><span class="qs">Profils & carnet</span></button>
+        <button class="quick" onclick="App.go('galerie')"><span class="qic">📸</span><span class="qt">Galerie</span><span class="qs">Nos pensionnaires</span></button>
         <button class="quick" onclick="App.go('avis')"><span class="qic">⭐</span><span class="qt">Avis</span><span class="qs">Témoignages</span></button>
         <button class="quick" onclick="App.go('profil')"><span class="qic">👤</span><span class="qt">Profil</span><span class="qs">Mes infos</span></button>
       </div>
+      <div id="home-gallery" style="margin-top:20px;"></div>
     </section>
 
     <!-- RESERVATION -->
     <section id="view-reservation" class="view"><div id="reservation-body"></div></section>
     <!-- MES CHIENS -->
     <section id="view-chiens" class="view"><div id="chiens-body"></div></section>
+    <!-- GALERIE -->
+    <section id="view-galerie" class="view"><div id="galerie-body"></div></section>
     <!-- AVIS -->
     <section id="view-avis" class="view"><div id="avis-body"></div></section>
     <!-- PROFIL -->
@@ -156,6 +165,7 @@
 <script src="app.js"></script>
 <script src="chiens.js"></script>
 <script src="reservation.js"></script>
+<script src="galerie.js"></script>
 <script src="profil.js"></script>
 <script src="avis.js"></script>
 <script>

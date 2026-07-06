@@ -260,7 +260,7 @@ const App = (function () {
   }
 
   // ── Navigation ────────────────────────────────────────────
-  const TITLES = { home: 'Accueil', reservation: 'Réservation', chiens: 'Mes animaux', avis: 'Avis', profil: 'Mon profil' };
+  const TITLES = { home: 'Accueil', reservation: 'Réservation', chiens: 'Mes animaux', galerie: 'Galerie', avis: 'Avis', profil: 'Mon profil' };
   function go(view) {
     _currentView = view;
     document.querySelectorAll('.view').forEach((v) => v.classList.remove('active'));
@@ -274,6 +274,7 @@ const App = (function () {
     if (view === 'home') return renderHome();
     if (view === 'chiens' && App.renderChiens) return App.renderChiens();
     if (view === 'reservation' && App.renderReservation) return App.renderReservation();
+    if (view === 'galerie' && App.renderGalerie) return App.renderGalerie();
     if (view === 'avis' && App.renderAvis) return App.renderAvis();
     if (view === 'profil' && App.renderProfil) return App.renderProfil();
     // Placeholder pour les vues pas encore construites
@@ -355,6 +356,8 @@ const App = (function () {
         '<div class="section-label">Prochain séjour</div>' +
         '<div class="card"><div class="empty">Aucune réservation à venir.<br><button class="btn btn-sm" style="margin-top:12px" onclick="App.go(\'reservation\')">📅 Réserver un séjour</button></div></div>';
     }
+    // Aperçu galerie (photos récentes)
+    if (App.galeriePreview) App.galeriePreview('home-gallery');
   }
 
   // Animation festive « Joyeux anniversaire »
