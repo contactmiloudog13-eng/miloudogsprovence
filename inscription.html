@@ -839,6 +839,8 @@ function showStep2(prenom) {
   document.getElementById('slbl2').className = 'step-label active';
   // Afficher étape 2
   document.getElementById('step-chien').style.display = 'block';
+  // Remonter tout en haut (sinon on arrive en bas de la page sur mobile)
+  try { window.scrollTo({ top: 0, behavior: 'auto' }); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; } catch(e) {}
 }
 
 // ── Sauvegarde chien ─────────────────────────────────────────────────────────

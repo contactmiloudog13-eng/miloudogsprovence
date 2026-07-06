@@ -405,19 +405,6 @@ function loadGA() {
     var ul=document.getElementById('navlinks');
     if(!ul || ul.dataset.simpl) return;
     ul.dataset.simpl='1';
-    // Lien vers l'APPLICATION MOBILE (ajouté sur toutes les pages, bien visible)
-    if(!ul.querySelector('.nav-app-link')){
-      var appLi=document.createElement('li'); appLi.className='nav-app-link';
-      var appA=document.createElement('a'); appA.href='app/'; appA.setAttribute('data-icon','📱'); appA.textContent='Appli';
-      appLi.appendChild(appA);
-      var ctaFirst=ul.querySelector('.nav-mobile-cta');
-      ul.insertBefore(appLi, ctaFirst||null);
-      if(!document.getElementById('nav-app-css')){
-        var ac=document.createElement('style'); ac.id='nav-app-css';
-        ac.textContent='.nav-app-link a{color:var(--lavande)!important;font-weight:800!important;}@media(min-width:761px){.nav-app-link a{background:var(--lavande);color:#fff!important;padding:6px 12px!important;border-radius:20px;}.nav-app-link a:hover{background:var(--lavande-dark);}}';
-        document.head.appendChild(ac);
-      }
-    }
     // Liens principaux toujours visibles (par nom de fichier)
     var primary=['index.html','','services.html','avis.html','reservation.html'];
     var lis=[].slice.call(ul.children).filter(function(li){return li.tagName==='LI';});
