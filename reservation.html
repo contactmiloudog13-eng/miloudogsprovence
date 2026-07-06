@@ -196,7 +196,7 @@
   <div class="container">
     <div class="resa-layout">
       <div class="resa-info fade-in">
-        <h2 class="section-title">Comment ça marche ?</h2>
+        <details class="resa-acc" open><summary class="section-title" style="text-align:left;margin:0;">Comment ça marche ?</summary>
         <div class="resa-steps-cards">
           <div class="rsc reveal-left"><div class="rsc-num">1</div><div><strong>Remplissez le formulaire</strong><span>2 minutes chrono, en ligne 24h/24</span></div></div>
           <div class="rsc reveal-left"><div class="rsc-num">2</div><div><strong>Confirmation sous 24h</strong><span>Je vous rappelle pour valider les dates</span></div></div>
@@ -205,19 +205,29 @@
           <div class="rsc reveal-left"><div class="rsc-num">5</div><div><strong>Paiement à la fin</strong><span>Aucun acompte demandé</span></div></div>
           <div class="rsc reveal-left" style="background:linear-gradient(135deg,#FFF8E6,#FFF3CD);border-color:var(--soleil);"><div class="rsc-num" style="background:var(--soleil);color:#1a0e00;">🏡</div><div><strong style="color:#8B6020;">Vie en famille</strong><span>Jamais en cage · terrain de 2 000 m²</span></div></div>
         </div>
-        <style>.resa-steps-cards{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}.rsc{display:flex;align-items:center;gap:14px;background:var(--cream);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;transition:transform .2s,box-shadow .2s;}.rsc:hover{transform:translateX(4px);box-shadow:0 4px 16px rgba(74,63,114,.1);}.rsc-num{width:36px;height:36px;border-radius:50%;background:var(--lavande);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.88rem;flex-shrink:0;}.rsc strong{display:block;font-size:.9rem;color:var(--lavande-dark);margin-bottom:2px;}.rsc span{font-size:.78rem;color:var(--text-muted);}</style>
+        </details>
+        <style>.resa-steps-cards{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}.rsc{display:flex;align-items:center;gap:14px;background:var(--cream);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;transition:transform .2s,box-shadow .2s;}.rsc:hover{transform:translateX(4px);box-shadow:0 4px 16px rgba(74,63,114,.1);}.rsc-num{width:36px;height:36px;border-radius:50%;background:var(--lavande);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.88rem;flex-shrink:0;}.rsc strong{display:block;font-size:.9rem;color:var(--lavande-dark);margin-bottom:2px;}.rsc span{font-size:.78rem;color:var(--text-muted);}
+        /* Accordéons : toujours ouverts sur ordi, repliables sur téléphone */
+        .resa-acc>summary{list-style:none;}.resa-acc>summary::-webkit-details-marker{display:none;}
+        .resa-acc:not([open])>:not(summary){display:none!important;}
+        @media(min-width:761px){.resa-acc>summary{pointer-events:none;cursor:default;}}
+        @media(max-width:760px){.resa-acc{border:1.5px solid var(--border);border-radius:14px;background:#fff;margin-bottom:10px;overflow:hidden;}.resa-acc>summary{cursor:pointer;padding:14px 16px;font-weight:800;color:var(--lavande-dark);font-size:.95rem;display:flex;justify-content:space-between;align-items:center;}.resa-acc>summary::after{content:'▾';font-size:.8rem;}.resa-acc[open]>summary::after{content:'▴';}.resa-acc[open]>:not(summary){padding:0 16px 14px;}.resa-acc .resa-steps-cards{margin-bottom:0;}.contact-box{display:none!important;}}</style>
+        <details class="resa-acc" open><summary>📅 Comment fonctionnent les demi-journées ?</summary>
         <div style="background:var(--lavande-light);border:1px solid var(--lavande);border-radius:14px;padding:16px 20px;margin-bottom:20px;">
-          <p style="font-weight:700;color:var(--lavande-dark);margin-bottom:12px;">📅 Comment fonctionnent les demi-journées ?</p>
           <p style="font-size:.88rem;font-weight:700;color:var(--lavande-dark);margin-bottom:4px;">1ère demi-journée — Matin</p>
           <p style="font-size:.85rem;color:var(--text-muted);line-height:1.7;margin-bottom:12px;">Dépôt à partir de <strong>8h</strong> · reprise à <strong>13h30</strong> · durée : 5h30</p>
           <p style="font-size:.88rem;font-weight:700;color:var(--lavande-dark);margin-bottom:4px;">2ème demi-journée — Après-midi</p>
           <p style="font-size:.85rem;color:var(--text-muted);line-height:1.7;margin-bottom:12px;">Dépôt à partir de <strong>13h30</strong> · reprise avant <strong>19h</strong> · durée : 5h30</p>
           <p style="font-size:.82rem;color:var(--text-muted);font-style:italic;line-height:1.6;">Vous choisissez votre créneau et l'heure d'arrivée lors de la réservation — l'heure de départ se calcule 5h30 après.</p>
         </div>
+        </details>
+        <details class="resa-acc" open><summary>🕗 Horaires d'ouverture</summary>
         <div style="background:var(--vert-light);border:1px solid var(--vert);border-radius:14px;padding:16px 20px;margin-bottom:20px;">
-          <p style="font-weight:700;color:var(--vert);margin-bottom:8px;">🕗 Horaires d'ouverture</p>
           <p style="font-size:.9rem;color:var(--text-muted);line-height:1.8;">Lundi – Dimanche : <strong>8h00 – 19h00</strong><br>Arrivées & départs uniquement dans ces horaires.</p>
         </div>
+        </details>
+        <script>/* Sur téléphone : on replie les accordéons (ouverts par défaut sur ordi) */
+        try{ if(window.matchMedia('(max-width:760px)').matches){ document.querySelectorAll('.resa-acc[open]').forEach(function(d){ d.removeAttribute('open'); }); } }catch(e){}</script>
         <div class="contact-box">
           <h4>📞 Contact direct</h4>
           <div class="contact-item">📱 <a href="tel:0777234088">07 77 23 40 88</a></div>

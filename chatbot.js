@@ -399,39 +399,64 @@ function loadGA() {
 
 })();
 
-/* ── MENU MOBILE SIMPLIFIÉ : on garde 4 liens clés, le reste sous « Plus » ──── */
+/* ── MENU MOBILE : ordre imposé + « Plus » + Mon espace / Déconnexion ─────────
+   Ne s'exécute QUE sur téléphone → le menu de l'ordinateur reste intact. */
 (function(){
   try{
     var ul=document.getElementById('navlinks');
     if(!ul || ul.dataset.simpl) return;
+    if(!window.matchMedia('(max-width:760px)').matches) return; // ordi : on ne touche à rien
     ul.dataset.simpl='1';
-    // Liens principaux toujours visibles (par nom de fichier)
-    var primary=['index.html','','services.html','avis.html','reservation.html'];
-    var lis=[].slice.call(ul.children).filter(function(li){return li.tagName==='LI';});
-    var extras=lis.filter(function(li){
+
+    function liByHref(fn){
+      var lis=[].slice.call(ul.querySelectorAll('li'));
+      for(var i=0;i<lis.length;i++){
+        var a=lis[i].querySelector('a'); if(!a) continue;
+        var h=(a.getAttribute('href')||'').split('/').pop().split('#')[0];
+        if(h===fn) return lis[i];
+      }
+      return null;
+    }
+    function mkLi(cls,href,icon,txt,onclick){
+      var li=document.createElement('li'); li.className=cls;
+      var a=document.createElement('a'); a.href=href; a.setAttribute('data-icon',icon); a.textContent=txt;
+      if(onclick) a.addEventListener('click',onclick);
+      li.appendChild(a); return li;
+    }
+
+    // Items principaux (dans l'ordre voulu)
+    var accueil=liByHref('index.html'), services=liByHref('services.html');
+    var reserv=liByHref('reservation.html'), avis=liByHref('avis.html');
+    // Items secondaires → regroupés sous « Plus »
+    var primary=['index.html','services.html','avis.html','reservation.html','espace-client.html','connexion.html'];
+    var extras=[].slice.call(ul.querySelectorAll('li')).filter(function(li){
       if(li.classList.contains('nav-mobile-cta')) return false;
-      if(li.classList.contains('nav-app-link')) return false;
       var a=li.querySelector('a'); if(!a) return false;
-      var href=(a.getAttribute('href')||'').split('/').pop().split('#')[0];
-      return primary.indexOf(href)===-1;
+      var h=(a.getAttribute('href')||'').split('/').pop().split('#')[0];
+      return primary.indexOf(h)===-1;
     });
-    if(extras.length<3) return;              // pas assez d'items pour valoir le coup
     extras.forEach(function(li){ li.classList.add('nav-extra'); });
-    var toggle=document.createElement('li');
-    toggle.className='nav-more-toggle';
-    var link=document.createElement('a');
-    link.href='javascript:void(0)'; link.setAttribute('data-icon','⋯'); link.textContent='Plus ▾';
-    link.addEventListener('click',function(e){
-      e.preventDefault();
-      var open=ul.classList.toggle('show-extra');
-      link.textContent=open?'Moins ▴':'Plus ▾';
-    });
-    toggle.appendChild(link);
-    ul.insertBefore(toggle, extras[0]);      // insère « Plus » juste avant les liens secondaires
-    // Styles (injectés une fois)
+
+    // Bouton « Plus ▾ »
+    var toggle=document.createElement('li'); toggle.className='nav-more-toggle';
+    var tlink=document.createElement('a'); tlink.href='javascript:void(0)'; tlink.setAttribute('data-icon','⋯'); tlink.textContent='Plus ▾';
+    tlink.addEventListener('click',function(e){ e.preventDefault(); var o=ul.classList.toggle('show-extra'); tlink.textContent=o?'Moins ▴':'Plus ▾'; });
+    toggle.appendChild(tlink);
+
+    // Mon espace / Déconnexion = l'item auth existant (#nav-auth-item), géré par firebase-auth.js
+    var monEspace=document.getElementById('nav-auth-item') || liByHref('espace-client.html') || liByHref('connexion.html');
+
+    // Bouton CTA « Réserver » redondant → masqué (on a déjà Réservation dans le menu)
+    var cta=ul.querySelector('.nav-mobile-cta'); if(cta) cta.style.display='none';
+
+    // Ré-agencement : Mon espace, Accueil, Services, Réservation, Avis, Plus + le reste
+    var order=[monEspace, accueil, services, reserv, avis, toggle].concat(extras);
+    order.forEach(function(el){ if(el) ul.appendChild(el); });
+
+    // Styles (une fois)
     if(!document.getElementById('nav-simpl-css')){
       var st=document.createElement('style'); st.id='nav-simpl-css';
-      st.textContent='.nav-more-toggle{display:none;}@media(max-width:760px){.nav-more-toggle{display:block;}#navlinks .nav-extra{display:none!important;}#navlinks.show-extra .nav-extra{display:flex!important;}}';
+      st.textContent='@media(max-width:760px){.nav-more-toggle{display:block;}#navlinks .nav-extra{display:none!important;}#navlinks.show-extra .nav-extra{display:flex!important;}}';
       document.head.appendChild(st);
     }
   }catch(e){}
