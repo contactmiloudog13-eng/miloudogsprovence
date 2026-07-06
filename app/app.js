@@ -203,12 +203,16 @@ const App = (function () {
     let cameFromRedirect = false;
     try { cameFromRedirect = sessionStorage.getItem('gRedirect') === '1'; sessionStorage.removeItem('gRedirect'); } catch (e) {}
     auth.getRedirectResult().then((res) => {
-      if (res && res.user && res.additionalUserInfo && res.additionalUserInfo.isNewUser) {
-        const u = res.user; const parts = (u.displayName || '').trim().split(' ');
-        db.ref('users/' + u.uid).update({ prenom: parts.shift() || '', nom: parts.join(' '), email: u.email || '', createdAt: Date.now() });
+      if (res && res.user) {
+        if (res.additionalUserInfo && res.additionalUserInfo.isNewUser) {
+          const u = res.user; const parts = (u.displayName || '').trim().split(' ');
+          db.ref('users/' + u.uid).update({ prenom: parts.shift() || '', nom: parts.join(' '), email: u.email || '', createdAt: Date.now() });
+        }
+      } else if (cameFromRedirect) {
+        // On revient d'une redirection Google mais sans utilisateur → échec silencieux
+        try { authMsg('La connexion Google n\'a pas abouti. Réessayez, ou créez un compte avec votre e-mail.'); } catch (e) {}
       }
     }).catch((err) => {
-      // Si on revient d'une redirection Google et qu'elle a échoué → on le montre
       if (cameFromRedirect) { try { authMsg('Connexion Google impossible : ' + authError(err)); } catch (e) {} }
     });
     auth.onAuthStateChanged(async (user) => {
