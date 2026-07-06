@@ -138,33 +138,36 @@ const App = (function () {
     } catch (err) { authMsg(authError(err)); btn.disabled = false; }
     return false;
   }
+  function _googleProvider() {
+    const p = new firebase.auth.GoogleAuthProvider();
+    p.setCustomParameters({ prompt: 'select_account' });
+    return p;
+  }
+  function _doRedirect() {
+    authMsg('⏳ Redirection vers Google…');
+    try { sessionStorage.setItem('gRedirect', '1'); } catch (e) {}
+    auth.signInWithRedirect(_googleProvider()).catch((e2) => authMsg(authError(e2)));
+  }
   function loginGoogle() {
-    authMsg('');
-    const provider = new firebase.auth.GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: 'select_account' });
-    // Sur mobile OU en PWA installée, les popups Google ne fonctionnent pas
-    // (bloquées / non supportées en mode standalone) → on utilise la REDIRECTION.
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const useRedirect = isStandalone || isMobile;
     authMsg('⏳ Connexion Google…');
+    // Stratégie : on tente la POPUP (marche sur ordi + PWA Android). Si la popup
+    // est impossible (bloquée, iOS, standalone…) on bascule sur la REDIRECTION.
     auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-      .then(() => {
-        if (useRedirect) return auth.signInWithRedirect(provider); // la page se recharge → getRedirectResult() dans boot()
-        return auth.signInWithPopup(provider).then((res) => {
-          if (res && res.additionalUserInfo && res.additionalUserInfo.isNewUser && res.user) {
-            const u = res.user; const parts = (u.displayName || '').trim().split(' ');
-            return db.ref('users/' + u.uid).update({ prenom: parts.shift() || '', nom: parts.join(' '), email: u.email || '', createdAt: Date.now() });
-          }
-        });
+      .then(() => auth.signInWithPopup(_googleProvider()))
+      .then((res) => {
+        if (res && res.additionalUserInfo && res.additionalUserInfo.isNewUser && res.user) {
+          const u = res.user; const parts = (u.displayName || '').trim().split(' ');
+          return db.ref('users/' + u.uid).update({ prenom: parts.shift() || '', nom: parts.join(' '), email: u.email || '', createdAt: Date.now() });
+        }
       })
+      .then(() => { authMsg(''); })
       .catch((err) => {
         const c = (err && err.code) || '';
         if (c.includes('popup-closed-by-user') || c.includes('cancelled-popup-request')) { authMsg(''); return; }
-        if (c.includes('operation-not-allowed')) { authMsg('La connexion Google n\'est pas encore activée dans Firebase.'); return; }
-        // Popup impossible dans ce contexte → on bascule en redirection
-        if (c.includes('popup-blocked') || c.includes('operation-not-supported')) { auth.signInWithRedirect(provider).catch((e2) => authMsg(authError(e2))); return; }
-        authMsg(authError(err));
+        if (c.includes('operation-not-allowed')) { authMsg('⚠️ Connexion Google non activée dans Firebase.'); return; }
+        if (c.includes('unauthorized-domain')) { authMsg('⚠️ Domaine non autorisé pour Google.'); return; }
+        // Tous les autres cas (popup bloquée, non supportée, iOS, PWA, réseau…) → redirection
+        _doRedirect();
       });
     return false;
   }
@@ -190,13 +193,18 @@ const App = (function () {
 
   // ── Démarrage / état de connexion ─────────────────────────
   function boot() {
-    // Retour d'une connexion Google par redirection (repli PWA) → créer le profil si nouveau
+    // Retour d'une connexion Google par redirection → créer le profil si nouveau
+    let cameFromRedirect = false;
+    try { cameFromRedirect = sessionStorage.getItem('gRedirect') === '1'; sessionStorage.removeItem('gRedirect'); } catch (e) {}
     auth.getRedirectResult().then((res) => {
       if (res && res.user && res.additionalUserInfo && res.additionalUserInfo.isNewUser) {
         const u = res.user; const parts = (u.displayName || '').trim().split(' ');
         db.ref('users/' + u.uid).update({ prenom: parts.shift() || '', nom: parts.join(' '), email: u.email || '', createdAt: Date.now() });
       }
-    }).catch(() => {});
+    }).catch((err) => {
+      // Si on revient d'une redirection Google et qu'elle a échoué → on le montre
+      if (cameFromRedirect) { try { authMsg('Connexion Google impossible : ' + authError(err)); } catch (e) {} }
+    });
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         _user = user;
