@@ -171,6 +171,13 @@
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+    // Dès qu'une nouvelle version du Service Worker prend la main → on recharge une
+    // seule fois, pour que l'utilisateur ait TOUJOURS la dernière version (fini les
+    // vieux caches qui masquent les corrections).
+    let _swReloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (_swReloaded) return; _swReloaded = true; location.reload();
+    });
   }
 
   // ── Invite d'installation (PWA) ──────────────────────────────

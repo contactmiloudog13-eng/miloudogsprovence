@@ -753,6 +753,16 @@ function toggleTag(el){
     msgD.style.display='none';
     hFin.disabled=false; mFin.disabled=false;
   }
+  // ── Synchronise l'état "visite à domicile" / "Pack Duo" avec les tags réellement actifs ──
+  // (sinon, en passant de Visite/Pack Duo à Pension, __visite.active reste true et la
+  //  validation réclame à tort l'adresse de visite)
+  var _vtag=[].slice.call(document.querySelectorAll('.service-tag')).filter(function(t){return t.dataset.visite==='1';})[0];
+  var _ptag=[].slice.call(document.querySelectorAll('.service-tag')).filter(function(t){return t.dataset.pack;})[0];
+  if(_ptag && !_ptag.classList.contains('active')) window.__packDuo=false;
+  if(window.__visite){
+    var vActiveNow = !!(_vtag && _vtag.classList.contains('active'));
+    if(window.__visite.active !== vActiveNow && typeof toggleVisitePanel==='function') toggleVisitePanel();
+  }
   autoDepart();
   calcPrice();
 }

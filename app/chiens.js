@@ -12,6 +12,7 @@
   function selId() { return App.getSelectedChien(); }
 
   let _chienEdit = false; // mode édition d'un animal existant
+  let _addingNew = false; // true quand on est en train d'AJOUTER un nouvel animal
   let _lockAttr = '';     // ' disabled' quand les champs sont en lecture seule
 
   // Espèces d'animaux (comme sur le site)
@@ -49,9 +50,9 @@
     const ds = dogs();
     const ids = Object.keys(ds);
 
-    // sélection courante par défaut
+    // sélection courante par défaut (sauf si on est en train d'ajouter un nouvel animal)
     if (selId() && !ds[selId()]) App.setSelectedChien(null);
-    if (!selId() && ids.length) App.setSelectedChien(ids[0]);
+    if (!selId() && ids.length && !_addingNew) App.setSelectedChien(ids[0]);
 
     // Barre de sélection (chips)
     let chips = '<div class="dog-chips">';
@@ -149,8 +150,8 @@
   }
 
   // ── Actions ───────────────────────────────────────────────
-  App.chienSelect = function (id) { _chienEdit = false; App.setSelectedChien(id); App.renderChiens(); };
-  App.chienNew = function () { _chienEdit = false; App.setSelectedChien(null); App.renderChiens(); document.getElementById('c-nom').focus(); };
+  App.chienSelect = function (id) { _chienEdit = false; _addingNew = false; App.setSelectedChien(id); App.renderChiens(); };
+  App.chienNew = function () { _chienEdit = false; _addingNew = true; App.setSelectedChien(null); App.renderChiens(); var n=document.getElementById('c-nom'); if(n) n.focus(); };
   App.chienEdit = function () { _chienEdit = true; App.renderChiens(); };
   App.chienAge = function () {
     const age = App.computeAge(document.getElementById('c-naissance').value);
@@ -232,6 +233,7 @@
         App.setSelectedChien(ref.key);
         App._pendingPhoto = null;
       }
+      _addingNew = false;
       _chienEdit = false; // reverrouille : le listener temps réel re-render en lecture seule
       App.toast('Profil de ' + nom + ' enregistré ✓');
     } catch (e) { App.toast('Erreur : ' + (e.message || 'enregistrement')); }
