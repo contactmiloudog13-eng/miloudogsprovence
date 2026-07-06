@@ -1,5 +1,5 @@
 /* Milou Dogs — Service Worker (offline app shell) */
-const CACHE = 'milou-app-v12';
+const CACHE = 'milou-app-v13';
 const SHELL = [
   './',
   './index.html',

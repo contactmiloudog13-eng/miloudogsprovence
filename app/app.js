@@ -113,18 +113,29 @@ const App = (function () {
       .catch((err) => { authMsg(authError(err)); btn.disabled = false; });
     return false;
   }
-  function signup(e) {
+  function phoneKey(tel) { return (tel || '').replace(/\D/g, '').replace(/^0033/, '').replace(/^33/, '').replace(/^0/, ''); }
+  async function signup(e) {
     e.preventDefault();
     const btn = $('su-btn'); btn.disabled = true; authMsg('');
     const prenom = $('su-prenom').value.trim(), nom = $('su-nom').value.trim();
     const email = $('su-email').value.trim(), tel = $('su-tel').value.trim(), pwd = $('su-pwd').value;
-    auth.createUserWithEmailAndPassword(email, pwd)
-      .then((cred) => {
-        const uid = cred.user.uid;
-        return db.ref('users/' + uid).update({ prenom, nom, email, telephone: tel, createdAt: Date.now() })
-          .then(() => cred.user.updateProfile({ displayName: prenom }));
-      })
-      .catch((err) => { authMsg(authError(err)); btn.disabled = false; });
+    try {
+      const cred = await auth.createUserWithEmailAndPassword(email, pwd);
+      const uid = cred.user.uid;
+      // Numéro déjà utilisé par un autre compte ? → on annule la création
+      const pk = phoneKey(tel);
+      if (pk) {
+        const snap = await db.ref('phones/' + pk).get();
+        if (snap.exists() && snap.val() !== uid) {
+          await cred.user.delete().catch(() => {});
+          authMsg('Ce numéro de téléphone est déjà associé à un compte.');
+          btn.disabled = false; return false;
+        }
+        await db.ref('phones/' + pk).set(uid);
+      }
+      await db.ref('users/' + uid).update({ prenom, nom, email, telephone: tel, createdAt: Date.now() });
+      await cred.user.updateProfile({ displayName: prenom });
+    } catch (err) { authMsg(authError(err)); btn.disabled = false; }
     return false;
   }
   function loginGoogle() {

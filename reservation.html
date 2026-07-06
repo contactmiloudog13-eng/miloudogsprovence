@@ -298,7 +298,7 @@
           <div class="step-panel" id="step-panel-2" style="display:none">
             <p class="step-title">📅 Étape 2 — La réservation</p>
 
-            <div class="form-group">
+            <div class="form-group" id="row-nb-chiens">
               <label>Nombre de chiens</label>
               <div style="display:flex;gap:10px;flex-wrap:wrap;">
                 <label style="display:flex;align-items:center;gap:8px;padding:10px 18px;border:1px solid var(--border);border-radius:12px;cursor:pointer;background:white;font-size:.9rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--text);">
@@ -1013,6 +1013,7 @@ function toggleVisitePanel(){
   // Visite SEULE (hors Pack Duo) : la période est gérée DANS le panneau → on masque
   // les dates/heures globales de la réservation pour éviter la confusion.
   var rowDeb=document.getElementById('row-date-debut'), rowFin=document.getElementById('row-date-fin');
+  var rowNb=document.getElementById('row-nb-chiens');
   if(active){
     if(pk.checked){ pk.checked=false; togglePickup(pk); }
     pk.disabled=true; pkCard.classList.add('disabled');
@@ -1021,11 +1022,14 @@ function toggleVisitePanel(){
     if(!window.__packDuo){
       if(rowDeb) rowDeb.style.display='none';
       if(rowFin) rowFin.style.display='none';
+      // Visite SEULE = pas un chien en pension → on masque "Nombre de chiens" et on remet à 1
+      if(rowNb){ rowNb.style.display='none'; var r1=document.querySelector('input[name="nb-chiens"][value="1"]'); if(r1) r1.checked=true; }
       visiteRecalc();
     }
   } else {
     pk.disabled=false; pkCard.classList.remove('disabled');
     if(rowDeb) rowDeb.style.display='';
+    if(rowNb) rowNb.style.display='';
   }
   calcPrice();
 }
@@ -1097,6 +1101,8 @@ function selectPackDuo(el){
   var row=document.getElementById('row-date-fin');
   var colDate=document.getElementById('col-date-fin');
   var banner=document.getElementById('pack-duo-banner');
+  var rowNb=document.getElementById('row-nb-chiens');
+  if(rowNb) rowNb.style.display='';   // Pack Duo = un chien en pension → on garde "Nombre de chiens"
   if(on){
     // Nettoie les autres services de garde (le pack gère pension + visite)
     document.querySelectorAll('.service-tag.active').forEach(function(t){

@@ -532,6 +532,22 @@ function firebaseError(code) {
 function validatePhone(tel) {
   return /^(\+33|0033|0)[67]\d{8}$/.test(tel.replace(/[\s.\-]/g,''));
 }
+// Clé unique normalisée d'un numéro (pour empêcher les doublons) : chiffres seuls, sans 33/0 initial
+function _phoneKey(tel) {
+  return (tel || '').replace(/\D/g, '').replace(/^0033/, '').replace(/^33/, '').replace(/^0/, '');
+}
+// Vérifie qu'un numéro n'est pas déjà pris par un AUTRE compte (nécessite d'être authentifié)
+async function _phoneTaken(tel, ownUid) {
+  var pk = _phoneKey(tel); if (!pk) return false;
+  try {
+    var s = await firebase.database().ref('phones/' + pk).get();
+    return s.exists() && s.val() !== ownUid;
+  } catch (e) { return false; }
+}
+async function _reservePhone(tel, uid) {
+  var pk = _phoneKey(tel); if (!pk) return;
+  try { await firebase.database().ref('phones/' + pk).set(uid); } catch (e) {}
+}
 
 // Inscription / connexion via Google (1 clic)
 async function registerGoogle() {
@@ -629,6 +645,14 @@ document.getElementById('register-form').addEventListener('submit', async e => {
     window.__suppressAuthRedirect = true; // empêche la redirection auto avant l'écriture du profil
     const cred = await firebase.auth().createUserWithEmailAndPassword(email, password);
     await cred.user.updateProfile({ displayName: prenom });
+    // ── Numéro déjà utilisé par un autre compte ? → on annule ce compte ──
+    if (await _phoneTaken(telephone, cred.user.uid)) {
+      await cred.user.delete().catch(function(){});
+      showError('Ce numéro de téléphone est déjà associé à un compte. <a href="connexion.html" style="color:#c0392b;font-weight:700;">Se connecter →</a>');
+      setLoading(false);
+      return;
+    }
+    await _reservePhone(telephone, cred.user.uid);
     const adresse    = document.getElementById('adresse').value.trim();
     const codePostal = document.getElementById('codepostal').value.trim();
     const ville      = document.getElementById('ville').value.trim();
@@ -782,6 +806,12 @@ async function submitGoogleProfile() {
   setLoading(true);
   try {
     var uid = window._newUid;
+    // Numéro déjà pris par un autre compte ?
+    if (await _phoneTaken(telephone, uid)) {
+      showError('Ce numéro de téléphone est déjà associé à un autre compte.');
+      setLoading(false); return;
+    }
+    await _reservePhone(telephone, uid);
     var prof = { prenom:prenom, nom:nom, email:email, telephone:telephone, adresse:adresse, codePostal:codePostal, ville:ville, updatedAt: Date.now() };
     if (_regPhoto) prof.photoUrl = _regPhoto;
     await firebase.database().ref('users/' + uid).update(prof);
