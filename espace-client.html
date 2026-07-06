@@ -506,6 +506,9 @@ body:not(.auth-ready) footer{visibility:hidden;}
       <button class="dash-tab" id="tab-resa" onclick="showTab('reservations',this)">
         <span class="tab-icon">📅</span> Mes réservations<span class="notif-dot" id="resa-notif-dot" style="display:none;"></span>
       </button>
+      <button class="dash-tab" onclick="showTab('carnet',this);loadCarnet()">
+        <span class="tab-icon">🎟️</span> Carnet Malin
+      </button>
       <button class="dash-tab" id="tab-admin" onclick="showTab('admin',this)" style="display:none;background:linear-gradient(135deg,#fff3cd,#ffe08a);color:#7a5a00;border:1.5px solid #f5c84a;">
         <span class="tab-icon">⚙️</span> Admin
       </button>
@@ -858,6 +861,14 @@ body:not(.auth-ready) footer{visibility:hidden;}
       </div>
     </div>
 
+    <!-- ══ PANNEAU : CARNET MALIN ══ -->
+    <div class="dash-panel" id="panel-carnet">
+      <div class="panel-card">
+        <h3>🎟️ Mon Carnet Malin</h3>
+        <div id="carnet-body"><p style="text-align:center;color:var(--text-muted);padding:20px;">Chargement…</p></div>
+      </div>
+    </div>
+
     <!-- ══ PANNEAU ADMIN ══ -->
     <div class="dash-panel" id="panel-admin">
       <div class="panel-card">
@@ -976,6 +987,102 @@ function showTab(name, btn) {
   if (name === 'reservations' && window._resaList) _markResaAsSeen(window._resaList);
 }
 
+// ── CARNET MALIN ─────────────────────────────────────────────────────────────
+let _carnetRef = null, _carnetReqRef = null;
+function _frD(s){ if(!s) return ''; if(/^\d{4}-\d{2}-\d{2}/.test(s)){ var p=s.slice(0,10).split('-'); return p[2]+'/'+p[1]+'/'+p[0]; } var d=new Date(s); return isNaN(d)?'':d.toLocaleDateString('fr-FR'); }
+function loadCarnet(){
+  if(!_currentUser){ document.getElementById('carnet-body').innerHTML='<p style="text-align:center;color:var(--text-muted);padding:20px;">Connectez-vous pour accéder à votre Carnet Malin.</p>'; return; }
+  var uid=_currentUser.uid, db=firebase.database();
+  // Écoute en temps réel le carnet actif
+  if(_carnetRef) _carnetRef.off();
+  _carnetRef=db.ref('carnets/'+uid);
+  _carnetRef.on('value',function(s){
+    var c=s.val();
+    if(c){ renderCarnetActif(c); return; }
+    // Pas de carnet actif → on regarde s'il y a une demande en attente
+    db.ref('carnet_requests/'+uid).once('value').then(function(rs){
+      var r=rs.val();
+      if(r && r.status==='en_attente') renderCarnetAttente(r);
+      else renderCarnetOffre();
+    });
+  });
+}
+function renderCarnetOffre(){
+  var pension=(window.__tarifsCache&&window.__tarifsCache.pension)||25;
+  var full=pension*10, prix=Math.round(full*0.9);
+  document.getElementById('carnet-body').innerHTML=
+    '<div style="text-align:center;">'+
+    '<div style="font-size:2.6rem;">🎟️</div>'+
+    '<p style="font-size:1.05rem;font-weight:800;color:var(--lavande-dark);margin:8px 0 4px;">10 nuits de pension prépayées</p>'+
+    '<p style="color:var(--text-muted);font-size:.9rem;line-height:1.7;max-width:440px;margin:0 auto 14px;">Payez une fois, utilisez vos 10 nuits quand vous voulez sur 1 an. '+
+    '<b style="color:var(--lavande-dark);">'+prix+'€</b> au lieu de <s>'+full+'€</s> — soit '+(prix/10).toFixed(2).replace('.',',')+'€ la nuit.</p>'+
+    '<ul style="list-style:none;padding:0;max-width:360px;margin:0 auto 18px;text-align:left;font-size:.88rem;color:var(--text);">'+
+    '<li style="padding:5px 0;">✓ 10 nuits à utiliser quand vous voulez</li>'+
+    '<li style="padding:5px 0;">✓ Valables 1 an, sans engagement</li>'+
+    '<li style="padding:5px 0;">✓ Cumulable avec la réduction multi-chiens</li>'+
+    '<li style="padding:5px 0;">✓ Ferme et définitif une fois réglé (pas de remboursement)</li>'+
+    '</ul>'+
+    '<button class="btn-save" onclick="orderCarnet('+prix+')" style="font-size:.95rem;">🎟️ Commander mon Carnet Malin</button>'+
+    '<p style="font-size:.78rem;color:var(--text-muted);margin-top:12px;">Règlement par virement — Milou vous recontacte pour finaliser.</p>'+
+    '</div>';
+}
+async function orderCarnet(prix){
+  if(!_currentUser) return;
+  var btn=event&&event.target; if(btn) btn.disabled=true;
+  try{
+    var s=await firebase.database().ref('users/'+_currentUser.uid).once('value');
+    var u=s.val()||{};
+    await firebase.database().ref('carnet_requests/'+_currentUser.uid).set({
+      prenom:u.prenom||'', nom:u.nom||'', email:u.email||_currentUser.email||'', telephone:u.telephone||'',
+      prix:prix||0, status:'en_attente', requestedAt:Date.now()
+    });
+    // Notifie l'admin
+    try{ await firebase.database().ref('notifications').push({ type:'carnet', message:'🎟️ Demande de Carnet Malin — '+(u.prenom||'')+' '+(u.nom||''), ts:Date.now() }); }catch(e){}
+    renderCarnetAttente({prenom:u.prenom});
+  }catch(e){ alert('Erreur : '+(e.message||e)); if(btn) btn.disabled=false; }
+}
+function renderCarnetAttente(r){
+  document.getElementById('carnet-body').innerHTML=
+    '<div style="text-align:center;padding:10px;">'+
+    '<div style="font-size:2.4rem;">⏳</div>'+
+    '<p style="font-size:1.05rem;font-weight:800;color:var(--lavande-dark);margin:8px 0;">Demande enregistrée !</p>'+
+    '<p style="color:var(--text-muted);font-size:.92rem;line-height:1.7;max-width:420px;margin:0 auto;">Nous avons bien reçu votre demande de Carnet Malin. '+
+    '<b>Milou vous recontacte</b> pour le règlement par virement. Dès réception, vos <b>10 nuits</b> seront activées ici même.</p>'+
+    '<p style="font-size:.82rem;color:var(--text-muted);margin-top:14px;">Une question ? <a href="tel:0777234088" style="color:var(--lavande);font-weight:700;">07 77 23 40 88</a></p>'+
+    '</div>';
+}
+function renderCarnetActif(c){
+  var nights=c.nights||10;
+  var used=c.usages?Object.keys(c.usages).length:(c.used||0);
+  var left=Math.max(0,nights-used);
+  var pct=Math.round((used/nights)*100);
+  var usages=c.usages?Object.values(c.usages).sort(function(a,b){return (a.ts||0)-(b.ts||0);}):[];
+  var expTxt=c.expiresAt?_frD(new Date(c.expiresAt).toISOString()):'';
+  var html=
+    '<div style="text-align:center;background:linear-gradient(135deg,#F4F0FA,#FAF6F0);border-radius:16px;padding:22px;margin-bottom:16px;">'+
+    '<div style="font-size:.8rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);font-weight:700;">Nuits restantes</div>'+
+    '<div style="font-family:\'Playfair Display\',serif;font-size:3.4rem;font-weight:800;color:var(--lavande);line-height:1;margin:4px 0;">'+left+'<span style="font-size:1.2rem;color:var(--text-muted);"> / '+nights+'</span></div>'+
+    '<div style="height:10px;background:#e5e0ec;border-radius:20px;overflow:hidden;max-width:280px;margin:12px auto 6px;"><div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--lavande),var(--soleil));"></div></div>'+
+    '<div style="font-size:.8rem;color:var(--text-muted);">'+used+' nuit'+(used>1?'s':'')+' utilisée'+(used>1?'s':'')+(expTxt?' · valable jusqu\'au '+expTxt:'')+'</div>'+
+    '</div>';
+  if(left<=0) html+='<div style="background:#FDECEA;border:1px solid #f5b7b1;border-radius:12px;padding:12px 14px;font-size:.85rem;color:#a5372a;margin-bottom:14px;">Votre carnet est épuisé. Vous pouvez en reprendre un nouveau ! <button class="btn-save" style="font-size:.8rem;margin-top:8px;" onclick="renderCarnetOffre()">🎟️ Reprendre un carnet</button></div>';
+  html+='<h4 style="font-size:.95rem;color:var(--lavande-dark);margin:6px 0 10px;">📖 Historique de mes nuits</h4>';
+  if(usages.length){
+    html+='<div style="display:flex;flex-direction:column;gap:8px;">'+usages.map(function(u,i){
+      return '<div style="display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px 14px;">'+
+        '<span style="font-size:.88rem;color:var(--text);">🌙 Nuit '+(i+1)+(u.date?' — <b>'+_frD(u.date)+'</b>':'')+(u.note?' <span style="color:var(--text-muted);">('+u.note+')</span>':'')+'</span>'+
+        '</div>';
+    }).join('')+'</div>';
+  } else {
+    html+='<p style="text-align:center;color:var(--text-muted);font-size:.85rem;padding:14px;">Aucune nuit utilisée pour l\'instant. Réservez une pension et vos nuits seront décomptées ici 🐾</p>';
+  }
+  html+='<div style="text-align:center;margin-top:16px;"><a href="reservation.html" class="btn-save" style="text-decoration:none;display:inline-flex;font-size:.85rem;">📅 Réserver une nuit</a></div>';
+  document.getElementById('carnet-body').innerHTML=html;
+}
+// Cache des tarifs (pour le prix affiché dans l'offre)
+window.__tarifsCache={pension:25};
+try{ firebase.database().ref('site_config/tarifs').on('value',function(s){ var t=s.val()||{}; if(t.pension) window.__tarifsCache.pension=Number(t.pension); }); }catch(e){}
+
 // ── Chargement profil ───────────────────────────────────────────────────────
 let _currentUser = null;
 let _logoutTimer = null;       // délai de grâce avant de conclure à une déconnexion
@@ -1018,6 +1125,12 @@ firebase.auth().onAuthStateChanged(async user => {
   document.body.classList.add('auth-ready');
   loader.classList.add('hide');
   setTimeout(() => { loader.style.display = 'none'; }, 400);
+
+  // Ouverture directe de l'onglet Carnet Malin (lien « Je veux mon Carnet Malin »)
+  if (location.hash === '#carnet') {
+    var _cb = [].slice.call(document.querySelectorAll('.dash-tab')).filter(function(b){ return /Carnet/.test(b.textContent); })[0];
+    if (_cb) { showTab('carnet', _cb); loadCarnet(); }
+  }
 
   try {
     const snap = await firebase.database().ref('users/' + user.uid).get();
