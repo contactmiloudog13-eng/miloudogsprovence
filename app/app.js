@@ -150,15 +150,8 @@ const App = (function () {
   }
   function loginGoogle() {
     authMsg('⏳ Connexion Google…');
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    // Sur mobile / PWA installée : la popup Google reste souvent bloquée (et peut
-    // "geler" sans erreur) → on part DIRECTEMENT sur la redirection (fiable).
-    if (isMobile || isStandalone) {
-      auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(_doRedirect).catch(_doRedirect);
-      return false;
-    }
-    // Ordinateur : popup (avec repli redirection si problème)
+    // La POPUP renvoie le résultat directement (sans passer par un stockage
+    // inter-domaines) → elle marche là où la redirection échoue silencieusement.
     auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
       .then(() => auth.signInWithPopup(_googleProvider()))
       .then((res) => {
@@ -173,7 +166,11 @@ const App = (function () {
         if (c.includes('popup-closed-by-user') || c.includes('cancelled-popup-request')) { authMsg(''); return; }
         if (c.includes('operation-not-allowed')) { authMsg('⚠️ Connexion Google non activée dans Firebase.'); return; }
         if (c.includes('unauthorized-domain')) { authMsg('⚠️ Domaine non autorisé pour Google.'); return; }
-        _doRedirect();
+        // Popup bloquée/impossible → dernier recours : la redirection
+        if (c.includes('popup-blocked') || c.includes('popup') || c.includes('operation-not-supported') || c.includes('web-storage')) {
+          _doRedirect(); return;
+        }
+        authMsg('Connexion Google impossible : ' + authError(err));
       });
     return false;
   }

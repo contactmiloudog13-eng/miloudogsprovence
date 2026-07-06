@@ -249,7 +249,7 @@
 
         <form id="reservation-form">
           <input type="hidden" name="access_key" value="5a89e49c-e26e-4e6f-8c5a-5d80a63551d5">
-          <input type="hidden" name="redirect" value="/miloudogsprovence/merci.html">
+          <input type="hidden" name="redirect" value="merci.html">
           <input type="hidden" name="subject" value="🐾 Nouvelle réservation – Milou Dogs Provence">
           <input type="hidden" name="Service" id="hidden-service">
           <input type="hidden" name="Devis" id="hidden-devis">
@@ -670,7 +670,8 @@ function _validateStep2() {
     return false;
   }
   const hH = document.getElementById('heure-debut-h');
-  if (!hH.value) { hH.style.borderColor = '#c0392b'; err = true; }
+  // En Pack Duo, l'heure d'arrivée du chien n'est pas bloquante (à caler ensemble)
+  if (!hH.value && !window.__packDuo) { hH.style.borderColor = '#c0392b'; err = true; }
   else hH.style.borderColor = '';
   // Date & heure de fin obligatoires dès que la section de fin est affichée
   let errFin = false;
@@ -1161,6 +1162,9 @@ function visiteRecalc(){
   v.unit=document.getElementById('visite-unit').value||'jour';
   v.start=document.getElementById('visite-start').value||'';
   v.end=document.getElementById('visite-end').value||'';
+  // La date de fin ne peut pas être avant la date de début
+  var _ve=document.getElementById('visite-end');
+  if(v.start){ _ve.min=v.start; if(v.end && v.end<v.start){ _ve.value=v.start; v.end=v.start; } }
   var days=_daysBetween(v.start,v.end);
   v.days=days;
   if(v.unit==='jour'){
@@ -1180,11 +1184,13 @@ function visiteRecalc(){
       sum.innerHTML='📅 Du <b>'+_frDate(v.start)+'</b> au <b>'+_frDate(v.end)+'</b> ('+days+' jour'+(days>1?'s':'')+')<br>🔁 '+v.freq+' passage'+(v.freq>1?'s':'')+' '+per+' → <b>'+v.passages+' passage'+(v.passages>1?'s':'')+' au total</b>';
     } else { sum.style.display='none'; }
   }
-  // On aligne les dates globales de la réservation sur la période de visite
-  if(v.active && !window.__packDuo){
+  // On aligne les dates globales de la réservation sur la période de visite.
+  // Pack Duo : on pré-remplit les dates de pension du chien depuis la période de
+  // visite (sans écraser si déjà saisies) → plus d'erreur "date d'arrivée manquante".
+  if(v.active){
     var dd=document.getElementById('date-debut'), df=document.getElementById('date-fin');
-    if(dd && v.start) dd.value=v.start;
-    if(df && v.end) df.value=v.end;
+    if(dd && v.start && (!window.__packDuo || !dd.value)) dd.value=v.start;
+    if(df && v.end && (!window.__packDuo || !df.value)) df.value=v.end;
   }
   _visiteApplyTravel(); calcPrice();
 }
@@ -1421,6 +1427,11 @@ async function submitReservation() {
 
   const form = document.getElementById('reservation-form');
   const formData = new FormData(form);
+  // Dates au format français (JJ/MM/AAAA) dans l'email au propriétaire
+  try {
+    formData.set('Date arrivée', _frDate(document.getElementById('date-debut').value));
+    var _df = document.getElementById('date-fin'); formData.set('Date départ', _frDate(_df ? _df.value : ''));
+  } catch(e){}
 
   // --- 1. Envoi vers Google Sheets via Apps Script ---
   const hH = document.getElementById('heure-debut-h').value;
@@ -1551,13 +1562,13 @@ async function submitReservation() {
     });
     const w3data = await w3res.json();
     if (w3data.success) {
-      window.location.href = '/miloudogsprovence/merci.html';
+      window.location.href = 'merci.html';
       return;
     }
   } catch(e) { console.warn('Web3Forms error:', e); }
 
   // Si Web3Forms échoue, rediriger quand même (Sheet a reçu)
-  window.location.href = '/miloudogsprovence/merci.html';
+  window.location.href = 'merci.html';
 }
 
 function showAdmin(){document.getElementById('admin').classList.add('visible');document.getElementById('admin').scrollIntoView({behavior:'smooth'});}
@@ -1691,11 +1702,13 @@ function ejsSendReception(data) {
   // Envoie un email au client pour confirmer la réception de sa demande
   return emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TPL_RECUE, {
     to_email   : data.email,
-    to_name    : data.prenom,
+    to_name    : data.prenom,               // prénom pour le « Bonjour … »
+    from_name  : 'Milou Dogs Provence',     // nom d'expéditeur (si le template l'utilise)
+    reply_to   : 'contact.miloudog13@gmail.com',
     chien_nom  : data.chien,
     service    : data.service,
-    date_arrivee : data.dateArrivee,
-    date_depart  : data.dateDepart,
+    date_arrivee : _frDate(data.dateArrivee),   // format FR JJ/MM/AAAA
+    date_depart  : _frDate(data.dateDepart),
   }).catch(function(e){ console.warn('EmailJS erreur:', e); });
 }
 </script>
