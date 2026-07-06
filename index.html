@@ -591,6 +591,43 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
   </div>
 </section>
 <style>@media(max-width:760px){.carnet-grid{grid-template-columns:1fr!important;}}</style>
+
+<!-- ── Application mobile ── -->
+<section id="app-section" style="padding:66px 5% 72px;background:linear-gradient(135deg,#4A3F72 0%,#7B6FA0 100%);position:relative;overflow:hidden;">
+  <div style="max-width:1000px;margin:0 auto;display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center;position:relative;z-index:2;" class="app-grid">
+    <div>
+      <span style="display:inline-block;background:rgba(255,255,255,.15);color:#fff;font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:6px 14px;border-radius:20px;margin-bottom:16px;">📱 Nouveau · Gratuit</span>
+      <h2 style="font-family:'Playfair Display',serif;color:#fff;font-size:2.1rem;line-height:1.15;margin:0 0 14px;">L'application Milou Dogs</h2>
+      <p style="color:rgba(255,255,255,.82);font-size:1rem;line-height:1.7;margin:0 0 22px;">Réservez en 2 minutes, gérez les profils de vos animaux, suivez leur séjour en photos et recevez leurs petites attentions — le tout dans votre poche.</p>
+      <ul style="list-style:none;padding:0;margin:0 0 28px;display:grid;gap:10px;">
+        <li style="display:flex;gap:10px;color:#fff;font-size:.95rem;"><span>📅</span> Réservation & devis instantané</li>
+        <li style="display:flex;gap:10px;color:#fff;font-size:.95rem;"><span>🐾</span> Profils, carnet de santé & photos</li>
+        <li style="display:flex;gap:10px;color:#fff;font-size:.95rem;"><span>📸</span> Journal de séjour & galerie</li>
+        <li style="display:flex;gap:10px;color:#fff;font-size:.95rem;"><span>🎂</span> Rappels d'anniversaire de vos compagnons</li>
+      </ul>
+      <a href="app/" style="display:inline-flex;align-items:center;gap:10px;background:var(--soleil);color:#2C2A26;font-weight:800;font-size:1.02rem;padding:15px 30px;border-radius:30px;text-decoration:none;box-shadow:0 10px 30px rgba(0,0,0,.25);">📲 Ouvrir l'application</a>
+      <p style="color:rgba(255,255,255,.6);font-size:.8rem;margin-top:14px;">Installable sur iPhone & Android — aucun téléchargement sur un store.</p>
+    </div>
+    <div style="text-align:center;" class="app-mockup">
+      <div style="display:inline-block;background:#2C2A26;border-radius:36px;padding:12px;box-shadow:0 24px 60px rgba(0,0,0,.35);">
+        <div style="width:210px;height:400px;border-radius:26px;background:var(--cream);overflow:hidden;display:flex;flex-direction:column;">
+          <div style="background:#4A3F72;color:#fff;padding:16px 14px 14px;text-align:left;">
+            <div style="font-size:.7rem;opacity:.8;">Bonjour 👋</div>
+            <div style="font-family:'Playfair Display',serif;font-size:1.05rem;">Votre espace 🐾</div>
+          </div>
+          <div style="padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div style="background:#fff;border-radius:12px;padding:12px 8px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06);"><div style="font-size:1.4rem;">📅</div><div style="font-size:.62rem;font-weight:700;color:var(--lavande-dark);margin-top:4px;">Réserver</div></div>
+            <div style="background:#fff;border-radius:12px;padding:12px 8px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06);"><div style="font-size:1.4rem;">🐾</div><div style="font-size:.62rem;font-weight:700;color:var(--lavande-dark);margin-top:4px;">Mes animaux</div></div>
+            <div style="background:#fff;border-radius:12px;padding:12px 8px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06);"><div style="font-size:1.4rem;">📸</div><div style="font-size:.62rem;font-weight:700;color:var(--lavande-dark);margin-top:4px;">Galerie</div></div>
+            <div style="background:#fff;border-radius:12px;padding:12px 8px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06);"><div style="font-size:1.4rem;">⭐</div><div style="font-size:.62rem;font-weight:700;color:var(--lavande-dark);margin-top:4px;">Avis</div></div>
+          </div>
+          <div style="margin:2px 12px;background:var(--soleil);border-radius:12px;padding:10px;text-align:center;color:#2C2A26;font-size:.72rem;font-weight:800;">🎂 Joyeux anniversaire Rex !</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<style>@media(max-width:760px){#app-section .app-grid{grid-template-columns:1fr!important;}#app-section .app-mockup{display:none;}}</style>
 <script>
 function simuCalc(){
   var nuits=parseInt(document.getElementById('simu-nuits').value)||1;
