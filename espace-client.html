@@ -1076,7 +1076,7 @@ function renderCarnetActif(c){
   } else {
     html+='<p style="text-align:center;color:var(--text-muted);font-size:.85rem;padding:14px;">Aucune nuit utilisée pour l\'instant. Réservez une pension et vos nuits seront décomptées ici 🐾</p>';
   }
-  html+='<div style="text-align:center;margin-top:16px;"><a href="reservation.html" class="btn-save" style="text-decoration:none;display:inline-flex;font-size:.85rem;">📅 Réserver une nuit</a></div>';
+  if(left>0) html+='<div style="text-align:center;margin-top:16px;"><a href="reservation.html?carnet=1" class="btn-save" style="text-decoration:none;display:inline-flex;font-size:.85rem;">📅 Réserver une nuit (Carnet Malin)</a></div>';
   document.getElementById('carnet-body').innerHTML=html;
 }
 // Cache des tarifs (pour le prix affiché dans l'offre)

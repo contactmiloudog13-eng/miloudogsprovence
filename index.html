@@ -1192,10 +1192,9 @@ document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeLigh
 }
 </style>
 <script>
-/* Réordonne l'accueil sur TÉLÉPHONE : services → comment ça marche → carnet → vidéo → vs chenil */
+/* Réordonne l'accueil (mobile ET ordi) : services → comment ça marche → carnet → vidéo → vs chenil */
 (function(){
   try{
-    if(!window.matchMedia('(max-width:760px)').matches) return;
     var hero=document.getElementById('hero'); if(!hero||!hero.parentNode) return;
     ['services-mini','hiw-home','carnet-section','video-section','comparaison-home'].reduce(function(anchor,id){
       var el=document.getElementById(id);

@@ -1286,6 +1286,7 @@ function calcPrice(){
   else if(d2&&hFH>8&&hFH<=13) extraDemi=1;
 
   let lines=[],total=0;
+  let _pensionNights=0,_pensionNightPrice=0;
 
   tags.forEach(t=>{
     if(t.dataset.visite==='1') return; // géré séparément (panneau visite)
@@ -1293,6 +1294,7 @@ function calcPrice(){
     const price=parseInt(t.dataset.price);
     const unit=t.dataset.unit;
     const name=t.textContent.trim();
+    if(unit==='nuit'){ _pensionNights=Math.max(_pensionNights,nuits); _pensionNightPrice=price; }
 
     if(unit==='nuit'){
       // Sans dates : afficher tarif de base
@@ -1363,11 +1365,27 @@ function calcPrice(){
     lines.push('🚗 Récupération à domicile — <small style="color:var(--text-muted);">saisissez votre adresse pour le calcul</small>');
   }
 
+  // ── Carnet Malin : déduction des nuits prépayées ──
+  window.__carnetCovered=0;
+  if(window.__carnet && window.__carnetApply && window.__carnet.left>0 && _pensionNights>0){
+    const covered=Math.min(_pensionNights,window.__carnet.left);
+    const deduction=covered*_pensionNightPrice;
+    window.__carnetCovered=covered;
+    if(covered>0){
+      lines.push('🎟️ <span style="color:#159067;font-weight:700;">Carnet Malin — '+covered+' nuit'+(covered>1?'s':'')+' déduite'+(covered>1?'s':'')+' : −'+deduction+'€</span>');
+      total=Math.max(0,total-deduction);
+      const rem=_pensionNights-covered;
+      if(rem>0) lines.push('<small style="color:var(--text-muted);">'+rem+' nuit'+(rem>1?'s':'')+' au-delà du carnet → à régler ('+(rem*_pensionNightPrice)+'€)</small>');
+      else lines.push('<small style="color:#159067;">✅ Séjour entièrement couvert par votre Carnet Malin</small>');
+    }
+  }
+
   if(!lines.length){box.style.display='none';return;}
   document.getElementById('price-detail').innerHTML=lines.join('<br>');
   let totalLabel='Total : '+total+'€';
+  if(window.__carnetCovered>0) totalLabel+=' <span style="color:#159067;">(Carnet Malin appliqué)</span>';
   if(discount) totalLabel+=' (−'+Math.round(discRate*100)+'% multi-chiens inclus)';
-  document.getElementById('price-total').textContent=totalLabel;
+  document.getElementById('price-total').innerHTML=totalLabel;
   box.style.display='block';
 }
 
@@ -1518,7 +1536,25 @@ async function submitReservation() {
       parrainage: document.getElementById('parrainage').value,
       createdAt : Date.now(),
     };
+    // Carnet Malin : marquer la réservation si des nuits prépayées sont utilisées
+    var _cov=window.__carnetCovered||0;
+    var _cuid=document.getElementById('hidden-userid').value;
+    if(window.__carnet && window.__carnetApply && _cov>0 && _cuid){
+      fbData.carnetMalin={ nuitsDeduites:_cov, uid:_cuid };
+    }
     await firebase.database().ref('reservations').push(fbData);
+
+    // Décompte automatique des nuits du Carnet Malin
+    if(window.__carnet && window.__carnetApply && _cov>0 && _cuid){
+      try{
+        var _cref=firebase.database().ref('carnets/'+_cuid+'/usages');
+        var _dArr=document.getElementById('date-debut').value;
+        for(var _i=0;_i<_cov;_i++){
+          await _cref.push({ date:_dArr, ts:Date.now()+_i, note:'Réservation en ligne' });
+        }
+        window.__carnet.left=Math.max(0,window.__carnet.left-_cov);
+      }catch(_ce){ console.warn('Carnet déduction:',_ce); }
+    }
 
     // Sauvegarde profil client indépendamment de la réservation
     try {
@@ -1767,11 +1803,50 @@ firebase.auth().onAuthStateChanged(async user => {
       chien.nom
         ? '🐕 ' + chien.nom + (chien.race ? ' · ' + chien.race : '') + (chien.age ? ' · ' + chien.age : '') + (chien.poids ? ' · ' + chien.poids + ' kg' : '')
         : '🐕 Chien non renseigné — vous pouvez le saisir dans votre espace client';
+    // ── Carnet Malin : charger le solde de nuits ──
+    try{
+      const csnap = await firebase.database().ref('carnets/'+user.uid).get();
+      if(csnap.exists()){
+        const c=csnap.val();
+        if(c.status==='actif'){
+          const nights=c.nights||10;
+          const used=c.usages?Object.keys(c.usages).length:(c.used||0);
+          const left=Math.max(0,nights-used);
+          window.__carnet={uid:user.uid,nights:nights,used:used,left:left};
+          if(left>0) initCarnetMode();
+        }
+      }
+    }catch(e){ console.warn('carnet:',e); }
+
     // Connecté → sauter directement à l'étape 2
     goStep(2);
 
   } catch(e) { console.warn('Erreur pré-remplissage:', e); }
 });
+
+// ── Mode Carnet Malin (arrivée depuis l'espace client) ──────────────────────
+function initCarnetMode(){
+  const c=window.__carnet; if(!c||c.left<=0) return;
+  const params=new URLSearchParams(location.search);
+  window.__carnetApply=true;
+  // Pré-sélectionner la pension à la nuit si on arrive via le bouton Carnet
+  if(params.get('carnet')==='1'){
+    const nuitTag=document.querySelector('.service-tag[data-unit="nuit"]');
+    if(nuitTag && !nuitTag.classList.contains('active') && typeof toggleTag==='function'){
+      try{ toggleTag(nuitTag); }catch(e){ nuitTag.click&&nuitTag.click(); }
+    }
+  }
+  // Bandeau d'information
+  const box=document.getElementById('price-box');
+  if(box && !document.getElementById('carnet-banner')){
+    const b=document.createElement('div');
+    b.id='carnet-banner';
+    b.style.cssText='background:linear-gradient(135deg,#F4F0FA,#FAF6F0);border:1px solid #d8cdec;border-radius:12px;padding:12px 14px;margin:12px 0;font-size:.9rem;';
+    b.innerHTML='🎟️ <b>Carnet Malin actif</b> — '+c.left+' nuit'+(c.left>1?'s':'')+' prépayée'+(c.left>1?'s':'')+'.<br><label style="display:flex;align-items:center;gap:8px;margin-top:8px;cursor:pointer;"><input type="checkbox" id="carnet-use" checked onchange="window.__carnetApply=this.checked;calcPrice();"> Utiliser mon Carnet Malin pour cette réservation</label>';
+    box.parentNode.insertBefore(b,box);
+  }
+  if(typeof calcPrice==='function') calcPrice();
+}
 </script>
 
 <script src="chatbot.js"></script>
