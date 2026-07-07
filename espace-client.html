@@ -498,6 +498,9 @@ body:not(.auth-ready) footer{visibility:hidden;}
     <!-- Annonces publiées par Milou Dogs (remplie dynamiquement) -->
     <div id="annonces-zone"></div>
 
+    <!-- Nouvelles du chien (journal de séjour) — bandeau visible tous onglets -->
+    <div id="journal-alert-zone"></div>
+
     <!-- Onglets -->
     <div class="dash-tabs">
       <button class="dash-tab active" onclick="showTab('profil',this)">
@@ -1988,11 +1991,40 @@ function loadReservations(user) {
 
 // ── Journal de séjour : photos + notes publiées par la pension pendant la garde ──
 function loadJournals(list) {
+  let _jrTotal = 0, _jrLast = 0, _jrDog = '';
+  const _jrPending = list.filter(r => (r.statut || '') === 'confirmé').length;
+  let _jrDone = 0;
+  const _renderJrAlert = () => {
+    const zone = document.getElementById('journal-alert-zone');
+    if (!zone) return;
+    if (!_jrTotal) { zone.innerHTML = ''; return; }
+    let read = 0;
+    try { read = parseInt(localStorage.getItem('mdp_jr_last') || '0', 10) || 0; } catch(e) {}
+    const isNew = _jrLast > read;
+    zone.innerHTML = `<div onclick="showTab('reservations',document.getElementById('tab-resa'));(function(){var t=document.getElementById('tab-resa');if(t){document.querySelectorAll('.dash-tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');}})();this.querySelector('.jr-al-new')&&this.querySelector('.jr-al-new').remove();"
+      style="cursor:pointer;background:linear-gradient(135deg,#FFF6E3,#FFEFC9);border:1.5px solid #E8A84C;border-radius:16px;padding:15px 18px;margin-bottom:12px;box-shadow:0 4px 14px rgba(232,168,76,.15);position:relative;">
+      ${isNew ? '<span class="jr-al-new" style="position:absolute;top:12px;right:14px;background:#E8A84C;color:#3a2400;font-size:.66rem;font-weight:800;padding:2px 9px;border-radius:20px;letter-spacing:.4px;">NOUVEAU</span>' : ''}
+      <div style="font-size:.72rem;color:#a07830;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">📔 Nouvelles de votre compagnon</div>
+      <div style="font-size:1rem;font-weight:800;color:#8B6020;padding-right:70px;">Milou Dogs a partagé ${_jrTotal} moment${_jrTotal>1?'s':''}${_jrDog?' de '+_jrDog:''} 🐾</div>
+      <div style="font-size:.85rem;color:#6a5220;margin-top:4px;">Touchez ici pour voir les photos et notes dans « Mes réservations ».</div>
+    </div>`;
+    const dot = document.getElementById('resa-notif-dot');
+    if (dot && isNew) dot.style.display = 'inline-block';
+    try { localStorage.setItem('mdp_jr_last', String(_jrLast)); } catch(e) {}
+  };
+  if (!_jrPending) { _renderJrAlert(); }
   list.forEach(r => {
     if ((r.statut || '') !== 'confirmé') return;
     firebase.database().ref('sejour_journal/' + r.id).orderByChild('ts').once('value').then(snap => {
       const entries = [];
       snap.forEach(c => { entries.push(c.val()); });
+      _jrDone++;
+      if (entries.length) {
+        _jrTotal += entries.length;
+        entries.forEach(e => { if ((e.ts||0) > _jrLast) _jrLast = e.ts||0; });
+        if (r.chien && r.chien.nom) _jrDog = r.chien.nom;
+      }
+      if (_jrDone >= _jrPending) _renderJrAlert();
       const box = document.getElementById('jr-' + r.id);
       if (!box || !entries.length) return;
       entries.reverse();
@@ -2006,7 +2038,7 @@ function loadJournals(list) {
             ${e.note ? `<p>${e.note}</p>` : ''}
           </div>`;
         }).join('');
-    }).catch(() => {});
+    }).catch(() => { _jrDone++; if (_jrDone >= _jrPending) _renderJrAlert(); });
   });
 }
 function openJournalPhoto(url) {
