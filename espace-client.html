@@ -998,8 +998,10 @@ function loadCarnet(){
   _carnetRef=db.ref('carnets/'+uid);
   _carnetRef.on('value',function(s){
     var c=s.val();
-    if(c){ renderCarnetActif(c); return; }
-    // Pas de carnet actif → on regarde s'il y a une demande en attente
+    var left = c ? ((c.nights||10) - (c.usages?Object.keys(c.usages).length:(c.used||0))) : 0;
+    // Carnet actif AVEC des jours restants → tableau de bord du carnet
+    if(c && c.status==='actif' && left>0){ renderCarnetActif(c); return; }
+    // Carnet épuisé ou archivé → on repropose l'offre (le carnet est archivé)
     db.ref('carnet_requests/'+uid).once('value').then(function(rs){
       var r=rs.val();
       if(r && r.status==='en_attente') renderCarnetAttente(r);
