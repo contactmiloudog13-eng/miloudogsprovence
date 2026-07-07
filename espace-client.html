@@ -1009,21 +1009,51 @@ function loadCarnet(){
 }
 function renderCarnetOffre(){
   var pension=(window.__tarifsCache&&window.__tarifsCache.pension)||25;
-  var full=pension*10, prix=Math.round(full*0.9);
+  var full=pension*10, prix=Math.round(full*0.9), econ=full-prix;
+  var unit=(prix/10).toFixed(2).replace('.',',');
+  var av=[
+    ['⭐','Priorité sur les places','Titulaires prioritaires : vos dates sont réservées en premier, même en période chargée (vacances, ponts).'],
+    ['🌙','10 jours prépayés','Valables en pension de nuit <b>ou</b> en garderie de jour — vous choisissez.'],
+    ['💸',''+econ+'€ d\'économie','Payez <b>'+prix+'€</b> au lieu de <s>'+full+'€</s>, soit <b>'+unit+'€ le jour</b>.'],
+    ['🗓️','Valable 1 an','Utilisez vos jours quand vous voulez, sans engagement ni date imposée.'],
+    ['🐶','Cumulable multi-chiens','La remise multi-chiens s\'applique en plus sur les jours au-delà du carnet.'],
+    ['⚡','Zéro paperasse','Décompte automatique à chaque réservation, suivi en direct dans cet espace.']
+  ];
+  var avHtml=av.map(function(a){
+    return '<div style="display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px 15px;box-shadow:0 3px 10px rgba(74,63,114,.05);">'+
+      '<div style="font-size:1.5rem;line-height:1;flex-shrink:0;">'+a[0]+'</div>'+
+      '<div><div style="font-weight:800;color:var(--lavande-dark);font-size:.92rem;margin-bottom:2px;">'+a[1]+'</div>'+
+      '<div style="font-size:.82rem;color:var(--text-muted);line-height:1.55;">'+a[2]+'</div></div>'+
+    '</div>';
+  }).join('');
   document.getElementById('carnet-body').innerHTML=
+    // — Bandeau prix premium —
+    '<div style="position:relative;overflow:hidden;text-align:center;background:linear-gradient(135deg,var(--lavande),#9b8ed8);border-radius:20px;padding:26px 20px 24px;margin-bottom:20px;box-shadow:0 16px 40px rgba(74,63,114,.28);">'+
+    '<div style="position:absolute;top:-30px;right:-20px;font-size:7rem;opacity:.12;">🎟️</div>'+
+    '<div style="display:inline-block;background:var(--soleil);color:#5a4a1e;font-weight:800;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:20px;margin-bottom:10px;">⭐ Formule la plus avantageuse</div>'+
+    '<div style="font-family:\'Playfair Display\',serif;font-size:1.55rem;font-weight:800;color:#fff;line-height:1.2;">Le Carnet Malin</div>'+
+    '<div style="color:rgba(255,255,255,.9);font-size:.9rem;margin:4px 0 12px;">10 jours de garde prépayés</div>'+
+    '<div style="display:flex;align-items:baseline;justify-content:center;gap:8px;">'+
+    '<span style="font-family:\'Playfair Display\',serif;font-size:3rem;font-weight:800;color:#fff;line-height:1;">'+prix+'€</span>'+
+    '<span style="color:rgba(255,255,255,.75);text-decoration:line-through;font-size:1.1rem;">'+full+'€</span>'+
+    '</div>'+
+    '<div style="color:#fff;font-weight:700;font-size:.9rem;margin-top:6px;">💸 '+econ+'€ d\'économie · '+unit+'€ le jour</div>'+
+    '</div>'+
+    // — Avantages —
+    '<h4 style="font-size:1rem;color:var(--lavande-dark);margin:0 0 12px;text-align:center;">Pourquoi c\'est le bon plan 🐾</h4>'+
+    '<div style="display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:20px;">'+avHtml+'</div>'+
+    // — Paiement —
+    '<div style="background:linear-gradient(135deg,#F4F0FA,#FAF6F0);border-radius:16px;padding:18px;margin-bottom:18px;">'+
+    '<div style="font-weight:800;color:var(--lavande-dark);font-size:.92rem;margin-bottom:10px;text-align:center;">💳 3 façons de régler, au choix</div>'+
+    '<div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;">'+
+    '<div style="flex:1;min-width:120px;text-align:center;background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 8px;"><div style="font-size:1.4rem;">🏦</div><div style="font-weight:700;font-size:.85rem;color:var(--text);">Virement</div><div style="font-size:.74rem;color:var(--text-muted);">IBAN envoyé par Milou</div></div>'+
+    '<div style="flex:1;min-width:120px;text-align:center;background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 8px;"><div style="font-size:1.4rem;">📲</div><div style="font-weight:700;font-size:.85rem;color:var(--text);">Wero</div><div style="font-size:.74rem;color:var(--text-muted);">Paiement mobile instantané</div></div>'+
+    '<div style="flex:1;min-width:120px;text-align:center;background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 8px;"><div style="font-size:1.4rem;">💶</div><div style="font-weight:700;font-size:.85rem;color:var(--text);">Espèces</div><div style="font-size:.74rem;color:var(--text-muted);">Directement sur place</div></div>'+
+    '</div></div>'+
+    // — CTA —
     '<div style="text-align:center;">'+
-    '<div style="font-size:2.6rem;">🎟️</div>'+
-    '<p style="font-size:1.05rem;font-weight:800;color:var(--lavande-dark);margin:8px 0 4px;">10 nuits de pension prépayées</p>'+
-    '<p style="color:var(--text-muted);font-size:.9rem;line-height:1.7;max-width:440px;margin:0 auto 14px;">Payez une fois, utilisez vos 10 nuits quand vous voulez sur 1 an. '+
-    '<b style="color:var(--lavande-dark);">'+prix+'€</b> au lieu de <s>'+full+'€</s> — soit '+(prix/10).toFixed(2).replace('.',',')+'€ la nuit.</p>'+
-    '<ul style="list-style:none;padding:0;max-width:360px;margin:0 auto 18px;text-align:left;font-size:.88rem;color:var(--text);">'+
-    '<li style="padding:5px 0;">✓ 10 nuits à utiliser quand vous voulez</li>'+
-    '<li style="padding:5px 0;">✓ Valables 1 an, sans engagement</li>'+
-    '<li style="padding:5px 0;">✓ Cumulable avec la réduction multi-chiens</li>'+
-    '<li style="padding:5px 0;">✓ Ferme et définitif une fois réglé (pas de remboursement)</li>'+
-    '</ul>'+
-    '<button class="btn-save" onclick="orderCarnet('+prix+')" style="font-size:.95rem;">🎟️ Commander mon Carnet Malin</button>'+
-    '<p style="font-size:.78rem;color:var(--text-muted);margin-top:12px;">Règlement par virement — Milou vous recontacte pour finaliser.</p>'+
+    '<button class="btn-save" onclick="orderCarnet('+prix+')" style="font-size:1rem;padding:14px 28px;">🎟️ Je commande mon Carnet Malin</button>'+
+    '<p style="font-size:.78rem;color:var(--text-muted);margin-top:12px;line-height:1.6;">Milou vous recontacte pour choisir votre mode de paiement.<br>Ferme et définitif une fois réglé (pas de remboursement).</p>'+
     '</div>';
 }
 async function orderCarnet(prix){
@@ -1044,11 +1074,15 @@ async function orderCarnet(prix){
 function renderCarnetAttente(r){
   document.getElementById('carnet-body').innerHTML=
     '<div style="text-align:center;padding:10px;">'+
-    '<div style="font-size:2.4rem;">⏳</div>'+
-    '<p style="font-size:1.05rem;font-weight:800;color:var(--lavande-dark);margin:8px 0;">Demande enregistrée !</p>'+
-    '<p style="color:var(--text-muted);font-size:.92rem;line-height:1.7;max-width:420px;margin:0 auto;">Nous avons bien reçu votre demande de Carnet Malin. '+
-    '<b>Milou vous recontacte</b> pour le règlement par virement. Dès réception, vos <b>10 nuits</b> seront activées ici même.</p>'+
-    '<p style="font-size:.82rem;color:var(--text-muted);margin-top:14px;">Une question ? <a href="tel:0777234088" style="color:var(--lavande);font-weight:700;">07 77 23 40 88</a></p>'+
+    '<div style="font-size:2.6rem;">⏳</div>'+
+    '<p style="font-size:1.1rem;font-weight:800;color:var(--lavande-dark);margin:8px 0;">Demande enregistrée '+(r&&r.prenom?', '+r.prenom:'')+' !</p>'+
+    '<p style="color:var(--text-muted);font-size:.92rem;line-height:1.7;max-width:420px;margin:0 auto 16px;">Nous avons bien reçu votre demande de Carnet Malin. '+
+    '<b>Milou vous recontacte</b> pour finaliser le règlement. Dès réception, vos <b>10 jours</b> seront activés ici même.</p>'+
+    '<div style="background:linear-gradient(135deg,#F4F0FA,#FAF6F0);border-radius:14px;padding:14px 16px;max-width:420px;margin:0 auto 14px;text-align:left;">'+
+    '<div style="font-weight:800;color:var(--lavande-dark);font-size:.88rem;margin-bottom:8px;">💳 Vous pourrez régler :</div>'+
+    '<div style="font-size:.86rem;color:var(--text);line-height:1.9;">🏦 par <b>virement</b> (IBAN transmis par Milou)<br>📲 par <b>Wero</b> (paiement mobile)<br>💶 en <b>espèces</b>, directement sur place</div>'+
+    '</div>'+
+    '<p style="font-size:.82rem;color:var(--text-muted);margin-top:8px;">Une question ? <a href="tel:0777234088" style="color:var(--lavande);font-weight:700;">07 77 23 40 88</a></p>'+
     '</div>';
 }
 function renderCarnetActif(c){
@@ -1060,7 +1094,7 @@ function renderCarnetActif(c){
   var expTxt=c.expiresAt?_frD(new Date(c.expiresAt).toISOString()):'';
   var html=
     '<div style="text-align:center;background:linear-gradient(135deg,#F4F0FA,#FAF6F0);border-radius:16px;padding:22px;margin-bottom:16px;">'+
-    '<div style="font-size:.8rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);font-weight:700;">Nuits restantes</div>'+
+    '<div style="font-size:.8rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);font-weight:700;">Jours restants</div>'+
     '<div style="font-family:\'Playfair Display\',serif;font-size:3.4rem;font-weight:800;color:var(--lavande);line-height:1;margin:4px 0;">'+left+'<span style="font-size:1.2rem;color:var(--text-muted);"> / '+nights+'</span></div>'+
     '<div style="height:10px;background:#e5e0ec;border-radius:20px;overflow:hidden;max-width:280px;margin:12px auto 6px;"><div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--lavande),var(--soleil));"></div></div>'+
     '<div style="font-size:.8rem;color:var(--text-muted);">'+used+' nuit'+(used>1?'s':'')+' utilisée'+(used>1?'s':'')+(expTxt?' · valable jusqu\'au '+expTxt:'')+'</div>'+

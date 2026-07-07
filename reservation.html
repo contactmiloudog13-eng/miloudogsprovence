@@ -1286,7 +1286,7 @@ function calcPrice(){
   else if(d2&&hFH>8&&hFH<=13) extraDemi=1;
 
   let lines=[],total=0;
-  let _pensionNights=0,_pensionNightPrice=0;
+  let _carnetUnitPrices=[],_carnetSubtotal=0; // pour le Carnet Malin (chaque nuit/jour = 1 unité)
 
   tags.forEach(t=>{
     if(t.dataset.visite==='1') return; // géré séparément (panneau visite)
@@ -1294,7 +1294,6 @@ function calcPrice(){
     const price=parseInt(t.dataset.price);
     const unit=t.dataset.unit;
     const name=t.textContent.trim();
-    if(unit==='nuit'){ _pensionNights=Math.max(_pensionNights,nuits); _pensionNightPrice=price; }
 
     if(unit==='nuit'){
       // Sans dates : afficher tarif de base
@@ -1320,6 +1319,11 @@ function calcPrice(){
       if(extraJournee) lines.push(`☀️ Jour de départ — <strong>${subJours}€</strong>`);
       if(extraDemi) lines.push(`🌤️ Demi-journée départ — <strong>${subDemi}€</strong>`);
       total+=subNuits+subJours+subDemi;
+      // Carnet Malin : 1 unité par nuit + 1 unité pour le jour de départ (jour non facturé, décompté du carnet)
+      if(nuits>0){ for(let _n=0;_n<nuits;_n++) _carnetUnitPrices.push(price); }
+      if(extraJournee) _carnetUnitPrices.push(price);
+      if(extraDemi) _carnetUnitPrices.push(price);
+      _carnetSubtotal+=subNuits+subJours+subDemi;
 
     } else if(unit==='jour'){
       const sameday=t.dataset.sameday==='1';
@@ -1328,6 +1332,8 @@ function calcPrice(){
       const label=qty>1?qty+' jours':'1 jour';
       lines.push(`${name} — ${price}€ × ${label} = <strong>${sub}€</strong>`);
       total+=sub;
+      // Carnet Malin : la garderie de jour est aussi éligible (1 unité par jour)
+      if(t.dataset.carnet!=='0'){ for(let _d=0;_d<qty;_d++) _carnetUnitPrices.push(price); _carnetSubtotal+=sub; }
 
     } else {
       const sub=disc(price*nbChiens);
@@ -1365,18 +1371,22 @@ function calcPrice(){
     lines.push('🚗 Récupération à domicile — <small style="color:var(--text-muted);">saisissez votre adresse pour le calcul</small>');
   }
 
-  // ── Carnet Malin : déduction des nuits prépayées ──
+  // ── Carnet Malin : déduction des unités prépayées (nuits + jour de départ + garderie) ──
   window.__carnetCovered=0;
-  if(window.__carnet && window.__carnetApply && window.__carnet.left>0 && _pensionNights>0){
-    const covered=Math.min(_pensionNights,window.__carnet.left);
-    const deduction=covered*_pensionNightPrice;
+  if(window.__carnet && window.__carnetApply && window.__carnet.left>0 && _carnetUnitPrices.length>0){
+    const totalUnits=_carnetUnitPrices.length;
+    const covered=Math.min(totalUnits,window.__carnet.left);
+    // On couvre les unités les plus chères en premier (avantage client)
+    const sorted=_carnetUnitPrices.slice().sort((a,b)=>b-a);
+    let deduction=0; for(let i=0;i<covered;i++) deduction+=sorted[i];
+    deduction=Math.min(deduction,_carnetSubtotal); // jamais plus que le sous-total pension
     window.__carnetCovered=covered;
     if(covered>0){
-      lines.push('🎟️ <span style="color:#159067;font-weight:700;">Carnet Malin — '+covered+' nuit'+(covered>1?'s':'')+' déduite'+(covered>1?'s':'')+' : −'+deduction+'€</span>');
-      total=Math.max(0,total-deduction);
-      const rem=_pensionNights-covered;
-      if(rem>0) lines.push('<small style="color:var(--text-muted);">'+rem+' nuit'+(rem>1?'s':'')+' au-delà du carnet → à régler ('+(rem*_pensionNightPrice)+'€)</small>');
-      else lines.push('<small style="color:#159067;">✅ Séjour entièrement couvert par votre Carnet Malin</small>');
+      lines.push('🎟️ <span style="color:#159067;font-weight:700;">Carnet Malin — '+covered+' jour'+(covered>1?'s':'')+' déduit'+(covered>1?'s':'')+' : −'+deduction+'€</span>');
+      total=Math.max(0,Math.round((total-deduction)*100)/100);
+      const rem=totalUnits-covered;
+      if(rem>0) lines.push('<small style="color:var(--text-muted);">'+rem+' jour'+(rem>1?'s':'')+' au-delà du carnet → à régler</small>');
+      else lines.push('<small style="color:#159067;">✅ Séjour entièrement couvert par votre Carnet Malin (jour de départ compris)</small>');
     }
   }
 
@@ -1842,7 +1852,7 @@ function initCarnetMode(){
     const b=document.createElement('div');
     b.id='carnet-banner';
     b.style.cssText='background:linear-gradient(135deg,#F4F0FA,#FAF6F0);border:1px solid #d8cdec;border-radius:12px;padding:12px 14px;margin:12px 0;font-size:.9rem;';
-    b.innerHTML='🎟️ <b>Carnet Malin actif</b> — '+c.left+' nuit'+(c.left>1?'s':'')+' prépayée'+(c.left>1?'s':'')+'.<br><label style="display:flex;align-items:center;gap:8px;margin-top:8px;cursor:pointer;"><input type="checkbox" id="carnet-use" checked onchange="window.__carnetApply=this.checked;calcPrice();"> Utiliser mon Carnet Malin pour cette réservation</label>';
+    b.innerHTML='🎟️ <b>Carnet Malin actif</b> — '+c.left+' jour'+(c.left>1?'s':'')+' prépayé'+(c.left>1?'s':'')+' (pension ou garderie).<br><label style="display:flex;align-items:center;gap:8px;margin-top:8px;cursor:pointer;"><input type="checkbox" id="carnet-use" checked onchange="window.__carnetApply=this.checked;calcPrice();"> Payer avec mon Carnet Malin</label>';
     box.parentNode.insertBefore(b,box);
   }
   if(typeof calcPrice==='function') calcPrice();
