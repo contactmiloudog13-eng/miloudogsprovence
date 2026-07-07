@@ -495,6 +495,9 @@ body:not(.auth-ready) footer{visibility:hidden;}
     <!-- Zone anniversaire (remplie dynamiquement) -->
     <div id="bday-zone"></div>
 
+    <!-- Annonces publiées par Milou Dogs (remplie dynamiquement) -->
+    <div id="annonces-zone"></div>
+
     <!-- Onglets -->
     <div class="dash-tabs">
       <button class="dash-tab active" onclick="showTab('profil',this)">
@@ -1217,7 +1220,42 @@ firebase.auth().onAuthStateChanged(async user => {
   loadReservations(user);
   loadParrainage(user);
   renderCalendar();
+  loadAnnonces();
 });
+
+// ── Annonces Milou Dogs (publiées depuis l'admin) ───────────────────────────
+function loadAnnonces() {
+  var zone = document.getElementById('annonces-zone');
+  if (!zone) return;
+  firebase.database().ref('announcements').orderByChild('ts').limitToLast(10).on('value', function(snap) {
+    var arr = [];
+    snap.forEach(function(c) { var v = c.val() || {}; v._id = c.key; arr.push(v); });
+    arr.sort(function(a, b) { return (b.ts || 0) - (a.ts || 0); });
+    var read = {};
+    try { read = JSON.parse(localStorage.getItem('mdp_ann_read') || '{}'); } catch(e) {}
+    if (!arr.length) { zone.innerHTML = ''; return; }
+    var h = '';
+    arr.forEach(function(a) {
+      var isNew = !read[a._id];
+      var d = a.ts ? new Date(a.ts).toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'}) : '';
+      var body = (a.body || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      h += '<div style="position:relative;background:linear-gradient(135deg,#f3f0ff,#faf8ff);border:1.5px solid #d9cffb;border-radius:16px;padding:16px 18px;margin-bottom:12px;box-shadow:0 4px 14px rgba(127,119,221,.10);">'
+        + (isNew ? '<span style="position:absolute;top:12px;right:14px;background:#7F77DD;color:#fff;font-size:.66rem;font-weight:800;padding:2px 9px;border-radius:20px;letter-spacing:.4px;">NOUVEAU</span>' : '')
+        + '<div style="font-size:.72rem;color:#8a82c0;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">📢 Message de Milou Dogs</div>'
+        + (a.title ? '<div style="font-size:1.02rem;font-weight:800;color:#3a2f6b;margin-bottom:6px;padding-right:70px;">' + a.title.replace(/</g,'&lt;') + '</div>' : '')
+        + '<div style="font-size:.9rem;color:#4a4470;line-height:1.6;white-space:pre-wrap;">' + body + '</div>'
+        + (d ? '<div style="font-size:.72rem;color:#a29bc8;margin-top:8px;">' + d + '</div>' : '')
+        + '</div>';
+    });
+    zone.innerHTML = h;
+    // Marque toutes les annonces affichées comme lues (au prochain chargement, plus de badge NOUVEAU)
+    try {
+      var nr = {};
+      arr.forEach(function(a) { nr[a._id] = 1; });
+      localStorage.setItem('mdp_ann_read', JSON.stringify(nr));
+    } catch(e) {}
+  });
+}
 
 // ── Mode édition profil ─────────────────────────────────────────────────────
 function enableProfileEdit() {
