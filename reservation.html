@@ -1546,25 +1546,14 @@ async function submitReservation() {
       parrainage: document.getElementById('parrainage').value,
       createdAt : Date.now(),
     };
-    // Carnet Malin : marquer la réservation si des nuits prépayées sont utilisées
+    // Carnet Malin : marquer la réservation SANS décompter (le décompte se fait
+    // à l'acceptation dans l'admin ; annulation = restitution des jours).
     var _cov=window.__carnetCovered||0;
     var _cuid=document.getElementById('hidden-userid').value;
     if(window.__carnet && window.__carnetApply && _cov>0 && _cuid){
-      fbData.carnetMalin={ nuitsDeduites:_cov, uid:_cuid };
+      fbData.carnetMalin={ nuitsDeduites:_cov, uid:_cuid, date:document.getElementById('date-debut').value, applied:false };
     }
     await firebase.database().ref('reservations').push(fbData);
-
-    // Décompte automatique des nuits du Carnet Malin
-    if(window.__carnet && window.__carnetApply && _cov>0 && _cuid){
-      try{
-        var _cref=firebase.database().ref('carnets/'+_cuid+'/usages');
-        var _dArr=document.getElementById('date-debut').value;
-        for(var _i=0;_i<_cov;_i++){
-          await _cref.push({ date:_dArr, ts:Date.now()+_i, note:'Réservation en ligne' });
-        }
-        window.__carnet.left=Math.max(0,window.__carnet.left-_cov);
-      }catch(_ce){ console.warn('Carnet déduction:',_ce); }
-    }
 
     // Sauvegarde profil client indépendamment de la réservation
     try {
