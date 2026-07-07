@@ -1010,12 +1010,15 @@ function loadCarnet(){
   });
 }
 function renderCarnetOffre(){
-  var pension=(window.__tarifsCache&&window.__tarifsCache.pension)||25;
-  var full=pension*10, prix=Math.round(full*0.9), econ=full-prix;
-  var unit=(prix/10).toFixed(2).replace('.',',');
+  var tc=window.__tarifsCache||{};
+  var pension=tc.pension||25;
+  var nights=tc.carnetNights||10;
+  var remise=(tc.carnetRemise!=null?tc.carnetRemise:10);
+  var full=pension*nights, prix=Math.round(full*(1-remise/100)), econ=full-prix;
+  var unit=(prix/nights).toFixed(2).replace('.',',');
   var av=[
     ['⭐','Priorité sur les places','Titulaires prioritaires : vos dates sont réservées en premier, même en période chargée (vacances, ponts).'],
-    ['🌙','10 jours prépayés','Valables en pension de nuit <b>ou</b> en garderie de jour — vous choisissez.'],
+    ['🌙',nights+' jours prépayés','Valables en pension de nuit <b>ou</b> en garderie de jour — vous choisissez.'],
     ['💸',''+econ+'€ d\'économie','Payez <b>'+prix+'€</b> au lieu de <s>'+full+'€</s>, soit <b>'+unit+'€ le jour</b>.'],
     ['🗓️','Valable 1 an','Utilisez vos jours quand vous voulez, sans engagement ni date imposée.'],
     ['🐶','Cumulable multi-chiens','La remise multi-chiens s\'applique en plus sur les jours au-delà du carnet.'],
@@ -1125,8 +1128,14 @@ function renderCarnetActif(c){
   document.getElementById('carnet-body').innerHTML=html;
 }
 // Cache des tarifs (pour le prix affiché dans l'offre)
-window.__tarifsCache={pension:25};
-try{ firebase.database().ref('site_config/tarifs').on('value',function(s){ var t=s.val()||{}; if(t.pension) window.__tarifsCache.pension=Number(t.pension); }); }catch(e){}
+window.__tarifsCache={pension:25,carnetNights:10,carnetRemise:10};
+try{ firebase.database().ref('site_config/tarifs').on('value',function(s){ var t=s.val()||{};
+  if(t.pension!=null) window.__tarifsCache.pension=Number(t.pension);
+  if(t.carnetNights!=null) window.__tarifsCache.carnetNights=Number(t.carnetNights);
+  if(t.carnetRemise!=null) window.__tarifsCache.carnetRemise=Number(t.carnetRemise);
+  // Rafraîchir l'offre si elle est affichée
+  var b=document.getElementById('carnet-body'); if(b && b.querySelector('button[onclick^="orderCarnet"]')) renderCarnetOffre();
+}); }catch(e){}
 
 // ── Chargement profil ───────────────────────────────────────────────────────
 let _currentUser = null;
