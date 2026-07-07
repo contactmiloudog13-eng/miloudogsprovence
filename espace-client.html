@@ -1015,6 +1015,23 @@ function loadCarnet(){
     });
   });
 }
+// Affichage INSTANTANÉ de l'offre Carnet Malin quand on arrive via « Je veux mon Carnet Malin »
+// (on n'attend pas la restauration de session Firebase : l'offre est une page marketing).
+(function(){
+  if(location.hash!=='#carnet') return;
+  function boot(){
+    if(window.__carnetBooted) return; window.__carnetBooted=true;
+    var content=document.getElementById('dashboard-content');
+    var loader=document.getElementById('auth-loading');
+    if(content) content.style.display='block';
+    document.body.classList.add('auth-ready');
+    if(loader){ loader.classList.add('hide'); setTimeout(function(){ loader.style.display='none'; },400); }
+    var cb=[].slice.call(document.querySelectorAll('.dash-tab')).filter(function(b){ return /Carnet/.test(b.textContent); })[0];
+    if(cb){ try{ showTab('carnet',cb); }catch(e){} }
+    try{ renderCarnetOffre(); }catch(e){}   // remplacé ensuite par le vrai état si connecté (loadCarnet)
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
+})();
 function renderCarnetOffre(){
   var tc=window.__tarifsCache||{};
   var pension=tc.pension||25;
@@ -1068,7 +1085,7 @@ function renderCarnetOffre(){
     '</div>';
 }
 async function orderCarnet(prix){
-  if(!_currentUser) return;
+  if(!_currentUser){ window.location.href='connexion.html?next='+encodeURIComponent('espace-client.html#carnet'); return; }
   var btn=event&&event.target; if(btn) btn.disabled=true;
   try{
     var s=await firebase.database().ref('users/'+_currentUser.uid).once('value');
@@ -1159,6 +1176,9 @@ firebase.auth().onAuthStateChanged(async user => {
     // redirige. La session sera ré-émise par Firebase juste après.
     if (_hasAuthenticated) return;
 
+    // Page de l'offre Carnet Malin (#carnet) : on laisse le visiteur voir l'offre
+    // sans le rediriger. La connexion n'est demandée qu'au clic sur « Je commande ».
+    if (location.hash === '#carnet') return;
     // Premier chargement sans session → on laisse un court délai (le temps que
     // Firebase restaure la session LOCAL) puis on renvoie vers la connexion.
     if (_logoutTimer) return;
