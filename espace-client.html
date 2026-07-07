@@ -1028,6 +1028,18 @@ function loadCarnet(){
     if(loader){ loader.classList.add('hide'); setTimeout(function(){ loader.style.display='none'; },400); }
     var cb=[].slice.call(document.querySelectorAll('.dash-tab')).filter(function(b){ return /Carnet/.test(b.textContent); })[0];
     if(cb){ try{ showTab('carnet',cb); }catch(e){} }
+    // Mode invité : on ne montre QUE l'offre Carnet (pas de profil/animaux/résa, pas de badge « Compte actif »).
+    if(!(firebase.auth().currentUser)){
+      window.__carnetHiddenTabs=[];
+      [].slice.call(document.querySelectorAll('.dash-tab')).forEach(function(t){
+        if(t!==cb && t.id!=='tab-admin'){ window.__carnetHiddenTabs.push(t); t.style.display='none'; }
+      });
+      var badge=document.querySelector('.welcome-badge'); if(badge) badge.style.display='none';
+      var wname=document.getElementById('welcome-name'); if(wname) wname.textContent='Le Carnet Malin 🎟️';
+      var wmail=document.getElementById('welcome-email'); if(wmail) wmail.textContent='La formule prépayée la plus avantageuse';
+      var av=document.querySelector('.welcome-avatar-wrap'); if(av){ av.style.pointerEvents='none'; av.style.opacity='.7'; }
+      document.body.classList.add('carnet-guest');
+    }
     try{ renderCarnetOffre(); }catch(e){}   // remplacé ensuite par le vrai état si connecté (loadCarnet)
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
@@ -1194,6 +1206,15 @@ firebase.auth().onAuthStateChanged(async user => {
   _hasAuthenticated = true;
   if (_logoutTimer) { clearTimeout(_logoutTimer); _logoutTimer = null; }
   _currentUser = user;
+
+  // Sortie du mode invité Carnet : on réaffiche les onglets et le badge « Compte actif ».
+  if (document.body.classList.contains('carnet-guest')) {
+    document.body.classList.remove('carnet-guest');
+    (window.__carnetHiddenTabs || []).forEach(function(t){ t.style.display = ''; });
+    window.__carnetHiddenTabs = [];
+    var _wb = document.querySelector('.welcome-badge'); if (_wb) _wb.style.display = '';
+    var _av = document.querySelector('.welcome-avatar-wrap'); if (_av) { _av.style.pointerEvents = ''; _av.style.opacity = ''; }
+  }
 
   // ── Onglet Admin visible uniquement pour le propriétaire ──
   if (user.email === 'contact.miloudog13@gmail.com') {
