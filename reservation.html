@@ -1065,8 +1065,10 @@ window.DEPL_FIXE=5; window.DEPL_KM=0.5; window.DEPL_MIRAMAS=10; window.VISITE_SU
 // Correspondance clé admin (vXxx) ⇄ animal du select visite
 var VISITE_KEYMAP={chien:'vChien',chat:'vChat',furet:'vFuret',poules:'vPoules',lapin:'vLapin',rongeur:'vRongeur',oiseau:'vOiseau',tortue:'vTortue',poisson:'vPoisson'};
 // ═══ Tarifs pilotables : lit site_config/tarifs et applique partout (temps réel) ═══
-(function(){
+// (exécuté APRÈS le chargement complet, car les scripts Firebase se chargent en bas de page)
+window.addEventListener('load', function(){
   try{
+    if(!window.firebase || !firebase.database) return;
     firebase.database().ref('site_config/tarifs').on('value', function(s){
       var t=s.val(); if(!t) return;
       // 1) Prix des boutons de service
@@ -1855,5 +1857,3 @@ function initCarnetMode(){
 <script src="effects-extra.js"></script>
 </body>
 </html>
-
-
