@@ -63,10 +63,10 @@
     <h1>Demande envoyée avec succès !</h1>
     <p>Merci pour votre confiance. Je vous recontacte dans les <strong>24h</strong> pour confirmer votre réservation.</p>
     <div class="merci-recap">
-      <h3>📋 La suite se passe en 3 étapes</h3>
+      <h3 id="merci-recap-title">📋 La suite se passe en 3 étapes</h3>
       <div class="merci-step"><div class="merci-step-num">1</div><div><strong>Confirmation sous 24h</strong><br>Je vous rappelle au numéro indiqué pour valider les dates et le service.</div></div>
-      <div class="merci-step"><div class="merci-step-num">2</div><div><strong>Visite de présentation</strong><br>Avant le premier séjour, votre chien vient découvrir les lieux et nous faire connaissance.</div></div>
-      <div class="merci-step"><div class="merci-step-num">3</div><div><strong>Séjour & photos quotidiennes</strong><br>Pendant toute la durée, je vous envoie des nouvelles et photos chaque jour sur WhatsApp.</div></div>
+      <div class="merci-step" id="merci-step-visite"><div class="merci-step-num">2</div><div><strong>Visite de présentation</strong><br>Avant le premier séjour, votre chien vient découvrir les lieux et nous faire connaissance.</div></div>
+      <div class="merci-step"><div class="merci-step-num" id="merci-step-sejour-num">3</div><div><strong>Séjour & photos quotidiennes</strong><br>Pendant toute la durée, je vous envoie des nouvelles et photos chaque jour sur WhatsApp.</div></div>
       <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
         <h3 style="margin-bottom:12px;">🎒 Pensez à apporter</h3>
         <div class="merci-step"><div style="font-size:1.3rem">🦮</div><div><strong>La laisse et le collier</strong></div></div>
@@ -127,6 +127,20 @@ document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
   );
   const btn = document.getElementById('btn-partage');
   if (btn) btn.href = 'https://wa.me/?text=' + msg;
+})();
+
+// Client déjà venu → pas de visite de présentation : on retire l'étape et on renumérote.
+(function(){
+  var returning = '0';
+  try { returning = sessionStorage.getItem('mdp_returning') || '0'; } catch(e){}
+  if (returning === '1') {
+    var v = document.getElementById('merci-step-visite');
+    if (v) v.remove();
+    var num = document.getElementById('merci-step-sejour-num');
+    if (num) num.textContent = '2';
+    var title = document.getElementById('merci-recap-title');
+    if (title) title.textContent = '📋 La suite se passe en 2 étapes';
+  }
 })();
 </script>
 <!-- Firebase SDKs -->

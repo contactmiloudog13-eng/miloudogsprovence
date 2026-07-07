@@ -1562,6 +1562,8 @@ async function submitReservation() {
       const clientRef = firebase.database().ref('clients/' + clientKey);
       const snap = await clientRef.get();
       const existing = snap.val() || {};
+      // Client déjà venu ? (au moins 1 réservation antérieure) → pas de visite de présentation
+      try { sessionStorage.setItem('mdp_returning', ((existing.nbResas || 0) >= 1) ? '1' : '0'); } catch(e){}
       // Mise à jour ou création de la fiche client
       await clientRef.set({
         prenom    : fbData.client.prenom,
