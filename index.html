@@ -567,15 +567,15 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
     </div>
     <div class="carnet-grid" style="display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:center;margin-top:34px;">
       <div style="background:#fff;border:1px solid var(--border);border-radius:24px;padding:34px;box-shadow:0 14px 44px rgba(74,63,114,.12);position:relative;overflow:hidden;">
-        <span style="position:absolute;top:0;right:0;background:linear-gradient(135deg,#F5C84A,#E8A030);color:#1a0e00;font-weight:800;font-size:.8rem;padding:6px 18px;border-bottom-left-radius:16px;">−10 %</span>
-        <div style="font-weight:800;color:var(--lavande-dark);font-size:1.1rem;margin-bottom:6px;">🎟️ 10 nuits de pension</div>
+        <span id="carnet-badge" style="position:absolute;top:0;right:0;background:linear-gradient(135deg,#F5C84A,#E8A030);color:#1a0e00;font-weight:800;font-size:.8rem;padding:6px 18px;border-bottom-left-radius:16px;">−10 %</span>
+        <div style="font-weight:800;color:var(--lavande-dark);font-size:1.1rem;margin-bottom:6px;">🎟️ <span id="carnet-nights-title">10</span> nuits de pension</div>
         <div style="display:flex;align-items:baseline;gap:12px;">
           <span id="carnet-price" style="font-family:'Playfair Display',serif;font-size:2.9rem;color:var(--lavande);font-weight:800;line-height:1;">225€</span>
           <span id="carnet-full" style="text-decoration:line-through;color:var(--text-muted);font-size:1.1rem;">250€</span>
         </div>
         <p style="color:var(--text-muted);font-size:.9rem;margin:8px 0 20px;">soit <b id="carnet-pernight">22,50€</b> la nuit au lieu de <span id="carnet-basenight">25€</span></p>
         <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px;font-size:.94rem;color:var(--text-muted);">
-          <li style="display:flex;gap:10px;"><span style="color:var(--vert);">✓</span> 10 nuits à utiliser <b>quand vous voulez</b></li>
+          <li style="display:flex;gap:10px;"><span style="color:var(--vert);">✓</span> <span id="carnet-nights-li">10</span> nuits à utiliser <b>quand vous voulez</b></li>
           <li style="display:flex;gap:10px;"><span style="color:var(--vert);">✓</span> Valable 1 an · <b>sans engagement</b></li>
           <li style="display:flex;gap:10px;"><span style="color:var(--vert);">✓</span> Cumulable avec la réduction multi-chiens</li>
           <li style="display:flex;gap:10px;"><span style="color:var(--vert);">✓</span> Réglé une fois par virement — plus rien à sortir ensuite</li>
@@ -1159,12 +1159,17 @@ document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeLigh
       if(t.remise2!=null) window.SIMU_REMISE2=Number(t.remise2);
       if(t.remise3!=null) window.SIMU_REMISE3=Number(t.remise3);
       if(typeof simuCalc==='function') try{ simuCalc(); }catch(e){}
-      // Carnet Malin : 10 nuits de pension −10%
+      // Carnet Malin : lit la vraie config admin (nuits + remise pilotables)
       if(t.pension!=null){
-        var pen=Number(t.pension), full=pen*10, price=Math.round(full*0.9), per=Math.round(full*0.9/10*100)/100;
+        var pen=Number(t.pension);
+        var nights=(t.carnetNights!=null?Number(t.carnetNights):10);
+        var remise=(t.carnetRemise!=null?Number(t.carnetRemise):10);
+        var full=pen*nights, price=Math.round(full*(1-remise/100)), per=price/nights;
         var set=function(id,v){var e=document.getElementById(id); if(e) e.textContent=v;};
         set('carnet-full', full+'€'); set('carnet-price', price+'€');
         set('carnet-pernight', per.toFixed(2).replace('.',',')+'€'); set('carnet-basenight', pen+'€');
+        set('carnet-badge', '−'+remise+' %');
+        set('carnet-nights-title', nights); set('carnet-nights-li', nights);
       }
     });
   }catch(e){}

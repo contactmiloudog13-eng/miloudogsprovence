@@ -1037,7 +1037,7 @@ function loadCarnet(){
       var badge=document.querySelector('.welcome-badge'); if(badge) badge.style.display='none';
       var wname=document.getElementById('welcome-name'); if(wname) wname.textContent='Le Carnet Malin 🎟️';
       var wmail=document.getElementById('welcome-email'); if(wmail) wmail.textContent='La formule prépayée la plus avantageuse';
-      var av=document.querySelector('.welcome-avatar-wrap'); if(av){ av.style.pointerEvents='none'; av.style.opacity='.7'; }
+      var av=document.querySelector('.welcome-avatar-wrap'); if(av){ av.style.display='none'; }
       document.body.classList.add('carnet-guest');
     }
     try{ renderCarnetOffre(); }catch(e){}   // remplacé ensuite par le vrai état si connecté (loadCarnet)
@@ -1094,6 +1094,7 @@ function renderCarnetOffre(){
     '<div style="text-align:center;">'+
     '<button class="btn-save" onclick="orderCarnet('+prix+')" style="font-size:1rem;padding:14px 28px;">🎟️ Je commande mon Carnet Malin</button>'+
     '<p style="font-size:.78rem;color:var(--text-muted);margin-top:12px;line-height:1.6;">Milou vous recontacte pour choisir votre mode de paiement.<br>Ferme et définitif une fois réglé (pas de remboursement).</p>'+
+    '<p style="font-size:.72rem;color:var(--text-muted);margin-top:10px;opacity:.85;">🎓 Certifiée ACACED · 🛡️ Assurée RC Pro · ✅ Micro-entreprise déclarée</p>'+
     '</div>';
 }
 async function orderCarnet(prix){
@@ -1213,7 +1214,7 @@ firebase.auth().onAuthStateChanged(async user => {
     (window.__carnetHiddenTabs || []).forEach(function(t){ t.style.display = ''; });
     window.__carnetHiddenTabs = [];
     var _wb = document.querySelector('.welcome-badge'); if (_wb) _wb.style.display = '';
-    var _av = document.querySelector('.welcome-avatar-wrap'); if (_av) { _av.style.pointerEvents = ''; _av.style.opacity = ''; }
+    var _av = document.querySelector('.welcome-avatar-wrap'); if (_av) { _av.style.display = ''; _av.style.pointerEvents = ''; _av.style.opacity = ''; }
   }
 
   // ── Onglet Admin visible uniquement pour le propriétaire ──

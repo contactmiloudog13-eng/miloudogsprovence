@@ -83,6 +83,9 @@
 .vdur-btn{flex:1;padding:11px;border:1.5px solid var(--border);border-radius:10px;background:#fff;color:var(--text-muted);font-family:'Lato',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;transition:all .2s;}
 .vdur-btn:hover{border-color:var(--lavande);}
 .vdur-btn.active{background:var(--lavande);border-color:var(--lavande);color:#fff;}
+.bdur-btn{flex:1;padding:11px;border:1.5px solid var(--border);border-radius:10px;background:#fff;color:var(--text-muted);font-family:'Lato',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;transition:all .2s;}
+.bdur-btn:hover{border-color:var(--lavande);}
+.bdur-btn.active{background:var(--lavande);border-color:var(--lavande);color:#fff;}
 .tag-close{margin-left:6px;font-size:.7rem;opacity:.7;line-height:1;vertical-align:middle;background:rgba(74,63,114,0.15);border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,opacity .2s;}
 .tag-close:hover{background:rgba(74,63,114,0.35);opacity:1;}
 .form-submit{width:100%;padding:16px;background:var(--lavande);color:white;border:none;border-radius:40px;font-family:'Lato',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:all .2s;margin-top:8px;}
@@ -454,6 +457,42 @@
               </div>
               <small id="msg-depart" style="display:none;margin-top:-8px;margin-bottom:14px;background:#FDF3E0;border:1px solid var(--soleil);border-radius:8px;padding:7px 10px;font-size:.78rem;color:#7a5a1a;line-height:1.5;">⏰ <strong>Heure limite de récupération.</strong> Vous pouvez venir avant, mais pas après — merci de respecter ce créneau ❤️</small>
             </div>
+            <!-- Balades pendant le séjour (pension) -->
+            <div class="addon-card" id="balade-card" style="display:none;">
+              <label class="addon-check">
+                <input type="checkbox" id="balade-on" onchange="baladeToggle(this)">
+                <span class="ac-txt">
+                  <span class="addon-title">🦮 Ajouter des balades pendant le séjour</span>
+                  <span class="addon-sub">Une sortie rien que pour lui pendant sa pension. <b>30 min = 6€</b> · <b>45 min = 9€</b> la balade.</span>
+                </span>
+              </label>
+              <div id="balade-panel" class="addon-panel" style="display:none;">
+                <label class="addon-flabel">Durée de la balade</label>
+                <div class="vdur-row">
+                  <button type="button" class="bdur-btn active" data-min="30" data-price="6" onclick="baladeSetDur(30)">30 min — 6€</button>
+                  <button type="button" class="bdur-btn" data-min="45" data-price="9" onclick="baladeSetDur(45)">45 min — 9€</button>
+                </div>
+                <label class="addon-flabel" style="margin-top:12px;">Combien de balades ?</label>
+                <div class="addon-row">
+                  <div>
+                    <select id="balade-freq" class="addon-select" onchange="calcPrice()">
+                      <option value="1">1 balade</option>
+                      <option value="2">2 balades</option>
+                      <option value="3">3 balades</option>
+                      <option value="4">4 balades</option>
+                    </select>
+                  </div>
+                  <div>
+                    <select id="balade-unit" class="addon-select" onchange="calcPrice()">
+                      <option value="jour">par jour</option>
+                      <option value="semaine">par semaine</option>
+                    </select>
+                  </div>
+                </div>
+                <div id="balade-summary" style="display:none;background:var(--lavande-light);border-radius:10px;padding:10px 12px;margin-top:12px;font-size:.85rem;color:var(--lavande-dark);font-weight:700;line-height:1.5;"></div>
+              </div>
+            </div>
+
             <!-- Disponibilités en direct (publiées depuis l'admin) -->
             <details id="dispo-cal" style="background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:12px 16px;margin:2px 0 14px;">
               <summary style="cursor:pointer;font-weight:800;font-size:.9rem;color:var(--lavande-dark);list-style-position:inside;">📅 Voir les disponibilités en direct</summary>
@@ -1001,6 +1040,20 @@ var VISITE_ANIMALS={
   tortue:{n:'🐢 Tortue / reptile',p:10}, poisson:{n:'🐠 Poissons (aquarium)',p:8}
 };
 window.__visite={active:false,animal:'chien',animalBase:15,animalLabel:'🐶 Chien',dur:30,price:15,freq:1,unit:'jour',start:'',end:'',days:1,passages:1,travelDays:1,km:null,city:'',postcode:'',address:'',coords:null,travelPerDay:0,travelTotal:0};
+// ── Balades pendant le séjour (pension) ──
+window.__balade={active:false,dur:30,price:6,freq:1,unit:'jour',count:0,total:0};
+function baladeToggle(cb){
+  window.__balade.active=cb.checked;
+  var p=document.getElementById('balade-panel'); if(p) p.style.display=cb.checked?'':'none';
+  var c=document.getElementById('balade-card'); if(c) c.classList.toggle('checked',cb.checked);
+  calcPrice();
+}
+function baladeSetDur(min){
+  window.__balade.dur=min;
+  window.__balade.price=(min===45?9:6);
+  [].slice.call(document.querySelectorAll('#balade-panel .bdur-btn')).forEach(function(b){ b.classList.toggle('active', parseInt(b.dataset.min)===min); });
+  calcPrice();
+}
 var _vTimer=null,_vFeats=[];
 
 function visiteSetAnimal(){
@@ -1065,10 +1118,8 @@ window.DEPL_FIXE=5; window.DEPL_KM=0.5; window.DEPL_MIRAMAS=10; window.VISITE_SU
 // Correspondance clé admin (vXxx) ⇄ animal du select visite
 var VISITE_KEYMAP={chien:'vChien',chat:'vChat',furet:'vFuret',poules:'vPoules',lapin:'vLapin',rongeur:'vRongeur',oiseau:'vOiseau',tortue:'vTortue',poisson:'vPoisson'};
 // ═══ Tarifs pilotables : lit site_config/tarifs et applique partout (temps réel) ═══
-// (exécuté APRÈS le chargement complet, car les scripts Firebase se chargent en bas de page)
-window.addEventListener('load', function(){
+(function(){
   try{
-    if(!window.firebase || !firebase.database) return;
     firebase.database().ref('site_config/tarifs').on('value', function(s){
       var t=s.val(); if(!t) return;
       // 1) Prix des boutons de service
@@ -1372,6 +1423,30 @@ function calcPrice(){
   } else if(window.__pickup && window.__pickup.active){
     lines.push('🚗 Récupération à domicile — <small style="color:var(--text-muted);">saisissez votre adresse pour le calcul</small>');
   }
+
+  // ── Balades pendant le séjour (option, prix à part, non couvert par le Carnet Malin) ──
+  (function(){
+    var isPension = tags.some(function(t){return t.dataset.unit==='nuit';});
+    var card=document.getElementById('balade-card');
+    var on=document.getElementById('balade-on');
+    if(card) card.style.display = isPension ? '' : 'none';
+    if(!isPension && on && on.checked){ on.checked=false; window.__balade.active=false;
+      var pp=document.getElementById('balade-panel'); if(pp) pp.style.display='none'; if(card) card.classList.remove('checked'); }
+    window.__balade.count=0; window.__balade.total=0;
+    var sum=document.getElementById('balade-summary');
+    if(isPension && on && on.checked){
+      var stayDays=Math.max(1,nuits);
+      var bfreq=parseInt(document.getElementById('balade-freq').value)||1;
+      var bunit=document.getElementById('balade-unit').value||'jour';
+      var bdur=window.__balade.dur||30, bprice=window.__balade.price||6;
+      var bcount=(bunit==='jour') ? bfreq*stayDays : bfreq*Math.max(1,Math.ceil(stayDays/7));
+      var bsub=bprice*bcount;
+      window.__balade.count=bcount; window.__balade.total=bsub; window.__balade.freq=bfreq; window.__balade.unit=bunit;
+      lines.push('🦮 Balades ('+bdur+' min) — '+bprice+'€ × '+bcount+' balade'+(bcount>1?'s':'')+' <small style="color:var(--text-muted);">('+bfreq+'× '+(bunit==='jour'?'/jour':'/semaine')+')</small> = <strong>'+bsub+'€</strong>');
+      total=Math.round((total+bsub)*100)/100;
+      if(sum){ sum.style.display='block'; sum.innerHTML='🦮 <b>'+bcount+' balade'+(bcount>1?'s':'')+'</b> sur le séjour ('+bfreq+' '+(bunit==='jour'?'par jour':'par semaine')+', '+bdur+' min) → <b>'+bsub+'€</b>'; }
+    } else if(sum){ sum.style.display='none'; }
+  })();
 
   // ── Carnet Malin : déduction des unités prépayées (nuits + jour de départ + garderie) ──
   window.__carnetCovered=0;
@@ -1857,3 +1932,5 @@ function initCarnetMode(){
 <script src="effects-extra.js"></script>
 </body>
 </html>
+
+
