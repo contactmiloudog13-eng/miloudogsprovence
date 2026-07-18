@@ -633,7 +633,7 @@ function fanInit(photos){
     var d = document.createElement('div');
     d.className = 'fan-card';
     var img = document.createElement('img');
-    img.src = cldOpt(p.url, 700);
+    img.src = cldOpt(p.url, 900);   // MÊME variante que la grille → 1 seul téléchargement par photo
     img.alt = p.caption || 'Chien en pension familiale chez Milou Dogs Provence';
     img.loading = 'lazy';
     d.appendChild(img);

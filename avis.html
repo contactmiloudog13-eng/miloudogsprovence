@@ -390,16 +390,18 @@
 .aw-head h2{font-size:clamp(1.5rem,3.2vw,2.1rem);color:#fff;margin:0;}
 .aw-stage{position:relative;height:400px;display:flex;align-items:center;justify-content:center;overflow:hidden;gap:6px;perspective:300px;}
 .aw-plane{display:flex;flex-direction:row;align-items:center;gap:18px;transform:translateX(-60px) translateZ(-100px) rotateX(20deg) rotateY(-10deg) rotateZ(20deg);}
-.aw-col{width:240px;flex-shrink:0;display:flex;flex-direction:column;gap:18px;}
-.aw-col[data-dir="down"]{animation:awDown 40s linear infinite;}
-.aw-col[data-dir="up"]{animation:awUp 40s linear infinite;}
-.aw-stage:hover .aw-col{animation-play-state:paused;}
-@keyframes awDown{from{transform:translateY(0);}to{transform:translateY(-50%);}}
-@keyframes awUp{from{transform:translateY(-50%);}to{transform:translateY(0);}}
+/* Pas de « gap » ici : la boucle translateY(-50%) doit tomber au pixel près.
+   On utilise margin-bottom sur CHAQUE carte (y compris la dernière). */
+.aw-col{width:240px;flex-shrink:0;display:flex;flex-direction:column;will-change:transform;backface-visibility:hidden;}
+.aw-col[data-dir="down"]{animation:awDown 45s linear infinite;}
+.aw-col[data-dir="up"]{animation:awUp 45s linear infinite;}
+/* --awShift est mesuré en JS (distance exacte entre les 2 copies) : boucle sans saut */
+@keyframes awDown{from{transform:translateY(0);}to{transform:translateY(var(--awShift,-50%));}}
+@keyframes awUp{from{transform:translateY(var(--awShift,-50%));}to{transform:translateY(0);}}
 .aw-fade{position:absolute;left:0;right:0;height:95px;pointer-events:none;z-index:3;}
 .aw-fade-t{top:0;background:linear-gradient(#241F3A,rgba(36,31,58,0));}
 .aw-fade-b{bottom:0;background:linear-gradient(rgba(36,31,58,0),#241F3A);}
-.aw-card{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.11);border-radius:14px;padding:16px;backdrop-filter:blur(2px);box-shadow:0 8px 26px rgba(0,0,0,.28);}
+.aw-card{background:#2E2748;border:1px solid rgba(255,255,255,.11);border-radius:14px;padding:16px;margin-bottom:18px;box-shadow:0 8px 26px rgba(0,0,0,.28);}
 .aw-card .aw-hd{display:flex;align-items:center;gap:10px;margin-bottom:9px;}
 .aw-card .aw-av{width:36px;height:36px;border-radius:50%;background:rgba(245,200,74,.16);color:#F5C84A;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.82rem;flex-shrink:0;}
 .aw-card .aw-nm{font-weight:700;font-size:.9rem;color:#fff;line-height:1.2;}
@@ -717,11 +719,23 @@ function renderAvisWall(){
   src.forEach(function(a,i){ buckets[i % cols.length].push(a); });
   buckets.forEach(function(b,ci){
     if (!b.length) b = src.slice(0,3);
+    b = b.slice(0,7);           // 7 avis max par colonne : boucle déjà longue, DOM léger
     // On duplique la colonne (x2) : le défilement -50% boucle sans couture
     var one = b.map(awCard).join('');
     cols[ci].innerHTML = one + one;
   });
   sec.style.display = '';
+  // Décalage EXACT = distance entre la 1re carte de chaque copie (offsetTop, espace
+  // de mise en page, insensible au transform 3D du parent). Évite le saut de boucle.
+  requestAnimationFrame(function(){
+    cols.forEach(function(col){
+      var cards = col.querySelectorAll('.aw-card');
+      if (cards.length < 2) return;
+      var half = cards.length / 2;
+      var shift = cards[half].offsetTop - cards[0].offsetTop;
+      if (shift > 0) col.style.setProperty('--awShift', (-shift) + 'px');
+    });
+  });
 }
 
 /* ─── Chargement avis Google (admin) ─── */
