@@ -435,18 +435,67 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
 <style>@keyframes urgpulse{0%,100%{opacity:1;}50%{opacity:.3;}}</style>
 
 <!-- ── Bandeau confiance (pro déclarée / ACACED / RC Pro) ── -->
-<section id="trust-bar" style="background:white;border-bottom:1px solid var(--border);padding:18px 5%;">
-  <div style="max-width:1000px;margin:0 auto;display:flex;flex-wrap:wrap;gap:14px 34px;justify-content:center;align-items:center;">
+<section id="trust-bar" style="background:white;border-bottom:1px solid var(--border);padding:18px 0;">
+  <!-- Défilement infini : le groupe de 4 est répété 4× et on translate de -25%
+       (= exactement une largeur de groupe) → boucle sans couture. -->
+  <div id="tb-track">
     <span class="trust-item">✅ <strong>Micro-entreprise déclarée</strong><small>SIRET vérifié</small></span>
     <span class="trust-item">🎓 <strong>Certifiée ACACED</strong><small>Aptitude animaux de compagnie</small></span>
     <span class="trust-item">🛡️ <strong>Assurée RC Pro</strong><small>Responsabilité civile pro</small></span>
-    <span class="trust-item">⭐ <strong>5.0 sur Google</strong><small>41 avis vérifiés</small></span>
+    <span class="trust-item">⭐ <strong>5.0 sur Google</strong><small><span class="tb-avis-n">41</span> avis vérifiés</small></span>
+    <span class="trust-item">✅ <strong>Micro-entreprise déclarée</strong><small>SIRET vérifié</small></span>
+    <span class="trust-item">🎓 <strong>Certifiée ACACED</strong><small>Aptitude animaux de compagnie</small></span>
+    <span class="trust-item">🛡️ <strong>Assurée RC Pro</strong><small>Responsabilité civile pro</small></span>
+    <span class="trust-item">⭐ <strong>5.0 sur Google</strong><small><span class="tb-avis-n">41</span> avis vérifiés</small></span>
+    <span class="trust-item">✅ <strong>Micro-entreprise déclarée</strong><small>SIRET vérifié</small></span>
+    <span class="trust-item">🎓 <strong>Certifiée ACACED</strong><small>Aptitude animaux de compagnie</small></span>
+    <span class="trust-item">🛡️ <strong>Assurée RC Pro</strong><small>Responsabilité civile pro</small></span>
+    <span class="trust-item">⭐ <strong>5.0 sur Google</strong><small><span class="tb-avis-n">41</span> avis vérifiés</small></span>
+    <span class="trust-item">✅ <strong>Micro-entreprise déclarée</strong><small>SIRET vérifié</small></span>
+    <span class="trust-item">🎓 <strong>Certifiée ACACED</strong><small>Aptitude animaux de compagnie</small></span>
+    <span class="trust-item">🛡️ <strong>Assurée RC Pro</strong><small>Responsabilité civile pro</small></span>
+    <span class="trust-item">⭐ <strong>5.0 sur Google</strong><small><span class="tb-avis-n">41</span> avis vérifiés</small></span>
   </div>
 </section>
 <style>
-#trust-bar .trust-item{display:inline-flex;flex-direction:column;line-height:1.25;font-size:.82rem;color:var(--text);align-items:flex-start;position:relative;padding-left:2px;}
+/* ── Défilement infini (même effet que la bande de confiance Milou Compagnie) ── */
+#trust-bar{overflow:hidden;position:relative;}
+#trust-bar::before,#trust-bar::after{content:'';position:absolute;top:0;bottom:0;width:90px;z-index:2;pointer-events:none;}
+#trust-bar::before{left:0;background:linear-gradient(90deg,#fff,rgba(255,255,255,0));}
+#trust-bar::after{right:0;background:linear-gradient(270deg,#fff,rgba(255,255,255,0));}
+#tb-track{display:flex;width:max-content;align-items:center;animation:tbScroll 40s linear infinite;will-change:transform;}
+/* --tbShift = largeur EXACTE d'un groupe, mesurée en JS (évite le trou sur écran large) */
+@keyframes tbScroll{from{transform:translateX(0);}to{transform:translateX(var(--tbShift,-25%));}}
+@media(prefers-reduced-motion:reduce){#tb-track{animation:none;}}
+#trust-bar .trust-item{display:inline-flex;flex-direction:column;line-height:1.25;font-size:.82rem;color:var(--text);align-items:flex-start;position:relative;padding:0 30px;flex-shrink:0;white-space:nowrap;}
 #trust-bar .trust-item strong{font-weight:800;color:var(--lavande-dark);}
 #trust-bar .trust-item small{font-size:.68rem;color:var(--text-muted);font-weight:400;letter-spacing:.01em;}
+</style>
+<script>
+/* Bande de confiance : clone le groupe de 4 jusqu'à couvrir largement l'écran,
+   et fixe le décalage de boucle à la largeur exacte d'un groupe (en px). */
+(function(){
+  var t = document.getElementById('tb-track');
+  if (!t) return;
+  var GROUP = 4;
+  function setup(){
+    var w = 0;
+    for (var i = 0; i < GROUP; i++){ var c = t.children[i]; if (c) w += c.offsetWidth; }
+    if (!w) return;
+    var need = window.innerWidth * 2 + w;
+    var guard = 0;
+    while (t.scrollWidth < need && t.children.length < 160 && guard++ < 40){
+      for (var j = 0; j < GROUP; j++) t.appendChild(t.children[j].cloneNode(true));
+    }
+    t.style.setProperty('--tbShift', (-w) + 'px');
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setup);
+  else setup();
+  var rt;
+  window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(setup, 200); }, {passive:true});
+})();
+</script>
+<style>
 @media(max-width:600px){#trust-bar{padding:14px 5%;}#trust-bar > div{gap:12px 20px;}#trust-bar .trust-item{font-size:.76rem;}#trust-bar .trust-item small{font-size:.64rem;}}
 </style>
 
