@@ -366,6 +366,63 @@
   </div>
 </div>
 
+<!-- ══ MUR D'AVIS 3D (inspiré « 3D Testimonails » — ReUI / 21st.dev) ══ -->
+<section class="avis-wall" id="avis-wall" style="display:none;">
+  <div class="aw-head">
+    <div class="aw-label">🐾 Le mur des familles</div>
+    <h2>Des dizaines d'avis, une seule note&nbsp;: 5,0</h2>
+  </div>
+  <div class="aw-stage" id="aw-stage">
+    <div class="aw-plane">
+      <div class="aw-col" data-dir="down"></div>
+      <div class="aw-col" data-dir="up"></div>
+      <div class="aw-col" data-dir="down"></div>
+    </div>
+    <div class="aw-fade aw-fade-t"></div>
+    <div class="aw-fade aw-fade-b"></div>
+  </div>
+</section>
+<style>
+.avis-wall{background:#f8f6ff;padding:10px 0 44px;}
+.aw-head{text-align:center;max-width:760px;margin:0 auto 26px;padding:0 20px;}
+.aw-label{display:inline-block;background:var(--lavande-light,#E8E4F0);color:var(--lavande-dark,#4A3F72);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:7px 16px;border-radius:30px;margin-bottom:14px;}
+.aw-head h2{font-size:clamp(1.5rem,3.2vw,2.1rem);color:var(--lavande-dark,#4A3F72);margin:0;}
+.aw-stage{position:relative;height:400px;display:flex;align-items:center;justify-content:center;overflow:hidden;gap:6px;perspective:300px;}
+.aw-plane{display:flex;flex-direction:row;align-items:center;gap:18px;transform:translateX(-60px) translateZ(-100px) rotateX(20deg) rotateY(-10deg) rotateZ(20deg);}
+.aw-col{width:240px;flex-shrink:0;display:flex;flex-direction:column;gap:18px;}
+.aw-col[data-dir="down"]{animation:awDown 40s linear infinite;}
+.aw-col[data-dir="up"]{animation:awUp 40s linear infinite;}
+.aw-stage:hover .aw-col{animation-play-state:paused;}
+@keyframes awDown{from{transform:translateY(0);}to{transform:translateY(-50%);}}
+@keyframes awUp{from{transform:translateY(-50%);}to{transform:translateY(0);}}
+.aw-fade{position:absolute;left:0;right:0;height:90px;pointer-events:none;z-index:3;}
+.aw-fade-t{top:0;background:linear-gradient(#f8f6ff,rgba(248,246,255,0));}
+.aw-fade-b{bottom:0;background:linear-gradient(rgba(248,246,255,0),#f8f6ff);}
+.aw-card{background:#fff;border:1px solid var(--border,#E5E0D8);border-radius:14px;padding:16px;box-shadow:0 6px 20px rgba(123,111,160,.08);}
+.aw-card .aw-hd{display:flex;align-items:center;gap:10px;margin-bottom:9px;}
+.aw-card .aw-av{width:36px;height:36px;border-radius:50%;background:var(--lavande-light,#E8E4F0);color:var(--lavande-dark,#4A3F72);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.82rem;flex-shrink:0;}
+.aw-card .aw-nm{font-weight:700;font-size:.9rem;color:var(--text,#2C2A26);line-height:1.2;}
+.aw-card .aw-dt{font-size:.72rem;color:var(--text-muted,#6B6760);}
+.aw-card .aw-st{color:#F5C84A;font-size:.82rem;letter-spacing:1.5px;margin-bottom:7px;}
+.aw-card .aw-tx{font-size:.84rem;line-height:1.6;color:var(--text-muted,#6B6760);margin:0;}
+@media(max-width:900px){
+  .aw-stage{height:340px;}
+  .aw-plane{transform:translateX(-20px) translateZ(-60px) rotateX(14deg) rotateY(-6deg) rotateZ(12deg);gap:14px;}
+  .aw-col{width:210px;}
+  .aw-col:nth-child(3){display:none;}
+}
+@media(max-width:560px){
+  .aw-stage{height:300px;perspective:500px;}
+  .aw-plane{transform:rotateX(8deg) rotateZ(6deg);gap:12px;}
+  .aw-col{width:180px;}
+}
+@media(prefers-reduced-motion:reduce){
+  .aw-col{animation:none!important;}
+  .aw-plane{transform:none;}
+  .aw-stage{height:auto;padding:10px 0;}
+}
+</style>
+
 <!-- ══ CORPS DE PAGE ══ -->
 <main class="avis-page-body">
   <div class="avis-page-inner">
@@ -633,6 +690,39 @@ function observeFade(grid){
   grid.querySelectorAll('.fade-in').forEach(function(el){ obs.observe(el); });
 }
 
+/* ─── Mur d'avis 3D (inspiré « 3D Testimonails » — ReUI / 21st.dev) ─── */
+function awEsc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+function awCard(a){
+  var txt = String(a.texte||'').replace(/\s+/g,' ').trim();
+  if (txt.length > 130) txt = txt.slice(0,130).replace(/\s+\S*$/,'') + '…';
+  return '<div class="aw-card">'
+    + '<div class="aw-hd"><div class="aw-av">' + awEsc(getInitiales(a.nom)) + '</div>'
+    + '<div><div class="aw-nm">' + awEsc(a.nom||'') + '</div>'
+    + '<div class="aw-dt">' + awEsc(a.date||'') + '</div></div></div>'
+    + '<div class="aw-st">' + renderStars(a.note) + '</div>'
+    + '<p class="aw-tx">« ' + awEsc(txt) + ' »</p>'
+    + '</div>';
+}
+function renderAvisWall(){
+  var sec = document.getElementById('avis-wall');
+  if (!sec) return;
+  // On part des avis Google, complétés par ceux de l'espace client
+  var src = (window.GOOGLE_ITEMS||[]).concat(window.CLIENT_ITEMS||[])
+              .filter(function(a){ return a && String(a.texte||'').trim().length > 20; });
+  if (src.length < 3) { sec.style.display = 'none'; return; }   // pas assez → on n'affiche pas
+  var cols = sec.querySelectorAll('.aw-col');
+  // Répartition en round-robin pour que chaque colonne soit variée
+  var buckets = [[],[],[]];
+  src.forEach(function(a,i){ buckets[i % cols.length].push(a); });
+  buckets.forEach(function(b,ci){
+    if (!b.length) b = src.slice(0,3);
+    // On duplique la colonne (x2) : le défilement -50% boucle sans couture
+    var one = b.map(awCard).join('');
+    cols[ci].innerHTML = one + one;
+  });
+  sec.style.display = '';
+}
+
 /* ─── Chargement avis Google (admin) ─── */
 function loadGoogleAvis() {
   firebase.database().ref('google_avis').orderByChild('ts').once('value', snap => {
@@ -660,6 +750,7 @@ function loadGoogleAvis() {
     GOOGLE_ITEMS = items;
     grid.style.display = '';
     renderGoogleGrid();
+    renderAvisWall();
   });
 }
 
@@ -688,6 +779,7 @@ firebase.database().ref('avis').orderByChild('createdAt').on('value', snap => {
   CLIENT_ITEMS = list;
   document.getElementById('fb-avis-section').style.display = 'block';
   renderClientGrid();
+  renderAvisWall();
 });
 
 /* ─── Fade-in général ─── */
