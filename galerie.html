@@ -364,6 +364,51 @@
   }
   </script>
 
+  <!-- ══ ÉVENTAIL DE PHOTOS (portage vanilla de « Card Fan Carousel » — 21st.dev) ══ -->
+  <section class="fan-section" id="fan-section" style="display:none;">
+    <div class="fan-head">
+      <div class="fan-label">📸 En images</div>
+      <h2>Leurs plus beaux moments chez nous</h2>
+    </div>
+    <div class="fan-layout" id="fan-layout"></div>
+    <div class="fan-nav" id="fan-nav">
+      <button class="fan-arrow" id="fan-prev" aria-label="Photo précédente">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="fan-dots" id="fan-dots"></div>
+      <button class="fan-arrow" id="fan-next" aria-label="Photo suivante">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </section>
+  <style>
+  .fan-section{padding:44px 5% 10px;background:#241F3A;position:relative;overflow:hidden;}
+  .fan-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(123,111,160,.35),transparent 62%);pointer-events:none;}
+  .fan-head{text-align:center;max-width:760px;margin:0 auto 10px;position:relative;z-index:2;}
+  .fan-label{display:inline-block;background:rgba(255,255,255,.10);color:#F5C84A;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:7px 16px;border-radius:30px;margin-bottom:14px;border:1px solid rgba(245,200,74,.25);}
+  .fan-head h2{font-size:clamp(1.5rem,3.2vw,2.1rem);color:#fff;margin:0;}
+  .fan-layout{position:relative;width:100%;height:38rem;z-index:2;}
+  .fan-card{position:absolute;left:50%;top:50%;width:16rem;height:22rem;border-radius:18px;overflow:hidden;cursor:zoom-in;opacity:0;
+    box-shadow:0 18px 50px rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.12);background:#2E2748;
+    transform-origin:center center;will-change:transform,opacity;
+    transition:transform .55s cubic-bezier(.34,1.32,.5,1),opacity .45s ease;}
+  .fan-card img{width:100%;height:100%;object-fit:cover;display:block;}
+  .fan-nav{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:18px;position:relative;z-index:3;}
+  .fan-arrow{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;flex-shrink:0;cursor:pointer;
+    border:1.5px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);
+    transition:border-color .3s,color .3s;padding:0;}
+  .fan-arrow:hover{border-color:rgba(255,255,255,.4);color:#fff;}
+  .fan-arrow svg{width:20px;height:20px;}
+  .fan-dots{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:center;max-width:60%;}
+  .fan-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.18);transition:all .3s;}
+  .fan-dot.on{background:#F5C84A;transform:scale(1.35);}
+  @media(max-width:1023px){.fan-layout{height:34rem;}.fan-card{width:14rem;height:19rem;}}
+  @media(max-width:767px){.fan-layout{height:28rem;}.fan-card{width:11.5rem;height:16rem;}}
+  @media(max-width:639px){.fan-layout{height:26rem;}.fan-card{width:10rem;height:14rem;}}
+  @media(max-width:479px){.fan-layout{height:22rem;}.fan-card{width:8.5rem;height:12rem;border-radius:14px;}}
+  @media(prefers-reduced-motion:reduce){.fan-card{transition:opacity .3s ease;}}
+  </style>
+
   <section style="padding:60px 5%;">
     <div class="container">
       <div id="galerie-loading" style="text-align:center;padding:40px;color:#888;font-size:.9rem;">Chargement des photos…</div>
@@ -455,8 +500,167 @@ function cldOpt(u,w){ try{ if(u.indexOf('/upload/')===-1 || u.indexOf('res.cloud
         + (p.caption ? '<div class="gal-caption">' + p.caption + '</div>' : '');
       grid.appendChild(item);
     });
+    fanInit(photos);
   }, function(){ loading.style.display='none'; empty.style.display='block'; });
 })();
+/* ─── Éventail de photos — portage vanilla de « Card Fan Carousel » (21st.dev) ───
+   Mêmes positions/échelles que l'original React+GSAP, mais en transitions CSS
+   (aucune librairie chargée : 0 Ko de plus). */
+var FAN_MAX = 7, FAN_HALF = 3;
+var FAN_POS = [
+  {rot:-21, scale:0.7756, x:-30, y:7.3, z:1},
+  {rot:-14, scale:0.8498, x:-22, y:4.0, z:2},
+  {rot:-7,  scale:0.9346, x:-11, y:1.3, z:3},
+  {rot:0,   scale:1.0,    x:0,   y:0.0, z:10},
+  {rot:7,   scale:0.9346, x:11,  y:1.3, z:3},
+  {rot:14,  scale:0.8498, x:22,  y:4.0, z:2},
+  {rot:21,  scale:0.7756, x:30,  y:7.3, z:1}
+];
+var FAN_CARDS = [], FAN_TOTAL = 0, FAN_CENTER = 0, FAN_PAGED = false;
+var FAN_SEEN = {}, FAN_MOUNTED = false, FAN_BUSY = false, FAN_HOVER = null;
+
+function fanMult(w){ if(w<480) return .28; if(w<640) return .38; if(w<768) return .5; if(w<1024) return .75; return 1; }
+function fanHMult(w){
+  var ideal = w<480?352 : w<640?416 : w<768?448 : w<1024?544 : 608;
+  var avail = window.innerHeight * 0.7;
+  return avail >= ideal ? 1 : avail/ideal;
+}
+function fanCfg(slotCount, slot){
+  if (slotCount >= FAN_MAX) return FAN_POS[slot];
+  var c = slotCount >> 1;
+  var d = slotCount > 1 ? (slot - c)/c : 0, ad = Math.abs(d);
+  return {rot:d*21, scale:1-0.2244*ad*ad, x:d*30, y:ad*ad*7.3, z:10-Math.abs(slot-c)};
+}
+function fanT(x,y,rot,sc){ return 'translate(-50%,-50%) translate('+x+'rem,'+y+'rem) rotate('+rot+'deg) scale('+sc+')'; }
+function fanVisible(center){
+  var map = {};
+  if (!FAN_PAGED){ for (var i=0;i<FAN_TOTAL;i++) map[i]=i; return map; }
+  for (var s=0;s<FAN_MAX;s++) map[((center+s-FAN_HALF)%FAN_TOTAL+FAN_TOTAL)%FAN_TOTAL] = s;
+  return map;
+}
+function fanLayout(dir){
+  var map = fanVisible(FAN_CENTER);
+  var slotCount = FAN_PAGED ? FAN_MAX : FAN_TOTAL;
+  var m = fanMult(window.innerWidth), hm = fanHMult(window.innerWidth);
+  var first = !FAN_MOUNTED;
+  FAN_BUSY = true;
+  FAN_CARDS.forEach(function(el, i){
+    var slot = map[i], was = FAN_SEEN[i];
+    if (slot !== undefined){
+      var c = fanCfg(slotCount, slot);
+      var target = fanT(c.x*m, c.y*hm, c.rot, c.scale);
+      if (first || !was){
+        // position d'entrée, sans transition, puis on anime à la frame suivante
+        var ex = first ? 0 : (dir==='right' ? 40 : -40);
+        var er = first ? 0 : (dir==='right' ? 30 : -30);
+        var ey = first ? 12*hm : c.y*hm;
+        el.style.transition = 'none';
+        el.style.transform = fanT(ex, ey, er, 0.5);
+        el.style.opacity = '0';
+        void el.offsetWidth;
+        el.style.transition = '';
+        el.style.transitionDelay = first ? (0.06*slot)+'s' : '0s';
+      } else {
+        el.style.transitionDelay = '0s';
+      }
+      el.style.transform = target;
+      el.style.opacity = '1';
+      el.style.zIndex = c.z;
+    } else if (was){
+      var xx = dir==='right' ? -40 : 40;
+      el.style.transitionDelay = '0s';
+      el.style.transform = fanT(xx, 0, dir==='right'?-30:30, 0.5);
+      el.style.opacity = '0';
+      el.style.zIndex = 0;
+    } else {
+      el.style.transition = 'none';
+      el.style.transform = fanT(0,0,0,0.3);
+      el.style.opacity = '0';
+      el.style.zIndex = 0;
+      void el.offsetWidth;
+      el.style.transition = '';
+    }
+  });
+  FAN_SEEN = {};
+  for (var k in map) FAN_SEEN[k] = true;
+  FAN_MOUNTED = true;
+  setTimeout(function(){ FAN_BUSY = false; }, 650);
+  var dots = document.querySelectorAll('.fan-dot');
+  for (var d=0; d<dots.length; d++) dots[d].classList.toggle('on', d===FAN_CENTER);
+}
+/* Survol : la carte visée se soulève, les voisines s'écartent (comme l'original) */
+function fanHoverLayout(hoveredSlot){
+  if (FAN_BUSY) return;
+  var map = fanVisible(FAN_CENTER);
+  var slotCount = FAN_PAGED ? FAN_MAX : FAN_TOTAL;
+  var m = fanMult(window.innerWidth), hm = fanHMult(window.innerWidth);
+  var entries = [];
+  FAN_CARDS.forEach(function(el,i){ if (map[i]!==undefined) entries.push({el:el, slot:map[i]}); });
+  var centerSlot = entries.length >> 1;
+  entries.forEach(function(e){
+    var c = fanCfg(slotCount, e.slot);
+    var tx = c.x*m, ty = c.y*hm, tr = c.rot, ts = c.scale, delay = 0;
+    if (hoveredSlot !== null){
+      var dist = Math.abs(e.slot - hoveredSlot);
+      delay = dist*0.02;
+      if (e.slot === hoveredSlot){ ty -= 2.5*hm; ts *= 1.08; }
+      else {
+        var norm = centerSlot>0 ? (e.slot-centerSlot)/centerSlot : 0;
+        var push = 8*(1-Math.abs(norm))*(1+0.2*Math.max(0,3-dist));
+        if (e.slot < hoveredSlot){ tx -= push*m; tr -= 3/(dist+1); }
+        else { tx += push*m; tr += 3/(dist+1); }
+      }
+    } else { delay = Math.abs(e.slot-centerSlot)*0.02; }
+    e.el.style.transitionDelay = delay+'s';
+    e.el.style.transform = fanT(tx, ty, tr, ts);
+    e.el.style.zIndex = c.z;
+  });
+}
+function fanCycle(dir){
+  if (FAN_BUSY || !FAN_PAGED) return;
+  FAN_CENTER = dir==='right' ? (FAN_CENTER+1)%FAN_TOTAL : (FAN_CENTER-1+FAN_TOTAL)%FAN_TOTAL;
+  fanLayout(dir);
+}
+function fanInit(photos){
+  var sec = document.getElementById('fan-section');
+  var wrap = document.getElementById('fan-layout');
+  if (!sec || !wrap || !photos || photos.length < 3) return;   // trop peu de photos → on n'affiche pas
+  FAN_TOTAL = photos.length;
+  FAN_PAGED = FAN_TOTAL > FAN_MAX;
+  FAN_CENTER = FAN_PAGED ? FAN_HALF : FAN_TOTAL >> 1;
+  wrap.innerHTML = '';
+  FAN_CARDS = photos.map(function(p){
+    var d = document.createElement('div');
+    d.className = 'fan-card';
+    var img = document.createElement('img');
+    img.src = cldOpt(p.url, 700);
+    img.alt = p.caption || 'Chien en pension familiale chez Milou Dogs Provence';
+    img.loading = 'lazy';
+    d.appendChild(img);
+    d.addEventListener('click', function(){ openLightbox(p.url, p.caption||''); });
+    wrap.appendChild(d);
+    return d;
+  });
+  // dots
+  var dots = document.getElementById('fan-dots');
+  dots.innerHTML = photos.map(function(){ return '<span class="fan-dot"></span>'; }).join('');
+  document.getElementById('fan-nav').style.display = FAN_PAGED ? 'flex' : 'none';
+  document.getElementById('fan-prev').onclick = function(){ fanCycle('left'); };
+  document.getElementById('fan-next').onclick = function(){ fanCycle('right'); };
+  // survol
+  FAN_CARDS.forEach(function(el,i){
+    el.addEventListener('mouseenter', function(){
+      var map = fanVisible(FAN_CENTER);
+      if (map[i]!==undefined) fanHoverLayout(map[i]);
+    });
+  });
+  wrap.addEventListener('mouseleave', function(){ fanHoverLayout(null); });
+  var rt;
+  window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(function(){ fanHoverLayout(null); }, 150); }, {passive:true});
+  sec.style.display = '';
+  requestAnimationFrame(function(){ fanLayout(null); });
+}
+
 function openLightbox(url, caption){
   var lb = document.getElementById('galerie-lightbox');
   document.getElementById('galerie-lightbox-img').src = url;
