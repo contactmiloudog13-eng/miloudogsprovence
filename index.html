@@ -436,25 +436,20 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
 
 <!-- ── Bandeau confiance (pro déclarée / ACACED / RC Pro) ── -->
 <section id="trust-bar" style="background:white;border-bottom:1px solid var(--border);padding:18px 0;">
-  <!-- Défilement infini : le groupe de 4 est répété 4× et on translate de -25%
-       (= exactement une largeur de groupe) → boucle sans couture. -->
+  <!-- Défilement infini. Le groupe (9 arguments DIFFÉRENTS) est cloné en JS
+       autant que nécessaire ; on translate de la largeur exacte d'un groupe. -->
   <div id="tb-track">
-    <span class="trust-item">✅ <strong>Micro-entreprise déclarée</strong><small>SIRET vérifié</small></span>
-    <span class="trust-item">🎓 <strong>Certifiée ACACED</strong><small>Aptitude animaux de compagnie</small></span>
-    <span class="trust-item">🛡️ <strong>Assurée RC Pro</strong><small>Responsabilité civile pro</small></span>
-    <span class="trust-item">⭐ <strong>5.0 sur Google</strong><small><span class="tb-avis-n">41</span> avis vérifiés</small></span>
-    <span class="trust-item">✅ <strong>Micro-entreprise déclarée</strong><small>SIRET vérifié</small></span>
-    <span class="trust-item">🎓 <strong>Certifiée ACACED</strong><small>Aptitude animaux de compagnie</small></span>
-    <span class="trust-item">🛡️ <strong>Assurée RC Pro</strong><small>Responsabilité civile pro</small></span>
-    <span class="trust-item">⭐ <strong>5.0 sur Google</strong><small><span class="tb-avis-n">41</span> avis vérifiés</small></span>
-    <span class="trust-item">✅ <strong>Micro-entreprise déclarée</strong><small>SIRET vérifié</small></span>
-    <span class="trust-item">🎓 <strong>Certifiée ACACED</strong><small>Aptitude animaux de compagnie</small></span>
-    <span class="trust-item">🛡️ <strong>Assurée RC Pro</strong><small>Responsabilité civile pro</small></span>
-    <span class="trust-item">⭐ <strong>5.0 sur Google</strong><small><span class="tb-avis-n">41</span> avis vérifiés</small></span>
-    <span class="trust-item">✅ <strong>Micro-entreprise déclarée</strong><small>SIRET vérifié</small></span>
-    <span class="trust-item">🎓 <strong>Certifiée ACACED</strong><small>Aptitude animaux de compagnie</small></span>
-    <span class="trust-item">🛡️ <strong>Assurée RC Pro</strong><small>Responsabilité civile pro</small></span>
-    <span class="trust-item">⭐ <strong>5.0 sur Google</strong><small><span class="tb-avis-n">41</span> avis vérifiés</small></span>
+    <div class="tb-group">
+      <span class="trust-item">✅ <strong>Micro-entreprise déclarée</strong><small>SIRET vérifié</small></span>
+      <span class="trust-item">🎓 <strong>Certifiée ACACED</strong><small>Aptitude animaux de compagnie</small></span>
+      <span class="trust-item">🛡️ <strong>Assurée RC Pro</strong><small>Responsabilité civile pro</small></span>
+      <span class="trust-item">⭐ <strong>5.0 sur Google</strong><small><span class="tb-avis-n">41</span> avis vérifiés</small></span>
+      <span class="trust-item">🌳 <strong>2 000 m² clôturés</strong><small>Terrain entièrement sécurisé</small></span>
+      <span class="trust-item">🚫 <strong>Aucune cage</strong><small>Vie en liberté, comme à la maison</small></span>
+      <span class="trust-item">👥 <strong>Maximum 7 chiens</strong><small>Petits groupes familiaux</small></span>
+      <span class="trust-item">📸 <strong>Photos quotidiennes</strong><small>Des nouvelles chaque jour</small></span>
+      <span class="trust-item">🏡 <strong>Pension familiale</strong><small>À Miramas, en Provence</small></span>
+    </div>
   </div>
 </section>
 <style>
@@ -463,29 +458,31 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
 #trust-bar::before,#trust-bar::after{content:'';position:absolute;top:0;bottom:0;width:90px;z-index:2;pointer-events:none;}
 #trust-bar::before{left:0;background:linear-gradient(90deg,#fff,rgba(255,255,255,0));}
 #trust-bar::after{right:0;background:linear-gradient(270deg,#fff,rgba(255,255,255,0));}
-#tb-track{display:flex;width:max-content;align-items:center;animation:tbScroll 40s linear infinite;will-change:transform;}
+#tb-track{display:flex;width:max-content;align-items:center;animation:tbScroll 68s linear infinite;will-change:transform;}
+.tb-group{display:flex;align-items:center;flex-shrink:0;}
 /* --tbShift = largeur EXACTE d'un groupe, mesurée en JS (évite le trou sur écran large) */
-@keyframes tbScroll{from{transform:translateX(0);}to{transform:translateX(var(--tbShift,-25%));}}
+@keyframes tbScroll{from{transform:translateX(0);}to{transform:translateX(var(--tbShift,-50%));}}
 @media(prefers-reduced-motion:reduce){#tb-track{animation:none;}}
-#trust-bar .trust-item{display:inline-flex;flex-direction:column;line-height:1.25;font-size:.82rem;color:var(--text);align-items:flex-start;position:relative;padding:0 30px;flex-shrink:0;white-space:nowrap;}
+/* Fin séparateur entre chaque argument (y compris d'un groupe à l'autre) */
+#trust-bar .trust-item{display:inline-flex;flex-direction:column;line-height:1.25;font-size:.82rem;color:var(--text);align-items:flex-start;position:relative;padding:0 28px;flex-shrink:0;white-space:nowrap;border-left:1px solid var(--border);}
 #trust-bar .trust-item strong{font-weight:800;color:var(--lavande-dark);}
 #trust-bar .trust-item small{font-size:.68rem;color:var(--text-muted);font-weight:400;letter-spacing:.01em;}
 </style>
 <script>
-/* Bande de confiance : clone le groupe de 4 jusqu'à couvrir largement l'écran,
-   et fixe le décalage de boucle à la largeur exacte d'un groupe (en px). */
+/* Bande de confiance : clone le GROUPE (9 arguments distincts) jusqu'à couvrir
+   largement l'écran, et fixe le décalage de boucle à sa largeur exacte (en px). */
 (function(){
   var t = document.getElementById('tb-track');
   if (!t) return;
-  var GROUP = 4;
+  var master = t.querySelector('.tb-group');
+  if (!master) return;
   function setup(){
-    var w = 0;
-    for (var i = 0; i < GROUP; i++){ var c = t.children[i]; if (c) w += c.offsetWidth; }
+    var w = master.offsetWidth;
     if (!w) return;
     var need = window.innerWidth * 2 + w;
     var guard = 0;
-    while (t.scrollWidth < need && t.children.length < 160 && guard++ < 40){
-      for (var j = 0; j < GROUP; j++) t.appendChild(t.children[j].cloneNode(true));
+    while (t.scrollWidth < need && t.children.length < 12 && guard++ < 12){
+      t.appendChild(master.cloneNode(true));
     }
     t.style.setProperty('--tbShift', (-w) + 'px');
   }
@@ -493,6 +490,14 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
   else setup();
   var rt;
   window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(setup, 200); }, {passive:true});
+  // Le nb de chiens max est réécrit plus tard depuis Firebase (site_config/maxChiens),
+  // ce qui change la largeur du groupe → on re-mesure pour garder la boucle exacte.
+  if (window.ResizeObserver){
+    var ro = new ResizeObserver(function(){ setup(); });
+    ro.observe(master);
+  } else {
+    setTimeout(setup, 1500);
+  }
 })();
 </script>
 <style>
