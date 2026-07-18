@@ -31,6 +31,17 @@
     setTimeout(function(){ r.remove(); }, 700);
   });
 
+  /* ── SPOTLIGHT CARD (21st.dev) — halo qui suit le curseur ── */
+  if(!(window.matchMedia && window.matchMedia('(hover:none)').matches)){
+    document.addEventListener('mousemove', function(e){
+      var el = e.target.closest && e.target.closest('.avis-card,.avis-card-new,.contact-box,.t-card');
+      if(!el) return;
+      var r = el.getBoundingClientRect();
+      el.style.setProperty('--sx', (e.clientX - r.left) + 'px');
+      el.style.setProperty('--sy', (e.clientY - r.top) + 'px');
+    }, {passive:true});
+  }
+
   /* ── SCROLL REVEAL OBSERVER ── */
   var revObs = new IntersectionObserver(function(entries){
     entries.forEach(function(e){

@@ -274,3 +274,25 @@ section{transition:opacity .01s;}
   .fcp:hover,.photo:hover,.tp:hover,.ap:hover,.mc:hover{transform:none!important;filter:none!important;}
   .btn-primary:hover,.btn-outline:hover{transform:none!important;}
 }
+
+/* ═══════════ ANIMATIONS 21st.dev (adaptées à la charte Milou Dogs) ═══════════ */
+/* ── Spotlight Card (21st.dev « Spotlight Card », 6,1k ❤) — halo lavande au curseur ── */
+.avis-card,.avis-card-new,.contact-box{position:relative;}
+.avis-card::after,.avis-card-new::after,.contact-box::after{
+  content:'';position:absolute;inset:0;border-radius:inherit;
+  background:radial-gradient(260px circle at var(--sx,50%) var(--sy,50%),rgba(123,111,160,0.16),transparent 62%);
+  opacity:0;transition:opacity .35s ease;pointer-events:none;z-index:2;}
+.avis-card:hover::after,.avis-card-new:hover::after,.contact-box:hover::after{opacity:1;}
+@media(hover:none){.avis-card::after,.avis-card-new::after,.contact-box::after{display:none;}}
+/* Les cartes tarifs (.t-card) ont déjà un ::before de glow — on le fait suivre le curseur */
+.t-card::before{background:radial-gradient(240px circle at var(--sx,50%) var(--sy,50%),rgba(123,111,160,0.14) 0%,transparent 62%)!important;}
+
+/* ── Shine Border (21st.dev « Shine Border ») — bordure dorée rotative sur le CTA ── */
+@property --shine-a{syntax:'<angle>';inherits:false;initial-value:0deg;}
+.avis-cta::after{content:'';position:absolute;inset:0;border-radius:inherit;padding:2px;
+  background:conic-gradient(from var(--shine-a),transparent 0 62%,var(--gold) 74%,#fff 80%,var(--gold) 86%,transparent 96% 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;
+  animation:shineSpin 5s linear infinite;pointer-events:none;z-index:1;}
+@keyframes shineSpin{to{--shine-a:360deg;}}
+@media(prefers-reduced-motion:reduce){.cta-avis::after{animation:none;opacity:.5;}}
