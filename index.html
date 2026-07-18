@@ -1197,11 +1197,15 @@ document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeLigh
 }
 </style>
 <script>
-/* Réordonne l'accueil (mobile ET ordi) : services → comment ça marche → carnet → vidéo → vs chenil */
+/* Réordonne l'accueil (mobile ET ordi) : urgence + confiance collés au hero,
+   puis services → comment ça marche → carnet → vidéo → vs chenil.
+   ⚠️ urgence-bar et trust-bar DOIVENT rester en tête de cette liste : sinon les
+   sections ci-dessous s'insèrent entre le hero et eux, et le bandeau de
+   confiance se retrouve relégué en bas de page. */
 (function(){
   try{
     var hero=document.getElementById('hero'); if(!hero||!hero.parentNode) return;
-    ['services-mini','hiw-home','carnet-section','video-section','comparaison-home'].reduce(function(anchor,id){
+    ['urgence-bar','trust-bar','services-mini','hiw-home','carnet-section','video-section','comparaison-home'].reduce(function(anchor,id){
       var el=document.getElementById(id);
       if(el && anchor && anchor.parentNode){ anchor.parentNode.insertBefore(el, anchor.nextSibling); return el; }
       return anchor;
