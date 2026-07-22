@@ -76,6 +76,14 @@
 .addon-suggest div:last-child{border-bottom:none;}
 .addon-suggest div:hover{background:var(--lavande-light);}
 .addon-result{margin-top:10px;font-size:.85rem;color:var(--text);background:var(--cream);border-radius:8px;padding:9px 12px;line-height:1.5;}
+/* Choix du trajet (aller-retour / récupération / dépose) */
+.pk-mode{display:flex;align-items:flex-start;gap:10px;border:1.5px solid var(--border);border-radius:11px;padding:10px 12px;cursor:pointer;transition:border-color .18s,background .18s;}
+.pk-mode:hover{border-color:var(--lavande);}
+.pk-mode input{margin-top:3px;flex-shrink:0;accent-color:var(--lavande);}
+.pk-mode span{display:flex;flex-direction:column;gap:2px;}
+.pk-mode b{font-size:.88rem;color:var(--text);font-weight:700;}
+.pk-mode small{font-size:.76rem;color:var(--text-muted);line-height:1.45;}
+.pk-mode:has(input:checked){border-color:var(--lavande);background:var(--lavande-light);}
 .addon-result:empty{display:none;padding:0;}
 .addon-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;}
 .addon-row > div{flex:1;min-width:130px;}
@@ -362,12 +370,27 @@
               <label class="addon-check">
                 <input type="checkbox" id="pickup-home" onchange="togglePickup(this)">
                 <span class="ac-txt">
-                  <span class="addon-title">🚗 Récupération à domicile</span>
-                  <span class="addon-sub">On vient chercher votre chien chez vous — le prix est calculé automatiquement selon la distance.</span>
+                  <span class="addon-title">🚗 Transport à domicile</span>
+                  <span class="addon-sub">On se déplace chez vous — le prix est calculé automatiquement selon la distance.</span>
                 </span>
               </label>
               <div id="pickup-panel" class="addon-panel" style="display:none;">
-                <label class="addon-flabel">Votre adresse de récupération</label>
+                <label class="addon-flabel">De quel trajet avez-vous besoin&nbsp;?</label>
+                <div id="pickup-mode-row" style="display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:14px;">
+                  <label class="pk-mode" data-mode="both">
+                    <input type="radio" name="pickup-mode" value="both" checked onchange="pickupSetMode('both')">
+                    <span><b>🔄 Aller-retour</b><small>On vient le chercher avant la garde et on le ramène après</small></span>
+                  </label>
+                  <label class="pk-mode" data-mode="pickup">
+                    <input type="radio" name="pickup-mode" value="pickup" onchange="pickupSetMode('pickup')">
+                    <span><b>➡️ Récupération seule</b><small>On vient le chercher — vous venez le rechercher après la garde</small></span>
+                  </label>
+                  <label class="pk-mode" data-mode="dropoff">
+                    <input type="radio" name="pickup-mode" value="dropoff" onchange="pickupSetMode('dropoff')">
+                    <span><b>⬅️ Dépose seule</b><small>Vous nous l'amenez — on le ramène chez vous après la garde</small></span>
+                  </label>
+                </div>
+                <label class="addon-flabel">Votre adresse</label>
                 <div style="position:relative;">
                   <input id="pickup-addr" class="addon-input" type="text" autocomplete="off" placeholder="Ex : 12 rue des Lilas, 13800 Istres" oninput="pickupAddrInput()">
                   <div id="pickup-suggest" class="addon-suggest"></div>
@@ -856,7 +879,7 @@ function autoDepart(){
 // ===== Récupération à domicile : distance + prix automatiques =====
 // Coordonnées [lon,lat] du point de départ (adresse privée, JAMAIS affichée).
 var HOME_COORDS=[5.013373,43.570176];
-window.__pickup={active:false,km:null,price:0,address:'',coords:null};
+window.__pickup={active:false,mode:'both',trajets:2,unitPrice:0,calc:'',km:null,price:0,address:'',coords:null};
 window.__clientAddr='';
 var _pickupTimer=null, _pickupFeats=[];
 
@@ -1011,24 +1034,59 @@ function pickupDistance(coords){
   }).catch(function(){ _pickupFinish(_haversineKm(HOME_COORDS,coords)*1000*1.3); });
 }
 
-function _pickupFinish(meters){
-  var km=Math.round(meters/1000*10)/10;                 // distance aller (une fois)
+// Libellés des 3 modes de transport
+var PICKUP_MODES={
+  both:   {label:'Aller-retour',       short:'aller-retour (récupération + retour)', trajets:2, emoji:'🔄'},
+  pickup: {label:'Récupération seule', short:'récupération avant la garde',          trajets:1, emoji:'➡️'},
+  dropoff:{label:'Dépose seule',       short:'retour après la garde',                trajets:1, emoji:'⬅️'}
+};
+function pickupSetMode(m){
+  if(!PICKUP_MODES[m]) m='both';
+  window.__pickup.mode=m;
+  // On recalcule le tarif avec la distance déjà connue (sans refaire d'appel réseau)
+  if(window.__pickup.km!=null) _pickupPrice(window.__pickup.km);
+  calcPrice();
+}
+window.pickupSetMode=pickupSetMode;
+
+// Calcule le prix du transport pour une distance ALLER donnée (en km), selon le mode.
+// 1 trajet = un aller-retour depuis chez nous (on part, on va chez vous, on revient).
+function _pickupPrice(km){
+  var mode=window.__pickup.mode||'both';
+  var cfg=PICKUP_MODES[mode]||PICKUP_MODES.both;
   var isMiramas = /miramas/i.test(window.__pickup.city||'') || window.__pickup.postcode==='13140';
-  var res=document.getElementById('pickup-result');
-  var price, html;
   var fixe=(window.DEPL_FIXE!=null?window.DEPL_FIXE:5), perKm=(window.DEPL_KM!=null?window.DEPL_KM:0.5);
   var miramasFlat=(window.DEPL_MIRAMAS!=null?window.DEPL_MIRAMAS:10);
+  var n=cfg.trajets, unit, price, calc;
+  function fr(x){ return x.toString().replace('.',','); }
   if(isMiramas){
-    price=miramasFlat;
-    html='✅ <strong>Miramas</strong> → récupération <strong>'+miramasFlat.toString().replace('.',',')+'€</strong> <small style="color:var(--text-muted);">(forfait)</small>';
+    unit=miramasFlat;
+    price=Math.round(unit*n*100)/100;
+    calc='forfait Miramas '+fr(unit)+'€'+(n>1?' × '+n+' trajets':'');
   } else {
-    var aller_retour=Math.round(km*2*10)/10;            // aller + retour
-    price=Math.round((fixe+aller_retour*perKm)*100)/100;
-    html='✅ Distance : <strong>'+km.toString().replace('.',',')+' km</strong> (aller-retour '+aller_retour.toString().replace('.',',')+' km) → récupération <strong>'+price.toString().replace('.',',')+'€</strong>'
-       + ' <small style="color:var(--text-muted);">('+fixe.toString().replace('.',',')+'€ + '+aller_retour.toString().replace('.',',')+' km × '+perKm.toString().replace('.',',')+'€)</small>';
+    var ar=Math.round(km*2*10)/10;                       // aller + retour d'UN trajet
+    unit=Math.round((fixe+ar*perKm)*100)/100;
+    price=Math.round(unit*n*100)/100;
+    calc=fr(fixe)+'€ + '+fr(ar)+' km × '+fr(perKm)+'€'+(n>1?' = '+fr(unit)+'€ × '+n+' trajets':'');
   }
-  window.__pickup.km=km; window.__pickup.price=price;
-  res.innerHTML=html;
+  window.__pickup.price=price;
+  window.__pickup.unitPrice=unit;
+  window.__pickup.trajets=n;
+  window.__pickup.calc=calc;
+  var res=document.getElementById('pickup-result');
+  if(res){
+    res.innerHTML='✅ '+cfg.emoji+' <strong>'+cfg.label+'</strong>'
+      + (isMiramas?' — <strong>Miramas</strong>':' — distance <strong>'+fr(km)+' km</strong>')
+      + ' → <strong>'+fr(price)+'€</strong>'
+      + ' <small style="color:var(--text-muted);">('+calc+')</small>';
+  }
+  return price;
+}
+
+function _pickupFinish(meters){
+  var km=Math.round(meters/1000*10)/10;                 // distance aller (une fois)
+  window.__pickup.km=km;
+  _pickupPrice(km);
   calcPrice();
 }
 
@@ -1416,12 +1474,16 @@ function calcPrice(){
     }
   }
 
-  // Récupération à domicile (distance calculée automatiquement)
+  // Transport à domicile (aller-retour / récupération seule / dépose seule)
   if(window.__pickup && window.__pickup.active && window.__pickup.price>0){
-    lines.push('🚗 Récupération à domicile'+(window.__pickup.km?(' ('+window.__pickup.km.toString().replace('.',',')+' km)'):'')+' — <strong>'+window.__pickup.price.toString().replace('.',',')+'€</strong>');
+    var _pkCfg=PICKUP_MODES[window.__pickup.mode||'both']||PICKUP_MODES.both;
+    var _pkKm=window.__pickup.km?(' '+window.__pickup.km.toString().replace('.',',')+' km'):'';
+    lines.push('🚗 Transport à domicile — '+_pkCfg.label+_pkKm
+      +' <small style="color:var(--text-muted);">('+(window.__pickup.calc||'')+')</small>'
+      +' = <strong>'+window.__pickup.price.toString().replace('.',',')+'€</strong>');
     total=Math.round((total+window.__pickup.price)*100)/100;
   } else if(window.__pickup && window.__pickup.active){
-    lines.push('🚗 Récupération à domicile — <small style="color:var(--text-muted);">saisissez votre adresse pour le calcul</small>');
+    lines.push('🚗 Transport à domicile — <small style="color:var(--text-muted);">saisissez votre adresse pour le calcul</small>');
   }
 
   // ── Balades pendant le séjour (option, prix à part, non couvert par le Carnet Malin) ──
@@ -1469,6 +1531,7 @@ function calcPrice(){
 
   if(!lines.length){box.style.display='none';return;}
   document.getElementById('price-detail').innerHTML=lines.join('<br>');
+  window.__priceLines=lines.slice();   // conservé pour construire le devis ligne par ligne
   let totalLabel='Total : '+total+'€';
   if(window.__carnetCovered>0) totalLabel+=' <span style="color:#159067;">(Carnet Malin appliqué)</span>';
   if(discount) totalLabel+=' (−'+Math.round(discRate*100)+'% multi-chiens inclus)';
@@ -1493,19 +1556,37 @@ function prepareSubmit(){
   document.getElementById('hidden-nbchiens').value=nb+' chien'+(parseInt(nb)>1?'s':'');
   const box=document.getElementById('price-box');
   if(box.style.display!=='none'){
-    const detail=document.getElementById('price-detail').innerText;
     const total=document.getElementById('price-total').textContent;
-    let devis=detail+' | '+total;
+    // Une prestation = une ligne « libellé | montant » (format lu par l'admin :
+    // séparateur de lignes <br>, séparateur libellé/montant " | ").
+    var devisLines=(window.__priceLines||[]).map(_devisLine).filter(Boolean);
+    devisLines.push('Total | '+total);
     if(window.__pickup && window.__pickup.active && window.__pickup.address){
-      devis+=' | 🚗 Récupération à : '+window.__pickup.address+(window.__pickup.km?(' ('+window.__pickup.km+' km)'):'');
+      var _pkc=PICKUP_MODES[window.__pickup.mode||'both']||PICKUP_MODES.both;
+      devisLines.push('🚗 '+_pkc.emoji+' '+_pkc.label+' — '+_pkc.short+' : '+window.__pickup.address+(window.__pickup.km?(' ('+window.__pickup.km+' km)'):''));
     }
     if(window.__visite && window.__visite.active && window.__visite.address){
       var _v=window.__visite;
-      devis+=' | 🏡 Visite ('+(_v.animalLabel||'Chien')+') à : '+_v.address+' — du '+_frDate(_v.start)+' au '+_frDate(_v.end)+', '+_v.freq+'× '+(_v.unit==='jour'?'par jour':'par semaine')+' = '+_v.passages+' passage'+(_v.passages>1?'s':'')+' ('+(_v.dur===60?'1h':'30 min')+')';
+      devisLines.push('🏡 Visite ('+(_v.animalLabel||'Chien')+') à : '+_v.address+' — du '+_frDate(_v.start)+' au '+_frDate(_v.end)+', '+_v.freq+'× '+(_v.unit==='jour'?'par jour':'par semaine')+' = '+_v.passages+' passage'+(_v.passages>1?'s':'')+' ('+(_v.dur===60?'1h':'30 min')+')');
     }
-    document.getElementById('hidden-devis').value=devis;
+    document.getElementById('hidden-devis').value=devisLines.join('<br>');
   }
   return true;
+}
+
+// Convertit une ligne HTML du récapitulatif en « libellé | montant » pour le devis.
+// Le montant est celui de FIN de ligne (après le dernier « = » ou « — »).
+function _devisLine(html){
+  var t=String(html).replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
+  if(!t) return '';
+  var AMT='([−+]?\\s*[\\d]+(?:[.,][\\d]+)?\\s*€)';
+  var m=t.match(new RegExp('^(.*)=\\s*'+AMT+'\\s*$'));                 // « … = 75€ » (dernier =)
+  if(m) return m[1].replace(/[—–-]\s*$/,'').trim()+' | '+m[2].replace(/\s+/g,'').trim();
+  m=t.match(new RegExp('^(.*?)\\s*[—–]\\s*'+AMT+'\\s*$'));             // « … — 10€ »
+  if(m) return m[1].trim()+' | '+m[2].replace(/\s+/g,'').trim();
+  m=t.match(new RegExp('^(.*?)\\s*:?\\s*'+AMT+'\\s*$'));               // « … −15€ »
+  if(m) return m[1].replace(/[:—–-]\s*$/,'').trim()+' | '+m[2].replace(/\s+/g,'').trim();
+  return t;                                                            // ligne sans montant (info)
 }
 
 // ===== VALIDATION CODE PARRAIN =====
