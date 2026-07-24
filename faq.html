@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Comment se passe la première rencontre ?","acceptedAnswer":{"@type":"Answer","text":"Avant tout séjour, on organise une visite de présentation. Votre chien découvre les lieux, rencontre nos animaux et on échange sur ses habitudes. Étape indispensable pour un séjour serein."}},{"@type":"Question","name":"Combien de chiens accueillez-vous en même temps ?","acceptedAnswer":{"@type":"Answer","text":"Maximum 7 chiens simultanément. Pas de cage, vie en famille dans la maison avec accès à 2 000 m² de terrain clôturé."}},{"@type":"Question","name":"Donnez-vous des nouvelles pendant la garde ?","acceptedAnswer":{"@type":"Answer","text":"Oui, photos et message quotidien sur WhatsApp. Vous pouvez partir sereinement."}},{"@type":"Question","name":"Mon chien doit-il être vacciné ?","acceptedAnswer":{"@type":"Answer","text":"Oui, vaccins à jour (CHPPIL minimum) et traitement antipuces/tiques obligatoires. Carnet de santé demandé à l'arrivée."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Comment se passe la première rencontre ?","acceptedAnswer":{"@type":"Answer","text":"Avant tout séjour, on organise une visite de présentation. Votre chien découvre les lieux, rencontre nos animaux et on échange sur ses habitudes. Étape indispensable pour un séjour serein."}},{"@type":"Question","name":"Combien de chiens accueillez-vous en même temps ?","acceptedAnswer":{"@type":"Answer","text":"Maximum 7 chiens simultanément. Pas de cage, vie en famille dans la maison avec accès à 2 000 m² de terrain clôturé."}},{"@type":"Question","name":"Donnez-vous des nouvelles pendant la garde ?","acceptedAnswer":{"@type":"Answer","text":"Oui, photos et message quotidien sur WhatsApp. Vous pouvez partir sereinement."}},{"@type":"Question","name":"Mon chien doit-il être vacciné ?","acceptedAnswer":{"@type":"Answer","text":"Oui, vaccins à jour (CHPPIL minimum) et traitement antipuces/tiques obligatoires. Carnet de santé demandé à l'arrivée."}},{"@type": "Question", "name": "C'est quoi le Forfait Évasion de Milou Dogs Provence ?", "acceptedAnswer": {"@type": "Answer", "text": "Chaque samedi, Milou Dogs Provence emmène 5 chiens maximum en randonnée autour de Miramas. Le maître dépose son chien à la pension entre 8h et 9h10, le groupe part 2 heures de balade, puis les chiens se reposent à la pension jusqu'à la récupération le soir entre 17h et 19h."}},{"@type": "Question", "name": "Combien coûte une sortie du Forfait Évasion ?", "acceptedAnswer": {"@type": "Answer", "text": "35€ la journée complète : 2 heures de randonnée encadrée plus la garderie jusqu'au soir. Le 2ᵉ chien du même foyer est à 25€, la carte 4 samedis à 120€ au lieu de 140€, et la nuit sur place 25€ de plus."}},{"@type": "Question", "name": "Quelles sont les conditions pour partir en randonnée du samedi ?", "acceptedAnswer": {"@type": "Answer", "text": "Le chien doit être sociable avec ses congénères, vacciné (CHLPPi à jour), identifié par puce ou tatouage, traité contre les puces et les tiques, et avoir plus de 6 mois. Les chiens de catégorie 1 et 2 ne sont pas acceptés en sortie collective."}},{"@type": "Question", "name": "Faut-il amener le chien à la pension pour le Forfait Évasion ?", "acceptedAnswer": {"@type": "Answer", "text": "Oui. Le maître dépose son chien à la pension de Miramas entre 8h et 9h10 et vient le récupérer le soir entre 17h et 19h. Il n'y a pas de récupération à domicile, ce qui permet de garder le tarif à 35 € la journée complète. Le chien peut aussi rester dormir sur place moyennant 25 € supplémentaires."}}]}</script>
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:url" content="https://miloudogsprovence.fr/faq.html">
@@ -104,6 +104,7 @@
   <ul class="nav-links" id="navlinks">
     <li><a href="index.html" data-icon="🏠">Accueil</a></li>
     <li><a href="services.html" data-icon="🐾">Services &amp; Tarifs</a></li>
+    <li><a href="forfait-evasion.html" data-icon="🏔️">Forfait Évasion</a></li>
     <li><a href="a-propos.html" data-icon="❤️">À propos</a></li>
     <li><a href="avis.html" data-icon="⭐">Avis</a></li>
     <li><a href="galerie.html" data-icon="📸">Galerie</a></li>
@@ -122,7 +123,7 @@
 <section class="faq-hero">
   <div class="faq-hero-label">❓ Questions fréquentes</div>
   <h1>Tout ce que vous devez savoir</h1>
-  <p>8 questions, toutes les réponses. Si vous n'en trouvez pas une, appelez-nous directement.</p>
+  <p>15 questions, toutes les réponses. Si vous n'en trouvez pas une, appelez-nous directement.</p>
   <div class="faq-search">
     <input type="text" id="faq-search-input" placeholder="Rechercher une question…" oninput="searchFaq(this.value)">
     <button onclick="searchFaq(document.getElementById('faq-search-input').value)">🔍 Chercher</button>
@@ -149,10 +150,94 @@
       <button class="faq-cat-btn" onclick="filterCat('sante',this)"><span class="cat-ico">🩺</span> Santé</button>
       <button class="faq-cat-btn" onclick="filterCat('pratique',this)"><span class="cat-ico">💳</span> Pratique</button>
       <button class="faq-cat-btn" onclick="filterCat('urgence',this)"><span class="cat-ico">🚨</span> Urgence</button>
+      <button class="faq-cat-btn" onclick="filterCat('evasion',this)"><span class="cat-ico">🏔️</span> Forfait Évasion</button>
     </div>
 
     <!-- Questions -->
     <div id="faq-main">
+
+      <!-- Forfait Évasion -->
+      <div class="faq-section" data-cat="evasion" data-capacite-fixe>
+        <div class="faq-section-title"><span>🏔️</span> Forfait Évasion — la randonnée du samedi</div>
+
+        <div class="faq-item fade-in" data-cat="evasion">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-ico">🎒</span>
+            <span class="faq-txt">C'est quoi le Forfait Évasion ?</span>
+            <span class="faq-arrow">▾</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Chaque <strong>samedi</strong>, on emmène <strong>5 chiens maximum</strong> en randonnée autour de Miramas. Vous déposez votre chien à la pension entre <strong>8 h et 9 h 10</strong>, le groupe part pour <strong>2 heures de balade</strong>, puis tout le monde rentre : sieste et jeux calmes sur le terrain jusqu'au soir. Vous le récupérez entre 17 h et 19 h. <a href="forfait-evasion.html" style="color:var(--lavande);font-weight:700;">Voir la page complète et réserver →</a></div>
+          </div>
+        </div>
+
+        <div class="faq-item fade-in" data-cat="evasion">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-ico">🚗</span>
+            <span class="faq-txt">Vous venez chercher le chien à la maison ?</span>
+            <span class="faq-arrow">▾</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Non. C'est vous qui l'amenez à la pension le matin, entre 8 h et 9 h 10, et qui venez le récupérer le soir entre 17 h et 19 h. C'est ce qui permet de garder le tarif à 35 € la journée complète, sans frais de déplacement. Si votre soirée est prise, il peut aussi <strong>dormir sur place</strong> et vous le récupérez le lendemain.</div>
+          </div>
+        </div>
+
+        <div class="faq-item fade-in" data-cat="evasion">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-ico">💰</span>
+            <span class="faq-txt">Combien coûte une sortie Évasion ?</span>
+            <span class="faq-arrow">▾</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner"><strong>35 € la journée complète</strong> : 2 h de randonnée encadrée plus la garderie jusqu'au soir. Le 2ᵉ chien du même foyer est à 25 €, et la <strong>carte 4 samedis est à 120 €</strong> au lieu de 140 €, sans date d'expiration. S'il dort sur place, comptez 25 € de plus. Règlement le jour de la sortie, rien à payer en ligne.</div>
+          </div>
+        </div>
+
+        <div class="faq-item fade-in" data-cat="evasion">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-ico">🐕</span>
+            <span class="faq-txt">Mon chien doit-il être sociable avec les autres chiens ?</span>
+            <span class="faq-arrow">▾</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Oui, c'est la seule condition non négociable : le groupe reste ensemble toute la journée. Si votre chien n'a jamais été en groupe, on commence par une <strong>demi-journée de test à 10 €</strong> à la pension. Les chiens de catégorie 1 et 2 ne sont pas acceptés en sortie collective.</div>
+          </div>
+        </div>
+
+        <div class="faq-item fade-in" data-cat="evasion">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-ico">🦮</span>
+            <span class="faq-txt">Mon chien reste-t-il attaché pendant la randonnée ?</span>
+            <span class="faq-arrow">▾</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Par défaut oui : laisse ou longe de 5 à 10 m, systématiquement dans les zones réglementées, près des troupeaux et en période de nidification. Si vous cochez l'autorisation à la réservation <em>et</em> si son rappel est fiable, il peut avoir des temps de liberté sur les portions sécurisées.</div>
+          </div>
+        </div>
+
+        <div class="faq-item fade-in" data-cat="evasion">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-ico">🔥</span>
+            <span class="faq-txt">Et s'il fait très chaud ou que les massifs sont fermés ?</span>
+            <span class="faq-arrow">▾</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">La sécurité passe avant tout. En cas de canicule, d'alerte météo ou de <strong>fermeture préfectorale des massifs pour risque incendie</strong>, la balade est raccourcie ou déplacée au bord de l'eau, et la journée se transforme en garderie. Sinon la sortie est reportée au samedi suivant ou remboursée, à votre choix.</div>
+          </div>
+        </div>
+
+        <div class="faq-item fade-in" data-cat="evasion">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-ico">⏳</span>
+            <span class="faq-txt">Toutes les places sont prises, que faire ?</span>
+            <span class="faq-arrow">▾</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Inscrivez-vous sur la <strong>liste d'attente</strong> du samedi concerné depuis la page Forfait Évasion : vous êtes appelé en priorité dès qu'une place se libère — ça arrive presque chaque semaine. Vous pouvez aussi réserver directement le samedi suivant.</div>
+          </div>
+        </div>
+
+      </div>
 
       <!-- Séjour -->
       <div class="faq-section" data-cat="sejour">

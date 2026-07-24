@@ -77,6 +77,9 @@ _auth.onAuthStateChanged(_updateNav);
     var nodes = [], node;
     while ((node = walker.nextNode())) nodes.push(node);
     nodes.forEach(function (t) {
+      // data-capacite-fixe : zone dont le nombre de chiens ne dépend PAS de la
+      // capacité de la pension (ex. le groupe de 5 du Forfait Évasion).
+      try { if (t.parentElement && t.parentElement.closest('[data-capacite-fixe]')) return; } catch (e) {}
       var v = t.nodeValue, o = v;
       // « Maximum N chiens » / « Max N chiens » / « maximum de N chiens »
       v = v.replace(/(\bMaximum\s+|\bMax\s+|\bmaximum\s+de\s+)\d+(\s+chiens\b)/gi, function (m, a, b) { return a + n + b; });
@@ -148,24 +151,208 @@ function redirectIfLoggedIn(dest) {
   });
 }
 
-// ── Affluence du site (compteur maison, lu depuis Milou Admin) ──────────────
-// Écrit dans analytics/{total, daily/YYYY-MM-DD, dailyUnique/YYYY-MM-DD, pages/<page>}.
+// ── Affluence du site — compteur maison v2 (lu depuis Milou Admin) ──────────
+//
+// Mesure d'audience 100 % première partie : aucun cookie, aucune donnée
+// personnelle, aucun partage avec un tiers, uniquement des compteurs agrégés
+// sur notre propre Firebase. Entre dans l'exemption de consentement CNIL pour
+// la mesure d'audience (pas de traçage inter-sites, identifiant local anonyme
+// purgé au bout de 13 mois).
+//
+// Structure écrite dans /analytics :
+//   total, daily/<jour>, dailyUnique/<jour>, pages/<page>   ← historique v1 (conservé)
+//   j/<jour>/vues        nombre de pages vues
+//   j/<jour>/uniques     visiteurs uniques du jour
+//   j/<jour>/sessions    nombre de visites (sessions)
+//   j/<jour>/nouveaux    sessions de visiteurs jamais venus
+//   j/<jour>/rebonds     sessions à une seule page
+//   j/<jour>/secondes    temps cumulé passé sur le site
+//   j/<jour>/pages/<page>/{v,u}   vues et visiteurs uniques par page
+//   j/<jour>/entrees/<page>       page d'arrivée des sessions
+//   j/<jour>/src/<source>         google, direct, instagram, ia…
+//   j/<jour>/ref/<hote>           domaine référent brut
+//   j/<jour>/dev/<appareil>       mobile / tablette / ordi
+//   j/<jour>/nav/<navigateur>     Chrome, Safari, Firefox…
+//   j/<jour>/h/<00-23>            heure d'arrivée
+//   j/<jour>/ev/<evenement>       appel, whatsapp, clic_reserver…
+//
+// MDPtrack('nom_evenement') est exposé globalement pour marquer un événement
+// métier depuis n'importe quelle page (envoi de demande, réservation Évasion…).
 (function trackVisit(){
-  try {
-    var inc = firebase.database.ServerValue && firebase.database.ServerValue.increment
-              ? firebase.database.ServerValue.increment(1) : null;
-    if (inc === null) return;                       // SDK trop ancien → on ne casse rien
-    var d = new Date();
-    var day = d.getFullYear() + '-' + ('0'+(d.getMonth()+1)).slice(-2) + '-' + ('0'+d.getDate()).slice(-2);
-    var page = (location.pathname.split('/').pop() || 'index.html').replace(/[.#$\[\]]/g, '_') || 'index_html';
-    var A = _db.ref('analytics');
-    A.child('total').set(inc);
-    A.child('daily/' + day).set(inc);
-    A.child('pages/' + page).set(inc);
-    // visiteur unique par jour (approx via localStorage)
+  var A, inc1, JOUR, PAGE, PREFIX;
+
+  function nb(n){
+    return firebase.database.ServerValue.increment(n);
+  }
+  function bump(chemin, n){
+    try { A.child(chemin).set(n === 1 ? inc1 : nb(n)); } catch(e){}
+  }
+  function cle(s){
+    // Une clé Firebase ne peut pas contenir . # $ [ ] /
+    return String(s || '').replace(/[.#$\[\]\/]/g, '_').slice(0, 64) || 'autre';
+  }
+  function drapeau(k){
+    // true si c'est la première fois aujourd'hui (mémoire locale, sans cookie)
     try {
-      var vk = 'mdp_visit_' + day;
-      if (!localStorage.getItem(vk)) { localStorage.setItem(vk, '1'); A.child('dailyUnique/' + day).set(inc); }
+      if (localStorage.getItem(k)) return false;
+      localStorage.setItem(k, '1');
+      return true;
+    } catch(e){ return false; }
+  }
+
+  try {
+    if (!firebase.database.ServerValue || !firebase.database.ServerValue.increment) return;
+    if (location.protocol === 'file:') return;
+    if (/localhost|127\.0\.0\.1/.test(location.hostname)) return;
+    if (navigator.webdriver) return;
+    if (/bot|crawl|spider|slurp|bingpreview|headless|lighthouse|pagespeed|gtmetrix|preview/i.test(navigator.userAgent)) return;
+
+    // Exclusion volontaire : ouvrir n'importe quelle page avec ?noanalytics=1
+    // (et ?noanalytics=0 pour se remettre dans les stats).
+    try {
+      if (/[?&]noanalytics=1/.test(location.search)) localStorage.setItem('mdp_no_analytics', '1');
+      if (/[?&]noanalytics=0/.test(location.search)) localStorage.removeItem('mdp_no_analytics');
+      if (localStorage.getItem('mdp_no_analytics')) return;
     } catch(e){}
+
+    A     = _db.ref('analytics');
+    inc1  = nb(1);
+    var d = new Date();
+    JOUR  = d.getFullYear() + '-' + ('0'+(d.getMonth()+1)).slice(-2) + '-' + ('0'+d.getDate()).slice(-2);
+    PAGE  = cle(location.pathname.split('/').pop() || 'index.html') || 'index_html';
+    PREFIX = 'j/' + JOUR + '/';
+
+    // ── Ménage : on ne garde que les drapeaux locaux du jour ────────────────
+    try {
+      for (var i = localStorage.length - 1; i >= 0; i--) {
+        var k = localStorage.key(i);
+        if (k && /^mdp_(visit|u|up)_/.test(k) && k.indexOf(JOUR) === -1) localStorage.removeItem(k);
+      }
+    } catch(e){}
+
+    // ── Identifiant visiteur anonyme (local, durée de vie 13 mois) ──────────
+    var vid = null, visiteurNouveau = false;
+    try {
+      var brut = localStorage.getItem('mdp_vid');
+      var obj  = brut ? JSON.parse(brut) : null;
+      if (!obj || !obj.id || (Date.now() - (obj.ne || 0)) > 400 * 864e5) {
+        obj = { id: Math.random().toString(36).slice(2) + Date.now().toString(36), ne: Date.now() };
+        visiteurNouveau = true;
+      }
+      localStorage.setItem('mdp_vid', JSON.stringify(obj));
+      vid = obj.id;
+    } catch(e){}
+
+    // ── Session (30 min d'inactivité = nouvelle visite) ─────────────────────
+    var sess = null, sessionNouvelle = false;
+    try {
+      sess = JSON.parse(sessionStorage.getItem('mdp_sess') || 'null');
+      if (sess && (Date.now() - (sess.vu || 0)) > 30 * 60000) sess = null;
+    } catch(e){}
+    if (!sess) { sess = { n: 0, debut: Date.now(), sec: 0 }; sessionNouvelle = true; }
+    sess.n  = (sess.n || 0) + 1;
+    sess.vu = Date.now();
+    try { sessionStorage.setItem('mdp_sess', JSON.stringify(sess)); } catch(e){}
+
+    // ── Compteurs historiques (v1) : on continue de les alimenter ───────────
+    bump('total', 1);
+    bump('daily/' + JOUR, 1);
+    bump('pages/' + PAGE, 1);
+    if (drapeau('mdp_visit_' + JOUR)) bump('dailyUnique/' + JOUR, 1);
+
+    // ── Pages vues ─────────────────────────────────────────────────────────
+    bump(PREFIX + 'vues', 1);
+    bump(PREFIX + 'pages/' + PAGE + '/v', 1);
+    bump(PREFIX + 'h/' + ('0' + d.getHours()).slice(-2), 1);
+    if (drapeau('mdp_u_' + JOUR)) bump(PREFIX + 'uniques', 1);
+    if (drapeau('mdp_up_' + JOUR + '_' + PAGE)) bump(PREFIX + 'pages/' + PAGE + '/u', 1);
+
+    // ── Début de visite : source, appareil, page d'entrée ───────────────────
+    if (sessionNouvelle) {
+      bump(PREFIX + 'sessions', 1);
+      bump(PREFIX + 'rebonds', 1);           // supposé rebond, corrigé à la 2ᵉ page
+      bump(PREFIX + 'entrees/' + PAGE, 1);
+      if (visiteurNouveau) bump(PREFIX + 'nouveaux', 1);
+
+      // Source du trafic
+      var ref = '', hote = '';
+      try { ref = document.referrer || ''; hote = ref ? new URL(ref).hostname.replace(/^www\./, '') : ''; } catch(e){}
+      var utm = '';
+      try { utm = new URLSearchParams(location.search).get('utm_source') || ''; } catch(e){}
+
+      var src;
+      if (utm) src = cle(utm.toLowerCase());
+      else if (!hote) src = 'direct';
+      else if (hote.indexOf(location.hostname.replace(/^www\./, '')) !== -1) src = 'interne';
+      else if (/google/.test(hote))                       src = 'google';
+      else if (/bing/.test(hote))                         src = 'bing';
+      else if (/yahoo/.test(hote))                        src = 'yahoo';
+      else if (/duckduckgo/.test(hote))                   src = 'duckduckgo';
+      else if (/ecosia/.test(hote))                       src = 'ecosia';
+      else if (/qwant/.test(hote))                        src = 'qwant';
+      else if (/instagram/.test(hote))                    src = 'instagram';
+      else if (/facebook|fb\.com|fb\.me/.test(hote))      src = 'facebook';
+      else if (/tiktok/.test(hote))                       src = 'tiktok';
+      else if (/snapchat/.test(hote))                     src = 'snapchat';
+      else if (/youtube|youtu\.be/.test(hote))            src = 'youtube';
+      else if (/whatsapp|wa\.me/.test(hote))              src = 'whatsapp';
+      else if (/pinterest/.test(hote))                    src = 'pinterest';
+      else if (/linkedin|lnkd/.test(hote))                src = 'linkedin';
+      else if (/twitter|t\.co|x\.com/.test(hote))         src = 'twitter';
+      else if (/chatgpt|openai|perplexity|claude|gemini|copilot/.test(hote)) src = 'ia';
+      else if (/pagesjaunes|mappy|yelp|tripadvisor/.test(hote)) src = 'annuaires';
+      else src = 'autre';
+
+      bump(PREFIX + 'src/' + src, 1);
+      if (hote && src !== 'interne') bump(PREFIX + 'ref/' + cle(hote), 1);
+
+      // Appareil
+      var ua = navigator.userAgent;
+      var appareil = /iPad|Tablet|PlayBook|Silk|(Android(?!.*Mobi))/i.test(ua) ? 'tablette'
+                   : /Mobi|Android|iPhone|iPod|Windows Phone/i.test(ua)       ? 'mobile'
+                   : 'ordi';
+      bump(PREFIX + 'dev/' + appareil, 1);
+
+      // Navigateur
+      var navi = /Edg\//.test(ua)                      ? 'Edge'
+               : /OPR\/|Opera/.test(ua)                ? 'Opera'
+               : /SamsungBrowser/.test(ua)             ? 'Samsung'
+               : /Firefox\//.test(ua)                  ? 'Firefox'
+               : /Chrome\//.test(ua)                   ? 'Chrome'
+               : /Safari\//.test(ua)                   ? 'Safari'
+               : 'Autre';
+      bump(PREFIX + 'nav/' + navi, 1);
+    }
+
+    // 2ᵉ page de la visite → ce n'était finalement pas un rebond
+    if (sess.n === 2) bump(PREFIX + 'rebonds', -1);
+
+    // ── Temps passé : battement toutes les 20 s, plafonné à 30 min/visite ───
+    var PAS = 20, PLAFOND = 1800;
+    var battement = setInterval(function(){
+      if (document.hidden) return;
+      if ((sess.sec || 0) >= PLAFOND) { clearInterval(battement); return; }
+      sess.sec = (sess.sec || 0) + PAS;
+      try { sessionStorage.setItem('mdp_sess', JSON.stringify(sess)); } catch(e){}
+      bump(PREFIX + 'secondes', PAS);
+    }, PAS * 1000);
+
+    // ── Événements : appel, WhatsApp, email, clic « Réserver » ──────────────
+    window.MDPtrack = function(nom){ bump(PREFIX + 'ev/' + cle(nom), 1); };
+
+    document.addEventListener('click', function(e){
+      var a = e.target && e.target.closest ? e.target.closest('a,[data-ev]') : null;
+      if (!a) return;
+      var manuel = a.getAttribute('data-ev');
+      if (manuel) { window.MDPtrack(manuel); return; }
+      var href = (a.getAttribute('href') || '').toLowerCase();
+      if (!href) return;
+      if (href.indexOf('tel:') === 0)                                window.MDPtrack('appel');
+      else if (href.indexOf('mailto:') === 0)                        window.MDPtrack('email');
+      else if (href.indexOf('wa.me') !== -1 || href.indexOf('whatsapp') !== -1) window.MDPtrack('whatsapp');
+      else if (href.indexOf('maps') !== -1 && href.indexOf('goo') !== -1)       window.MDPtrack('itineraire');
+      else if (href.indexOf('forfait-evasion') !== -1)               window.MDPtrack('clic_evasion');
+      else if (href.indexOf('reservation.html') !== -1)              window.MDPtrack('clic_reserver');
+    }, true);
   } catch(e){}
 })();

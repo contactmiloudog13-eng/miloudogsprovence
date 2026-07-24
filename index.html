@@ -231,6 +231,20 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
 .svc-mini-perks{list-style:none;margin-top:12px;border-top:1px solid var(--border);padding-top:12px;}
 .svc-mini-perks li{font-size:.78rem;color:var(--text-muted);padding:3px 0;display:flex;gap:7px;}
 .svc-mini-perks li::before{content:'✓';color:var(--vert);font-weight:700;flex-shrink:0;}
+/* Carte « Nouveau » — Forfait Évasion */
+.svc-neuf{border-color:var(--soleil)!important;background:linear-gradient(160deg,#FFFDF6,#FFF6E4)!important;}
+.svc-neuf::before{transform:scaleX(1)!important;background:linear-gradient(90deg,var(--soleil),var(--gold))!important;}
+.svc-neuf .svc-mini-price{color:#B4720F;}
+.svc-neuf-pastille{
+  position:absolute;top:14px;right:14px;z-index:2;
+  background:linear-gradient(135deg,var(--gold),var(--soleil));color:#241B45;
+  padding:4px 12px;border-radius:30px;font-size:.66rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.09em;white-space:nowrap;
+  box-shadow:0 4px 14px rgba(232,168,76,.42);
+  animation:neufPop 3.4s ease-in-out infinite;
+}
+@keyframes neufPop{0%,88%,100%{transform:scale(1);}92%{transform:scale(1.09);}}
+@media(prefers-reduced-motion:reduce){.svc-neuf-pastille{animation:none;}}
 .fidelite-banner{background:linear-gradient(135deg,var(--soleil-light,#FFF8E6),#FFF3CD);border:1.5px solid var(--soleil);border-radius:16px;padding:20px 28px;margin-top:40px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
 .fidelite-banner .fb-icon{font-size:2.5rem;flex-shrink:0;}
 .fidelite-banner .fb-text strong{display:block;font-size:1rem;color:var(--lavande-dark);margin-bottom:3px;}
@@ -293,6 +307,7 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
   <ul class="nav-links" id="navlinks">
         <li><a href="index.html" data-icon="🏠">Accueil</a></li>
     <li><a href="services.html" data-icon="🐾">Services &amp; Tarifs</a></li>
+    <li><a href="forfait-evasion.html" data-icon="🏔️">Forfait Évasion</a></li>
     <li><a href="a-propos.html" data-icon="❤️">À propos</a></li>
     <li><a href="avis.html" data-icon="⭐">Avis</a></li>
     <li><a href="galerie.html" data-icon="📸">Galerie</a></li>
@@ -512,6 +527,18 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
       <p class="section-sub">Tous les services adaptés à votre chien, à Miramas et alentours</p>
     </div>
     <div class="svc-mini-grid">
+      <a class="svc-mini-card svc-neuf fade-in" href="forfait-evasion.html" data-capacite-fixe data-tarif-fixe data-ev="clic_evasion_grille" style="text-decoration:none;color:inherit;display:block;">
+        <span class="svc-neuf-pastille">✨ Nouveau</span>
+        <span class="svc-mini-icon">🏔️</span>
+        <div class="svc-mini-name">Forfait Évasion</div>
+        <p class="svc-mini-desc">Le samedi : 2 h de randonnée avec 4 copains max, puis toute la journée à la pension.</p>
+        <div class="svc-mini-price">35€<small>/journée</small></div>
+        <ul class="svc-mini-perks">
+          <li>5 chiens maximum</li>
+          <li>Photos pendant la balade</li>
+          <li>Il rentre enfin fatigué</li>
+        </ul>
+      </a>
       <div class="svc-mini-card fade-in">
         <span class="svc-mini-icon">🏠</span>
         <div class="svc-mini-name">Pension nuit</div>
@@ -569,16 +596,83 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
         <a href="garde-animaux-domicile-miramas.html" style="display:inline-block;margin-top:12px;font-size:.8rem;color:var(--lavande);font-weight:700;text-decoration:none;" onclick="event.stopPropagation()">Tout savoir sur les visites →</a>
       </div>
     </div>
-    <div class="fidelite-banner fade-in">
-      <div class="fb-icon">🎴</div>
-      <div class="fb-text">
-        <strong>Carte de fidélité offerte à chaque client !</strong>
-        <span>Cumulez vos visites (garderie, promenade, pension...) — à la 10ème visite, recevez <strong>1 demi-journée offerte</strong> ! Valable sans limite dans le temps.</span>
-      </div>
-      <a class="btn-outline" href="services.html" style="flex-shrink:0;">Voir tous les services →</a>
+    <div style="text-align:center;margin-top:34px;">
+      <a class="btn-outline" href="services.html">Voir tous les services &amp; tarifs →</a>
     </div>
   </div>
 </section>
+
+<!-- ── Forfait Évasion — la randonnée du samedi ────────── -->
+<style>
+/* Bandeau Évasion : photo en fond + voile « nuit lavande » (mêmes teintes que
+   la page Forfait Évasion). La photo est pilotable depuis l'admin (slot evh-photo). */
+#evasion-home{position:relative;overflow:hidden;padding:76px 5%;isolation:isolate;background:#241B45;}
+#evasion-home .evh-photo{
+  position:absolute;inset:0;z-index:-3;
+  background-image:url('IMG_1073.webp');background-size:cover;background-position:center 38%;
+  transform:scale(1.04);
+}
+#evasion-home::before{
+  content:'';position:absolute;inset:0;z-index:-2;
+  background:linear-gradient(102deg,#241B45 0%,rgba(36,27,69,.94) 40%,rgba(59,47,99,.72) 70%,rgba(74,63,114,.45) 100%);
+}
+#evasion-home::after{
+  content:'';position:absolute;inset:0;z-index:-1;
+  background:radial-gradient(ellipse 55% 60% at 20% 26%,rgba(245,200,74,.18),transparent 68%);
+}
+@media(max-width:860px){
+  #evasion-home::before{background:linear-gradient(180deg,rgba(36,27,69,.95) 0%,rgba(36,27,69,.88) 55%,rgba(74,63,114,.78) 100%);}
+  #evasion-home .evh-photo{background-image:url('IMG_1073-800.webp');}
+}
+#evasion-home .evh-carte{
+  display:block;text-decoration:none;
+  background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);border-radius:22px;
+  padding:24px;backdrop-filter:blur(16px) saturate(1.4);
+  box-shadow:0 26px 64px rgba(0,0,0,.32);transition:transform .3s,border-color .3s;
+}
+#evasion-home .evh-carte:hover{transform:translateY(-4px);border-color:rgba(245,200,74,.45);}
+</style>
+<section id="evasion-home" data-capacite-fixe>
+  <div class="evh-photo" aria-hidden="true"></div>
+  <div class="container" style="position:relative;z-index:2;">
+    <div style="display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:center;" class="ev-home-split">
+      <div class="fade-in">
+        <span style="display:inline-flex;align-items:center;gap:8px;background:rgba(245,200,74,.16);border:1px solid rgba(245,200,74,.45);color:#F5C84A;padding:7px 16px;border-radius:30px;font-size:.74rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;">🏔️ Nouveau · tous les samedis</span>
+        <h2 class="section-title" style="color:white;margin:18px 0 14px;">Le <span style="color:#F5C84A;">Forfait Évasion</span> :<br>votre chien part en randonnée</h2>
+        <p style="color:rgba(255,255,255,.84);font-size:1rem;line-height:1.8;font-weight:300;max-width:560px;">
+          Chaque samedi, on emmène <strong style="color:#fff;">5 chiens maximum</strong> en randonnée dans les plus beaux
+          coins autour de Miramas : la garrigue, les rives de l'étang, les collines.
+          Vous le déposez le matin, il marche <strong style="color:#fff;">deux heures</strong>, passe l'après-midi
+          à la pension, et vous le récupérez le soir enfin fatigué.
+        </p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 26px;">
+          <span style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.9);padding:7px 14px;border-radius:20px;font-size:.8rem;font-weight:600;">🥾 2 h de balade</span>
+          <span style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.9);padding:7px 14px;border-radius:20px;font-size:.8rem;font-weight:600;">🏡 La journée à la pension</span>
+          <span style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.9);padding:7px 14px;border-radius:20px;font-size:.8rem;font-weight:600;">📸 Photos en direct</span>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+          <a class="btn-primary" href="forfait-evasion.html" style="background:#F5C84A;color:#1a0e00;border:none;">🎒 Découvrir le Forfait Évasion</a>
+          <span style="color:rgba(255,255,255,.75);font-size:.9rem;"><strong style="color:#fff;font-size:1.25rem;">35€</strong> la journée complète</span>
+        </div>
+      </div>
+      <div class="fade-in">
+        <a class="evh-carte" href="forfait-evasion.html" data-ev="clic_evasion_accueil">
+          <div style="color:#fff;font-weight:800;font-size:.95rem;" id="evh-titre">Prochaine sortie du samedi</div>
+          <div style="display:flex;gap:8px;margin:14px 0 12px;" id="evh-pastilles">
+            <div style="flex:1;height:9px;border-radius:6px;background:rgba(255,255,255,.18);"></div>
+            <div style="flex:1;height:9px;border-radius:6px;background:rgba(255,255,255,.18);"></div>
+            <div style="flex:1;height:9px;border-radius:6px;background:rgba(255,255,255,.18);"></div>
+            <div style="flex:1;height:9px;border-radius:6px;background:rgba(255,255,255,.18);"></div>
+            <div style="flex:1;height:9px;border-radius:6px;background:rgba(255,255,255,.18);"></div>
+          </div>
+          <div style="color:rgba(255,255,255,.68);font-size:.82rem;line-height:1.6;" id="evh-sous">5 places par sortie — voir les samedis disponibles</div>
+          <div style="color:#F5C84A;font-weight:800;font-size:.85rem;margin-top:14px;">Voir les dates &amp; réserver →</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+<style>@media(max-width:860px){#evasion-home .ev-home-split{grid-template-columns:1fr!important;gap:26px!important;}}</style>
 
 <!-- ── Simulateur de prix express ─────────────────────── -->
 <section id="simu" style="background:linear-gradient(135deg,#2d1f4e 0%,#4A3F72 100%);padding:56px 5%;">
@@ -1192,6 +1286,52 @@ function closeLightbox() {
 document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeLightbox(); });
 </script>
 
+<!-- ── Forfait Évasion : places restantes du prochain samedi, en direct ── -->
+<script>
+(function(){
+  var MOIS_EV=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  function cle(d){ return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
+  try{
+    var db=firebase.database();
+    Promise.all([db.ref('evasion/config').once('value'), db.ref('evasion/sorties').once('value')])
+    .then(function(r){
+      var cfg=r[0].val()||{}, sorties=r[1].val()||{};
+      if(cfg.actif===false) return;
+      var places=cfg.places||5, semaines=cfg.semaines||8;
+      var d=new Date(); d.setHours(0,0,0,0);
+      d.setDate(d.getDate()+((6-d.getDay()+7)%7));
+      var choisi=null;
+      for(var i=0;i<semaines;i++){
+        var k=cle(d), s=sorties[k]||{};
+        var total=s.places!=null?s.places:places, pris=Math.max(0,s.pris||0);
+        var depart=new Date(d.getFullYear(),d.getMonth(),d.getDate(),9,0,0);
+        var tard=(depart.getTime()-Date.now())<(cfg.delaiHeures||20)*3600000;
+        if(s.statut!=='annulee' && s.statut!=='fermee' && !tard && total-pris>0){
+          choisi={k:k,d:new Date(d),total:total,pris:pris,reste:total-pris,lieu:s.lieu}; break;
+        }
+        d.setDate(d.getDate()+7);
+      }
+      var t=document.getElementById('evh-titre'), p=document.getElementById('evh-pastilles'), so=document.getElementById('evh-sous');
+      if(!t||!p||!so) return;
+      if(!choisi){
+        t.textContent='Les prochains samedis sont complets 🎉';
+        so.textContent='Rejoignez la liste d\'attente : une place se libère presque chaque semaine.';
+        return;
+      }
+      t.innerHTML='Prochaine sortie · <span style="color:#F5C84A;">samedi '+choisi.d.getDate()+' '+MOIS_EV[choisi.d.getMonth()]+'</span>';
+      var h='';
+      for(var k2=0;k2<choisi.total;k2++){
+        h+='<div style="flex:1;height:9px;border-radius:6px;background:'+(k2<choisi.pris?'#F5C84A':'rgba(255,255,255,.18)')+';"></div>';
+      }
+      p.innerHTML=h;
+      so.innerHTML=(choisi.reste===1?'⚠️ <strong style="color:#F5C84A;">Dernière place disponible !</strong>'
+        : 'Il reste <strong style="color:#fff;">'+choisi.reste+' places</strong> sur '+choisi.total+'.')
+        +(choisi.lieu?'<br>📍 '+choisi.lieu:'');
+    }).catch(function(){});
+  }catch(e){}
+})();
+</script>
+
 <script src="effects-extra.js"></script>
 <!-- Prix pilotés depuis l'admin (site_config/tarifs) — mise à jour en direct -->
 <script>
@@ -1200,6 +1340,9 @@ document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeLigh
     firebase.database().ref('site_config/tarifs').on('value', function(s){
       var t=s.val(); if(!t) return;
       document.querySelectorAll('.svc-mini-price').forEach(function(el){
+        // data-tarif-fixe : prix qui ne vient PAS de site_config/tarifs
+        // (le Forfait Évasion a ses propres tarifs dans evasion/config).
+        try{ if(el.closest('[data-tarif-fixe]')) return; }catch(e){}
         var sm=el.querySelector('small'); if(!sm||!el.firstChild) return;
         var u=sm.textContent.toLowerCase(), k=null;
         if(u.indexOf('nuit')>=0) k='pension';
@@ -1243,7 +1386,9 @@ document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeLigh
   #services-mini .svc-mini-card{padding:14px 11px!important;}
   #services-mini .svc-mini-desc,#services-mini .svc-mini-perks,#services-mini .svc-mini-card>a{display:none!important;}
   #services-mini .svc-mini-name{font-size:.9rem!important;}
-  #services-mini .section-sub,#services-mini .fidelite-banner{display:none!important;}
+  #services-mini .section-sub{display:none!important;}
+  /* la carte Évasion garde son texte : c'est la nouveauté qu'on met en avant */
+  #services-mini .svc-neuf .svc-mini-desc{display:block!important;}
   /* « Comment ça marche » réduit : 2 colonnes, icône + titre seulement */
   #hiw-home .hiw-grid{grid-template-columns:1fr 1fr!important;gap:10px!important;}
   #hiw-home .hiw-card{padding:14px 10px!important;}
@@ -1259,7 +1404,7 @@ document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeLigh
 (function(){
   try{
     var hero=document.getElementById('hero'); if(!hero||!hero.parentNode) return;
-    ['urgence-bar','trust-bar','services-mini','hiw-home','carnet-section','video-section','comparaison-home'].reduce(function(anchor,id){
+    ['urgence-bar','trust-bar','services-mini','evasion-home','hiw-home','carnet-section','video-section','comparaison-home'].reduce(function(anchor,id){
       var el=document.getElementById(id);
       if(el && anchor && anchor.parentNode){ anchor.parentNode.insertBefore(el, anchor.nextSibling); return el; }
       return anchor;

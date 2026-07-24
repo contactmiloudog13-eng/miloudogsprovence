@@ -159,6 +159,7 @@
   <ul class="nav-links" id="navlinks">
     <li><a href="index.html" data-icon="🏠">Accueil</a></li>
     <li><a href="services.html" data-icon="🐾">Services & Tarifs</a></li>
+    <li><a href="forfait-evasion.html" data-icon="🏔️">Forfait Évasion</a></li>
     <li><a href="avis.html" data-icon="⭐">Avis</a></li>
     <li><a href="galerie.html" data-icon="📸">Galerie</a></li>
     <li><a href="blog.html" data-icon="📝">Conseils</a></li>
@@ -364,6 +365,19 @@
                     <span class="service-tag svc-pack" data-pack="duo" onclick="selectPackDuo(this)">🎁 Pack Duo Maison<small>Votre chien en pension + on passe chez vous pour un 2ᵉ animal · −33 % sur les visites</small></span>
                   </div>
                 </div>
+                <!-- Forfait Évasion : réservation à part (places limitées par samedi) -->
+                <a href="forfait-evasion.html" data-capacite-fixe data-ev="clic_evasion_resa" style="display:flex;gap:14px;align-items:center;text-decoration:none;margin-top:14px;
+                   background:linear-gradient(118deg,#241B45,#4A3F72 68%,#5B4E86);border-radius:16px;padding:16px 18px;border:1px solid rgba(245,200,74,.32);">
+                  <div style="font-size:1.9rem;flex-shrink:0;">🏔️</div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="color:#F5C84A;font-weight:800;font-size:.9rem;">Forfait Évasion — la randonnée du samedi</div>
+                    <div style="color:rgba(255,255,255,.78);font-size:.8rem;line-height:1.5;margin-top:3px;">
+                      2 h de balade avec 4 copains max, puis la journée à la pension. Vous le déposez le matin, vous le récupérez le soir. <strong style="color:#fff;">35 €</strong>.
+                      <span id="ev-resa-places" style="color:#F5C84A;font-weight:700;"></span>
+                    </div>
+                  </div>
+                  <div style="color:#F5C84A;font-weight:800;font-size:.85rem;white-space:nowrap;">Réserver →</div>
+                </a>
               </div>
             </div>
             <div class="addon-card" id="pickup-card">
@@ -1759,6 +1773,8 @@ async function submitReservation() {
 
   // Google Sheets supprimé — tout passe par Firebase
 
+  try { if (window.MDPtrack) window.MDPtrack('demande_envoyee'); } catch(e){}
+
   // --- 2. Envoi vers Web3Forms ---
   try {
     const w3res = await fetch('https://api.web3forms.com/submit', {
@@ -1925,6 +1941,29 @@ function ejsSendReception(data) {
 <script src="firebase-auth.js"></script>
 
 <script>
+// ── Forfait Évasion : places restantes du prochain samedi ───────────────────
+(function(){
+  try{
+    var db=firebase.database();
+    Promise.all([db.ref('evasion/config').once('value'), db.ref('evasion/sorties').once('value')]).then(function(r){
+      var cfg=r[0].val()||{}, so=r[1].val()||{}, el=document.getElementById('ev-resa-places');
+      if(!el || cfg.actif===false) return;
+      var places=cfg.places||5, d=new Date(); d.setHours(0,0,0,0);
+      d.setDate(d.getDate()+((6-d.getDay()+7)%7));
+      for(var i=0;i<(cfg.semaines||8);i++){
+        var k=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+        var s=so[k]||{}, total=s.places!=null?s.places:places, reste=total-Math.max(0,s.pris||0);
+        var tard=(new Date(d.getFullYear(),d.getMonth(),d.getDate(),9,0,0).getTime()-Date.now())<(cfg.delaiHeures||20)*3600000;
+        if(s.statut!=='annulee' && s.statut!=='fermee' && !tard && reste>0){
+          el.textContent = reste===1 ? ' 🔥 Dernière place samedi !' : (' Il reste '+reste+' places samedi.');
+          return;
+        }
+        d.setDate(d.getDate()+7);
+      }
+    }).catch(function(){});
+  }catch(e){}
+})();
+
 // ── Pré-remplissage formulaire si connecté ──────────────────────────────────
 let _userEmail = '';
 firebase.auth().onAuthStateChanged(async user => {

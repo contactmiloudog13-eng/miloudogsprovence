@@ -120,6 +120,7 @@
   <ul class="nav-links" id="navlinks">
         <li><a href="index.html" data-icon="🏠">Accueil</a></li>
     <li><a href="services.html" data-icon="🐾">Services &amp; Tarifs</a></li>
+    <li><a href="forfait-evasion.html" data-icon="🏔️">Forfait Évasion</a></li>
     <li><a href="a-propos.html" data-icon="❤️">À propos</a></li>
     <li><a href="avis.html" data-icon="⭐">Avis</a></li>
     <li><a href="galerie.html" data-icon="📸">Galerie</a></li>
@@ -221,6 +222,29 @@
           <li>Découverte des lieux</li>
           <li>Rencontre avec les autres chiens</li>
         </ul>
+      </div>
+
+      <!-- Forfait Évasion — randonnée du samedi -->
+      <div class="t-card fade-in" data-capacite-fixe data-tarif-fixe onclick="location.href='forfait-evasion.html'" style="border-color:var(--lavande);background:linear-gradient(160deg,#fff,#F6F4FB);">
+        <div class="star-ribbon" style="background:linear-gradient(135deg,#4A3F72,#7B6FA0);color:#F5C84A;">🏔️ Nouveau · samedis</div>
+        <div class="t-card-top">
+          <div class="t-icon">🏔️</div>
+          <div>
+            <div class="t-name">Forfait Évasion</div>
+            <div class="t-sub">Randonnée du samedi — 5 chiens max</div>
+          </div>
+        </div>
+        <div class="t-price-row">
+          <span class="t-price">35€</span>
+          <span class="t-unit">/ journée</span>
+        </div>
+        <ul class="t-perks">
+          <li>2 h de randonnée autour de Miramas</li>
+          <li>Puis toute la journée à la pension</li>
+          <li>📸 Photos pendant la balade</li>
+          <li>🎟️ Carte 4 sorties : 120€ au lieu de 140€</li>
+        </ul>
+        <a href="forfait-evasion.html" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;font-size:.8rem;color:var(--lavande-dark);font-weight:800;text-decoration:none;">Voir les samedis disponibles →</a>
       </div>
 
       <!-- Promenades -->
@@ -534,6 +558,9 @@ function notifyToilettage(){
     firebase.database().ref('site_config/tarifs').on('value', function(s){
       var t=s.val(); if(!t) return;
       document.querySelectorAll('.t-price').forEach(function(el){
+        // data-tarif-fixe : prix qui ne vient PAS de site_config/tarifs
+        // (le Forfait Évasion a ses propres tarifs dans evasion/config).
+        try{ if(el.closest('[data-tarif-fixe]')) return; }catch(e){}
         var row=el.closest('.t-price-row')||el.parentElement;
         var unitEl=row&&row.querySelector('.t-unit');
         var u=(unitEl?unitEl.textContent:'').toLowerCase(), k=null;

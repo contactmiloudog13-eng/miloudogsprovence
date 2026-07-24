@@ -13,13 +13,27 @@ window.SITE_IMAGE_REGISTRY = {
     { id:'mc2', cls:'mc2', def:'IMG_1073.webp', label:'Galerie accueil 2' },
     { id:'mc3', cls:'mc3', def:'IMG_1130.webp', label:'Galerie accueil 3' },
     { id:'mc4', cls:'mc4', def:'IMG_3307.webp', label:'Galerie accueil 4' },
-    { id:'mc5', cls:'mc5', def:'IMG_1078.webp', label:'Galerie accueil 5' }
+    { id:'mc5', cls:'mc5', def:'IMG_1078.webp', label:'Galerie accueil 5' },
+    { id:'evasion', cls:'evh-photo', def:'IMG_1073.webp', label:'Bandeau Forfait Évasion' }
   ],
   apropos: [
     { id:'ap1', cls:'ap1', def:'IMG_1075.webp', label:'Mosaïque 1' },
     { id:'ap2', cls:'ap2', def:'IMG_1138.webp', label:'Mosaïque 2' },
     { id:'ap3', cls:'ap3', def:'IMG_1146.webp', label:'Mosaïque 3' },
     { id:'ap4', cls:'ap4', def:'IMG_1191.webp', label:'Mosaïque 4' }
+  ],
+  evasion: [
+    { id:'evhero', cls:'evhero', def:'IMG_1073.webp', label:'Grande photo du haut' },
+    { id:'ev-photo-journee', cls:'ev-photo-journee', def:'IMG_1240.webp', label:'Photo « déroulé de la journée »' },
+    { id:'ev1', cls:'ev1', def:'IMG_1240.webp', label:'Lieu 1 — Miramas-le-Vieux' },
+    { id:'ev2', cls:'ev2', def:'IMG_1073.webp', label:'Lieu 2 — Poudrerie St-Chamas' },
+    { id:'ev3', cls:'ev3', def:'IMG_1212.webp', label:'Lieu 3 — Étang de Berre' },
+    { id:'ev4', cls:'ev4', def:'IMG_1130.webp', label:'Lieu 4 — Étang de l\'Olivier' },
+    { id:'ev5', cls:'ev5', def:'IMG_3307.webp', label:'Lieu 5 — Bois de Castillon' },
+    { id:'ev6', cls:'ev6', def:'IMG_1146.webp', label:'Lieu 6 — La Touloubre' },
+    { id:'evg1', cls:'evg1', def:'IMG_1073.webp', label:'Galerie Évasion 1' },
+    { id:'evg2', cls:'evg2', def:'IMG_3307.webp', label:'Galerie Évasion 2' },
+    { id:'evg3', cls:'evg3', def:'IMG_1212.webp', label:'Galerie Évasion 3' }
   ],
   services: [
     { id:'g1', cls:'g1', def:'IMG_0952.webp', label:'Galerie 1' },
@@ -40,6 +54,7 @@ window.SITE_IMAGE_PAGE = (function(){
   if (p === '' || p === 'index.html') return 'home';
   if (p === 'a-propos.html') return 'apropos';
   if (p === 'services.html') return 'services';
+  if (p === 'forfait-evasion.html') return 'evasion';
   return null;
 })();
 
