@@ -25,12 +25,12 @@ window.SITE_IMAGE_REGISTRY = {
   evasion: [
     { id:'evhero', cls:'evhero', def:'IMG_1073.webp', label:'Grande photo du haut' },
     { id:'ev-photo-journee', cls:'ev-photo-journee', def:'IMG_1240.webp', label:'Photo « déroulé de la journée »' },
-    { id:'ev1', cls:'ev1', def:'IMG_1240.webp', label:'Lieu 1 — Miramas-le-Vieux' },
+    { id:'ev1', cls:'ev1', def:'lieu-miramas-le-vieux.webp', label:'Lieu 1 — Miramas-le-Vieux' },
     { id:'ev2', cls:'ev2', def:'IMG_1073.webp', label:'Lieu 2 — Poudrerie St-Chamas' },
-    { id:'ev3', cls:'ev3', def:'IMG_1212.webp', label:'Lieu 3 — Étang de Berre' },
-    { id:'ev4', cls:'ev4', def:'IMG_1130.webp', label:'Lieu 4 — Étang de l\'Olivier' },
+    { id:'ev3', cls:'ev3', def:'lieu-etang-de-berre.webp', label:'Lieu 3 — Étang de Berre' },
+    { id:'ev4', cls:'ev4', def:'lieu-etang-olivier.webp', label:'Lieu 4 — Étang de l\'Olivier' },
     { id:'ev5', cls:'ev5', def:'IMG_3307.webp', label:'Lieu 5 — Bois de Castillon' },
-    { id:'ev6', cls:'ev6', def:'IMG_1146.webp', label:'Lieu 6 — La Touloubre' },
+    { id:'ev6', cls:'ev6', def:'lieu-pont-flavien.webp', label:'Lieu 6 — La Touloubre & Pont Flavien' },
     { id:'evg1', cls:'evg1', def:'IMG_1073.webp', label:'Galerie Évasion 1' },
     { id:'evg2', cls:'evg2', def:'IMG_3307.webp', label:'Galerie Évasion 2' },
     { id:'evg3', cls:'evg3', def:'IMG_1212.webp', label:'Galerie Évasion 3' }

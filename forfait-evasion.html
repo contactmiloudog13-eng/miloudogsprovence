@@ -227,12 +227,24 @@
   background:rgba(36,27,69,.6);border:1px solid rgba(245,200,74,.5);color:var(--or);
   padding:5px 12px;border-radius:30px;font-size:.72rem;font-weight:700;backdrop-filter:blur(8px);
 }
-.ev1{background-image:url('IMG_1240.webp');}
+/* Photos des lieux : quatre viennent de Wikimedia Commons (crédits en bas de
+   section), deux attendent nos propres photos. Toutes remplaçables depuis l'admin. */
+.ev1{background-image:url('lieu-miramas-le-vieux.webp');}
 .ev2{background-image:url('IMG_1073.webp');}
-.ev3{background-image:url('IMG_1212.webp');}
-.ev4{background-image:url('IMG_1130.webp');}
+.ev3{background-image:url('lieu-etang-de-berre.webp');}
+.ev4{background-image:url('lieu-etang-olivier.webp');}
 .ev5{background-image:url('IMG_3307.webp');}
-.ev6{background-image:url('IMG_1146.webp');}
+.ev6{background-image:url('lieu-pont-flavien.webp');}
+@media(max-width:760px){
+  .ev1{background-image:url('lieu-miramas-le-vieux-800.webp');}
+  .ev3{background-image:url('lieu-etang-de-berre-800.webp');}
+  .ev4{background-image:url('lieu-etang-olivier-800.webp');}
+  .ev6{background-image:url('lieu-pont-flavien-800.webp');}
+}
+.ev-credits{
+  text-align:center;font-size:.72rem;color:var(--text-muted);margin-top:18px;line-height:1.7;opacity:.75;
+}
+.ev-credits a{color:var(--text-muted);text-decoration:underline;}
 
 /* ── Inclus ───────────────────────────────────────────────────────────── */
 .ev-inclus{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;}
@@ -581,11 +593,19 @@
       <div class="ev-lieu"><div class="ph ev3"></div><span class="ev-km">10 km</span><div class="ev-lieu-txt"><h4>Les rives de l'étang de Berre</h4><p>Grandes étendues ouvertes et accès à l'eau. La sortie préférée des chiens qui aiment se tremper l'été.</p></div></div>
       <div class="ev-lieu"><div class="ph ev4"></div><span class="ev-km">11 km</span><div class="ev-lieu-txt"><h4>L'étang de l'Olivier, Istres</h4><p>Le tour de l'étang, plat et régulier, avec des points de vue sur toute la ville. Praticable toute l'année.</p></div></div>
       <div class="ev-lieu"><div class="ph ev5"></div><span class="ev-km">13 km</span><div class="ev-lieu-txt"><h4>Le bois de Castillon</h4><p>La sortie la plus sportive : montées, cailloux, sous-bois. Réservée aux chiens en bonne condition physique.</p></div></div>
-      <div class="ev-lieu"><div class="ph ev6"></div><span class="ev-km">10 km</span><div class="ev-lieu-txt"><h4>La Touloubre &amp; les bois de Grans</h4><p>On longe la rivière à l'ombre. C'est notre parcours de repli les jours de forte chaleur.</p></div></div>
+      <div class="ev-lieu"><div class="ph ev6"></div><span class="ev-km">10 km</span><div class="ev-lieu-txt"><h4>La Touloubre &amp; le Pont Flavien</h4><p>On longe la rivière à l'ombre, jusqu'au pont romain de Saint-Chamas. Notre parcours de repli les jours de forte chaleur.</p></div></div>
     </div>
     <p class="ev-mention">
       🔥 <strong>Sécurité incendie :</strong> de juin à septembre, l'accès aux massifs des Bouches-du-Rhône dépend de l'arrêté préfectoral du jour.
       Quand le risque est élevé, on bascule automatiquement sur un parcours autorisé au bord de l'eau — la sortie n'est jamais maintenue dans une zone fermée.
+    </p>
+    <p class="ev-credits">
+      Photos des lieux :
+      Miramas-le-Vieux © Mathieu Brossais · Étang de Berre © Micka13 · Pont Flavien © Mark Landon
+      (<a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener nofollow">CC BY-SA 4.0</a> /
+      <a href="https://creativecommons.org/licenses/by/4.0" target="_blank" rel="noopener nofollow">CC BY 4.0</a>) ·
+      Étang de l'Olivier © Malost (<a href="https://creativecommons.org/licenses/by-sa/3.0" target="_blank" rel="noopener nofollow">CC BY-SA 3.0</a>),
+      via Wikimedia Commons. Les autres photos sont les nôtres.
     </p>
   </div>
 </section>
