@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -1989,6 +1989,7 @@ async function deleteChien() {
 
 // ── Réservations temps réel ─────────────────────────────────────────────────
 let _resaRef = null;
+let _resaRefs = null;   // requêtes ciblées (userId + email) remplaçant la lecture globale
 
 function _getSeenStatuts() {
   try { return JSON.parse(localStorage.getItem('resa_seen') || '{}'); } catch(e) { return {}; }
@@ -2012,24 +2013,27 @@ function _markResaAsSeen(list) {
 }
 
 function loadReservations(user) {
-  if (_resaRef) { _resaRef.off(); }
-  _resaRef = firebase.database().ref('reservations');
-  _resaRef.on('value', snap => {
-    const list = [];
-    snap.forEach(child => {
-      const r = child.val();
-      const matchUid   = r.userId === user.uid;
-      const matchEmail = r.email === user.email ||
-                         (r.client && r.client.email === user.email);
-      if (matchUid || matchEmail) list.push({ id: child.key, ...r });
-    });
+  // ⚠️ Confidentialité : on ne lit PLUS toute la table « reservations » pour
+  // filtrer ensuite côté navigateur — ça exposait les réservations de tous les
+  // clients à quiconque crée un compte. Deux requêtes CIBLÉES (par uid et par
+  // email, pour retrouver aussi les réservations faites en invité), fusionnées.
+  if (_resaRefs) { _resaRefs.forEach(q => { try { q.off(); } catch(e){} }); }
+  const merged = {};
+  const apply = () => {
+    const list = Object.keys(merged).map(k => ({ id: k, ...merged[k] }));
     list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
     renderReservations(list);
     _checkNotifBadge(list);
     window._resaList = list;
     renderCalendar();
     loadJournals(list);
-  });
+  };
+  const collect = snap => { snap.forEach(c => { merged[c.key] = c.val(); }); apply(); };
+  const base = firebase.database().ref('reservations');
+  _resaRefs = [ base.orderByChild('userId').equalTo(user.uid) ];
+  if (user.email) _resaRefs.push(base.orderByChild('email').equalTo(user.email));
+  _resaRefs.forEach(q => q.on('value', collect));
+  _resaRef = null;
 }
 
 // ── Journal de séjour : photos + notes publiées par la pension pendant la garde ──

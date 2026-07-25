@@ -259,19 +259,24 @@ const App = (function () {
     });
   }
   function listenReservations() {
-    db.ref('reservations').on('value', (snap) => {
-      const list = [];
-      snap.forEach((c) => {
-        const r = c.val();
-        const matchUid = r.userId === _user.uid;
-        const matchEmail = r.email === _user.email || (r.client && r.client.email === _user.email);
-        if (matchUid || matchEmail) list.push(Object.assign({ id: c.key }, r));
-      });
+    // ⚠️ Confidentialité : on ne lit PLUS toute la table « reservations » pour
+    // filtrer ensuite côté navigateur — ça exposait les réservations de tous les
+    // clients à quiconque crée un compte. On fait deux requêtes CIBLÉES (par uid
+    // et par email, pour retrouver aussi les réservations faites en invité) que
+    // les règles Firebase sont les seules à autoriser, puis on fusionne.
+    const merged = {};
+    const apply = () => {
+      const list = Object.keys(merged).map((k) => Object.assign({ id: k }, merged[k]));
       list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
       _resaList = list;
       if (_currentView === 'home') renderHome();
       if (_currentView === 'reservation' && App.renderReservationList) App.renderReservationList();
-    });
+    };
+    const collect = (snap) => { snap.forEach((c) => { merged[c.key] = c.val(); }); apply(); };
+    db.ref('reservations').orderByChild('userId').equalTo(_user.uid).on('value', collect);
+    if (_user.email) {
+      db.ref('reservations').orderByChild('email').equalTo(_user.email).on('value', collect);
+    }
   }
 
   // ── Navigation ────────────────────────────────────────────

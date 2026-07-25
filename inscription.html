@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -501,13 +501,16 @@ function setLoading(on) {
 // ── Fusion réservations invité → compte ─────────────────────────────────────
 async function mergeGuestReservations(uid, email) {
   try {
-    const snap = await firebase.database().ref('reservations').get();
+    // ⚠️ Requête CIBLÉE sur son propre email (les règles interdisent désormais
+    // de lire toute la table : ça exposait les réservations de tous les clients).
+    const snap = await firebase.database().ref('reservations')
+      .orderByChild('email').equalTo(email).get();
     if (!snap.exists()) return;
     const updates = {};
     snap.forEach(child => {
       const r = child.val();
       // Correspond si même email ET pas encore de userId
-      if (r.client && r.client.email === email && !r.userId) {
+      if (!r.userId) {
         updates['reservations/' + child.key + '/userId'] = uid;
         updates['reservations/' + child.key + '/statut'] = 'en-attente';
       }
