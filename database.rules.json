@@ -121,7 +121,7 @@
       ".write": "auth.uid === 'pWy9D9chapW1dVcqHMtyvgWF2xM2' || auth.uid === '2v8MBqAKkHZqzbxxSDWI0iWmg1A3'"
     },
     "date_overrides": {
-      ".read": "auth != null",
+      ".read": "auth.uid === 'pWy9D9chapW1dVcqHMtyvgWF2xM2' || auth.uid === '2v8MBqAKkHZqzbxxSDWI0iWmg1A3'",
       ".write": "auth.uid === 'pWy9D9chapW1dVcqHMtyvgWF2xM2' || auth.uid === '2v8MBqAKkHZqzbxxSDWI0iWmg1A3'"
     },
 
