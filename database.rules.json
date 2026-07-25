@@ -96,7 +96,7 @@
         "createdAt"
       ],
       "$id": {
-        ".write": "auth.uid === 'pWy9D9chapW1dVcqHMtyvgWF2xM2' || auth.uid === '2v8MBqAKkHZqzbxxSDWI0iWmg1A3' || (auth != null && !data.exists() && newData.exists())"
+        ".write": "auth.uid === 'pWy9D9chapW1dVcqHMtyvgWF2xM2' || auth.uid === '2v8MBqAKkHZqzbxxSDWI0iWmg1A3' || (auth != null && !data.exists() && newData.exists() && newData.child('userId').val() === auth.uid)"
       }
     },
 
