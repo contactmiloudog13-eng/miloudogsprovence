@@ -198,7 +198,10 @@ footer p{font-size:.85rem;color:rgba(255,255,255,.6);line-height:1.8;}
     padding:14px 16px!important;
     gap:10px;
   }
-  #nl-form input{padding:4px 0!important;font-size:.9rem!important;}
+  /* 16px et pas .9rem : cette règle a un sélecteur ID, elle battait le
+     garde-fou anti-zoom générique — le champ newsletter faisait donc zoomer
+     l'iPhone au focus (mesuré : 14,4px). */
+  #nl-form input{padding:4px 0!important;font-size:16px!important;}
   #nl-form button{border-radius:12px!important;padding:13px!important;width:100%;}
 
   /* ── FOOTER BOTTOM ── */
@@ -229,6 +232,13 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   h1,h2{overflow-wrap:break-word;}
   table{font-size:.82rem;}
   input,select,textarea{font-size:16px!important;} /* évite le zoom auto iPhone */
+}
+/* Le garde-fou ci-dessus s'arrête à 760px, or un iPad fait 768px (portrait) ou
+   1024px (paysage) : iOS y zoomait encore au focus. On couvre la largeur des
+   tablettes ET, via « pointer:coarse », tout écran tactile quelle que soit sa
+   taille. Mesuré avant correction : 23 champs sous 16px à 768px de large. */
+@media (max-width:1024px), (pointer:coarse){
+  input,select,textarea{font-size:16px!important;}
 }
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important;}
