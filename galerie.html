@@ -495,10 +495,28 @@ function cldOpt(u,w){ try{ if(u.indexOf('/upload/')===-1 || u.indexOf('res.cloud
     if (!photos.length) { empty.style.display = 'block'; return; }
     grid.style.display = 'block';
     photos.forEach(function(p){
+      // ⚠️ Construction par le DOM, plus par concaténation de HTML.
+      // La légende partait dans TROIS contextes à la fois — attribut `alt`,
+      // chaîne JS d'un `onclick`, et contenu HTML — et le seul garde-fou
+      // (`replace(/'/g,...)`) n'empêchait ni la sortie de l'attribut par un
+      // guillemet double, ni l'injection de balise. Banc XSS du 04/08 : charge
+      // exécutée pour de vrai sur cette page (champ `galerie.caption`).
+      // Passer par textContent/setAttribute + addEventListener supprime la
+      // question : plus aucune donnée n'est interprétée comme du balisage.
       var item = document.createElement('div');
       item.className = 'gal-item';
-      item.innerHTML = '<img src="' + cldOpt(p.url,900) + '" alt="' + (p.caption || 'Chien chez Milou Dogs Provence') + '" loading="lazy" onclick="openLightbox(\'' + p.url.replace(/'/g,"\\'") + '\',\'' + (p.caption||'').replace(/'/g,"\\'") + '\')">'
-        + (p.caption ? '<div class="gal-caption">' + p.caption + '</div>' : '');
+      var img = document.createElement('img');
+      img.src = cldOpt(p.url, 900);
+      img.alt = p.caption || 'Chien chez Milou Dogs Provence';
+      img.loading = 'lazy';
+      img.addEventListener('click', function () { openLightbox(p.url, p.caption || ''); });
+      item.appendChild(img);
+      if (p.caption) {
+        var cap = document.createElement('div');
+        cap.className = 'gal-caption';
+        cap.textContent = p.caption;
+        item.appendChild(cap);
+      }
       grid.appendChild(item);
     });
     fanInit(photos);

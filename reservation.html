@@ -1616,7 +1616,11 @@ function validateParrainCode(val) {
       if (snap.exists()) {
         var prenom = '';
         snap.forEach(function(c){ prenom = c.val().prenom || ''; });
-        fb.innerHTML = '<span style="color:#276749;font-weight:700;">✅ Code valide' + (prenom ? ' — parrain : ' + prenom : '') + ' · -10€ sur sa prochaine garde 🎉</span>';
+        // ⚠️ Ce prénom est celui du PARRAIN, donc la donnée d'un TIERS : il est
+        // lu depuis sa fiche via le code de parrainage saisi. Sans échappement,
+        // quiconque met une charge dans son propre prénom l'exécute chez tous
+        // ceux qui saisissent son code (banc XSS du 04/08).
+        fb.innerHTML = '<span style="color:#276749;font-weight:700;">✅ Code valide' + (prenom ? ' — parrain : ' + (window.mdEsc ? window.mdEsc(prenom) : '') : '') + ' · -10€ sur sa prochaine garde 🎉</span>';
       } else {
         fb.innerHTML = '<span style="color:#c0392b;">❌ Code introuvable — vérifiez avec votre ami</span>';
       }

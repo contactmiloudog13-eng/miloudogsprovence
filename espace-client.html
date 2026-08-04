@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -963,7 +963,29 @@ body:not(.auth-ready) footer{visibility:hidden;}
 </footer>
 
 <!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
+// ── Échappement HTML (ajouté le 04/08 après le banc XSS test_xss_dogs.js) ──
+// Aucun échappeur n'existait dans ce projet : les données affichées ici
+// (nom du chien, libellé de service, note du journal de séjour, prénom)
+// devenaient du balisage. Le banc a prouvé l'injection sur cette page.
+function _esc(v) {
+  return String(v == null ? '' : v)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+// Pour une valeur placée dans une CHAÎNE JS à l'intérieur d'un attribut
+// (onclick="f('…')") : l'échappement HTML seul ne suffit pas, car le
+// navigateur décode les entités AVANT d'interpréter le JS — un &#39;
+// redeviendrait une apostrophe et refermerait la chaîne. On neutralise donc
+// les caractères de structure JS, puis on interdit tout chevron.
+function _escJs(v) {
+  return String(v == null ? '' : v)
+    .replace(/\/g, '\\').replace(/'/g, '').replace(/"/g, '')
+    .replace(/[<>]/g, '').replace(/[
+]/g, ' ');
+}
+
+</script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="firebase-auth.js"></script>
@@ -1155,7 +1177,7 @@ function renderCarnetActif(c){
   if(usages.length){
     html+='<div style="display:flex;flex-direction:column;gap:8px;">'+usages.map(function(u,i){
       return '<div style="display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px 14px;">'+
-        '<span style="font-size:.88rem;color:var(--text);">🌙 Nuit '+(i+1)+(u.date?' — <b>'+_frD(u.date)+'</b>':'')+(u.note?' <span style="color:var(--text-muted);">('+u.note+')</span>':'')+'</span>'+
+        '<span style="font-size:.88rem;color:var(--text);">🌙 Nuit '+(i+1)+(u.date?' — <b>'+_frD(u.date)+'</b>':'')+(u.note?' <span style="color:var(--text-muted);">('+_esc(u.note)+')</span>':'')+'</span>'+
         '</div>';
     }).join('')+'</div>';
   } else {
@@ -1364,7 +1386,7 @@ function onCodePostalInput(input) {
         if (!Array.isArray(list) || !list.length) return;
         const dl = document.getElementById('ville-suggestions');
         const villeInput = document.getElementById('f-ville');
-        dl.innerHTML = list.map(c => '<option value="' + c.nom + '"></option>').join('');
+        dl.innerHTML = list.map(c => '<option value="' + _esc(c.nom) + '"></option>').join('');
         // Une seule commune, ou ville encore vide → on remplit automatiquement
         if (list.length === 1 || !villeInput.value.trim()) villeInput.value = list[0].nom;
       })
@@ -1612,11 +1634,11 @@ function renderChienSelector() {
     const d = _chiens[id];
     const isActive = id === _selectedChienId;
     const photoHtml = d.photoUrl
-      ? `<div class="chien-mini-avatar"><img src="${d.photoUrl}" alt="${d.nom||''}"></div>`
+      ? `<div class="chien-mini-avatar"><img src="${_esc(d.photoUrl)}" alt="${_esc(d.nom)}"></div>`
       : `<div class="chien-mini-avatar">${especeEmoji(d.espece)}</div>`;
     return `<div class="chien-mini-card${isActive?' active':''}" onclick="selectChien('${id}')">
       ${photoHtml}
-      <div class="chien-mini-name">${d.nom||'—'}</div>
+      <div class="chien-mini-name">${_esc(d.nom)||'—'}</div>
     </div>`;
   }).join('');
   html += `<button class="btn-add-chien" onclick="addNewChien()">
@@ -2031,9 +2053,59 @@ function loadReservations(user) {
   const collect = snap => { snap.forEach(c => { merged[c.key] = c.val(); }); apply(); };
   const base = firebase.database().ref('reservations');
   _resaRefs = [ base.orderByChild('userId').equalTo(user.uid) ];
-  if (user.email) _resaRefs.push(base.orderByChild('email').equalTo(user.email));
+  // ⚠️ Depuis le 04/08, la requête par email exige un email VÉRIFIÉ (sinon
+  // n'importe qui s'inscrivait avec l'adresse d'un client pour lire ses
+  // réservations invité). L'interroger sans vérification renverrait une erreur
+  // de permission : on ne la lance donc que si l'adresse est prouvée.
+  if (user.email && user.emailVerified) {
+    _resaRefs.push(base.orderByChild('email').equalTo(user.email));
+    _rattacherResasInvite(user);
+  }
   _resaRefs.forEach(q => q.on('value', collect));
   _resaRef = null;
+  _rappelVerifEmail(user);
+}
+
+// Rattache au compte les réservations faites EN INVITÉ avec la même adresse.
+// Se faisait à l'inscription (mergeGuestReservations) — mais l'email n'y est
+// jamais encore vérifié, donc les règles le refusaient : la fusion échouait
+// pour TOUT LE MONDE, en silence (l'erreur était avalée par un catch).
+// On la rejoue donc ici, au premier passage avec une adresse vérifiée.
+function _rattacherResasInvite(user) {
+  firebase.database().ref('reservations').orderByChild('email').equalTo(user.email).get()
+    .then(function (snap) {
+      if (!snap.exists()) return;
+      var updates = {};
+      snap.forEach(function (c) {
+        var r = c.val();
+        if (r && !r.userId) updates['reservations/' + c.key + '/userId'] = user.uid;
+      });
+      if (Object.keys(updates).length) return firebase.database().ref().update(updates);
+    })
+    .catch(function (e) { console.warn('Rattachement réservations invité :', e); });
+}
+
+// Rappel non bloquant tant que l'adresse n'est pas vérifiée : sans ça, le
+// client ne comprendrait pas pourquoi ses réservations faites en invité
+// n'apparaissent pas dans son espace.
+function _rappelVerifEmail(user) {
+  if (!user || user.emailVerified) return;
+  if (document.getElementById('verif-email-zone')) return;
+  var zone = document.createElement('div');
+  zone.id = 'verif-email-zone';
+  zone.style.cssText = 'background:#fff8e6;border:1.5px solid #f5c84a;border-radius:14px;padding:14px 16px;margin:0 0 16px;font-size:.92rem;color:#7a5a00;';
+  zone.innerHTML = '<b>✉️ Confirmez votre adresse e-mail</b><br>'
+    + 'Nous vous avons envoyé un lien de confirmation. Il nous sert à vérifier que cette adresse est bien la vôtre '
+    + 'avant de vous montrer les réservations passées faites sans compte.'
+    + ' <button id="verif-email-btn" style="margin-top:8px;background:#f5c84a;border:none;border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer;color:#5a4200;">Renvoyer le lien</button>';
+  var cible = document.getElementById('annonces-zone') || document.querySelector('.dash-panel') || document.body;
+  cible.parentNode.insertBefore(zone, cible);
+  document.getElementById('verif-email-btn').onclick = function () {
+    var b = this; b.disabled = true; b.textContent = 'Envoi…';
+    user.sendEmailVerification()
+      .then(function () { b.textContent = '✅ Lien envoyé'; })
+      .catch(function () { b.disabled = false; b.textContent = 'Réessayer'; });
+  };
 }
 
 // ── Journal de séjour : photos + notes publiées par la pension pendant la garde ──
@@ -2082,7 +2154,7 @@ function loadJournals(list) {
           return `<div class="jr-entry">
             <div class="jr-date">${d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})} · ${d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</div>
             ${e.url ? `<img src="${e.url}" alt="Photo du séjour" loading="lazy" onclick="openJournalPhoto('${e.url}')">` : ''}
-            ${e.note ? `<p>${e.note}</p>` : ''}
+            ${e.note ? `<p>${_esc(e.note)}</p>` : ''}
           </div>`;
         }).join('');
     }).catch(() => { _jrDone++; if (_jrDone >= _jrPending) _renderJrAlert(); });
@@ -2130,7 +2202,7 @@ function renderReservations(list) {
       : null;
 
     const details = [
-      r.chien?.nom  ? '🐕 ' + r.chien.nom + (r.chien.race ? ' · ' + r.chien.race : '') : null,
+      r.chien?.nom  ? '🐕 ' + _esc(r.chien.nom) + (r.chien.race ? ' · ' + _esc(r.chien.race) : '') : null,
       periode       ? '📅 ' + periode : null,
       r.heureArrivee? '⏰ Arrivée : ' + r.heureArrivee : null,
       r.nbChiens    ? '🐶 ' + r.nbChiens : null,
@@ -2140,7 +2212,7 @@ function renderReservations(list) {
     return `<div class="resa-card">
       <div class="resa-card-header">
         <div>
-          <div class="resa-card-service">${r.service || 'Service non précisé'}</div>
+          <div class="resa-card-service">${_esc(r.service) || 'Service non précisé'}</div>
           <div class="resa-card-date">Demande du ${dateCreation}</div>
         </div>
         <span class="resa-status ${s.cls}">${s.label}</span>
@@ -2155,7 +2227,7 @@ function renderReservations(list) {
       </div>` : ''}
       ${statut === 'confirmé' ? `<div class="resa-card-footer" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
         <span style="font-size:.8rem;color:var(--text-muted);">Vous avez profité de nos services ?</span>
-        <button class="btn-avis" id="btn-avis-${r.id}" onclick="openAvisModal('${r.id}','${(r.service||'').replace(/'/g,'')}','${(r.chien?.nom||'').replace(/'/g,'')}')">⭐ Laisser un avis</button>
+        <button class="btn-avis" id="btn-avis-${r.id}" onclick="openAvisModal('${_escJs(r.id)}','${_escJs(r.service)}','${_escJs(r.chien?.nom)}')">⭐ Laisser un avis</button>
       </div>` : ''}
     </div>`;
   }).join('');

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -500,6 +500,14 @@ function setLoading(on) {
 
 // ── Fusion réservations invité → compte ─────────────────────────────────────
 async function mergeGuestReservations(uid, email) {
+  // ⚠️ Depuis le 04/08, lire et rattacher les réservations invité exige un
+  // email VÉRIFIÉ — ce qui n'est JAMAIS le cas dans la seconde qui suit
+  // l'inscription. Le rattachement réel a donc lieu au premier passage dans
+  // l'espace client avec une adresse confirmée (_rattacherResasInvite,
+  // espace-client.html). On sort tout de suite ici plutôt que de lancer une
+  // requête vouée à être refusée.
+  var _u = firebase.auth().currentUser;
+  if (!_u || !_u.emailVerified) return;
   try {
     // ⚠️ Requête CIBLÉE sur son propre email (les règles interdisent désormais
     // de lire toute la table : ça exposait les réservations de tous les clients).
@@ -670,6 +678,15 @@ document.getElementById('register-form').addEventListener('submit', async e => {
       prenom, nom, email, telephone, adresse, codePostal, ville,
       createdAt: Date.now(), updatedAt: Date.now(), nbResas: 0,
     });
+    // ── Email de vérification ────────────────────────────────────────────
+    // Indispensable depuis le 04/08 : les règles n'autorisent la lecture et le
+    // rattachement des réservations faites EN INVITÉ qu'à un email VÉRIFIÉ.
+    // Sans cette preuve de possession, il suffisait de créer un compte avec
+    // l'adresse d'un client pour lire ses réservations (nom, téléphone,
+    // adresse) — le lien de vérification, lui, part dans SA boîte à lui.
+    // Non bloquant : le compte reste utilisable, seul l'historique invité
+    // attend la vérification (espace-client.html affiche un rappel).
+    try { await cred.user.sendEmailVerification(); } catch (e) { console.warn('Email de vérification non envoyé :', e); }
     await mergeGuestReservations(cred.user.uid, email);
     // Passer à l'étape 2
     window._newUid = cred.user.uid;

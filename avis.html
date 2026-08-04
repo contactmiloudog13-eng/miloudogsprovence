@@ -575,6 +575,17 @@ function renderStars(n) {
   return '<span style="color:#F5C84A;">' + '★'.repeat(nb) + '</span>'
        + '<span style="color:#d0c8e0;">' + '★'.repeat(5-nb) + '</span>';
 }
+// ⚠️ Échappement HTML — ajouté le 04/08 après un banc XSS qui a prouvé
+// l'injection sur cette page (tests-regles/test_xss_dogs.js).
+// « a.texte » et « a.nom » sont écrits par les CLIENTS (nœud `avis`, chacun
+// dépose le sien) : sans échappement, un client malveillant exécutait du code
+// chez CHAQUE VISITEUR de la page des avis. Ne jamais retirer ces mdEsc().
+function mdEsc(v) {
+  return String(v == null ? '' : v)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 function buildCard(a, i, source) {
   const cl = AVATAR_COLORS[i % AVATAR_COLORS.length];
   // Toujours recalculer les initiales depuis le nom (certaines anciennes valeurs
@@ -584,14 +595,14 @@ function buildCard(a, i, source) {
   return `
     <div class="avis-card-new fade-in${isFeat ? ' featured' : ''}">
       <div class="ac-header">
-        <div class="ac-avatar ${cl}">${initiales}</div>
+        <div class="ac-avatar ${cl}">${mdEsc(initiales)}</div>
         <div class="ac-info">
-          <div class="ac-name">${a.nom||''}</div>
-          <div class="ac-date">${a.date||''}</div>
+          <div class="ac-name">${mdEsc(a.nom)}</div>
+          <div class="ac-date">${mdEsc(a.date)}</div>
         </div>
       </div>
       <div class="ac-stars">${renderStars(a.note)}</div>
-      <p class="ac-text clamp">"${a.texte||''}"</p>
+      <p class="ac-text clamp">"${mdEsc(a.texte)}"</p>
       <button class="ac-more" onclick="toggleMore(this)">Lire la suite ▾</button>
       <div class="ac-source">
         <div class="g-dot"></div>

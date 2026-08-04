@@ -17,9 +17,31 @@ if (!firebase.apps.length) firebase.initializeApp(_firebaseConfig);
 const _auth = firebase.auth();
 const _db   = firebase.database();
 
+// ── Bascule AUTOMATIQUE sur les émulateurs en local ────────────────────────
+// Sert au banc XSS (tests-regles/) : servi depuis 127.0.0.1, le site affiche
+// des données volontairement empoisonnées au lieu de la production, ce qui
+// permet d'éprouver POUR DE VRAI le rendu de chaque page.
+// ⚠️ La condition porte sur le NOM D'HÔTE : elle ne peut pas se déclencher sur
+// miloudogsprovence.fr. Vérifié en ligne après déploiement.
+if (location.hostname === "127.0.0.1" || location.hostname === "localhost") {
+  try { _db.useEmulator("127.0.0.1", 9101); } catch (e) {}
+  try { _auth.useEmulator("http://127.0.0.1:9199", { disableWarnings: true }); } catch (e) {}
+}
+
 // Persistance LOCAL par défaut : la session reste valide même après quelques
 // secondes / un rafraîchissement (évite les déconnexions intempestives).
 _auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
+
+// Échappement HTML partagé. Aucun échappeur n'existait dans le projet avant le
+// 04/08 — c'est ce qui a laissé passer les injections trouvées par le banc
+// tests-regles/test_xss_dogs.js. Exposé sur window pour les pages qui en ont
+// besoin (elles ne partagent pas la portée de ce fichier).
+function mdEscNav(v) {
+  return String(v == null ? '' : v)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+window.mdEsc = mdEscNav;
 
 // ── Mise à jour de la navbar selon l'état de connexion ──────────────────────
 function _updateNav(user) {
@@ -29,7 +51,12 @@ function _updateNav(user) {
   if (user) {
     _db.ref('users/' + user.uid).get().then(snap => {
       const data   = snap.exists() ? snap.val() : {};
-      const prenom = data.prenom || user.displayName || 'Mon espace';
+      // ⚠️ Échappé : ce prénom part dans du innerHTML sur TOUTES les pages qui
+      // chargent ce script (barre de navigation). Banc XSS du 04/08 : la charge
+      // devenait un élément réel. Portée limitée (chacun n'écrit que son propre
+      // profil, donc auto-injection), mais le même prénom est aussi affiché
+      // dans le back-office — et là, la session visée n'est plus la sienne.
+      const prenom = mdEscNav(data.prenom || user.displayName || 'Mon espace');
 
       if (mobileItem) mobileItem.innerHTML =
         `<a href="espace-client.html" data-icon="👤" style="color:var(--lavande-dark)!important;font-weight:800;">👤 ${prenom}</a>

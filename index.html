@@ -1231,10 +1231,24 @@ function cldOpt(u,w){ try{ if(u.indexOf('/upload/')===-1 || u.indexOf('res.cloud
 
     grid.style.display = 'block';
     photos.forEach(function(p) {
+      // ⚠️ Même correctif que galerie.html (code dupliqué) : construction par
+      // le DOM. La légende partait dans l'attribut `alt`, dans la chaîne JS
+      // d'un `onclick` ET dans le HTML — banc XSS du 04/08, charge exécutée
+      // pour de vrai. textContent/addEventListener supprime le problème.
       var item = document.createElement('div');
       item.className = 'gal-item';
-      item.innerHTML = '<img src="' + cldOpt(p.url,900) + '" alt="' + (p.caption || 'Chien chez Milou Dogs Provence') + '" loading="lazy" onclick="openLightbox(\'' + p.url.replace(/'/g,"\\'") + '\',\'' + (p.caption||'').replace(/'/g,"\\'") + '\')">'
-        + (p.caption ? '<div class="gal-caption">' + p.caption + '</div>' : '');
+      var img = document.createElement('img');
+      img.src = cldOpt(p.url, 900);
+      img.alt = p.caption || 'Chien chez Milou Dogs Provence';
+      img.loading = 'lazy';
+      img.addEventListener('click', function () { openLightbox(p.url, p.caption || ''); });
+      item.appendChild(img);
+      if (p.caption) {
+        var cap = document.createElement('div');
+        cap.className = 'gal-caption';
+        cap.textContent = p.caption;
+        item.appendChild(cap);
+      }
       grid.appendChild(item);
     });
   });

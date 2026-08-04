@@ -274,7 +274,11 @@ const App = (function () {
     };
     const collect = (snap) => { snap.forEach((c) => { merged[c.key] = c.val(); }); apply(); };
     db.ref('reservations').orderByChild('userId').equalTo(_user.uid).on('value', collect);
-    if (_user.email) {
+    // ⚠️ La requête par email exige un email VÉRIFIÉ depuis le 04/08 (sans quoi
+    // s'inscrire avec l'adresse d'un client donnait accès à ses réservations
+    // faites en invité). La lancer sans vérification renverrait une erreur de
+    // permission : on ne l'ajoute donc que si l'adresse est prouvée.
+    if (_user.email && _user.emailVerified) {
       db.ref('reservations').orderByChild('email').equalTo(_user.email).on('value', collect);
     }
   }
