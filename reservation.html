@@ -46,6 +46,11 @@
 .form-group label{display:block;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:8px;}
 .form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 16px;border:1px solid var(--border);border-radius:12px;background:white;font-family:'Lato',sans-serif;font-size:.95rem;color:var(--text);transition:border-color .2s;outline:none;}
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--lavande);}
+/* iOS : input[type=date] a une largeur intrinsèque supérieure à la colonne et,
+   avec min-width:auto (défaut des éléments de grille), refuse de rétrécir → il
+   débordait à droite. min-width:0 l'autorise à suivre sa colonne. */
+.form-row,.form-group{min-width:0;}
+.form-group input[type=date]{-webkit-appearance:none;appearance:none;min-width:0;max-width:100%;text-align:left;}
 .form-group textarea{min-height:90px;resize:vertical;}
 .form-service-tags{display:flex;flex-wrap:wrap;gap:8px;}
 .svc-groups{display:flex;flex-direction:column;gap:18px;}
@@ -1948,8 +1953,13 @@ document.addEventListener('DOMContentLoaded',()=>{
   // ── Périodes de forte affluence : bandeau tarifs (cf. tarifs-fetes.js) ──
   let _feteMsg=document.createElement('div');
   _feteMsg.id='fetes-banner';
-  _feteMsg.style.cssText='display:none;margin:6px 0 14px;background:#FDF3E0;border:1px solid var(--soleil);border-radius:10px;padding:11px 15px;font-size:.84rem;color:#7a5a1a;line-height:1.6;';
-  (function(){ const row=document.getElementById('date-debut').closest('.form-row'); if(row&&row.parentNode) row.parentNode.insertBefore(_feteMsg, row.nextSibling); })();
+  _feteMsg.style.cssText='display:none;margin:2px 0 18px;background:#FDF3E0;border:1px solid var(--soleil);border-radius:12px;padding:14px 16px;font-size:.84rem;color:#7a5a1a;line-height:1.65;';
+  // Après le bloc de dates COMPLET (arrivée + départ), pas entre les deux :
+  // inséré après #row-date-debut, le bandeau coupait la paire de champs en deux.
+  (function(){
+    const apres=document.getElementById('row-date-fin')||document.getElementById('row-date-debut');
+    if(apres&&apres.parentNode) apres.parentNode.insertBefore(_feteMsg, apres.nextSibling);
+  })();
   function _checkFetes(){
     const F=window.MDP_FETES;
     if(!F||!dateDebut.value){ _feteMsg.style.display='none'; return; }
@@ -1958,12 +1968,19 @@ document.addEventListener('DOMContentLoaded',()=>{
     for(let dt=new Date(s); dt<=e && !per; dt.setDate(dt.getDate()+1)) per=F.periodeDe(_iso(dt));
     if(!per){ _feteMsg.style.display='none'; return; }
     const forts=per.joursForts.map(_fmtShort2).join(', ');
-    _feteMsg.innerHTML='🎄 <strong>'+per.label+'</strong> — vos dates tombent sur une période de forte affluence. '+
-      'La pension est à <strong>'+per.tarifHaut+'€ / nuit</strong>, et <strong>'+per.tarifFort+'€ / nuit</strong> les '+forts+'. '+
-      'Cette majoration s\'applique <strong>uniquement '+per.libelleCourt+'</strong> — en dehors de cette période, le tarif habituel reste inchangé.';
+    _feteMsg.innerHTML=
+      '<div style="font-weight:800;margin-bottom:7px;">🎄 '+per.label+'</div>'+
+      '<div style="display:flex;gap:8px;margin-bottom:4px;"><span style="opacity:.6;">•</span><span><strong>'+per.tarifHaut+'€ / nuit</strong> sur la période</span></div>'+
+      '<div style="display:flex;gap:8px;margin-bottom:9px;"><span style="opacity:.6;">•</span><span><strong>'+per.tarifFort+'€ / nuit</strong> les '+forts+'</span></div>'+
+      '<div style="border-top:1px solid rgba(122,90,26,.22);padding-top:9px;font-size:.79rem;">Majoration limitée <strong>'+per.libelleCourt+'</strong>. En dehors, le tarif habituel s\'applique.</div>';
     _feteMsg.style.display='block';
   }
-  const _fmtShort2 = iso => new Date(iso+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
+  // « 1 janvier » → « 1ᵉʳ janvier » (le premier du mois prend l'ordinal en français)
+  const _fmtShort2 = iso => {
+    const d=new Date(iso+'T12:00:00');
+    const mois=d.toLocaleDateString('fr-FR',{month:'long'});
+    return (d.getDate()===1?'1ᵉʳ':d.getDate())+' '+mois;
+  };
   dateDebut.addEventListener('change',_checkFetes); dateDebut.addEventListener('input',_checkFetes);
   if(dateFin){ dateFin.addEventListener('change',_checkFetes); dateFin.addEventListener('input',_checkFetes); }
   _checkFetes();
@@ -1982,8 +1999,11 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
   try{ firebase.database().ref('closures').on('value', s=>{ _closures=s.val()||{}; _renderCongeBanner(); _checkConge(); }); }catch(e){}
 
+  // Basculement 3D réservé au pointeur précis : sur tactile, mousemove part
+  // mais mouseleave jamais — la carte resterait figée de travers.
+  const _pointeurPrecis = !!(window.matchMedia && window.matchMedia('(hover:hover) and (pointer:fine)').matches);
   document.querySelectorAll('.avis-card,.service-card,.faq-item').forEach(card=>{
-    if(!card.classList.contains('faq-item')){
+    if(_pointeurPrecis && !card.classList.contains('faq-item')){
       card.addEventListener('mousemove',e=>{
         const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
         card.style.transform=`perspective(900px) rotateY(${x*18}deg) rotateX(${-y*14}deg) translateY(-12px) scale(1.03)`;

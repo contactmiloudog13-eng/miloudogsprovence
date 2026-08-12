@@ -1,5 +1,13 @@
 (function(){
 
+  /* Les effets 3D ci-dessous suivent le curseur : ils inclinent l'élément au
+     mousemove et le remettent droit au mouseleave. Sur écran tactile, un appui
+     déclenche bien mousemove, mais mouseleave ne part JAMAIS — l'élément reste
+     figé de travers (le formulaire de réservation penché sur mobile).
+     On ne les active donc que sur un pointeur précis (souris / trackpad). */
+  var POINTEUR_PRECIS = !!(window.matchMedia &&
+    window.matchMedia('(hover:hover) and (pointer:fine)').matches);
+
   /* ── SCROLL PROGRESS BAR ── */
   var bar = document.createElement('div');
   bar.id = 'scroll-progress';
@@ -171,7 +179,7 @@
       });
     });
   }
-  init3DTilt('.service-card,.avis-card,.t-card,.avis-global');
+  if(POINTEUR_PRECIS) init3DTilt('.service-card,.avis-card,.t-card,.avis-global');
 
   /* ── 3D DEPTH LAYERS SUR HERO ── */
   var heroContent = document.querySelector('.hero-content');
@@ -226,7 +234,7 @@
   document.body.appendChild(blobContainer);
 
   /* ── 3D PHOTO TILT (galerie) ── */
-  document.querySelectorAll('.fcp,.photo,.tp,.ap,.mc').forEach(function(img){
+  if(POINTEUR_PRECIS) document.querySelectorAll('.fcp,.photo,.tp,.ap,.mc').forEach(function(img){
     img.style.transformStyle = 'preserve-3d';
     img.addEventListener('mousemove', function(e){
       var r = img.getBoundingClientRect();
@@ -279,7 +287,7 @@
   }, {passive:true});
 
   /* ── 3D HOVER SUR CONTACT BOX / PARRAINAGE ── */
-  document.querySelectorAll('.contact-box,.parrainage-box,.resa-form').forEach(function(box){
+  if(POINTEUR_PRECIS) document.querySelectorAll('.contact-box,.parrainage-box,.resa-form').forEach(function(box){
     box.addEventListener('mousemove', function(e){
       var r = box.getBoundingClientRect();
       var x = (e.clientX - r.left) / r.width;
