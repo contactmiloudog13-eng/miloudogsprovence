@@ -749,6 +749,7 @@
         <label class="ev-case"><input type="checkbox" id="ev-c2" required><span><b>Mon chien est vacciné (CHLPPi à jour), identifié</b> et traité contre les puces et les tiques. Je présenterai son carnet de santé avant la première sortie.</span></label>
         <label class="ev-case"><input type="checkbox" id="ev-c3"><span>J'autorise Milou Dogs à le détacher sur les portions sécurisées si son rappel est fiable. <em>Sans cette case, il reste en laisse ou en longe toute la balade.</em></span></label>
         <label class="ev-case"><input type="checkbox" id="ev-c4"><span>J'autorise l'utilisation des photos de mon chien sur le site et les réseaux de Milou Dogs Provence.</span></label>
+        <label class="ev-case"><input type="checkbox" id="ev-c5" required><span>J'accepte les <a href="cgv.html" target="_blank" style="color:var(--lavande);font-weight:700;">conditions générales</a>. Je reconnais notamment que <b>si mon chien casse ou abîme quelque chose, je le paie</b>, et qu'après 24 heures d'adaptation, <b>chaque jour où mon chien fait ses besoins à l'intérieur me sera facturé 5 €</b>.</span></label>
 
         <div class="ev-recap" id="ev-recap"></div>
 
@@ -1100,6 +1101,7 @@ function evEnvoyer(ev){
   var btn = document.getElementById('ev-submit');
   err.style.display = 'none';
   if (!EV_CHOIX) { err.textContent = '⚠️ Choisissez d\'abord un samedi.'; err.style.display = 'block'; return; }
+  if (!document.getElementById('ev-c5').checked) { err.textContent = '⚠️ Merci d\'accepter les conditions générales pour envoyer votre demande.'; err.style.display = 'block'; return; }
 
   var etat = evEtat(EV_CHOIX);
   var attente = etat.etat === 'complet';
@@ -1116,6 +1118,7 @@ function evEnvoyer(ev){
     vaccine:document.getElementById('ev-c2').checked,
     detachable:document.getElementById('ev-c3').checked,
     droitImage:document.getElementById('ev-c4').checked,
+    cgvAcceptees:document.getElementById('ev-c5').checked,
     prix:total, statut:attente ? 'attente' : 'demande',
     uid:EV_UID || null, createdAt:Date.now()
   };

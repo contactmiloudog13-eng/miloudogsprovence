@@ -699,6 +699,7 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
         <span id="simu-total" style="font-family:'Playfair Display',serif;font-size:3rem;color:var(--gold);font-weight:700;line-height:1;">50€</span>
         <div id="simu-detail" style="color:rgba(255,255,255,.6);font-size:.8rem;margin-top:6px;">25€ × 2 nuits · photos quotidiennes incluses</div>
       </div>
+      <div id="simu-fetes" style="display:none;color:rgba(255,255,255,.55);font-size:.74rem;margin-top:10px;line-height:1.6;"></div>
       <a class="hero-btn-main" href="reservation.html" style="display:inline-block;margin-top:18px;">📅 Réserver à ce prix</a>
       <p style="color:rgba(255,255,255,.4);font-size:.7rem;margin-top:12px;">Pension complète nuit &amp; journée · Sans acompte · Annulation gratuite</p>
     </div>
@@ -740,6 +741,7 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
 </section>
 <style>@media(max-width:760px){.carnet-grid{grid-template-columns:1fr!important;}}</style>
 
+<script src="tarifs-fetes.js"></script>
 <script>
 function simuCalc(){
   var nuits=parseInt(document.getElementById('simu-nuits').value)||1;
@@ -751,6 +753,18 @@ function simuCalc(){
   document.getElementById('simu-total').textContent=total+'€';
   document.getElementById('simu-detail').textContent=pen+'€ × '+nuits+' nuit'+(nuits>1?'s':'')+(nb>1?' × '+nb+' chiens (−'+Math.round(rate*100)+'%)':'')+' · photos quotidiennes incluses';
 }
+// Le simulateur raisonne en nombre de nuits, sans dates : il ne peut pas appliquer
+// les majorations de période. On le signale et on renvoie vers la page tarifs.
+(function(){
+  var host=document.getElementById('simu-fetes'), F=window.MDP_FETES;
+  if(!host||!F) return;
+  var aVenir=F.periodesAVenir();
+  if(!aVenir.length) return;
+  var p=aVenir[0];
+  host.innerHTML='🎄 Estimation au tarif habituel. '+p.label+' ('+p.libelleCourt+') : '+
+    p.tarifHaut+'€ à '+p.tarifFort+'€ la nuit — <a href="services.html" style="color:var(--gold);">voir le détail</a>.';
+  host.style.display='block';
+})();
 </script>
 
 <!-- ── Comment ça marche ─────────────────────────────── -->

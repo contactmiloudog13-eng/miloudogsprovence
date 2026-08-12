@@ -233,6 +233,35 @@
   }
   function discRate(nb) { return nb >= 3 ? T.remise3 / 100 : nb === 2 ? T.remise2 / 100 : 0; }
 
+  /* Majorations des périodes de forte affluence (cf. tarifs-fetes.js).
+     Pension à la nuit uniquement — la garderie et les autres services
+     gardent leur tarif habituel. Renvoie null hors période. */
+  function nuitsMajorees(base, n) {
+    const a = document.getElementById('r-arr'), F = window.MDP_FETES;
+    if (!F || !a || !a.value || !(n > 0)) return null;
+    const prix = F.tarifsSejour(a.value, n, base);
+    return prix.some((p) => p !== base) ? prix : null;
+  }
+  function detailNuits(prix) {
+    const grp = {};
+    prix.forEach((p) => { grp[p] = (grp[p] || 0) + 1; });
+    return Object.keys(grp).sort((x, y) => x - y)
+      .map((p) => grp[p] + ' nuit' + (grp[p] > 1 ? 's' : '') + ' × ' + p + '€').join(' + ');
+  }
+  function majorationNote(n, base) {
+    const p = periodeSejour(n);
+    return p
+      ? '🎄 <b>Tarif ' + p.label + '</b> — majoration appliquée uniquement ' + p.libelleCourt + '. Le reste de l\'année, la nuit reste à ' + base + '€.'
+      : '';
+  }
+  function periodeSejour(n) {
+    const a = document.getElementById('r-arr'), F = window.MDP_FETES;
+    if (!F || !a || !a.value) return null;
+    const dates = F.datesNuits(a.value, n);
+    for (let i = 0; i < dates.length; i++) { const p = F.periodeDe(dates[i]); if (p) return p; }
+    return null;
+  }
+
   function visiteCalc() {
     V.freq = parseInt((document.getElementById('v-freq') || {}).value) || 1;
     V.unit = (document.getElementById('v-unit') || {}).value || 'jour';
@@ -271,9 +300,12 @@
       else if (V.km == null) lines.push('🚗 <small>Saisissez l\'adresse pour le déplacement</small>');
     } else if (_svc.id === 'packduo') {
       const n = nights() || 1;
-      const pen = Math.round(T.pension * n * nb * (1 - disc));
-      lines.push('🏠 Pension chien — ' + T.pension + '€ × ' + n + ' nuit' + (n > 1 ? 's' : '') + (disc ? ' (−' + Math.round(disc * 100) + '%)' : '') + ' = <b>' + pen + '€</b>');
+      const maj = nuitsMajorees(T.pension, n);
+      const brut = maj ? maj.reduce((a, b) => a + b, 0) : T.pension * n;
+      const pen = Math.round(brut * nb * (1 - disc));
+      lines.push('🏠 Pension chien — ' + (maj ? detailNuits(maj) : T.pension + '€ × ' + n + ' nuit' + (n > 1 ? 's' : '')) + (disc ? ' (−' + Math.round(disc * 100) + '%)' : '') + ' = <b>' + pen + '€</b>');
       total += pen;
+      if (maj) lines.push(majorationNote(n, T.pension));
       const v = visiteCalc();
       const remV = Math.round(v.visites * (1 - T.packDuo / 100));
       lines.push('🎁 Visites 2ᵉ animal (' + v.ani.n + ') — <s>' + v.visites + '€</s> <b>' + remV + '€</b> (−' + T.packDuo + '%)');
@@ -281,9 +313,13 @@
       if (V.km != null && v.travel > 0) { lines.push('🚗 Déplacement — <b>' + String(v.travel).replace('.', ',') + '€</b>'); total += v.travel; }
     } else if (_svc.range) {
       const n = nights() || 1;
-      const sub = Math.round(_svc.price * n * nb * (1 - disc));
-      lines.push(_svc.label + ' — ' + _svc.price + '€ × ' + n + ' × ' + nb + ' chien' + (nb > 1 ? 's' : '') + (disc ? ' (−' + Math.round(disc * 100) + '%)' : '') + ' = <b>' + sub + '€</b>');
+      // Seule la pension à la nuit est majorée pendant les périodes de forte affluence
+      const maj = _svc.id === 'pension' ? nuitsMajorees(_svc.price, n) : null;
+      const brut = maj ? maj.reduce((a, b) => a + b, 0) : _svc.price * n;
+      const sub = Math.round(brut * nb * (1 - disc));
+      lines.push(_svc.label + ' — ' + (maj ? detailNuits(maj) : _svc.price + '€ × ' + n) + ' × ' + nb + ' chien' + (nb > 1 ? 's' : '') + (disc ? ' (−' + Math.round(disc * 100) + '%)' : '') + ' = <b>' + sub + '€</b>');
       total += sub;
+      if (maj) lines.push(majorationNote(n, _svc.price));
     } else {
       const sub = Math.round(_svc.price * nb * (1 - disc));
       lines.push(_svc.label + ' — <b>' + sub + '€</b>');

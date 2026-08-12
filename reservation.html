@@ -68,6 +68,13 @@
 .addon-title{display:block;font-family:'Lato',sans-serif;font-weight:800;font-size:.94rem;color:var(--text);text-transform:none;letter-spacing:0;margin:0;}
 .addon-sub{display:block;font-size:.82rem;color:var(--text-muted);font-weight:400;margin-top:3px;line-height:1.5;text-transform:none;letter-spacing:0;}
 .addon-panel{margin-top:14px;padding-top:14px;border-top:1px dashed var(--border);}
+/* ── Acceptation des conditions générales (même rendu que inscription.html) ── */
+.cgu-row{display:flex;align-items:flex-start;gap:10px;margin:4px 0 22px;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;background:#fff;transition:border-color .2s;}
+.cgu-req{display:inline-block;background:#c0392b;color:#fff;font-size:.63rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;padding:2px 8px;border-radius:20px;margin-right:6px;vertical-align:2px;}
+.cgu-row input[type=checkbox]{width:16px;height:16px;accent-color:var(--lavande);cursor:pointer;flex-shrink:0;margin-top:3px;}
+.cgu-row label{font-size:.85rem;color:var(--text-muted);cursor:pointer;font-weight:400;text-transform:none;letter-spacing:0;line-height:1.6;}
+.cgu-row a{color:var(--lavande);text-decoration:none;font-weight:700;}
+.cgu-row a:hover{color:var(--lavande-dark);}
 .addon-flabel{display:block;font-size:.78rem;font-weight:700;color:var(--lavande-dark);text-transform:none;letter-spacing:0;margin-bottom:6px;}
 .addon-input,.addon-select,.addon-num{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;font-family:'Lato',sans-serif;font-size:.9rem;color:var(--text);background:#fff;box-sizing:border-box;}
 .addon-input:focus,.addon-select:focus,.addon-num:focus{outline:none;border-color:var(--lavande);}
@@ -564,6 +571,17 @@
               <div style="font-size:.75rem;color:var(--text-muted);margin-top:3px;">Votre ami vous a donné un code ? Entrez-le ici pour lui offrir 10€ de réduction sur sa prochaine garde 🎉</div>
             </div>
 
+            <div class="cgu-row" id="cgv-row">
+              <input type="checkbox" id="cgv-accept" name="CGV acceptées" value="Oui" required>
+              <label for="cgv-accept">
+                <span class="cgu-req">Obligatoire</span>
+                J'ai lu et j'accepte les <a href="cgv.html" target="_blank">conditions générales</a> de Milou Dogs Provence.
+                Je reconnais notamment que <strong>si mon chien casse ou abîme quelque chose, je le paie</strong>
+                (coût réel de la réparation ou du remplacement), et qu'après 24 heures d'adaptation,
+                <strong>chaque jour où mon chien fait ses besoins à l'intérieur me sera facturé 5 €</strong>.
+              </label>
+            </div>
+
             <div class="step-panel-nav">
               <button type="button" class="step-back-btn" onclick="goStep(2)">← Retour</button>
               <button type="button" class="form-submit" id="btn-submit" onclick="submitReservation()" style="flex:1;margin-top:0;">📅 Envoyer ma demande</button>
@@ -618,6 +636,7 @@
   <p>Miramas & Provence · ⭐⭐⭐⭐⭐ sur Google</p>
   <p style="margin-top:20px;font-size:.75rem;opacity:.5;">© 2025 Milou Dogs Provence · Tous droits réservés · <a onclick="showAdmin()" style="cursor:pointer;color:rgba(255,255,255,.4);">Admin</a></p>
 </footer>
+<script src="tarifs-fetes.js"></script>
 <script>
 function toggleMenu(btn){document.getElementById('navlinks').classList.toggle('open');btn.classList.toggle('open');}
 
@@ -1427,15 +1446,31 @@ function calcPrice(){
         total+=disc(price*nbChiens);
         return;
       }
-      // 1ère nuit : tardive = 10€, sinon prix normal
-      const prix1=arriveTardive?10:price;
-      const subNuits=disc((prix1+(Math.max(0,nuits-1)*price))*nbChiens);
-      const subJours=disc(extraJournee*price*nbChiens);
+      // Tarif nuit par nuit : chaque nuit prend le tarif de son jour d'arrivée
+      // (majoration des périodes de forte affluence, cf. tarifs-fetes.js).
+      const F=window.MDP_FETES;
+      const prixNuits=F?F.tarifsSejour(d1,nuits,price):Array(Math.max(0,nuits)).fill(price);
+      const perNuit1=F?F.periodeDe(d1):null;
+      const majore=prixNuits.some(p=>p!==price);
+      // 1ère nuit : tardive = 10€, sauf en période majorée (geste commercial suspendu)
+      if(arriveTardive&&prixNuits.length&&!perNuit1) prixNuits[0]=10;
+      const prixDepart=F?F.tarifNuit(d2,price):price; // le jour de départ suit sa propre date
+
+      const subNuits=disc(prixNuits.reduce((a,b)=>a+b,0)*nbChiens);
+      const subJours=disc(extraJournee*prixDepart*nbChiens);
       const subDemi=disc(extraDemi*10*nbChiens);
 
       if(nuits>0){
-        if(arriveTardive&&nuits===1)
-          lines.push(`${name} — arrivée tardive → <strong>10€</strong> au lieu de 20€ 🤍`);
+        if(majore){
+          // Regroupe les nuits par tarif : « 2 nuits × 30€ + 2 nuits × 35€ »
+          const grp={};
+          prixNuits.forEach(p=>{grp[p]=(grp[p]||0)+1;});
+          const detail=Object.keys(grp).sort((a,b)=>a-b)
+            .map(p=>`${grp[p]} nuit${grp[p]>1?'s':''} × ${p}€`).join(' + ');
+          lines.push(`${name} — ${detail} = <strong>${subNuits}€</strong>`);
+        }
+        else if(arriveTardive&&nuits===1)
+          lines.push(`${name} — arrivée tardive → <strong>10€</strong> au lieu de ${price}€ 🤍`);
         else if(arriveTardive)
           lines.push(`${name} — 1ère nuit 10€ + ${nuits-1} nuit${nuits-1>1?'s':''} × ${price}€ = <strong>${subNuits}€</strong> 🤍`);
         else
@@ -1443,11 +1478,19 @@ function calcPrice(){
       }
       if(extraJournee) lines.push(`☀️ Jour de départ — <strong>${subJours}€</strong>`);
       if(extraDemi) lines.push(`🌤️ Demi-journée départ — <strong>${subDemi}€</strong>`);
+      if(majore&&F){
+        // Période de la première nuit effectivement majorée
+        let per=null;
+        const datesN=F.datesNuits(d1,nuits);
+        for(let _i=0;_i<datesN.length&&!per;_i++) per=F.periodeDe(datesN[_i]);
+        if(!per) per=F.periodeDe(d2);
+        if(per) lines.push(`🎄 <strong>Tarif ${per.label}</strong> — majoration appliquée uniquement ${per.libelleCourt}. Le reste de l'année, la nuit reste à ${price}€.`);
+      }
       total+=subNuits+subJours+subDemi;
       // Carnet Malin : 1 unité par nuit + 1 unité pour le jour de départ (jour non facturé, décompté du carnet)
-      if(nuits>0){ for(let _n=0;_n<nuits;_n++) _carnetUnitPrices.push(price); }
-      if(extraJournee) _carnetUnitPrices.push(price);
-      if(extraDemi) _carnetUnitPrices.push(price);
+      if(nuits>0){ for(let _n=0;_n<nuits;_n++) _carnetUnitPrices.push(prixNuits[_n]); }
+      if(extraJournee) _carnetUnitPrices.push(prixDepart);
+      if(extraDemi) _carnetUnitPrices.push(prixDepart);
       _carnetSubtotal+=subNuits+subJours+subDemi;
 
     } else if(unit==='jour'){
@@ -1563,6 +1606,22 @@ function getPriceSummary(){
 
 function prepareSubmit(){
   // À l'étape 3, les étapes 1 et 2 ont déjà été validées.
+  // Seule l'acceptation des conditions générales reste à contrôler ici
+  // (le bouton d'envoi est un type="button" : l'attribut required ne se déclenche pas).
+  const cgv=document.getElementById('cgv-accept');
+  if(cgv && !cgv.checked){
+    const msg=document.getElementById('error-msg');
+    // Les validations des étapes 1 et 2 déplacent #error-msg dans leur propre panneau :
+    // on le ramène dans l'étape 3, sinon le message s'afficherait dans un panneau masqué.
+    document.getElementById('step-panel-3').appendChild(msg);
+    msg.style.display='block';
+    msg.textContent='⚠️ Merci d\'accepter les conditions générales pour envoyer votre demande.';
+    setTimeout(()=>msg.style.display='none',5000);
+    document.getElementById('cgv-row').style.borderColor='#c0392b';
+    cgv.focus();
+    return false;
+  }
+  if(cgv) document.getElementById('cgv-row').style.borderColor='';
   // On complète juste les champs cachés.
   const services=[...document.querySelectorAll('.service-tag.active')].map(t=>t.textContent.trim()).join(', ');
   document.getElementById('hidden-service').value=services||'Non précisé';
@@ -1720,6 +1779,7 @@ async function submitReservation() {
       prix      : document.getElementById('hidden-devis').value,
       message   : document.getElementById('message').value,
       parrainage: document.getElementById('parrainage').value,
+      cgvAcceptees: !!document.getElementById('cgv-accept')?.checked,
       createdAt : Date.now(),
     };
     // Carnet Malin : marquer la réservation SANS décompter (le décompte se fait
@@ -1882,6 +1942,29 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
   dateDebut.addEventListener('change',_checkConge); dateDebut.addEventListener('input',_checkConge);
   if(dateFin){ dateFin.addEventListener('change',_checkConge); dateFin.addEventListener('input',_checkConge); }
+
+  // ── Périodes de forte affluence : bandeau tarifs (cf. tarifs-fetes.js) ──
+  let _feteMsg=document.createElement('div');
+  _feteMsg.id='fetes-banner';
+  _feteMsg.style.cssText='display:none;margin:6px 0 14px;background:#FDF3E0;border:1px solid var(--soleil);border-radius:10px;padding:11px 15px;font-size:.84rem;color:#7a5a1a;line-height:1.6;';
+  (function(){ const row=document.getElementById('date-debut').closest('.form-row'); if(row&&row.parentNode) row.parentNode.insertBefore(_feteMsg, row.nextSibling); })();
+  function _checkFetes(){
+    const F=window.MDP_FETES;
+    if(!F||!dateDebut.value){ _feteMsg.style.display='none'; return; }
+    const s=new Date(dateDebut.value), e=new Date((dateFin&&dateFin.value)||dateDebut.value);
+    let per=null;
+    for(let dt=new Date(s); dt<=e && !per; dt.setDate(dt.getDate()+1)) per=F.periodeDe(_iso(dt));
+    if(!per){ _feteMsg.style.display='none'; return; }
+    const forts=per.joursForts.map(_fmtShort2).join(', ');
+    _feteMsg.innerHTML='🎄 <strong>'+per.label+'</strong> — vos dates tombent sur une période de forte affluence. '+
+      'La pension est à <strong>'+per.tarifHaut+'€ / nuit</strong>, et <strong>'+per.tarifFort+'€ / nuit</strong> les '+forts+'. '+
+      'Cette majoration s\'applique <strong>uniquement '+per.libelleCourt+'</strong> — en dehors de cette période, le tarif habituel reste inchangé.';
+    _feteMsg.style.display='block';
+  }
+  const _fmtShort2 = iso => new Date(iso+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
+  dateDebut.addEventListener('change',_checkFetes); dateDebut.addEventListener('input',_checkFetes);
+  if(dateFin){ dateFin.addEventListener('change',_checkFetes); dateFin.addEventListener('input',_checkFetes); }
+  _checkFetes();
   function _renderCongeBanner(){
     const today=new Date(); today.setHours(0,0,0,0);
     const up=Object.keys(_closures).filter(k=>_closures[k]).map(k=>{const p=k.split('-');return new Date(+p[0],+p[1]-1,+p[2]);}).filter(d=>d>=today).sort((a,b)=>a-b);

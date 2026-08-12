@@ -144,6 +144,9 @@
 <section id="services-content">
   <div style="max-width:1140px;margin:0 auto;">
 
+    <!-- Majorations des périodes de forte affluence — rempli par tarifs-fetes.js, disparaît seul une fois la période passée -->
+    <div id="fetes-info"></div>
+
     <div class="tarifs-grid fade-in">
 
       <!-- Pension nuit — vedette -->
@@ -551,6 +554,29 @@ function notifyToilettage(){
 }
 </script>
 <script src="effects-extra.js"></script>
+<!-- Majorations des périodes de forte affluence (pension à la nuit uniquement) -->
+<script src="tarifs-fetes.js"></script>
+<script>
+(function(){
+  var host=document.getElementById('fetes-info');
+  var F=window.MDP_FETES;
+  if(!host||!F) return;
+  var aVenir=F.periodesAVenir();
+  if(!aVenir.length) return;
+  var fmt=function(iso){return new Date(iso+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long'});};
+  host.innerHTML=aVenir.map(function(p){
+    return '<div style="background:#FDF3E0;border:1.5px solid var(--soleil);border-radius:18px;padding:22px 26px;margin-bottom:26px;">'+
+      '<div style="font-family:\'Playfair Display\',serif;font-size:1.15rem;color:#7a5a1a;margin-bottom:6px;">🎄 '+p.label+' — tarifs de la période</div>'+
+      '<p style="font-size:.9rem;color:#7a5a1a;line-height:1.7;margin:0 0 12px;">Pendant les fêtes, la demande dépasse largement le nombre de places. La <strong>pension à la nuit</strong> passe donc à un tarif de période, <strong>uniquement '+p.libelleCourt+'</strong> :</p>'+
+      '<ul style="list-style:none;margin:0 0 12px;padding:0;font-size:.9rem;color:#7a5a1a;line-height:1.9;">'+
+        '<li>→ <strong>'+p.tarifHaut+'€ / nuit</strong> sur l\'ensemble de la période</li>'+
+        '<li>→ <strong>'+p.tarifFort+'€ / nuit</strong> les '+p.joursForts.map(fmt).join(', ')+'</li>'+
+      '</ul>'+
+      '<p style="font-size:.86rem;color:#7a5a1a;line-height:1.6;margin:0;"><strong>En dehors de cette période, les tarifs affichés ci-dessous s\'appliquent normalement.</strong> Une nuit est facturée au tarif de son jour d\'arrivée, et seuls les jours situés dans la période sont majorés : un séjour à cheval est calculé jour par jour. La garderie, les promenades, les visites à domicile et le toilettage ne sont pas concernés.</p>'+
+    '</div>';
+  }).join('');
+})();
+</script>
 <!-- Prix pilotés depuis l'admin (site_config/tarifs) — mise à jour en direct -->
 <script>
 (function(){

@@ -9,7 +9,17 @@ const REPONSES = [
   // ── TARIFS ───────────────────────────────────────────────
   {
     mots: ['tarif','prix','cout','coute','cher','combien','nuit','journee','demi','promenade','toilettage','pension','euro','25','20','15','10','30','semaine','seance'],
-    rep: `🐾 Nos tarifs :\n\n🏠 Pension (nuit + journée) : 25€/nuit\n☀️ Garderie journée : 20€\n🌤️ Garderie demi-journée : 10€\n🦮 Promenade : 15€\n🛁 Toilettage : 30€\n🏡 Visite à domicile : dès 8€/passage (selon l'animal)\n\n💡 Réductions : 2 chiens −10%, 3 chiens et + −15%\n🎟️ Carnet Malin : 10 nuits prépayées à prix réduit\n\nUn devis instantané est calculé sur la page Réservation !`
+    rep: `🐾 Nos tarifs :\n\n🏠 Pension (nuit + journée) : 25€/nuit\n☀️ Garderie journée : 20€\n🌤️ Garderie demi-journée : 10€\n🦮 Promenade : 15€\n🛁 Toilettage : 30€\n🏡 Visite à domicile : dès 8€/passage (selon l'animal)\n\n💡 Réductions : 2 chiens −10%, 3 chiens et + −15%\n🎟️ Carnet Malin : 10 nuits prépayées à prix réduit\n\n🎄 Fêtes de fin d'année : du 20 décembre 2026 au 2 janvier 2027, la pension est à 30€/nuit (35€ les 24, 25, 31 déc et 1er janv). En dehors de cette période, on reste à 25€/nuit.\n\nUn devis instantané est calculé sur la page Réservation !`
+  },
+  // ── FÊTES DE FIN D'ANNÉE (majoration) ────────────────────
+  {
+    mots: ['noel','noël','fete','fetes','fêtes','reveillon','réveillon','jour de l an','nouvel an','decembre','décembre','janvier','24','25','31','majoration','vacances de noel'],
+    rep: `🎄 Fêtes de fin d'année :\n\nDu 20 décembre 2026 au 2 janvier 2027, la pension à la nuit passe à 30€, et à 35€ les 24, 25, 31 décembre et 1er janvier — les jours les plus demandés de l'année.\n\n✅ En dehors de cette période, le tarif habituel de 25€/nuit s'applique normalement, dès le 3 janvier.\n\nChaque nuit est facturée au tarif de son jour d'arrivée : un séjour à cheval sur la période est calculé jour par jour, sans majoration sur les nuits hors période. La garderie, les promenades, les visites et le toilettage ne sont pas concernés.\n\nLes places partent vite sur ces dates — mieux vaut réserver tôt !`
+  },
+  // ── PROPRETÉ / DÉGÂTS ────────────────────────────────────
+  {
+    mots: ['propre','proprete','propreté','pipi','crotte','besoin','accident','sale','salit','degat','dégât','degats','dégâts','casse','cassé','abime','abîme','detruit','détruit','ronge','abimer','responsabilite','responsabilité'],
+    rep: `🧼 Propreté :\n\nÀ son arrivée, votre chien a 24 heures d'adaptation — les accidents de ces premières 24h ne sont pas facturés, c'est normal dans un lieu inconnu. Au-delà, chaque jour où il fait ses besoins à l'intérieur est facturé 5€ pour le nettoyage (uniquement les jours concernés, et on vous prévient dès le premier).\n\n🔨 Dégâts :\n\nSi le chien casse ou abîme quelque chose, c'est à la charge de son propriétaire : coût réel de la réparation ou du remplacement, avec justificatif à l'appui. Pensez à vérifier que votre assurance responsabilité civile couvre votre animal.\n\nTout est détaillé dans nos conditions générales (articles 12 et 13).`
   },
   // ── CARNET MALIN (prépayé) ───────────────────────────────
   {
