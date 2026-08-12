@@ -2063,6 +2063,8 @@ async function submitReservation() {
       message   : document.getElementById('message').value,
       parrainage: document.getElementById('parrainage').value,
       cgvAcceptees: !!document.getElementById('cgv-accept')?.checked,
+      cgvDate     : document.getElementById('cgv-accept')?.checked ? new Date().toISOString() : null,
+      cgvVersion  : 'v2-2026',
       // Champs structurés (les champs texte ci-dessus restent inchangés pour l'admin)
       animaux : Object.keys(window.__animaux||{}).map(k=>({ type:k, qte:window.__animaux[k] })),
       options : {
@@ -2100,6 +2102,23 @@ async function submitReservation() {
         createdAt : existing.createdAt || Date.now(),
         updatedAt : Date.now(),
         nbResas   : (existing.nbResas || 0) + 1,
+        // Acceptation des conditions générales, horodatée et conservée sur la
+        // fiche client : c'est la preuve qu'on doit pouvoir ressortir en cas de
+        // contestation d'un supplément propreté ou d'un dégât.
+        cgv : (function(){
+          var ok = !!(fbData.cgvAcceptees);
+          var anc = existing.cgv || null;
+          if(!ok) return anc;                       // pas d'acceptation : on garde l'historique
+          var d = new Date();
+          return {
+            acceptees    : true,
+            version      : 'v2-2026',               // articles 12 et 13 inclus
+            date         : d.toISOString(),         // horodatage machine
+            dateLisible  : d.toLocaleString('fr-FR',{dateStyle:'long',timeStyle:'short'}),
+            premiereFois : (anc && anc.date) ? anc.date : d.toISOString(),
+            nbAcceptations : ((anc && anc.nbAcceptations) || 0) + 1
+          };
+        })(),
       });
       // Ajouter le chien si non déjà présent
       if (fbData.chien && fbData.chien.nom) {

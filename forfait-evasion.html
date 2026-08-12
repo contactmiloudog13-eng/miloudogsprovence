@@ -1119,6 +1119,8 @@ function evEnvoyer(ev){
     detachable:document.getElementById('ev-c3').checked,
     droitImage:document.getElementById('ev-c4').checked,
     cgvAcceptees:document.getElementById('ev-c5').checked,
+    cgvDate:document.getElementById('ev-c5').checked?new Date().toISOString():null,
+    cgvVersion:'v2-2026',
     prix:total, statut:attente ? 'attente' : 'demande',
     uid:EV_UID || null, createdAt:Date.now()
   };
