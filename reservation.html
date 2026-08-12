@@ -130,6 +130,15 @@
   .dv-mt{align-self:flex-end;}
   .dv-tv{font-size:1.6rem;}
 }
+.tp-t{font-size:.92rem;font-weight:800;color:#7a5a1a;margin-bottom:6px;}
+.tp-d{font-size:.84rem;color:#7a5a1a;line-height:1.65;margin-bottom:12px;}
+#test-prealable{background:#FDF3E0;border:1.5px solid var(--soleil);border-radius:14px;padding:16px 18px;margin:2px 0 16px;}
+#test-prealable label{color:#7a5a1a;}
+.tp-msg{font-size:.8rem;line-height:1.5;margin-top:2px;min-height:18px;}
+.tp-msg.ko{color:#c0392b;font-weight:700;}
+.tp-msg.ok{color:#159067;font-weight:700;}
+.tp-deja{background:none;border:none;padding:0;margin-top:10px;font-size:.78rem;color:#7a5a1a;text-decoration:underline;cursor:pointer;font-family:'Lato',sans-serif;opacity:.75;}
+.tp-deja:hover{opacity:1;}
 .opt-titre{font-size:.86rem;font-weight:800;color:var(--lavande-dark);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;}
 .ev-sam{display:flex;align-items:center;gap:9px;padding:9px 11px;border:1.5px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;margin-bottom:7px;text-transform:none;letter-spacing:0;}
 .ev-sam:has(input:checked){border-color:var(--lavande);background:var(--lavande-light);}
@@ -367,7 +376,7 @@
                 <div class="form-group"><label for="nom">Nom</label><input id="nom" autocomplete="family-name" name="Nom" type="text" placeholder="Votre nom"></div>
               </div>
               <div class="form-row">
-                <div class="form-group"><label for="tel">Téléphone *</label><input id="tel" autocomplete="tel" name="Téléphone" type="tel" placeholder="07 00 00 00 00" oninput="validTel(this)"><small id="tel-msg" style="font-size:.78rem;margin-top:4px;display:none;"></small></div>
+                <div class="form-group"><label for="tel">Téléphone *</label><input id="tel" autocomplete="tel" name="Téléphone" type="tel" placeholder="07 00 00 00 00" oninput="validTel(this);verifClientConnu(this.value)"><small id="tel-msg" style="font-size:.78rem;margin-top:4px;display:none;"></small></div>
                 <div class="form-group"><label for="email">Email</label><input id="email" autocomplete="email" name="Email" type="email" placeholder="votre@email.fr"></div>
               </div>
               <div class="form-row">
@@ -527,7 +536,7 @@
               <div class="form-group"><label>Heure d'arrivée *</label><div style="display:flex;gap:8px;">
                 <select id="heure-debut-h" name="Heure arrivée H" style="flex:1" required onchange="autoDepart();calcPrice()"><option value="">HH</option><option>08</option><option>09</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option></select>
                 <select id="heure-debut-m" name="Heure arrivée M" style="flex:1" required onchange="autoDepart();calcPrice()"><option value="">MM</option><option selected>00</option><option>15</option><option>30</option><option>45</option></select>
-              </div><small style="color:var(--text-muted);font-size:.75rem;">Ouvert de 8h à 19h</small></div>
+              </div><small style="color:var(--text-muted);font-size:.75rem;">Ouvert 8h–12h et 13h30–19h</small></div>
             </div>
             <div id="row-date-fin" style="display:none">
               <div class="form-row">
@@ -535,10 +544,32 @@
                 <div class="form-group" id="col-heure-fin"><label id="label-heure-fin">Heure de départ *</label><div style="display:flex;gap:8px;">
                   <select id="heure-fin-h" name="Heure départ H" style="flex:1" onchange="calcPrice()"><option value="">HH</option><option>08</option><option>09</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option></select>
                   <select id="heure-fin-m" name="Heure départ M" style="flex:1"><option value="">MM</option><option selected>00</option><option>15</option><option>30</option><option>45</option></select>
-                </div><small style="color:var(--text-muted);font-size:.75rem;">Ouvert de 8h à 19h</small></div>
+                </div><small style="color:var(--text-muted);font-size:.75rem;">Ouvert 8h–12h et 13h30–19h</small></div>
               </div>
               <small id="msg-depart" style="display:none;margin-top:-8px;margin-bottom:14px;background:#FDF3E0;border:1px solid var(--soleil);border-radius:8px;padding:7px 10px;font-size:.78rem;color:#7a5a1a;line-height:1.5;">⏰ <strong>Heure limite de récupération.</strong> Vous pouvez venir avant, mais pas après — merci de respecter ce créneau ❤️</small>
             </div>
+
+            <!-- Test obligatoire avant la 1re garde (nouveaux clients) -->
+            <div id="test-prealable" style="display:none;">
+              <div class="tp-t">🐣 Première garde chez nous : un test de 24 h d’abord</div>
+              <p class="tp-d">On ne découvre pas un chien le jour où ses maîtres partent. Avant votre première garde, votre chien passe <strong>24 h chez nous</strong> — il visite les lieux, rencontre les autres, et on voit comment il vit la nuit. C’est ce qui fait qu’un séjour se passe bien.</p>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Date du test *</label>
+                  <input id="test-date" name="Date du test" type="date" oninput="majTestPrealable()">
+                </div>
+                <div class="form-group">
+                  <label>Heure d’arrivée du test</label>
+                  <div style="display:flex;gap:8px;">
+                    <select id="test-h" style="flex:1" onchange="majTestPrealable()"><option value="">HH</option><option>08</option><option>09</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option></select>
+                    <select id="test-m" style="flex:1" onchange="majTestPrealable()"><option selected>00</option><option>15</option><option>30</option><option>45</option></select>
+                  </div>
+                </div>
+              </div>
+              <div id="test-msg" class="tp-msg"></div>
+              <button type="button" class="tp-deja" onclick="dejaVenu()">Mon chien est déjà venu chez vous ↩</button>
+            </div>
+
             <!-- Balades pendant le séjour (pension) -->
             <div class="addon-card" id="balade-card" style="display:none;">
               <label class="addon-check">
@@ -861,10 +892,23 @@ function _validateStep2() {
     if (!hFinEl.value) { hFinEl.style.borderColor = '#c0392b'; err = true; errFin = true; }
     else hFinEl.style.borderColor = '';
   }
+  // Test prealable : bloquant tant qu'une date valide n'est pas choisie
+  let errTest = false;
+  const _tpBox = document.getElementById('test-prealable');
+  if (_tpBox && _tpBox.style.display !== 'none' && !(window.__testPrealable && window.__testPrealable.date)) {
+    const _td = document.getElementById('test-date');
+    if (_td) _td.style.borderColor = '#c0392b';
+    err = true; errTest = true;
+  } else {
+    const _td = document.getElementById('test-date');
+    if (_td) _td.style.borderColor = '';
+  }
   if (err) {
     const msg = document.getElementById('error-msg');
     msg.style.display = 'block';
-    msg.textContent = errFin
+    msg.textContent = errTest
+      ? '⚠️ Première garde : choisissez une date de test, avant votre séjour.'
+      : errFin
       ? '⚠️ Merci d\'indiquer la date et l\'heure de fin de la garde.'
       : '⚠️ Merci de choisir un service, une date et une heure d\'arrivée.';
     document.getElementById('step-panel-2').appendChild(msg);
@@ -941,6 +985,7 @@ function toggleTag(el){
   }
   autoDepart();
   syncOptions();
+  syncTestPrealable();
   calcPrice();
 }
 
@@ -949,7 +994,27 @@ document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
 
 let reservations=JSON.parse(localStorage.getItem('mdp_reservations')||'[]');
 
+/* Horaires d'ouverture : 8h–12h et 13h30–19h. La coupure du midi ne doit pas
+   etre selectionnable, minutes comprises : a 12h seul :00 reste valide, et a
+   13h on ne peut pas descendre sous :30. */
+function majCreneaux(idH,idM){
+  var h=document.getElementById(idH), m=document.getElementById(idM);
+  if(!h||!m) return;
+  var v=parseInt(h.value,10);
+  [].slice.call(m.options).forEach(function(o){
+    if(!o.value) return;
+    var mn=parseInt(o.value,10);
+    var ko=(v===12 && mn>0) || (v===13 && mn<30) || (v===19 && mn>0);
+    o.disabled=ko;
+    if(ko && o.selected){ m.value = (v===13?'30':'00'); }
+  });
+}
+function majTousCreneaux(){
+  majCreneaux('heure-debut-h','heure-debut-m');
+  majCreneaux('heure-fin-h','heure-fin-m');
+}
 function autoDepart(){
+  majTousCreneaux();
   const tags=[...document.querySelectorAll('.service-tag.active')];
   // Reconnaissance par data-kind et non par le texte du tag : renommer un
   // service ne doit pas casser silencieusement la logique des dates.
@@ -1344,6 +1409,71 @@ function syncOptions(){
 /* Test 24 h : la date de fin découle de la date d'arrivée (J+1, même heure).
    C'est tout le sens du passage de la demi-journée à 24 h — on garde le chien
    une nuit pour voir comment il se comporte quand la maison s'éteint. */
+/* ══════════════════════════════════════════════════════════════════════
+   TEST PREALABLE — obligatoire avant la toute premiere garde.
+   On part du principe que le client est NOUVEAU tant que Firebase n'a pas
+   prouve le contraire : mieux vaut proposer le test a tort que de laisser
+   passer une premiere garde sans test. Le bouton « deja venu » rattrape
+   le cas ou la recherche echoue (Firebase indisponible, numero saisi
+   differemment d'une fois sur l'autre).
+   ══════════════════════════════════════════════════════════════════════ */
+window.__nouveauClient=true;
+window.__testPrealable={date:'',heure:''};
+
+function dejaVenu(){
+  window.__nouveauClient=false;
+  window.__testPrealable={date:'',heure:''};
+  var b=document.getElementById('test-prealable'); if(b) b.style.display='none';
+  calcPrice();
+}
+
+/* Recherche discrete du client sur son numero de telephone */
+function verifClientConnu(tel){
+  var t=(tel||'').replace(/\s/g,'');
+  if(t.length<10) return;
+  try{
+    firebase.database().ref('clients/'+t).once('value').then(function(sn){
+      var v=sn.val();
+      window.__nouveauClient = !(v && (v.nbResas||0)>=1);
+      syncTestPrealable();
+    }).catch(function(){});
+  }catch(e){}
+}
+
+/* Le test ne concerne que les gardes chez nous, et pas le test lui-meme */
+function syncTestPrealable(){
+  var box=document.getElementById('test-prealable'); if(!box) return;
+  var kinds=[].slice.call(document.querySelectorAll('.service-tag.active')).map(function(t){return t.dataset.kind;});
+  var garde=kinds.indexOf('pension')>=0||kinds.indexOf('garderie-jour')>=0||kinds.indexOf('garderie-demi')>=0;
+  var besoin=window.__nouveauClient && garde && kinds.indexOf('test24')<0;
+  box.style.display=besoin?'':'none';
+  if(!besoin) window.__testPrealable={date:'',heure:''};
+  if(besoin) majTestPrealable(); else calcPrice();
+}
+
+/* Le test doit tomber STRICTEMENT avant l'arrivee */
+function majTestPrealable(){
+  var d=document.getElementById('test-date'), msg=document.getElementById('test-msg');
+  var arr=(document.getElementById('date-debut')||{}).value||'';
+  if(!d||!msg) return;
+  if(arr){ var v=new Date(arr+'T12:00:00'); v.setDate(v.getDate()-1);
+    d.max=v.getFullYear()+'-'+('0'+(v.getMonth()+1)).slice(-2)+'-'+('0'+v.getDate()).slice(-2); }
+  d.min=new Date().toISOString().split('T')[0];
+  var val=d.value;
+  if(!val){ msg.className='tp-msg'; msg.textContent='Choisissez une date pour le test — elle doit être avant votre garde.'; window.__testPrealable={date:'',heure:''}; calcPrice(); return; }
+  if(arr && val>=arr){
+    msg.className='tp-msg ko';
+    msg.textContent='⚠️ Le test doit avoir lieu avant votre garde (au plus tard la veille).';
+    window.__testPrealable={date:'',heure:''}; calcPrice(); return;
+  }
+  var h=(document.getElementById('test-h')||{}).value||'', m=(document.getElementById('test-m')||{}).value||'00';
+  window.__testPrealable={date:val,heure:h?(h+':'+m):''};
+  msg.className='tp-msg ok';
+  var f=new Date(val+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  msg.textContent='✅ Test prévu le '+f+(h?(' à '+h+'h'+(m!=='00'?m:'')):'')+'.';
+  calcPrice();
+}
+
 function majTest24(){
   var d1=document.getElementById('date-debut'), d2=document.getElementById('date-fin');
   var hH=document.getElementById('heure-debut-h'), hM=document.getElementById('heure-debut-m');
@@ -1871,6 +2001,15 @@ function calcPrice(){
     } else if(sum){ sum.style.display='none'; }
   })();
 
+  // ── Test préalable (1re garde) ──
+  if(window.__testPrealable && window.__testPrealable.date){
+    var _t24=document.querySelector('.service-tag[data-kind="test24"]');
+    var _tpPx=_t24?parseInt(_t24.dataset.price)||25:25;
+    var _tpSub=_tpPx*Math.max(1,nbChiens);
+    P('🐣','Test 24 h avant la garde'+_xC(nbChiens),_jm(window.__testPrealable.date),_tpPx,Math.max(1,nbChiens),_tpSub);
+    total+=_tpSub;
+  }
+
   // ── Toilettage pendant le séjour ──
   if(window.__toilettage && window.__toilettage.active){
     var _tTag=document.querySelector('.service-tag[data-kind="toilettage"]');
@@ -2145,6 +2284,10 @@ async function submitReservation() {
       cgvVersion  : 'v2-2026',
       // Champs structurés (les champs texte ci-dessus restent inchangés pour l'admin)
       animaux : Object.keys(window.__animaux||{}).map(k=>({ type:k, qte:window.__animaux[k] })),
+      testPrealable : (window.__testPrealable && window.__testPrealable.date) ? {
+        date  : window.__testPrealable.date,
+        heure : window.__testPrealable.heure || ''
+      } : null,
       options : {
         balades    : !!(window.__balade&&window.__balade.active) && { duree:window.__balade.dur, nombre:window.__balade.count, total:window.__balade.total } || null,
         toilettage : !!(window.__toilettage&&window.__toilettage.active),
@@ -2220,6 +2363,10 @@ async function submitReservation() {
       service    : fbData.service,
       dateArrivee: fbData.dateArrivee,
       dateDepart : fbData.dateDepart,
+      // Montant annonce + devis detaille, pour que le client retrouve son prix
+      prix       : (document.getElementById('price-total')||{}).innerText
+                     ? document.getElementById('price-total').innerText.replace(/\s+/g,' ').trim() : '',
+      devis      : (fbData.prix||'').replace(/<br>/g,'\n').replace(/<[^>]+>/g,''),
     });
   } catch(e) { console.warn('Firebase save error:', e); }
 
@@ -2428,6 +2575,16 @@ function ejsSendReception(data) {
     service    : data.service,
     date_arrivee : _frDate(data.dateArrivee),   // format FR JJ/MM/AAAA
     date_depart  : _frDate(data.dateDepart),
+    // ⚠️ Ces variables doivent etre inserees dans le template EmailJS
+    //    (template_el176m5) pour apparaitre dans l'e-mail recu.
+    prix      : data.prix || '',
+    devis     : data.devis || '',
+    adresse   : '340 chemin de la Cacholle, 13140 Miramas',
+    horaires  : 'Ouvert 8h–12h et 13h30–19h',
+    telephone : '07 77 23 40 88',
+    rappel_sante : "Avant son arrivee, votre chien doit etre : a jour de ses vaccins (CHLPPi), "
+                 + "identifie (puce ou tatouage), et traite contre les puces, les tiques et les vers. "
+                 + "Merci d'apporter son carnet de sante le jour J.",
   }).catch(function(e){ console.warn('EmailJS erreur:', e); });
 }
 </script>
