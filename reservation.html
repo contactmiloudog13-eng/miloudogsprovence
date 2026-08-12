@@ -137,8 +137,6 @@
 .tp-msg{font-size:.8rem;line-height:1.5;margin-top:2px;min-height:18px;}
 .tp-msg.ko{color:#c0392b;font-weight:700;}
 .tp-msg.ok{color:#159067;font-weight:700;}
-.tp-deja{background:none;border:none;padding:0;margin-top:10px;font-size:.78rem;color:#7a5a1a;text-decoration:underline;cursor:pointer;font-family:'Lato',sans-serif;opacity:.75;}
-.tp-deja:hover{opacity:1;}
 .opt-titre{font-size:.86rem;font-weight:800;color:var(--lavande-dark);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;}
 .ev-sam{display:flex;align-items:center;gap:9px;padding:9px 11px;border:1.5px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;margin-bottom:7px;text-transform:none;letter-spacing:0;}
 .ev-sam:has(input:checked){border-color:var(--lavande);background:var(--lavande-light);}
@@ -567,7 +565,6 @@
                 </div>
               </div>
               <div id="test-msg" class="tp-msg"></div>
-              <button type="button" class="tp-deja" onclick="dejaVenu()">Mon chien est déjà venu chez vous ↩</button>
             </div>
 
             <!-- Balades pendant le séjour (pension) -->
@@ -1420,24 +1417,37 @@ function syncOptions(){
 window.__nouveauClient=true;
 window.__testPrealable={date:'',heure:''};
 
-function dejaVenu(){
-  window.__nouveauClient=false;
-  window.__testPrealable={date:'',heure:''};
-  var b=document.getElementById('test-prealable'); if(b) b.style.display='none';
-  calcPrice();
+/* Cle client normalisee : le meme numero doit toujours donner la meme cle,
+   qu'il soit saisi « 06 12 34 56 78 », « 06.12.34.56.78 » ou « +33612345678 ».
+   Les points sont interdits dans un chemin Firebase, d'ou le filtrage strict. */
+function _telKey(t){
+  var d=(t||'').replace(/\D/g,'');
+  if(d.indexOf('33')===0 && d.length===11) d='0'+d.slice(2);   // +33 6… → 06…
+  if(d.length>10) d=d.slice(-10);
+  return d;
 }
+window._telKey=_telKey;
 
-/* Recherche discrete du client sur son numero de telephone */
-function verifClientConnu(tel){
-  var t=(tel||'').replace(/\s/g,'');
-  if(t.length<10) return;
+/* Le site sait si le client est deja venu : on interroge sa fiche client
+   (clients/<tel>) et, s'il est connecte, son profil (users/<uid>). */
+async function verifClientConnu(tel){
+  var connu=false;
+  var key=_telKey(tel||(document.getElementById('tel')||{}).value||'');
   try{
-    firebase.database().ref('clients/'+t).once('value').then(function(sn){
-      var v=sn.val();
-      window.__nouveauClient = !(v && (v.nbResas||0)>=1);
-      syncTestPrealable();
-    }).catch(function(){});
-  }catch(e){}
+    if(key.length>=10){
+      var sn=await firebase.database().ref('clients/'+key).get();
+      if(sn.exists() && ((sn.val().nbResas||0)>=1)) connu=true;
+    }
+    if(!connu){
+      var u=firebase.auth().currentUser;
+      if(u){
+        var su=await firebase.database().ref('users/'+u.uid+'/nbResas').get();
+        if(su.exists() && Number(su.val())>=1) connu=true;
+      }
+    }
+  }catch(e){ /* hors ligne : on reste sur « nouveau », le test sera propose */ }
+  window.__nouveauClient=!connu;
+  syncTestPrealable();
 }
 
 /* Le test ne concerne que les gardes chez nous, et pas le test lui-meme */
@@ -2307,7 +2317,7 @@ async function submitReservation() {
 
     // Sauvegarde profil client indépendamment de la réservation
     try {
-      const tel = (fbData.client.telephone||'').replace(/\s/g,'');
+      const tel = _telKey(fbData.client.telephone);
       const clientKey = tel || (fbData.client.prenom + '_' + fbData.client.nom).toLowerCase().replace(/\s/g,'_');
       const clientRef = firebase.database().ref('clients/' + clientKey);
       const snap = await clientRef.get();
@@ -2341,6 +2351,16 @@ async function submitReservation() {
           };
         })(),
       });
+      // Compteur aussi sur le profil connecte : le client reste reconnu meme
+      // s'il saisit un autre numero par la suite.
+      try{
+        const _u=firebase.auth().currentUser;
+        if(_u){
+          const _r=firebase.database().ref('users/'+_u.uid+'/nbResas');
+          const _v=await _r.get();
+          await _r.set((Number(_v.val())||0)+1);
+        }
+      }catch(e){}
       // Ajouter le chien si non déjà présent
       if (fbData.chien && fbData.chien.nom) {
         const chiensSnap = await clientRef.child('chiens').get();
@@ -2639,6 +2659,9 @@ firebase.auth().onAuthStateChanged(async user => {
     if (data.nom)       document.getElementById('nom').value    = data.nom;
     if (data.telephone) document.getElementById('tel').value    = data.telephone;
     document.getElementById('email').value = user.email;
+    // Le pre-remplissage ne declenche pas oninput : on verifie explicitement,
+    // sinon un habitue connecte serait pris pour un nouveau client.
+    try{ verifClientConnu(data.telephone||''); }catch(e){}
 
     // Pré-remplir champs chien depuis /users/{uid}/chien
     const chien = data.chien || {};
