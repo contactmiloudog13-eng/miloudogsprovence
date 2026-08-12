@@ -3,7 +3,7 @@
    Toutes les fonctionnalités du site : tarifs pilotés depuis
    l'admin (site_config/tarifs), visite à domicile tous animaux
    (période du/au + fréquence /jour ou /semaine), récupération à
-   domicile, Pack Duo, remises multi-chiens, disponibilités en
+   domicile, remises multi-animaux, disponibilités en
    direct, devis détaillé, journal de séjour, factures.
    ============================================================ */
 (function () {
@@ -13,7 +13,7 @@
   /* ── Tarifs pilotés depuis l'admin (temps réel) ── */
   const T = {
     pension: 25, garderie: 20, demi: 10, promenade: 15, toilettage: 30,
-    remise2: 10, remise3: 15, packDuo: 33,
+    remise2: 10, remise3: 15,
     deplMiramas: 10, deplFixe: 5, deplKm: 0.5,
     vChien: 15, vChat: 12, vFuret: 13, vPoules: 13, vLapin: 10,
     vRongeur: 10, vOiseau: 10, vTortue: 10, vPoisson: 8, vSupp1h: 5
@@ -39,11 +39,11 @@
     return [
       { id: 'pension', label: '🏠 Pension (nuit & journée)', price: T.pension, unit: 'nuit', range: true },
       { id: 'garderie', label: '☀️ Garderie journée', price: T.garderie, unit: 'jour', range: true },
-      { id: 'demi', label: '🌤️ Demi-journée', price: T.demi, unit: 'fixe', range: false },
+      { id: 'demi', label: '🌤️ Garderie demi-journée', price: T.demi, unit: 'fixe', range: false },
+      { id: 'test24', label: '🐣 Test 24 h', price: T.pension, unit: 'nuit', range: true },
       { id: 'promenade', label: '🦮 Promenade', price: T.promenade, unit: 'fixe', range: false },
       { id: 'toilettage', label: '🛁 Toilettage', price: T.toilettage, unit: 'fixe', range: false },
-      { id: 'visite', label: '🏡 Visite à domicile', price: 0, unit: 'visite', range: false },
-      { id: 'packduo', label: '🎁 Pack Duo (pension + 2ᵉ animal)', price: 0, unit: 'pack', range: true }
+      { id: 'visite', label: '🏡 Visite à domicile', price: 0, unit: 'visite', range: false }
     ];
   }
   let _svc = null;
@@ -129,9 +129,6 @@
       '<div id="v-summary" style="display:none;background:var(--lavande-light);border-radius:10px;padding:9px 12px;margin-bottom:12px;font-size:.8rem;color:var(--lavande-dark);font-weight:700;line-height:1.5;"></div>' +
       '</div>' +
 
-      // ── Bandeau Pack Duo ──
-      '<div id="r-packinfo" style="display:none;background:#FBEFD0;border:1px solid #E8A84C;border-radius:12px;padding:10px 12px;margin-bottom:12px;font-size:.8rem;color:#7a5a1a;line-height:1.5;">' +
-      '🎁 <b>Pack Duo :</b> votre chien en pension chez nous + visites à domicile pour votre 2ᵉ animal, avec <b style="color:#159067;">−' + T.packDuo + '% sur les visites</b>. Remplissez la garde du chien ci-dessus ET la visite ci-dessous.</div>' +
 
       '<div class="field"><label>Message (facultatif)</label><textarea id="r-msg" rows="2" placeholder="Précisions, habitudes, besoins…"></textarea></div>' +
       '<div class="field"><label>Code parrainage (facultatif)</label><input type="text" id="r-parrain" placeholder="Code de votre ami"></div>' +
@@ -167,13 +164,12 @@
   App.resaSvc = function (id) {
     _svc = SERVICES().find((s) => s.id === id);
     document.querySelectorAll('#svc-chips .dog-chip').forEach((c) => c.classList.toggle('active', c.dataset.svc === id));
-    const isVisite = id === 'visite', isPack = id === 'packduo';
+    const isVisite = id === 'visite';
     document.getElementById('r-classic').style.display = isVisite ? 'none' : '';
-    document.getElementById('r-visite').style.display = (isVisite || isPack) ? '' : 'none';
-    document.getElementById('r-packinfo').style.display = isPack ? '' : 'none';
+    document.getElementById('r-visite').style.display = isVisite ? '' : 'none';
     document.getElementById('r-dep-field').style.display = (_svc && _svc.range) ? '' : 'none';
     const pk = document.getElementById('r-pickup-wrap');
-    if (pk) pk.style.display = (isVisite || isPack) ? 'none' : '';
+    if (pk) pk.style.display = isVisite ? 'none' : '';
     updateEstimate();
   };
   App.resaDur = function (m) {
@@ -300,23 +296,10 @@
       total += v.visites;
       if (V.km != null && v.travel > 0) { lines.push('🚗 Déplacement — <b>' + String(v.travel).replace('.', ',') + '€</b> (' + String(v.travelPer).replace('.', ',') + '€ × ' + v.travelDays + ')'); total += v.travel; }
       else if (V.km == null) lines.push('🚗 <small>Saisissez l\'adresse pour le déplacement</small>');
-    } else if (_svc.id === 'packduo') {
-      const n = nights() || 1;
-      const maj = nuitsMajorees(T.pension, n);
-      const brut = maj ? maj.reduce((a, b) => a + b, 0) : T.pension * n;
-      const pen = Math.round(brut * nb * (1 - disc));
-      lines.push('🏠 Pension chien — ' + (maj ? detailNuits(maj) : T.pension + '€ × ' + n + ' nuit' + (n > 1 ? 's' : '')) + (disc ? ' (−' + Math.round(disc * 100) + '%)' : '') + ' = <b>' + pen + '€</b>');
-      total += pen;
-      if (maj) lines.push(majorationNote(n, T.pension));
-      const v = visiteCalc();
-      const remV = Math.round(v.visites * (1 - T.packDuo / 100));
-      lines.push('🎁 Visites 2ᵉ animal (' + v.ani.n + ') — <s>' + v.visites + '€</s> <b>' + remV + '€</b> (−' + T.packDuo + '%)');
-      total += remV;
-      if (V.km != null && v.travel > 0) { lines.push('🚗 Déplacement — <b>' + String(v.travel).replace('.', ',') + '€</b>'); total += v.travel; }
     } else if (_svc.range) {
       const n = nights() || 1;
       // Seule la pension à la nuit est majorée pendant les périodes de forte affluence
-      const maj = _svc.id === 'pension' ? nuitsMajorees(_svc.price, n) : null;
+      const maj = (_svc.id === 'pension' || _svc.id === 'test24') ? nuitsMajorees(_svc.price, n) : null;
       const brut = maj ? maj.reduce((a, b) => a + b, 0) : _svc.price * n;
       const sub = Math.round(brut * nb * (1 - disc));
       lines.push(_svc.label + ' — ' + (maj ? detailNuits(maj) : _svc.price + '€ × ' + n) + ' × ' + nb + ' chien' + (nb > 1 ? 's' : '') + (disc ? ' (−' + Math.round(disc * 100) + '%)' : '') + ' = <b>' + sub + '€</b>');
@@ -327,7 +310,7 @@
       lines.push(_svc.label + ' — <b>' + sub + '€</b>');
       total += sub;
     }
-    if (PK.on && PK.km != null && _svc.id !== 'visite' && _svc.id !== 'packduo') {
+    if (PK.on && PK.km != null && _svc.id !== 'visite') {
       lines.push('🚗 Récupération à domicile — <b>' + String(PK.price).replace('.', ',') + '€</b>');
       total += PK.price;
     }
@@ -368,7 +351,7 @@
     const out = document.getElementById('r-msg-out');
     out.className = 'auth-msg';
     if (!_svc) { out.classList.add('err'); out.textContent = 'Choisissez une prestation.'; return; }
-    const isVisite = _svc.id === 'visite', isPack = _svc.id === 'packduo';
+    const isVisite = _svc.id === 'visite';
 
     let chienNom = '', arr = '', dep = '';
     if (isVisite) {
@@ -384,10 +367,6 @@
       if (!chienNom) { out.classList.add('err'); out.textContent = 'Indiquez votre animal.'; return; }
       if (!arr) { out.classList.add('err'); out.textContent = 'Choisissez une date d\'arrivée.'; return; }
       if (_svc.range && !dep) { out.classList.add('err'); out.textContent = 'Indiquez la date de fin.'; return; }
-      if (isPack) {
-        const v = visiteCalc();
-        if (!v.start || !v.end || v.days < 1 || V.km == null) { out.classList.add('err'); out.textContent = 'Pack Duo : remplissez aussi la visite du 2ᵉ animal (dates + adresse).'; return; }
-      }
     }
 
     const btn = document.getElementById('r-btn'); btn.disabled = true;
@@ -398,7 +377,7 @@
     const est = document.getElementById('r-estimate');
 
     let extra = '';
-    if (isVisite || isPack) {
+    if (isVisite) {
       const v = visiteCalc();
       extra = ' | 🏡 Visite (' + v.ani.n + ') à : ' + V.address + ' — ' + V.freq + '× ' + (V.unit === 'jour' ? 'par jour' : 'par semaine') + ' = ' + v.passages + ' passages (' + (V.dur === 60 ? '1h' : '30 min') + ')';
     }

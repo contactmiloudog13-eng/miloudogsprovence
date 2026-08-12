@@ -13,7 +13,7 @@ const REPONSES = [
   // ── TARIFS ───────────────────────────────────────────────
   {
     mots: ['tarif','prix','cout','coute','cher','combien','nuit','journee','demi','promenade','toilettage','pension','euro','25','20','15','10','30','semaine','seance'],
-    rep: `🐾 Nos tarifs :\n\n🏠 Pension (nuit + journée) : 25€/nuit\n☀️ Garderie journée : 20€\n🌤️ Garderie demi-journée : 10€\n🦮 Promenade : 15€\n🛁 Toilettage : 30€\n🏡 Visite à domicile : dès 8€/passage (selon l'animal)\n\n💡 Réductions : 2 chiens −10%, 3 chiens et + −15%${CARNET_ON ? '\n🎟️ Carnet Malin : 10 nuits prépayées à prix réduit' : ''}\n\n🎄 Fêtes de fin d'année : du 20 décembre 2026 au 2 janvier 2027, la pension est à 30€/nuit (35€ les 24, 25, 31 déc et 1er janv). En dehors de cette période, on reste à 25€/nuit.\n\nUn devis instantané est calculé sur la page Réservation !`
+    rep: `🐾 Nos tarifs :\n\n🏠 Pension (nuit + journée) : 25€/nuit\n☀️ Garderie journée : 20€\n🌤️ Garderie demi-journée : 10€\n🐣 Test 24 h (avant la 1re garde) : 25€\n🦮 Promenade : 15€\n🛁 Toilettage : 30€\n🏡 Visite à domicile : dès 8€/passage (selon l'animal)\n\n💡 Réductions : 2 animaux −10%, 3 animaux et + −15% (chiens, chats, lapins… tout compte)${CARNET_ON ? '\n🎟️ Carnet Malin : 10 nuits prépayées à prix réduit' : ''}\n\n🎄 Fêtes de fin d'année : du 20 décembre 2026 au 2 janvier 2027, la pension est à 30€/nuit (35€ les 24, 25, 31 déc et 1er janv). En dehors de cette période, on reste à 25€/nuit.\n\nUn devis instantané est calculé sur la page Réservation !`
   },
   // ── FÊTES DE FIN D'ANNÉE (majoration) ────────────────────
   {

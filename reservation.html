@@ -107,6 +107,35 @@
 .bdur-btn{flex:1;padding:11px;border:1.5px solid var(--border);border-radius:10px;background:#fff;color:var(--text-muted);font-family:'Lato',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;transition:all .2s;}
 .bdur-btn:hover{border-color:var(--lavande);}
 .bdur-btn.active{background:var(--lavande);border-color:var(--lavande);color:#fff;}
+.opt-titre{font-size:.86rem;font-weight:800;color:var(--lavande-dark);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;}
+.ev-sam{display:flex;align-items:center;gap:9px;padding:9px 11px;border:1.5px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;margin-bottom:7px;text-transform:none;letter-spacing:0;}
+.ev-sam:has(input:checked){border-color:var(--lavande);background:var(--lavande-light);}
+.ev-sam input{width:17px;height:17px;accent-color:var(--lavande);flex-shrink:0;cursor:pointer;}
+.ev-sam b{font-size:.86rem;color:var(--text);font-weight:700;}
+.ev-sam small{font-size:.76rem;color:var(--text-muted);margin-left:auto;white-space:nowrap;}
+/* ── Sélecteur d'animaux ── */
+.an-bloc{margin-top:14px;}
+.an-bloc-t{display:block;font-size:.8rem;font-weight:800;color:var(--lavande-dark);text-transform:none;letter-spacing:0;margin-bottom:8px;}
+.an-bloc-t small{font-weight:400;color:var(--text-muted);font-size:.78rem;}
+.an-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:8px;}
+.an-card{border:1.5px solid var(--border);border-radius:11px;background:#fff;transition:border-color .18s,background .18s;overflow:hidden;}
+.an-card.on{border-color:var(--lavande);background:var(--lavande-light);}
+.an-card label{display:flex;align-items:center;gap:9px;padding:10px 11px;cursor:pointer;margin:0;text-transform:none;letter-spacing:0;}
+.an-card input[type=checkbox]{width:17px;height:17px;flex-shrink:0;accent-color:var(--lavande);cursor:pointer;}
+.an-card .an-n{display:flex;flex-direction:column;gap:1px;min-width:0;}
+.an-card .an-n b{font-size:.86rem;color:var(--text);font-weight:700;}
+.an-card .an-n small{font-size:.74rem;color:var(--text-muted);}
+.an-qte{display:none;align-items:center;justify-content:space-between;gap:8px;padding:8px 11px;border-top:1px dashed var(--border);}
+.an-card.on .an-qte{display:flex;}
+.an-qte span{font-size:.78rem;color:var(--text-muted);}
+.an-step{display:flex;align-items:center;gap:10px;}
+.an-step button{width:28px;height:28px;border:1.5px solid var(--border);border-radius:8px;background:#fff;color:var(--lavande-dark);font-size:1rem;font-weight:800;line-height:1;cursor:pointer;padding:0;}
+.an-step button:hover{border-color:var(--lavande);}
+.an-step b{min-width:16px;text-align:center;font-size:.9rem;color:var(--text);}
+.an-recap{margin-top:14px;background:var(--lavande-light);border-radius:11px;padding:11px 14px;font-size:.84rem;color:var(--lavande-dark);line-height:1.6;}
+.svc-auto{background:var(--cream);border:1.5px dashed var(--border);border-radius:14px;padding:14px 16px;}
+.svc-auto .sa-t{font-size:.86rem;font-weight:800;color:var(--lavande-dark);margin-bottom:5px;}
+.svc-auto .sa-d{font-size:.82rem;color:var(--text-muted);line-height:1.6;}
 .tag-close{margin-left:6px;font-size:.7rem;opacity:.7;line-height:1;vertical-align:middle;background:rgba(74,63,114,0.15);border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,opacity .2s;}
 .tag-close:hover{background:rgba(74,63,114,0.35);opacity:1;}
 .form-submit{width:100%;padding:16px;background:var(--lavande);color:white;border:none;border-radius:40px;font-family:'Lato',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:all .2s;margin-top:8px;}
@@ -333,64 +362,46 @@
           <div class="step-panel" id="step-panel-2" style="display:none">
             <p class="step-title">📅 Étape 2 — La réservation</p>
 
-            <div class="form-group" id="row-nb-chiens">
-              <label>Nombre de chiens</label>
-              <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                <label style="display:flex;align-items:center;gap:8px;padding:10px 18px;border:1px solid var(--border);border-radius:12px;cursor:pointer;background:white;font-size:.9rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--text);">
-                  <input type="radio" name="nb-chiens" value="1" onchange="calcPrice()" checked style="accent-color:var(--lavande);width:16px;height:16px;"> 1 chien
-                </label>
-                <label style="display:flex;align-items:center;gap:8px;padding:10px 18px;border:1px solid var(--border);border-radius:12px;cursor:pointer;background:white;font-size:.9rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--text);">
-                  <input type="radio" name="nb-chiens" value="2" onchange="calcPrice()" style="accent-color:var(--lavande);width:16px;height:16px;"> 2 chiens <span style="font-size:.75rem;background:var(--vert-light);color:var(--vert);padding:2px 7px;border-radius:20px;font-weight:700;margin-left:4px;">−10%</span>
-                </label>
-                <label style="display:flex;align-items:center;gap:8px;padding:10px 18px;border:1px solid var(--border);border-radius:12px;cursor:pointer;background:white;font-size:.9rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--text);">
-                  <input type="radio" name="nb-chiens" value="3" onchange="calcPrice()" style="accent-color:var(--lavande);width:16px;height:16px;"> 3 chiens <span style="font-size:.75rem;background:var(--vert-light);color:var(--vert);padding:2px 7px;border-radius:20px;font-weight:700;margin-left:4px;">−15%</span>
-                </label>
+            <!-- ═══ 1. Qui dois-je garder ? ═══ -->
+            <div class="form-group" id="row-animaux">
+              <label>Qui dois-je garder ? *</label>
+
+              <div class="an-bloc">
+                <span class="an-bloc-t">🐶 Combien de chiens ?</span>
+                <div class="vdur-row" id="row-nb-chiens">
+                  <button type="button" class="vdur-btn" data-n="0" onclick="setNbChiens(0)">Aucun</button>
+                  <button type="button" class="vdur-btn active" data-n="1" onclick="setNbChiens(1)">1 chien</button>
+                  <button type="button" class="vdur-btn" data-n="2" onclick="setNbChiens(2)">2 chiens</button>
+                  <button type="button" class="vdur-btn" data-n="3" onclick="setNbChiens(3)">3 chiens</button>
+                </div>
               </div>
+
+              <div class="an-bloc">
+                <span class="an-bloc-t">🐱 D'autres animaux ? <small>facultatif — ils sont gardés chez vous</small></span>
+                <div class="an-grid" id="autres-animaux"></div>
+              </div>
+
+              <div id="an-recap" class="an-recap" style="display:none;"></div>
             </div>
-            <div class="form-group">
-              <label>Service souhaité *</label>
+
+            <!-- ═══ 2. Quel service ? (piloté par les animaux) ═══ -->
+            <div class="form-group" id="row-service">
+              <label>Quel service ? *</label>
               <div class="svc-groups">
-                <div class="svc-group">
-                  <div class="svc-group-title">🏠 Garde de votre chien <small>chez nous, en famille</small></div>
+                <div class="svc-group" id="svc-chiens">
+                  <div class="svc-group-title">🐶 Pour votre chien <small>la pension n'accueille que des chiens</small></div>
                   <div class="form-service-tags">
-                    <span class="service-tag" data-price="25" data-unit="nuit" onclick="toggleTag(this)">🏠 Pension nuit &amp; journée</span>
-                    <span class="service-tag" data-price="20" data-unit="jour" data-sameday="1" onclick="toggleTag(this)">☀️ Garderie journée</span>
-                    <span class="service-tag" data-price="10" data-unit="jour" data-sameday="1" onclick="toggleTag(this)">🌤️ Garderie demi-journée</span>
-                    <span class="service-tag" data-price="10" data-unit="fixe" data-sameday="1" onclick="toggleTag(this)">🐣 Test demi-journée</span>
+                    <span class="service-tag" data-kind="pension" data-price="25" data-unit="nuit" onclick="toggleTag(this)">🏠 Pension nuit &amp; journée</span>
+                    <span class="service-tag" data-kind="garderie-jour" data-price="20" data-unit="jour" data-sameday="1" onclick="toggleTag(this)">☀️ Garderie journée</span>
+                    <span class="service-tag" data-kind="garderie-demi" data-price="10" data-unit="jour" data-sameday="1" onclick="toggleTag(this)">🌤️ Garderie demi-journée</span>
+                    <span class="service-tag" data-kind="test24" data-price="25" data-unit="nuit" onclick="toggleTag(this)">🐣 Test 24 h</span>
+                    <span class="service-tag" data-kind="promenade" data-price="15" data-unit="fixe" data-sameday="1" data-duration="60" onclick="toggleTag(this)">🦮 Promenade seule</span>
+                    <span class="service-tag" data-kind="toilettage" data-price="30" data-unit="fixe" data-sameday="1" onclick="toggleTag(this)">🛁 Toilettage seul</span>
+                    <span class="service-tag" data-kind="visite" data-price="15" data-unit="fixe" data-sameday="1" data-visite="1" onclick="toggleTag(this);toggleVisitePanel()">🏡 Visite à domicile</span>
                   </div>
                 </div>
-                <div class="svc-group">
-                  <div class="svc-group-title">🏡 Visite à domicile <small>chien, chat, lapin, poules…</small></div>
-                  <div class="form-service-tags">
-                    <span class="service-tag" data-price="15" data-unit="fixe" data-sameday="1" data-visite="1" onclick="toggleTag(this);toggleVisitePanel()">🏡 Visite à domicile</span>
-                  </div>
-                </div>
-                <div class="svc-group">
-                  <div class="svc-group-title">✨ Services en plus</div>
-                  <div class="form-service-tags">
-                    <span class="service-tag" data-price="15" data-unit="fixe" data-sameday="1" data-duration="60" onclick="toggleTag(this)">🦮 Promenade</span>
-                    <span class="service-tag" data-price="30" data-unit="fixe" data-sameday="1" onclick="toggleTag(this)">🛁 Toilettage</span>
-                  </div>
-                </div>
-                <div class="svc-group svc-group-pack">
-                  <div class="svc-group-title">🎁 Formule avantageuse</div>
-                  <div class="form-service-tags">
-                    <span class="service-tag svc-pack" data-pack="duo" onclick="selectPackDuo(this)">🎁 Pack Duo Maison<small>Votre chien en pension + on passe chez vous pour un 2ᵉ animal · −33 % sur les visites</small></span>
-                  </div>
-                </div>
-                <!-- Forfait Évasion : réservation à part (places limitées par samedi) -->
-                <a href="forfait-evasion.html" data-capacite-fixe data-ev="clic_evasion_resa" style="display:flex;gap:14px;align-items:center;text-decoration:none;margin-top:14px;
-                   background:linear-gradient(118deg,#241B45,#4A3F72 68%,#5B4E86);border-radius:16px;padding:16px 18px;border:1px solid rgba(245,200,74,.32);">
-                  <div style="font-size:1.9rem;flex-shrink:0;">🏔️</div>
-                  <div style="flex:1;min-width:0;">
-                    <div style="color:#F5C84A;font-weight:800;font-size:.9rem;">Forfait Évasion — la randonnée du samedi</div>
-                    <div style="color:rgba(255,255,255,.78);font-size:.8rem;line-height:1.5;margin-top:3px;">
-                      2 h de balade avec 4 copains max, puis la journée à la pension. Vous le déposez le matin, vous le récupérez le soir. <strong style="color:#fff;">35 €</strong>.
-                      <span id="ev-resa-places" style="color:#F5C84A;font-weight:700;"></span>
-                    </div>
-                  </div>
-                  <div style="color:#F5C84A;font-weight:800;font-size:.85rem;white-space:nowrap;">Réserver →</div>
-                </a>
+                <!-- Autres espèces : la visite à domicile s'impose, on l'explique -->
+                <div class="svc-auto" id="svc-autres" style="display:none;"></div>
               </div>
             </div>
             <div class="addon-card" id="pickup-card">
@@ -427,16 +438,14 @@
             </div>
 
             <!-- Panneau Visite à domicile -->
-            <div id="pack-duo-banner" style="display:none;background:linear-gradient(135deg,#FBEFD0,#FFF8EC);border:1.5px solid #E8A84C;border-radius:14px;padding:14px 18px;margin-bottom:14px;">
-              <b style="color:#8a6d1f;">🎁 Pack Duo Maison activé</b>
-              <p style="font-size:.85rem;color:var(--text-muted);margin-top:6px;line-height:1.6;">Votre <b>chien</b> est en pension chez nous (indiquez ses infos et les dates plus bas). On passe aussi chez vous pour votre <b>2ᵉ animal</b> : renseignez-le ci-dessous, avec le nombre de visites souhaité. <b style="color:#159067;">−33 % sur toutes les visites</b> 🐾</p>
-            </div>
             <div id="visite-panel" class="addon-card checked" style="display:none;">
               <span class="addon-title">🏡 Visite à domicile</span>
               <span class="addon-sub">Votre animal reste chez lui, je passe m'en occuper : repas, eau fraîche, soins, câlins et un vrai moment ensemble. Chiens, chats, lapins, poules, furets, rongeurs, oiseaux, tortues, poissons… (pas de serpents 🙂)</span>
               <div class="addon-panel" style="border-top:none;padding-top:14px;">
-                <label class="addon-flabel" id="visite-animal-lbl">Quel animal dois-je garder ?</label>
-                <select id="visite-animal" class="addon-select" onchange="visiteSetAnimal()" style="margin-bottom:12px;">
+                <!-- Le choix de l'animal se fait desormais en haut de l'etape 2 : ce
+                     select reste dans le DOM (utilise par visiteSetAnimal) mais masque. -->
+                <label class="addon-flabel" id="visite-animal-lbl" style="display:none;">Quel animal dois-je garder ?</label>
+                <select id="visite-animal" class="addon-select" onchange="visiteSetAnimal()" style="margin-bottom:12px;display:none;">
                   <option value="chien">🐶 Chien — dès 15€</option>
                   <option value="chat">🐱 Chat — dès 12€</option>
                   <option value="furet">🦡 Furet — dès 13€</option>
@@ -544,6 +553,36 @@
             </div>
 
             <!-- Disponibilités en direct (publiées depuis l'admin) -->
+            <!-- ═══ 4. Et si on ajoutait… ═══ -->
+            <div id="options-sejour" style="display:none;margin-top:22px;">
+              <div class="opt-titre">✨ Et si on ajoutait…</div>
+
+              <div class="addon-card" id="toilettage-card">
+                <label class="addon-check">
+                  <input type="checkbox" id="toilettage-on" onchange="toggleToilettage(this.checked)">
+                  <span class="ac-txt">
+                    <span class="addon-title">🛁 Un toilettage pendant son séjour ?</span>
+                    <span class="addon-sub">Il vous revient propre et tout beau. <b id="toilettage-px">30€</b>, une fois pendant la garde.</span>
+                  </span>
+                </label>
+              </div>
+
+              <div class="addon-card" id="evasion-card">
+                <label class="addon-check">
+                  <input type="checkbox" id="evasion-on" onchange="toggleEvasion(this.checked)">
+                  <span class="ac-txt">
+                    <span class="addon-title">🏔️ Une sortie Évasion un samedi ?</span>
+                    <span class="addon-sub">2 h de randonnée avec 4 copains maximum, pendant son séjour chez nous.</span>
+                  </span>
+                </label>
+                <div class="addon-panel" id="evasion-panel" style="display:none;">
+                  <label class="addon-flabel">Quels samedis pendant son séjour ?</label>
+                  <div id="evasion-samedis"><span style="font-size:.82rem;color:var(--text-muted);">Choisissez d’abord vos dates de séjour.</span></div>
+                  <div style="font-size:.76rem;color:var(--text-muted);margin-top:9px;line-height:1.5;">C’est une <b>demande</b> : la place n’est pas bloquée tant qu’on ne vous a pas confirmé. 5 chiens maximum par samedi.</div>
+                </div>
+              </div>
+            </div>
+
             <details id="dispo-cal" style="background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:12px 16px;margin:2px 0 14px;">
               <summary style="cursor:pointer;font-weight:800;font-size:.9rem;color:var(--lavande-dark);list-style-position:inside;">📅 Voir les disponibilités en direct</summary>
               <div id="dispo-cal-body" style="margin-top:12px;"><span style="font-size:.82rem;color:var(--text-muted);">Chargement du calendrier…</span></div>
@@ -754,7 +793,7 @@ function _validateStep2() {
     document.querySelector('.form-service-tags').style.outline = '';
   }
   // ── Cas VISITE À DOMICILE seule (hors Pack Duo) : on valide la période + l'adresse ──
-  if (window.__visite && window.__visite.active && !window.__packDuo) {
+  if (window.__visite && window.__visite.active && !mdpNbChiens()) {
     var vs = document.getElementById('visite-start'), ve = document.getElementById('visite-end');
     var va = document.getElementById('visite-addr');
     var vErr = false;
@@ -783,7 +822,7 @@ function _validateStep2() {
   }
   const hH = document.getElementById('heure-debut-h');
   // En Pack Duo, l'heure d'arrivée du chien n'est pas bloquante (à caler ensemble)
-  if (!hH.value && !window.__packDuo) { hH.style.borderColor = '#c0392b'; err = true; }
+  if (!hH.value) { hH.style.borderColor = '#c0392b'; err = true; }
   else hH.style.borderColor = '';
   // Date & heure de fin obligatoires dès que la section de fin est affichée
   let errFin = false;
@@ -815,17 +854,15 @@ function _validateStep2() {
 function validTel(el){const v=el.value.replace(/\s/g,'');const ok=/^(0|\+33)[1-9][0-9]{8}$/.test(v);const msg=document.getElementById('tel-msg');msg.style.display=v.length>0?'block':'none';if(ok){el.style.borderColor='var(--vert)';msg.style.color='var(--vert)';msg.textContent='✓ Numéro valide';}else if(v.length>0){el.style.borderColor='#c0392b';msg.style.color='#c0392b';msg.textContent='⚠️ Numéro invalide (ex: 07 77 23 40 88)';}}
 function removeTag(e,el){e.stopPropagation();el.classList.add('active');toggleTag(el);}
 function toggleTag(el){
-  const isToilettage = el.textContent.includes('Toilettage');
   const wasActive = el.classList.contains('active');
-
-  // Si on active un service de garde (pas toilettage), désactiver les autres services de garde
-  if (!wasActive && !isToilettage) {
+  // Choix UNIQUE : un seul service principal. Le toilettage et les balades
+  // sont devenus des options de fin de parcours, plus des services cumulables.
+  if (!wasActive) {
     document.querySelectorAll('.service-tag.active').forEach(t => {
-      if (!t.textContent.includes('Toilettage')) {
-        t.classList.remove('active');
-        const x = t.querySelector('.tag-close');
-        if (x) x.remove();
-      }
+      if (t === el) return;
+      t.classList.remove('active');
+      const x = t.querySelector('.tag-close');
+      if (x) x.remove();
     });
   }
 
@@ -833,11 +870,15 @@ function toggleTag(el){
   const x=el.querySelector('.tag-close');
   if(el.classList.contains('active')){if(!x){const btn=document.createElement('span');btn.className='tag-close';btn.innerHTML='✕';btn.onclick=function(e){removeTag(e,el);};el.appendChild(btn);}}else{if(x)x.remove();}
   const tags=[...document.querySelectorAll('.service-tag.active')];
-  const isDemi=tags.some(t=>t.dataset.sameday==='1'&&(t.textContent.includes('demi-journée')||t.textContent.includes('Test')));
-  const isPromenade=tags.some(t=>t.dataset.duration==='60');
-  const isJournee=tags.some(t=>t.textContent.includes('Garderie journée'));
+  // Reconnaissance par data-kind et non par le texte du tag : renommer un
+  // service ne doit pas casser silencieusement la logique des dates.
+  const kinds=tags.map(t=>t.dataset.kind||'');
+  const isDemi=kinds.includes('garderie-demi');
+  const isTest24=kinds.includes('test24');
+  const isPromenade=kinds.includes('promenade');
+  const isJournee=kinds.includes('garderie-jour');
   const allSameday=tags.length&&tags.every(t=>t.dataset.sameday==='1');
-  const needFin=tags.some(t=>!t.dataset.sameday)||isDemi||isPromenade||isJournee;
+  const needFin=tags.some(t=>!t.dataset.sameday)||isDemi||isPromenade||isJournee||isTest24;
   const row=document.getElementById('row-date-fin');
   row.style.display=needFin?'':'none';
   const colDate=document.getElementById('col-date-fin');
@@ -847,6 +888,7 @@ function toggleTag(el){
   const hFin=document.getElementById('heure-fin-h');
   const mFin=document.getElementById('heure-fin-m');
   colDate.style.display=(allSameday||isPromenade||isJournee)?'none':'';
+  if(isTest24) colDate.style.display='';   // 24 h = une nuit : la date de fin est affichee (calculee)
   if(isDemi){
     colH.style.gridColumn='2';
     lbl.textContent='Heure de récupération (demi-journée = 5h30)';
@@ -866,17 +908,16 @@ function toggleTag(el){
     msgD.style.display='none';
     hFin.disabled=false; mFin.disabled=false;
   }
-  // ── Synchronise l'état "visite à domicile" / "Pack Duo" avec les tags réellement actifs ──
-  // (sinon, en passant de Visite/Pack Duo à Pension, __visite.active reste true et la
-  //  validation réclame à tort l'adresse de visite)
+  // ── Synchronise l'état "visite à domicile" avec les tags réellement actifs ──
+  // La visite reste active tant qu'il reste un animal non-chien : le chien peut
+  // partir en pension pendant que le chat, lui, est gardé chez son maître.
   var _vtag=[].slice.call(document.querySelectorAll('.service-tag')).filter(function(t){return t.dataset.visite==='1';})[0];
-  var _ptag=[].slice.call(document.querySelectorAll('.service-tag')).filter(function(t){return t.dataset.pack;})[0];
-  if(_ptag && !_ptag.classList.contains('active')) window.__packDuo=false;
   if(window.__visite){
-    var vActiveNow = !!(_vtag && _vtag.classList.contains('active'));
+    var vActiveNow = !!(_vtag && _vtag.classList.contains('active')) || mdpAutres().length>0;
     if(window.__visite.active !== vActiveNow && typeof toggleVisitePanel==='function') toggleVisitePanel();
   }
   autoDepart();
+  syncOptions();
   calcPrice();
 }
 
@@ -887,9 +928,15 @@ let reservations=JSON.parse(localStorage.getItem('mdp_reservations')||'[]');
 
 function autoDepart(){
   const tags=[...document.querySelectorAll('.service-tag.active')];
-  const isDemi=tags.some(t=>t.dataset.sameday==='1'&&(t.textContent.includes('demi-journée')||t.textContent.includes('Test')));
-  const isPromenade=tags.some(t=>t.dataset.duration==='60');
-  const isJournee=tags.some(t=>t.textContent.includes('Garderie journée'));
+  // Reconnaissance par data-kind et non par le texte du tag : renommer un
+  // service ne doit pas casser silencieusement la logique des dates.
+  const kinds=tags.map(t=>t.dataset.kind||'');
+  const isDemi=kinds.includes('garderie-demi');
+  const isTest24=kinds.includes('test24');
+  const isPromenade=kinds.includes('promenade');
+  const isJournee=kinds.includes('garderie-jour');
+  if(isTest24){ majTest24(); return; }
+  libereTest24();
   if(!isDemi&&!isPromenade) return;
   if(isJournee&&!isDemi&&!isPromenade) return;
   const hH=document.getElementById('heure-debut-h').value;
@@ -1137,7 +1184,226 @@ var VISITE_ANIMALS={
   rongeur:{n:'🐹 Rongeur',p:10}, oiseau:{n:'🦜 Oiseau',p:10},
   tortue:{n:'🐢 Tortue / reptile',p:10}, poisson:{n:'🐠 Poissons (aquarium)',p:8}
 };
+window.VISITE_ANIMALS=VISITE_ANIMALS;   // l'admin ecrit directement dans .p (cf. site_config/tarifs)
 window.__visite={active:false,animal:'chien',animalBase:15,animalLabel:'🐶 Chien',dur:30,price:15,freq:1,unit:'jour',start:'',end:'',days:1,passages:1,travelDays:1,km:null,city:'',postcode:'',address:'',coords:null,travelPerDay:0,travelTotal:0};
+
+/* ══════════════════════════════════════════════════════════════════════
+   QUI DOIS-JE GARDER ? — un compteur de chiens + les autres espèces.
+   Règle métier : la pension n'accueille QUE des chiens ; toute autre
+   espèce est forcément gardée à domicile. Un chien peut donc être en
+   pension pendant que le chat est visité chez son maître.
+   ══════════════════════════════════════════════════════════════════════ */
+window.__animaux={chien:1};                       // {espèce: quantité}, quantité > 0 seulement
+function mdpNbChiens(){ return window.__animaux.chien||0; }
+function mdpAutres(){   // espèces non-chien présentes, dans l'ordre de VISITE_ANIMALS
+  return Object.keys(VISITE_ANIMALS).filter(k=>k!=='chien' && (window.__animaux[k]||0)>0);
+}
+function mdpNbTotal(){ return Object.keys(window.__animaux).reduce((s,k)=>s+(window.__animaux[k]||0),0); }
+/* Prix d'UN passage de visite : on se déplace une fois et on s'occupe de
+   tout le monde, donc on additionne le tarif de chaque animal présent. */
+function mdpPrixAnimal(k){
+  var a=VISITE_ANIMALS[k];
+  return a?Number(a.p):0;   // .p est reecrit en direct par le panneau admin
+}
+
+function setNbChiens(n){
+  window.__animaux.chien=n;
+  if(!n) delete window.__animaux.chien;
+  document.querySelectorAll('#row-nb-chiens .vdur-btn').forEach(function(b){
+    b.classList.toggle('active', parseInt(b.dataset.n)===n);
+  });
+  syncAnimaux();
+}
+function toggleAnimal(k,on){
+  if(on) window.__animaux[k]=window.__animaux[k]||1; else delete window.__animaux[k];
+  var c=document.querySelector('.an-card[data-animal="'+k+'"]');
+  if(c) c.classList.toggle('on',!!on);
+  syncAnimaux();
+}
+function bumpAnimal(k,d){
+  var n=Math.max(1,Math.min(6,(window.__animaux[k]||1)+d));
+  window.__animaux[k]=n;
+  var el=document.getElementById('an-n-'+k); if(el) el.textContent=n;
+  syncAnimaux();
+}
+
+/* Construit la grille des autres espèces à partir de VISITE_ANIMALS :
+   une seule source de vérité pour les libellés et les tarifs. */
+function renderAutresAnimaux(){
+  var host=document.getElementById('autres-animaux'); if(!host) return;
+  host.innerHTML=Object.keys(VISITE_ANIMALS).filter(function(k){return k!=='chien';}).map(function(k){
+    var a=VISITE_ANIMALS[k];
+    return '<div class="an-card" data-animal="'+k+'">'+
+      '<label><input type="checkbox" onchange="toggleAnimal(\''+k+'\',this.checked)">'+
+      '<span class="an-n"><b>'+a.n+'</b><small id="an-px-'+k+'">'+a.p+'€ / passage</small></span></label>'+
+      '<div class="an-qte"><span>Combien ?</span><span class="an-step">'+
+      '<button type="button" onclick="bumpAnimal(\''+k+'\',-1)" aria-label="Retirer un '+a.n.replace(/[^\wÀ-ÿ ]/g,'').trim()+'">−</button>'+
+      '<b id="an-n-'+k+'">1</b>'+
+      '<button type="button" onclick="bumpAnimal(\''+k+'\',1)" aria-label="Ajouter un '+a.n.replace(/[^\wÀ-ÿ ]/g,'').trim()+'">+</button>'+
+      '</span></div></div>';
+  }).join('');
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   OPTIONS DE FIN DE PARCOURS — « et si on ajoutait… »
+   ══════════════════════════════════════════════════════════════════════ */
+window.__toilettage={active:false,prix:30};
+window.__evasion={active:false,dates:[],prix:35};
+
+function toggleToilettage(on){
+  window.__toilettage.active=!!on;
+  var c=document.getElementById('toilettage-card'); if(c) c.classList.toggle('checked',!!on);
+  calcPrice();
+}
+function toggleEvasion(on){
+  window.__evasion.active=!!on;
+  if(!on) window.__evasion.dates=[];
+  var c=document.getElementById('evasion-card'); if(c) c.classList.toggle('checked',!!on);
+  var p=document.getElementById('evasion-panel'); if(p) p.style.display=on?'':'none';
+  if(on) renderSamedis();
+  calcPrice();
+}
+function toggleSamedi(iso,on){
+  var d=window.__evasion.dates;
+  if(on){ if(d.indexOf(iso)<0) d.push(iso); } else { window.__evasion.dates=d.filter(function(x){return x!==iso;}); }
+  calcPrice();
+}
+/* Liste les samedis compris dans le séjour. On n'affiche que les samedis
+   réellement ouverts et non complets : les places sont gérées sur la page
+   Forfait Évasion, ici on ne fait qu'enregistrer une demande. */
+function renderSamedis(){
+  var host=document.getElementById('evasion-samedis'); if(!host) return;
+  var d1=(document.getElementById('date-debut')||{}).value, d2=(document.getElementById('date-fin')||{}).value;
+  if(!d1||!d2){ host.innerHTML='<span style="font-size:.82rem;color:var(--text-muted);">Choisissez d’abord vos dates de séjour.</span>'; return; }
+  var cfg=window.__evCfg||{}, sorties=window.__evSorties||{};
+  var out=[], d=new Date(d1+'T12:00:00'), fin=new Date(d2+'T12:00:00');
+  while(d<=fin){
+    if(d.getDay()===6){
+      var iso=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+      var s=sorties[iso]||{};
+      var statut=s.statut||'';
+      if(statut!=='annulee' && statut!=='fermee'){
+        var max=(cfg.places!=null?cfg.places:5);
+        var pris=s.inscrits?Object.keys(s.inscrits).length:(s.pris||0);
+        var reste=Math.max(0,max-pris);
+        var lbl=d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+        out.push('<label class="ev-sam">'+
+          '<input type="checkbox" '+(reste?'':'disabled')+' onchange="toggleSamedi(\''+iso+'\',this.checked)">'+
+          '<b>'+lbl.charAt(0).toUpperCase()+lbl.slice(1)+'</b>'+
+          '<small>'+(reste?(reste+' place'+(reste>1?'s':'')):'complet')+'</small></label>');
+      }
+    }
+    d.setDate(d.getDate()+1);
+  }
+  host.innerHTML=out.length?out.join(''):'<span style="font-size:.82rem;color:var(--text-muted);">Aucun samedi ne tombe pendant son séjour.</span>';
+}
+/* Le bloc d'options n'a de sens que pour une garde chez nous */
+function syncOptions(){
+  var kinds=[].slice.call(document.querySelectorAll('.service-tag.active')).map(function(t){return t.dataset.kind;});
+  var garde=kinds.indexOf('pension')>=0||kinds.indexOf('garderie-jour')>=0||kinds.indexOf('garderie-demi')>=0||kinds.indexOf('test24')>=0;
+  var box=document.getElementById('options-sejour'); if(box) box.style.display=garde?'':'none';
+  // Le toilettage seul et la promenade seule sont déjà le service principal
+  var tc=document.getElementById('toilettage-card');
+  if(tc) tc.style.display=kinds.indexOf('toilettage')>=0?'none':'';
+  // L'évasion suppose que le chien soit chez nous sur plusieurs jours
+  var ec=document.getElementById('evasion-card');
+  if(ec) ec.style.display=(kinds.indexOf('pension')>=0)?'':'none';
+  if(!garde){
+    if(window.__toilettage) window.__toilettage.active=false;
+    if(window.__evasion){ window.__evasion.active=false; window.__evasion.dates=[]; }
+    var t1=document.getElementById('toilettage-on'); if(t1) t1.checked=false;
+    var e1=document.getElementById('evasion-on'); if(e1) e1.checked=false;
+    var ep=document.getElementById('evasion-panel'); if(ep) ep.style.display='none';
+  }
+  if(window.__evasion&&window.__evasion.active) renderSamedis();
+}
+
+/* Test 24 h : la date de fin découle de la date d'arrivée (J+1, même heure).
+   C'est tout le sens du passage de la demi-journée à 24 h — on garde le chien
+   une nuit pour voir comment il se comporte quand la maison s'éteint. */
+function majTest24(){
+  var d1=document.getElementById('date-debut'), d2=document.getElementById('date-fin');
+  var hH=document.getElementById('heure-debut-h'), hM=document.getElementById('heure-debut-m');
+  var fH=document.getElementById('heure-fin-h'),  fM=document.getElementById('heure-fin-m');
+  var msg=document.getElementById('msg-depart');
+  if(!d1||!d2) return;
+  if(d1.value){
+    var d=new Date(d1.value+'T12:00:00'); d.setDate(d.getDate()+1);
+    d2.value=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+  }
+  if(hH&&hH.value&&fH) fH.value=hH.value;
+  if(hM&&fM) fM.value=hM.value||'00';
+  d2.readOnly=true; if(fH) fH.disabled=true; if(fM) fM.disabled=true;
+  var lbl=document.getElementById('label-heure-fin');
+  if(lbl) lbl.textContent='Récupération (24 h après l’arrivée)';
+  if(msg){ msg.textContent='🌙 Le test dure 24 h, une nuit comprise : c’est la nuit qui nous dit comment votre chien vit la séparation.'; msg.style.display='block'; }
+}
+/* Rend la main sur la date de fin quand on quitte le test 24 h */
+function libereTest24(){
+  var d2=document.getElementById('date-fin'), fH=document.getElementById('heure-fin-h'), fM=document.getElementById('heure-fin-m');
+  if(d2) d2.readOnly=false; if(fH) fH.disabled=false; if(fM) fM.disabled=false;
+}
+
+/* Répercute le choix des animaux sur le reste du formulaire :
+   services chiens affichés ou non, encart visite imposée, récapitulatif. */
+function syncAnimaux(){
+  var chiens=mdpNbChiens(), autres=mdpAutres(), total=mdpNbTotal();
+
+  // 1. Les services chiens n'ont de sens que s'il y a un chien
+  var svcChiens=document.getElementById('svc-chiens');
+  if(svcChiens) svcChiens.style.display=chiens>0?'':'none';
+  if(!chiens){
+    // Aucun chien : tout passe en visite à domicile, on la sélectionne d'office
+    var vt=document.querySelector('.service-tag[data-kind="visite"]');
+    if(vt && !vt.classList.contains('active')){ toggleTag(vt); toggleVisitePanel(); }
+  }
+
+  // 2. Encart « vos autres animaux sont gardés chez vous »
+  var box=document.getElementById('svc-autres');
+  if(box){
+    if(autres.length){
+      var liste=autres.map(function(k){
+        var q=window.__animaux[k];
+        return VISITE_ANIMALS[k].n+(q>1?' ×'+q:'');
+      }).join(', ');
+      var pxAutres=autres.reduce(function(s,k){ return s+mdpPrixAnimal(k)*window.__animaux[k]; },0);
+      box.innerHTML='<div class="sa-t">🏡 '+liste+' — gardé'+(autres.length>1||Object.keys(window.__animaux).length>2?'s':'')+' chez vous</div>'+
+        '<div class="sa-d">On ne prend que les chiens en pension : vos autres animaux restent dans leur environnement et on passe s\'en occuper. '+
+        '<strong>'+pxAutres+'€ par passage</strong> pour eux — un seul déplacement, tout le monde est vu.</div>';
+      box.style.display='';
+      // La visite devient obligatoire dès qu'il y a un animal non-chien
+      window.__visite.active=true;
+      var vp=document.getElementById('visite-panel'); if(vp) vp.style.display='';
+    } else {
+      box.style.display='none';
+      box.innerHTML='';
+      if(chiens>0 && !document.querySelector('.service-tag[data-kind="visite"].active')){
+        window.__visite.active=false;
+        var vp2=document.getElementById('visite-panel'); if(vp2) vp2.style.display='none';
+      }
+    }
+  }
+
+  // 3. Récapitulatif + remise
+  var rec=document.getElementById('an-recap');
+  if(rec){
+    if(total>0){
+      var parts=[];
+      if(chiens) parts.push(chiens+' chien'+(chiens>1?'s':''));
+      autres.forEach(function(k){ var q=window.__animaux[k]; parts.push(q+' '+VISITE_ANIMALS[k].n.replace(/^\S+\s/,'').toLowerCase()+(q>1?'s':'')); });
+      var rem=total>=3?(window.MDP_REMISE3||15):(total===2?(window.MDP_REMISE2||10):0);
+      rec.innerHTML='🐾 <strong>'+parts.join(' + ')+'</strong>'+
+        (rem?' — <strong>−'+rem+' %</strong> appliqués sur l’ensemble de votre réservation 🤍':'');
+      rec.style.display='';
+    } else { rec.style.display='none'; }
+  }
+
+  // 4. Nom(s) du chien demandé(s) à l'étape 1
+  var lbl=document.getElementById('chien-label');
+  if(lbl) lbl.textContent=chiens>1?('Noms des '+chiens+' chiens *'):'Nom du chien *';
+
+  if(typeof calcPrice==='function') calcPrice();
+}
 // ── Balades pendant le séjour (pension) ──
 window.__balade={active:false,dur:30,price:6,freq:1,unit:'jour',count:0,total:0};
 function baladeToggle(cb){
@@ -1177,7 +1443,9 @@ function computeRoadKm(coords, cb){ // distance routière ALLER (km), fallback v
 
 function toggleVisitePanel(){
   var tag=[].slice.call(document.querySelectorAll('.service-tag')).filter(function(t){return t.dataset.visite==='1';})[0];
-  var active=tag && tag.classList.contains('active');
+  // La visite est active si elle est le service choisi, OU si un animal non-chien
+  // doit etre garde chez son maitre pendant que le chien part en pension.
+  var active=(tag && tag.classList.contains('active')) || mdpAutres().length>0;
   window.__visite.active=!!active;
   document.getElementById('visite-panel').style.display=active?'block':'none';
   // Exclusivité : visite à domicile ⇄ récupération à domicile
@@ -1191,13 +1459,16 @@ function toggleVisitePanel(){
     pk.disabled=true; pkCard.classList.add('disabled');
     var inp=document.getElementById('visite-addr');
     if(inp && !inp.value && window.__clientAddr){ inp.value=window.__clientAddr; visiteGeocode(window.__clientAddr); }
-    if(!window.__packDuo){
+    // On ne masque les dates globales QUE si la visite est le seul service :
+    // s'il y a un chien en pension, ses dates de sejour restent indispensables.
+    var visiteSeule=!!(tag && tag.classList.contains('active')) && !document.querySelector('.service-tag.active:not([data-visite])');
+    if(visiteSeule){
       if(rowDeb) rowDeb.style.display='none';
       if(rowFin) rowFin.style.display='none';
-      // Visite SEULE = pas un chien en pension → on masque "Nombre de chiens" et on remet à 1
-      if(rowNb){ rowNb.style.display='none'; var r1=document.querySelector('input[name="nb-chiens"][value="1"]'); if(r1) r1.checked=true; }
-      visiteRecalc();
+    } else {
+      if(rowDeb) rowDeb.style.display='';
     }
+    visiteRecalc();
   } else {
     pk.disabled=false; pkCard.classList.remove('disabled');
     if(rowDeb) rowDeb.style.display='';
@@ -1206,8 +1477,6 @@ function toggleVisitePanel(){
   calcPrice();
 }
 // ══ Pack Duo Maison : pension du chien + visites à domicile d'un 2e animal, −33% sur les visites ══
-window.__packDuo=false;
-var PACK_DUO_RATE=0.33; // remise sur la partie visites (pilotée depuis l'admin)
 // Remises multi-chiens (pilotées depuis l'admin, valeurs par défaut ici)
 window.MDP_REMISE2=10; window.MDP_REMISE3=15;
 // Frais de déplacement + supplément visite 1h (pilotés depuis l'admin)
@@ -1221,16 +1490,20 @@ var VISITE_KEYMAP={chien:'vChien',chat:'vChat',furet:'vFuret',poules:'vPoules',l
     firebase.database().ref('site_config/tarifs').on('value', function(s){
       var t=s.val(); if(!t) return;
       // 1) Prix des boutons de service
+      // Correspondance data-kind → clé admin. Reconnaître les services par leur
+      // identifiant et non par leur libellé : renommer un service ne casse plus
+      // le pilotage des tarifs. Les clés Firebase, elles, sont inchangées.
+      var KIND_KEY={pension:'pension','garderie-jour':'garderie','garderie-demi':'demi',
+                    test24:'pension',            // un test dure 24 h : il suit le prix d'une nuit
+                    promenade:'promenade',toilettage:'toilettage'};
       [].slice.call(document.querySelectorAll('.service-tag')).forEach(function(tag){
-        var x=tag.textContent.toLowerCase();
-        if(tag.dataset.pack) return;
-        if(/test/.test(x)) return;                                   // "Test demi-journée" non piloté
-        if(/pension/.test(x) && t.pension!=null) tag.dataset.price=t.pension;
-        else if(/demi-journ/.test(x) && t.demi!=null) tag.dataset.price=t.demi;
-        else if(/garderie journ/.test(x) && t.garderie!=null) tag.dataset.price=t.garderie;
-        else if(/promenade/.test(x) && t.promenade!=null) tag.dataset.price=t.promenade;
-        else if(/toilettage/.test(x) && t.toilettage!=null) tag.dataset.price=t.toilettage;
-        else if(tag.dataset.visite==='1' && (t.vChien!=null||t.visite!=null)) tag.dataset.price=(t.vChien!=null?t.vChien:t.visite);
+        var k=tag.dataset.kind;
+        if(k==='visite'){
+          if(t.vChien!=null||t.visite!=null) tag.dataset.price=(t.vChien!=null?t.vChien:t.visite);
+          return;
+        }
+        var key=KIND_KEY[k];
+        if(key && t[key]!=null) tag.dataset.price=t[key];
       });
       // 2) Visite à domicile — prix par animal (clés vChien, vChat, …)
       //    Rétro-compat : l'ancienne clé "visite" pilote encore le chien si vChien absent.
@@ -1261,49 +1534,12 @@ var VISITE_KEYMAP={chien:'vChien',chat:'vChat',furet:'vFuret',poules:'vPoules',l
       // 4) Remises
       if(t.remise2!=null) window.MDP_REMISE2=Number(t.remise2);
       if(t.remise3!=null) window.MDP_REMISE3=Number(t.remise3);
-      if(t.packDuo!=null) PACK_DUO_RATE=Number(t.packDuo)/100;
       if(typeof calcPrice==='function') calcPrice();
     });
   }catch(e){}
 })();
-function selectPackDuo(el){
-  var on=!el.classList.contains('active');
-  var pension=[].slice.call(document.querySelectorAll('.service-tag')).filter(function(t){return t.dataset.unit==='nuit';})[0];
-  var visite =[].slice.call(document.querySelectorAll('.service-tag')).filter(function(t){return t.dataset.visite==='1';})[0];
-  var row=document.getElementById('row-date-fin');
-  var colDate=document.getElementById('col-date-fin');
-  var banner=document.getElementById('pack-duo-banner');
-  var rowNb=document.getElementById('row-nb-chiens');
-  if(rowNb) rowNb.style.display='';   // Pack Duo = un chien en pension → on garde "Nombre de chiens"
-  if(on){
-    // Nettoie les autres services de garde (le pack gère pension + visite)
-    document.querySelectorAll('.service-tag.active').forEach(function(t){
-      if(t===el) return; t.classList.remove('active'); var x=t.querySelector('.tag-close'); if(x) x.remove();
-    });
-    el.classList.add('active'); window.__packDuo=true;
-    if(pension) pension.classList.add('active');
-    if(visite){ visite.classList.add('active'); window.__visite.active=true; }
-    document.getElementById('visite-panel').style.display='block';   // 2e animal
-    // Le chien est en PENSION → il faut une date de début ET de fin
-    if(row) row.style.display='';
-    if(colDate) colDate.style.display='';
-    if(banner) banner.style.display='block';
-    // exclusivité visite ⇄ récupération à domicile (comme toggleVisitePanel)
-    var pk=document.getElementById('pickup-home'); if(pk){ if(pk.checked){ pk.checked=false; togglePickup(pk); } pk.disabled=true; var pc=document.getElementById('pickup-card'); if(pc) pc.classList.add('disabled'); }
-    var inp=document.getElementById('visite-addr'); if(inp && !inp.value && window.__clientAddr){ inp.value=window.__clientAddr; visiteGeocode(window.__clientAddr); }
-  } else {
-    el.classList.remove('active'); window.__packDuo=false;
-    if(pension) pension.classList.remove('active');
-    if(visite) visite.classList.remove('active');
-    window.__visite.active=false;
-    document.getElementById('visite-panel').style.display='none';
-    if(banner) banner.style.display='none';
-    if(row) row.style.display='none';
-    var pk=document.getElementById('pickup-home'); if(pk){ pk.disabled=false; var pc=document.getElementById('pickup-card'); if(pc) pc.classList.remove('disabled'); }
-  }
-  calcPrice();
-}
-window.selectPackDuo=selectPackDuo;
+/* Pack Duo supprime : la combinaison chien en pension + autre animal visite
+   se fait desormais naturellement via le selecteur d'animaux. */
 
 function visiteSetDur(min){
   window.__visite.dur=min;
@@ -1350,8 +1586,8 @@ function visiteRecalc(){
   // visite (sans écraser si déjà saisies) → plus d'erreur "date d'arrivée manquante".
   if(v.active){
     var dd=document.getElementById('date-debut'), df=document.getElementById('date-fin');
-    if(dd && v.start && (!window.__packDuo || !dd.value)) dd.value=v.start;
-    if(df && v.end && (!window.__packDuo || !df.value)) df.value=v.end;
+    if(dd && v.start && !dd.value) dd.value=v.start;
+    if(df && v.end && !df.value) df.value=v.end;
   }
   _visiteApplyTravel(); calcPrice();
 }
@@ -1416,9 +1652,12 @@ function calcPrice(){
   const hH=parseInt(document.getElementById('heure-debut-h').value)||0;
   const hM=parseInt(document.getElementById('heure-debut-m').value)||0;
   const hFH=parseInt(document.getElementById('heure-fin-h').value)||0;
-  const nbChiens=parseInt(document.querySelector('input[name="nb-chiens"]:checked')?.value||1);
-  const discount=nbChiens>=2;
-  const discRate=nbChiens>=3?((window.MDP_REMISE3||15)/100):(nbChiens===2?((window.MDP_REMISE2||10)/100):0); // remises pilotées depuis l'admin
+  const nbChiens=mdpNbChiens();
+  // La remise porte sur le nombre TOTAL d'animaux confiés (chiens + autres
+  // espèces), et s'applique à l'ensemble de la réservation, visites comprises.
+  const nbTotal=mdpNbTotal();
+  const discount=nbTotal>=2;
+  const discRate=nbTotal>=3?((window.MDP_REMISE3||15)/100):(nbTotal===2?((window.MDP_REMISE2||10)/100):0); // remises pilotées depuis l'admin
   const disc=v=>discount?Math.round(v*(1-discRate)):v;
 
   // Nombre de nuits (diff jours calendaires)
@@ -1432,8 +1671,12 @@ function calcPrice(){
   const arriveTardive=d1&&arriveMin>=(13*60+30)&&arriveMin<(19*60);
 
   // Départ : ≥14h = journée complète (20€), entre 8h et 13h inclus = demi-journée (10€), =8h = rien
+  // Un test 24 h couvre l'arrivee ET la restitution le lendemain a la meme heure :
+  // pas de journee ni de demi-journee de depart facturees en plus.
+  const estTest24=!!document.querySelector('.service-tag[data-kind="test24"].active');
   let extraJournee=0,extraDemi=0;
-  if(d2&&hFH>=14) extraJournee=1;
+  if(estTest24){ /* rien */ }
+  else if(d2&&hFH>=14) extraJournee=1;
   else if(d2&&hFH>8&&hFH<=13) extraDemi=1;
 
   let lines=[],total=0;
@@ -1441,7 +1684,6 @@ function calcPrice(){
 
   tags.forEach(t=>{
     if(t.dataset.visite==='1') return; // géré séparément (panneau visite)
-    if(t.dataset.pack) return;         // le bouton "Pack Duo" n'a pas de prix propre
     const price=parseInt(t.dataset.price);
     const unit=t.dataset.unit;
     const name=t.textContent.trim();
@@ -1517,18 +1759,30 @@ function calcPrice(){
     }
   });
 
-  // Visite à domicile (durée × nb visites × jours + déplacement)
+  // Visite à domicile : un passage = TOUS les animaux concernés.
+  // Le prix du passage est la somme des tarifs des animaux gardés à domicile
+  // (les chiens en pension n'en font évidemment pas partie).
   if(window.__visite && window.__visite.active){
     const v=window.__visite;
     const totalVisits=Math.max(1,v.passages||1);
-    const visitesFull=v.price*totalVisits;
-    const isPack=!!window.__packDuo;
-    const visitesCost=isPack?Math.round(visitesFull*(1-PACK_DUO_RATE)):visitesFull;
-    const packSaving=visitesFull-visitesCost;
-    const visLabel=isPack?'🎁 Pack Duo — visites 2ᵉ animal':'🏡 Visite à domicile';
+    // Chiens comptés dans la visite seulement si le service choisi EST la visite
+    const chienEnVisite=!!document.querySelector('.service-tag[data-kind="visite"].active');
+    let pxPassage=0, detailAnimaux=[];
+    Object.keys(window.__animaux).forEach(function(k){
+      if(k==='chien' && !chienEnVisite) return;
+      const q=window.__animaux[k]; if(!q) return;
+      const pa=mdpPrixAnimal(k);
+      pxPassage+=pa*q;
+      detailAnimaux.push(VISITE_ANIMALS[k].n.replace(/^\S+\s/,'')+(q>1?' ×'+q:''));
+    });
+    if(v.dur===60) pxPassage+=(window.VISITE_SUPP1H||5);   // supplément 1 h
+    if(!pxPassage) pxPassage=v.price||15;                   // filet de sécurité
+    const visitesCost=disc(pxPassage*totalVisits);
     const freqTxt=v.freq+'× '+(v.unit==='jour'?'/jour':'/semaine');
-    lines.push(visLabel+' <small style="color:var(--text-muted);">('+(v.animalLabel||'🐶 Chien')+')</small> — '+v.price+'€ × '+totalVisits+' passage'+(totalVisits>1?'s':'')+' <small style="color:var(--text-muted);">('+freqTxt+', '+(v.dur===60?'1h':'30 min')+')</small>'+(isPack?' <span style="text-decoration:line-through;color:var(--text-muted);">'+visitesFull+'€</span> = <strong>'+visitesCost+'€</strong>':' = <strong>'+visitesCost+'€</strong>'));
-    if(isPack && packSaving>0) lines.push('<span style="color:#159067;font-weight:700;">🎁 Remise Pack Duo −'+Math.round(PACK_DUO_RATE*100)+'% sur les visites : −'+packSaving+'€</span>');
+    lines.push('🏡 Visite à domicile <small style="color:var(--text-muted);">('+(detailAnimaux.join(', ')||'1 animal')+')</small> — '
+      +pxPassage+'€ × '+totalVisits+' passage'+(totalVisits>1?'s':'')
+      +' <small style="color:var(--text-muted);">('+freqTxt+', '+(v.dur===60?'1h':'30 min')+')</small> = <strong>'+visitesCost+'€</strong>');
+    if(detailAnimaux.length>1) lines.push('<small style="color:var(--text-muted);">↳ un seul déplacement, tous vos animaux sont vus à chaque passage</small>');
     total+=visitesCost;
     if(v.km!=null && v.travelTotal>0){
       lines.push('🚗 Déplacement — <strong>'+v.travelTotal.toString().replace('.',',')+'€</strong> <small style="color:var(--text-muted);">('+v.travelPerDay.toString().replace('.',',')+'€ × '+(v.travelDays||1)+' déplacement'+((v.travelDays||1)>1?'s':'')+')</small>');
@@ -1574,6 +1828,28 @@ function calcPrice(){
     } else if(sum){ sum.style.display='none'; }
   })();
 
+  // ── Toilettage pendant le séjour ──
+  if(window.__toilettage && window.__toilettage.active){
+    var _tTag=document.querySelector('.service-tag[data-kind="toilettage"]');
+    var _tPx=_tTag?parseInt(_tTag.dataset.price)||30:30;
+    var _tSub=disc(_tPx*Math.max(1,nbChiens));
+    lines.push('🛁 Toilettage pendant le séjour — '+_tPx+'€'+(nbChiens>1?' × '+nbChiens+' chiens':'')+' = <strong>'+_tSub+'€</strong>');
+    total+=_tSub;
+  }
+
+  // ── Sortie Évasion (demande : la place n'est pas bloquée) ──
+  if(window.__evasion && window.__evasion.active && window.__evasion.dates.length){
+    var _evPx=Number((window.__evCfg&&window.__evCfg.prix)||window.__evasion.prix||35);
+    var _evN=window.__evasion.dates.length;
+    var _evSub=disc(_evPx*_evN*Math.max(1,nbChiens));
+    var _evLbl=window.__evasion.dates.map(function(iso){
+      return new Date(iso+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+    }).join(', ');
+    lines.push('🏔️ Sortie Évasion ('+_evLbl+') — '+_evPx+'€ × '+_evN+' samedi'+(_evN>1?'s':'')+(nbChiens>1?' × '+nbChiens+' chiens':'')+' = <strong>'+_evSub+'€</strong>');
+    lines.push('<small style="color:var(--text-muted);">↳ demande à confirmer : 5 chiens maximum par samedi</small>');
+    total+=_evSub;
+  }
+
   // ── Carnet Malin : déduction des unités prépayées (nuits + jour de départ + garderie) ──
   window.__carnetCovered=0;
   if(window.__carnet && window.__carnetApply && window.__carnet.left>0 && _carnetUnitPrices.length>0){
@@ -1598,7 +1874,7 @@ function calcPrice(){
   window.__priceLines=lines.slice();   // conservé pour construire le devis ligne par ligne
   let totalLabel='Total : '+total+'€';
   if(window.__carnetCovered>0) totalLabel+=' <span style="color:#159067;">(Carnet Malin appliqué)</span>';
-  if(discount) totalLabel+=' (−'+Math.round(discRate*100)+'% multi-chiens inclus)';
+  if(discount) totalLabel+=' (−'+Math.round(discRate*100)+'% multi-animaux inclus)';
   document.getElementById('price-total').innerHTML=totalLabel;
   box.style.display='block';
 }
@@ -1632,7 +1908,7 @@ function prepareSubmit(){
   // On complète juste les champs cachés.
   const services=[...document.querySelectorAll('.service-tag.active')].map(t=>t.textContent.trim()).join(', ');
   document.getElementById('hidden-service').value=services||'Non précisé';
-  const nb=document.querySelector('input[name="nb-chiens"]:checked')?.value||'1';
+  const nb=String(mdpNbChiens());
   document.getElementById('hidden-nbchiens').value=nb+' chien'+(parseInt(nb)>1?'s':'');
   const box=document.getElementById('price-box');
   if(box.style.display!=='none'){
@@ -1787,6 +2063,14 @@ async function submitReservation() {
       message   : document.getElementById('message').value,
       parrainage: document.getElementById('parrainage').value,
       cgvAcceptees: !!document.getElementById('cgv-accept')?.checked,
+      // Champs structurés (les champs texte ci-dessus restent inchangés pour l'admin)
+      animaux : Object.keys(window.__animaux||{}).map(k=>({ type:k, qte:window.__animaux[k] })),
+      options : {
+        balades    : !!(window.__balade&&window.__balade.active) && { duree:window.__balade.dur, nombre:window.__balade.count, total:window.__balade.total } || null,
+        toilettage : !!(window.__toilettage&&window.__toilettage.active),
+        transport  : !!(window.__pickup&&window.__pickup.active) && { mode:window.__pickup.mode, km:window.__pickup.km, prix:window.__pickup.price } || null,
+        evasion    : (window.__evasion&&window.__evasion.active) ? window.__evasion.dates.slice() : []
+      },
       createdAt : Date.now(),
     };
     // Carnet Malin : marquer la réservation SANS décompter (le décompte se fait
@@ -1887,21 +2171,24 @@ function setStatus(idx,status){reservations[idx].status=status;localStorage.setI
 function deleteResa(idx){if(confirm('Supprimer ?')){reservations.splice(idx,1);localStorage.setItem('mdp_reservations',JSON.stringify(reservations));renderAdmin();}}
 if(window.location.hash==='#admin-panel')showAdmin();
 
-// Dynamic dog label
-document.querySelectorAll('input[name="nb-chiens"]').forEach(r=>{
-  r.addEventListener('change',()=>{
-    const n=parseInt(r.value);
-    const lbl=document.getElementById('chien-label');
-    if(lbl) lbl.textContent=n>1?`Noms des ${n} chiens *`:'Nom du chien *';
-    const inp=document.getElementById('chien');
-    if(inp) inp.placeholder=n===2?'Ex: Rex, Bella':n===3?'Ex: Rex, Bella, Max':'Nom de votre chien';
-  });
-});
 
 </script>
 
 <script>
 document.addEventListener('DOMContentLoaded',()=>{
+  // Sélecteur d'animaux : grille construite depuis VISITE_ANIMALS
+  if(typeof renderAutresAnimaux==='function'){ renderAutresAnimaux(); syncAnimaux(); }
+  // Les cartes balades et transport existaient deja plus haut dans la page :
+  // on les regroupe avec les autres questions de fin de parcours.
+  (function(){
+    var box=document.getElementById('options-sejour');
+    var bal=document.getElementById('balade-card'), pk=document.getElementById('pickup-card');
+    var anchor=document.getElementById('toilettage-card');
+    if(box&&anchor){
+      if(bal){ bal.style.display=''; box.insertBefore(bal,anchor); }
+      if(pk) box.insertBefore(pk,anchor);
+    }
+  })();
   // Bloquer dates passées
   const today=new Date().toISOString().split('T')[0];
   const dateDebut=document.getElementById('date-debut');
@@ -1972,7 +2259,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       '<div style="font-weight:800;margin-bottom:7px;">🎄 '+per.label+'</div>'+
       '<div style="display:flex;gap:8px;margin-bottom:4px;"><span style="opacity:.6;">•</span><span><strong>'+per.tarifHaut+'€ / nuit</strong> sur la période</span></div>'+
       '<div style="display:flex;gap:8px;margin-bottom:9px;"><span style="opacity:.6;">•</span><span><strong>'+per.tarifFort+'€ / nuit</strong> les '+forts+'</span></div>'+
-      '<div style="border-top:1px solid rgba(122,90,26,.22);padding-top:9px;font-size:.79rem;">Majoration limitée <strong>'+per.libelleCourt+'</strong>. En dehors, le tarif habituel s\'applique.</div>';
+      '<div style="border-top:1px solid rgba(122,90,26,.22);padding-top:9px;font-size:.79rem;">Majoration appliquée <strong>uniquement '+per.libelleCourt+'</strong>. En dehors de cette période, le tarif habituel s\'applique.</div>';
     _feteMsg.style.display='block';
   }
   // « 1 janvier » → « 1ᵉʳ janvier » (le premier du mois prend l'ordinal en français)
@@ -1984,6 +2271,11 @@ document.addEventListener('DOMContentLoaded',()=>{
   dateDebut.addEventListener('change',_checkFetes); dateDebut.addEventListener('input',_checkFetes);
   if(dateFin){ dateFin.addEventListener('change',_checkFetes); dateFin.addEventListener('input',_checkFetes); }
   _checkFetes();
+
+  // Les samedis d'Evasion proposes dependent des dates du sejour
+  var _majSam=function(){ if(typeof renderSamedis==='function' && window.__evasion && window.__evasion.active) renderSamedis(); };
+  dateDebut.addEventListener('change',_majSam); dateDebut.addEventListener('input',_majSam);
+  if(dateFin){ dateFin.addEventListener('change',_majSam); dateFin.addEventListener('input',_majSam); }
   function _renderCongeBanner(){
     const today=new Date(); today.setHours(0,0,0,0);
     const up=Object.keys(_closures).filter(k=>_closures[k]).map(k=>{const p=k.split('-');return new Date(+p[0],+p[1]-1,+p[2]);}).filter(d=>d>=today).sort((a,b)=>a-b);
@@ -2056,6 +2348,11 @@ function ejsSendReception(data) {
     var db=firebase.database();
     Promise.all([db.ref('evasion/config').once('value'), db.ref('evasion/sorties').once('value')]).then(function(r){
       var cfg=r[0].val()||{}, so=r[1].val()||{}, el=document.getElementById('ev-resa-places');
+      // Alimente l'option « sortie Évasion » du formulaire (places et tarif réels)
+      window.__evCfg=cfg; window.__evSorties=so;
+      var evc=document.getElementById('evasion-card');
+      if(evc && cfg.actif===false) evc.style.display='none';
+      if(window.__evasion && window.__evasion.active && typeof renderSamedis==='function') renderSamedis();
       if(!el || cfg.actif===false) return;
       var places=cfg.places||5, d=new Date(); d.setHours(0,0,0,0);
       d.setDate(d.getDate()+((6-d.getDay()+7)%7));
