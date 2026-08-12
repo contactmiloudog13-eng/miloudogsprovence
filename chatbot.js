@@ -1,5 +1,9 @@
 (function(){
 
+// Carnet Malin : offre pilotée par l'interrupteur de site-flags.js.
+// Sans le fichier (ou avec le drapeau à false), le chatbot n'en parle jamais.
+const CARNET_ON = !!(window.MDP_FLAGS && window.MDP_FLAGS.carnetMalin);
+
 const REPONSES = [
   // ── NOMBRE DE CHIENS ─────────────────────────────────────
   {
@@ -9,7 +13,7 @@ const REPONSES = [
   // ── TARIFS ───────────────────────────────────────────────
   {
     mots: ['tarif','prix','cout','coute','cher','combien','nuit','journee','demi','promenade','toilettage','pension','euro','25','20','15','10','30','semaine','seance'],
-    rep: `🐾 Nos tarifs :\n\n🏠 Pension (nuit + journée) : 25€/nuit\n☀️ Garderie journée : 20€\n🌤️ Garderie demi-journée : 10€\n🦮 Promenade : 15€\n🛁 Toilettage : 30€\n🏡 Visite à domicile : dès 8€/passage (selon l'animal)\n\n💡 Réductions : 2 chiens −10%, 3 chiens et + −15%\n🎟️ Carnet Malin : 10 nuits prépayées à prix réduit\n\n🎄 Fêtes de fin d'année : du 20 décembre 2026 au 2 janvier 2027, la pension est à 30€/nuit (35€ les 24, 25, 31 déc et 1er janv). En dehors de cette période, on reste à 25€/nuit.\n\nUn devis instantané est calculé sur la page Réservation !`
+    rep: `🐾 Nos tarifs :\n\n🏠 Pension (nuit + journée) : 25€/nuit\n☀️ Garderie journée : 20€\n🌤️ Garderie demi-journée : 10€\n🦮 Promenade : 15€\n🛁 Toilettage : 30€\n🏡 Visite à domicile : dès 8€/passage (selon l'animal)\n\n💡 Réductions : 2 chiens −10%, 3 chiens et + −15%${CARNET_ON ? '\n🎟️ Carnet Malin : 10 nuits prépayées à prix réduit' : ''}\n\n🎄 Fêtes de fin d'année : du 20 décembre 2026 au 2 janvier 2027, la pension est à 30€/nuit (35€ les 24, 25, 31 déc et 1er janv). En dehors de cette période, on reste à 25€/nuit.\n\nUn devis instantané est calculé sur la page Réservation !`
   },
   // ── FÊTES DE FIN D'ANNÉE (majoration) ────────────────────
   {
@@ -21,11 +25,13 @@ const REPONSES = [
     mots: ['propre','proprete','propreté','pipi','crotte','besoin','accident','sale','salit','degat','dégât','degats','dégâts','casse','cassé','abime','abîme','detruit','détruit','ronge','abimer','responsabilite','responsabilité'],
     rep: `🧼 Propreté :\n\nÀ son arrivée, votre chien a 24 heures d'adaptation — les accidents de ces premières 24h ne sont pas facturés, c'est normal dans un lieu inconnu. Au-delà, chaque jour où il fait ses besoins à l'intérieur est facturé 5€ pour le nettoyage (uniquement les jours concernés, et on vous prévient dès le premier, photos à l'appui).\n\n🔨 Dégâts :\n\nSi le chien casse ou abîme quelque chose, c'est à la charge de son propriétaire : coût réel de la réparation ou du remplacement, avec justificatif à l'appui.\n\n💡 Et si ça arrive, aucune gêne à avoir : un chien parfaitement propre et sage chez lui peut ne pas l'être en pension — lieu inconnu, autres chiens, absence de ses maîtres. C'est très fréquent et ça n'a rien d'anormal. C'est simplement pour ça que ça se base sur ce qui se passe pendant le séjour, et vous êtes prévenu tout de suite.\n\nPensez à vérifier que votre assurance responsabilité civile couvre votre animal. Tout est détaillé dans nos conditions générales (articles 12 et 13).`
   },
-  // ── CARNET MALIN (prépayé) ───────────────────────────────
-  {
+  // ── CARNET MALIN (prépayé) — retirée du tableau si l'offre est désactivée.
+  // Une question sur « le carnet » bascule alors sur la réponse vaccins,
+  // qui liste déjà ce mot-clé pour le carnet de santé. C'est le bon repli.
+  ...(CARNET_ON ? [{
     mots: ['carnet','malin','prepaye','prepayer','abonnement','forfait','pack nuit','10 nuits','fidelite','avance','credit'],
     rep: `🎟️ Le Carnet Malin :\n\nVous achetez 10 nuits d'avance à prix réduit, à utiliser quand vous voulez sur 1 an. Zéro paperasse à chaque garde, et c'est cumulable avec la réduction multi-chiens.\n\n⚠️ Une fois réglé, le carnet est ferme et définitif (pas de remboursement) — mais rien ne se perd tant qu'il vous reste des nuits.`
-  },
+  }] : []),
   // ── VISITE À DOMICILE (tous animaux) ─────────────────────
   {
     mots: ['domicile','maison','chez moi','passage','passer','chat','lapin','furet','poule','rongeur','oiseau','tortue','poisson','nourrir','garder mon chat','visite chat','animaux'],
@@ -158,7 +164,7 @@ const REPONSES = [
   },
 ];
 
-const DEFAUT = `Hmm, je n'ai pas bien compris 😊\n\nVous pouvez me demander par exemple :\n• Les tarifs\n• Le Carnet Malin (nuits prépayées)\n• La visite à domicile (chat, lapin…)\n• La récupération à domicile\n• Comment réserver\n• Les vaccins requis\n• Le parrainage\n\nOu appelez-nous directement 📞 07 77 23 40 88 !`;
+const DEFAUT = `Hmm, je n'ai pas bien compris 😊\n\nVous pouvez me demander par exemple :\n• Les tarifs${CARNET_ON ? '\n• Le Carnet Malin (nuits prépayées)' : ''}\n• La visite à domicile (chat, lapin…)\n• La récupération à domicile\n• Comment réserver\n• Les vaccins requis\n• Le parrainage\n\nOu appelez-nous directement 📞 07 77 23 40 88 !`;
 
 function normalise(t){
   return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,' ');

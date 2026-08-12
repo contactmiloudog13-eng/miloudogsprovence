@@ -145,10 +145,12 @@
       '<div class="section-label">📅 Disponibilités</div>' +
       '<div class="card"><div id="r-dispo" style="font-size:.78rem;color:var(--text-muted);">Chargement…</div></div>' +
 
-      // ── Carnet Malin ──
-      '<div class="card" style="background:linear-gradient(135deg,#F4F0FA,#FAF6F0);">' +
-      '<div class="card-title">🎟️ Le Carnet Malin</div>' +
-      '<div style="font-size:.82rem;color:var(--text-muted);line-height:1.6;">10 nuits de pension prépayées à <b style="color:var(--lavande-dark);">prix réduit</b>, valables 1 an — zéro paperasse à chaque garde. Ferme et définitif une fois réglé.<br>📞 Intéressé ? Appelez le <a href="tel:0777234088" style="color:var(--lavande);font-weight:700;">07 77 23 40 88</a></div></div>' +
+      // ── Carnet Malin (affiché seulement si l'interrupteur est armé, cf. site-flags.js) ──
+      (window.mdpFlag && window.mdpFlag('carnetMalin') ?
+        '<div class="card" style="background:linear-gradient(135deg,#F4F0FA,#FAF6F0);">' +
+        '<div class="card-title">🎟️ Le Carnet Malin</div>' +
+        '<div style="font-size:.82rem;color:var(--text-muted);line-height:1.6;">10 nuits de pension prépayées à <b style="color:var(--lavande-dark);">prix réduit</b>, valables 1 an — zéro paperasse à chaque garde. Ferme et définitif une fois réglé.<br>📞 Intéressé ? Appelez le <a href="tel:0777234088" style="color:var(--lavande);font-weight:700;">07 77 23 40 88</a></div></div>'
+        : '') +
 
       '<div class="section-label">Mes réservations</div>' +
       '<div id="resa-list"></div>' +

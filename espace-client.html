@@ -9,6 +9,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script src="site-flags.js"></script>
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="effects.css">
 <style>
@@ -513,7 +514,9 @@ body:not(.auth-ready) footer{visibility:hidden;}
       <button class="dash-tab" id="tab-resa" onclick="showTab('reservations',this)">
         <span class="tab-icon">📅</span> Mes réservations<span class="notif-dot" id="resa-notif-dot" style="display:none;"></span>
       </button>
-      <button class="dash-tab" onclick="showTab('carnet',this);loadCarnet()">
+      <!-- Onglet Carnet Malin : masqué par défaut, révélé seulement si
+           MDP_FLAGS.carnetMalin est vrai (cf. site-flags.js). -->
+      <button class="dash-tab" id="tab-carnet" onclick="showTab('carnet',this);loadCarnet()" style="display:none;">
         <span class="tab-icon">🎟️</span> Carnet Malin
       </button>
       <button class="dash-tab" id="tab-admin" onclick="showTab('admin',this)" style="display:none;background:linear-gradient(135deg,#fff3cd,#ffe08a);color:#7a5a00;border:1.5px solid #f5c84a;">
@@ -1038,10 +1041,19 @@ function loadCarnet(){
     });
   });
 }
+// L'onglet Carnet Malin n'apparaît que si l'interrupteur est armé (cf. site-flags.js).
+(function(){
+  if(!(window.mdpFlag && window.mdpFlag('carnetMalin'))) return;
+  var t=document.getElementById('tab-carnet'); if(t) t.style.display='';
+})();
 // Affichage INSTANTANÉ de l'offre Carnet Malin quand on arrive via « Je veux mon Carnet Malin »
 // (on n'attend pas la restauration de session Firebase : l'offre est une page marketing).
 (function(){
   if(location.hash!=='#carnet') return;
+  // Offre désactivée (cf. site-flags.js) : un ancien lien #carnet ne doit pas
+  // basculer l'espace client en « mode invité » et masquer tous les onglets.
+  // On laisse simplement le tableau de bord se charger normalement.
+  if(!(window.mdpFlag && window.mdpFlag('carnetMalin'))) return;
   function boot(){
     if(window.__carnetBooted) return; window.__carnetBooted=true;
     var content=document.getElementById('dashboard-content');
@@ -1068,6 +1080,7 @@ function loadCarnet(){
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
 })();
 function renderCarnetOffre(){
+  if(!(window.mdpFlag && window.mdpFlag('carnetMalin'))) return; // offre retirée du site
   var tc=window.__tarifsCache||{};
   var pension=tc.pension||25;
   var nights=tc.carnetNights||10;
@@ -1121,6 +1134,9 @@ function renderCarnetOffre(){
     '</div>';
 }
 async function orderCarnet(prix){
+  // Offre retirée : aucune demande ne doit plus partir vers carnet_requests
+  // ni générer de notification admin (cf. site-flags.js).
+  if(!(window.mdpFlag && window.mdpFlag('carnetMalin'))) return;
   if(!_currentUser){ window.location.href='connexion.html?next='+encodeURIComponent('espace-client.html#carnet'); return; }
   var btn=event&&event.target; if(btn) btn.disabled=true;
   try{
@@ -1214,7 +1230,9 @@ firebase.auth().onAuthStateChanged(async user => {
 
     // Page de l'offre Carnet Malin (#carnet) : on laisse le visiteur voir l'offre
     // sans le rediriger. La connexion n'est demandée qu'au clic sur « Je commande ».
-    if (location.hash === '#carnet') return;
+    // Offre désactivée (cf. site-flags.js) → plus d'exception : un visiteur non
+    // connecté arrivant sur un vieux lien passe par la connexion comme les autres.
+    if (location.hash === '#carnet' && window.mdpFlag && window.mdpFlag('carnetMalin')) return;
     // Premier chargement sans session → on laisse un court délai (le temps que
     // Firebase restaure la session LOCAL) puis on renvoie vers la connexion.
     if (_logoutTimer) return;
@@ -1251,9 +1269,10 @@ firebase.auth().onAuthStateChanged(async user => {
   loader.classList.add('hide');
   setTimeout(() => { loader.style.display = 'none'; }, 400);
 
-  // Ouverture directe de l'onglet Carnet Malin (lien « Je veux mon Carnet Malin »)
-  if (location.hash === '#carnet') {
-    var _cb = [].slice.call(document.querySelectorAll('.dash-tab')).filter(function(b){ return /Carnet/.test(b.textContent); })[0];
+  // Ouverture directe de l'onglet Carnet Malin (lien « Je veux mon Carnet Malin »).
+  // Sans le drapeau, un vieux lien #carnet laisse simplement le tableau de bord.
+  if (location.hash === '#carnet' && window.mdpFlag && window.mdpFlag('carnetMalin')) {
+    var _cb = document.getElementById('tab-carnet');
     if (_cb) { showTab('carnet', _cb); loadCarnet(); }
   }
 

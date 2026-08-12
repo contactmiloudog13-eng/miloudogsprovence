@@ -1,5 +1,5 @@
 /* Milou Dogs — Service Worker (offline app shell + cache images) */
-const CACHE = 'milou-app-v19';
+const CACHE = 'milou-app-v20';
 const IMG_CACHE = 'milou-img-v1';
 const IMG_MAX = 120; // nb max de photos gardées hors-ligne
 const SHELL = [
@@ -9,6 +9,7 @@ const SHELL = [
   './app.js',
   './chiens.js',
   './tarifs-fetes.js',
+  './site-flags.js',
   './reservation.js',
   './galerie.js',
   './profil.js',

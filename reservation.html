@@ -18,6 +18,7 @@
 <link rel="canonical" href="https://miloudogsprovence.fr/reservation.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script src="site-flags.js"></script>
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="effects.css">
 <style>
@@ -2090,7 +2091,11 @@ firebase.auth().onAuthStateChanged(async user => {
         ? '🐕 ' + chien.nom + (chien.race ? ' · ' + chien.race : '') + (chien.age ? ' · ' + chien.age : '') + (chien.poids ? ' · ' + chien.poids + ' kg' : '')
         : '🐕 Chien non renseigné — vous pouvez le saisir dans votre espace client';
     // ── Carnet Malin : charger le solde de nuits ──
+    // Tant que l'offre est désactivée (cf. site-flags.js), on ne lit même pas
+    // Firebase : window.__carnet reste undefined, ce qui neutralise d'un coup
+    // la case à cocher, la déduction dans calcPrice() et fbData.carnetMalin.
     try{
+      if(window.mdpFlag && window.mdpFlag('carnetMalin')){
       const csnap = await firebase.database().ref('carnets/'+user.uid).get();
       if(csnap.exists()){
         const c=csnap.val();
@@ -2102,6 +2107,7 @@ firebase.auth().onAuthStateChanged(async user => {
           if(left>0) initCarnetMode();
         }
       }
+      }
     }catch(e){ console.warn('carnet:',e); }
 
     // Connecté → sauter directement à l'étape 2
@@ -2112,6 +2118,7 @@ firebase.auth().onAuthStateChanged(async user => {
 
 // ── Mode Carnet Malin (arrivée depuis l'espace client) ──────────────────────
 function initCarnetMode(){
+  if(!(window.mdpFlag && window.mdpFlag('carnetMalin'))) return; // offre désactivée
   const c=window.__carnet; if(!c||c.left<=0) return;
   const params=new URLSearchParams(location.search);
   window.__carnetApply=true;

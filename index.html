@@ -38,6 +38,7 @@
   }catch(e){}
 })();
 </script>
+<script src="site-flags.js"></script>
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="effects.css">
 <style>
@@ -706,8 +707,11 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
   </div>
 </section>
 
-<!-- ── Carnet prépayé (fidélité sans engagement) ── -->
-<section id="carnet-section" style="padding:60px 5%;background:var(--cream);">
+<!-- ── Carnet prépayé (fidélité sans engagement) ──
+     Masqué par défaut : révélé uniquement si MDP_FLAGS.carnetMalin est vrai
+     (cf. site-flags.js). Masquer côté HTML plutôt qu'en JS évite que l'offre
+     n'apparaisse une fraction de seconde au chargement. -->
+<section id="carnet-section" style="padding:60px 5%;background:var(--cream);display:none;">
   <div class="container" style="max-width:920px;">
     <div class="section-header" style="text-align:center;">
       <p class="section-label">🎟️ Nouveau · sans engagement</p>
@@ -740,6 +744,12 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
   </div>
 </section>
 <style>@media(max-width:760px){.carnet-grid{grid-template-columns:1fr!important;}}</style>
+<script>
+// Le Carnet Malin n'est affiché que si l'interrupteur est armé (cf. site-flags.js).
+if (window.mdpFlag && window.mdpFlag('carnetMalin')) {
+  document.getElementById('carnet-section').style.display = '';
+}
+</script>
 
 <script src="tarifs-fetes.js"></script>
 <script>
