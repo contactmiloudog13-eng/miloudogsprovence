@@ -107,6 +107,29 @@
 .bdur-btn{flex:1;padding:11px;border:1.5px solid var(--border);border-radius:10px;background:#fff;color:var(--text-muted);font-family:'Lato',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;transition:all .2s;}
 .bdur-btn:hover{border-color:var(--lavande);}
 .bdur-btn.active{background:var(--lavande);border-color:var(--lavande);color:#fff;}
+/* ── Devis facon facture ── */
+.dv-rec{margin-bottom:14px;}
+.dv-r{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:5px 0;font-size:.86rem;}
+.dv-r span{color:var(--text-muted);flex-shrink:0;}
+.dv-r b{color:var(--lavande-dark);text-align:right;font-weight:700;}
+.dv-box{background:rgba(255,255,255,.55);border-radius:12px;padding:4px 14px;margin:12px 0 14px;}
+.dv-l{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:11px 0;border-top:1px dashed rgba(123,111,160,.35);font-size:.86rem;}
+.dv-l:first-child{border-top:none;}
+.dv-lib{color:var(--text);flex:1;min-width:0;}
+.dv-lib em{font-style:normal;color:var(--text-muted);font-size:.82rem;}
+.dv-mt{color:var(--lavande-dark);white-space:nowrap;font-size:.84rem;}
+.dv-mt b{font-weight:800;}
+.dv-note{padding:7px 0;font-size:.78rem;color:var(--text-muted);line-height:1.5;border-top:1px dashed rgba(123,111,160,.25);}
+.dv-st{display:flex;justify-content:space-between;align-items:baseline;font-size:.86rem;padding:4px 0;color:var(--text-muted);}
+.dv-st b{color:var(--lavande-dark);font-weight:700;}
+.dv-rem b,.dv-rem span{color:#159067;}
+.dv-tl{font-size:.74rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);}
+.dv-tv{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--lavande-dark);line-height:1;}
+@media(max-width:430px){
+  .dv-l{flex-direction:column;gap:2px;}
+  .dv-mt{align-self:flex-end;}
+  .dv-tv{font-size:1.6rem;}
+}
 .opt-titre{font-size:.86rem;font-weight:800;color:var(--lavande-dark);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;}
 .ev-sam{display:flex;align-items:center;gap:9px;padding:9px 11px;border:1.5px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;margin-bottom:7px;text-transform:none;letter-spacing:0;}
 .ev-sam:has(input:checked){border-color:var(--lavande);background:var(--lavande-light);}
@@ -606,7 +629,7 @@
 
             <div id="price-box" style="display:none;background:var(--lavande-light);border:1px solid var(--lavande);border-radius:14px;padding:16px 20px;margin-bottom:18px;font-size:.92rem;color:var(--lavande-dark);">
               <div id="price-detail" style="line-height:1.8;"></div>
-              <div id="price-total" style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;margin-top:8px;color:var(--lavande-dark);border-top:1px solid var(--lavande);padding-top:8px;"></div>
+              <div id="price-total" style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:10px;border-top:1.5px solid var(--lavande);padding-top:12px;"></div>
             </div>
             <div class="form-group"><label>Message</label><textarea id="message" name="Message" placeholder="Informations supplémentaires sur votre chien, ses habitudes, allergies…"></textarea></div>
             <div class="form-group">
@@ -1658,7 +1681,9 @@ function calcPrice(){
   const nbTotal=mdpNbTotal();
   const discount=nbTotal>=2;
   const discRate=nbTotal>=3?((window.MDP_REMISE3||15)/100):(nbTotal===2?((window.MDP_REMISE2||10)/100):0); // remises pilotées depuis l'admin
-  const disc=v=>discount?Math.round(v*(1-discRate)):v;
+  // Les postes sont calcules au PRIX PLEIN : la remise s'applique une seule fois
+  // sur le sous-total (un seul arrondi, comme sur la facture).
+  const disc=v=>v;
 
   // Nombre de nuits (diff jours calendaires)
   let nuits=0;
@@ -1680,6 +1705,22 @@ function calcPrice(){
   else if(d2&&hFH>8&&hFH<=13) extraDemi=1;
 
   let lines=[],total=0;
+  // Un poste = une ligne de facture. P() alimente a la fois postes[] (affichage)
+  // et lines[] (format historique lu par _devisLine, donc par l'admin).
+  const postes=[];
+  // Suffixe « × N chiens » : sans lui, « 7 nuits » suivi de « × 14 » deroute.
+  const _xC=(n)=> (n>1? ' × '+n+' chiens':'');
+  const P=(icone,libelle,periode,pu,qte,montant)=>{
+    postes.push({icone:icone||'',libelle:libelle,periode:periode||'',pu:pu,qte:qte,montant:montant});
+    const per=periode?' · '+periode:'';
+    const calc=(pu!=null&&qte!=null&&qte!==1)?(pu+'€ × '+qte+' = '):(pu!=null?pu+'€ = ':'');
+    lines.push((icone?icone+' ':'')+libelle+per+' — '+calc+'<strong>'+montant+'€</strong>');
+  };
+  // Ligne d'information (sans montant) : affichee mais jamais comptee
+  const NOTE=(txt)=>{ postes.push({note:txt}); lines.push('<small style="color:var(--text-muted);">'+txt+'</small>'); };
+  // Dates courtes JJ/MM, comme sur la facture
+  const _jm=iso=>{ if(!iso) return ''; const d=new Date(iso+'T12:00:00'); return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2); };
+  const _periode=(a,b)=> (a&&b&&a!==b) ? ('du '+_jm(a)+' au '+_jm(b)) : (a?_jm(a):'');
   let _carnetUnitPrices=[],_carnetSubtotal=0; // pour le Carnet Malin (chaque nuit/jour = 1 unité)
 
   tags.forEach(t=>{
@@ -1691,7 +1732,7 @@ function calcPrice(){
     if(unit==='nuit'){
       // Sans dates : afficher tarif de base
       if(!d1){
-        lines.push(`${name} — ${price}€ / nuit`);
+        NOTE(name+' — '+price+'€ / nuit (choisissez vos dates pour le détail)');
         total+=disc(price*nbChiens);
         return;
       }
@@ -1710,30 +1751,35 @@ function calcPrice(){
       const subDemi=disc(extraDemi*10*nbChiens);
 
       if(nuits>0){
+        const _dts=F?F.datesNuits(d1,nuits):[];
         if(majore){
-          // Regroupe les nuits par tarif : « 2 nuits × 30€ + 2 nuits × 35€ »
+          // Une ligne PAR TARIF, chacune avec sa propre periode : plus lisible
+          // qu'un « 2 nuits × 30€ + 2 nuits × 35€ » ecrase sur une seule ligne.
           const grp={};
-          prixNuits.forEach(p=>{grp[p]=(grp[p]||0)+1;});
-          const detail=Object.keys(grp).sort((a,b)=>a-b)
-            .map(p=>`${grp[p]} nuit${grp[p]>1?'s':''} × ${p}€`).join(' + ');
-          lines.push(`${name} — ${detail} = <strong>${subNuits}€</strong>`);
+          prixNuits.forEach((px,i)=>{ (grp[px]=grp[px]||[]).push(_dts[i]); });
+          Object.keys(grp).sort((a,b)=>a-b).forEach(px=>{
+            const ds=grp[px], q=ds.length, m=Number(px)*q*nbChiens;
+            P('🏠', q+' nuit'+(q>1?'s':'')+_xC(nbChiens), _periode(ds[0],ds[q-1]), Number(px), q*nbChiens, m);
+          });
         }
         else if(arriveTardive&&nuits===1)
-          lines.push(`${name} — arrivée tardive → <strong>10€</strong> au lieu de ${price}€ 🤍`);
-        else if(arriveTardive)
-          lines.push(`${name} — 1ère nuit 10€ + ${nuits-1} nuit${nuits-1>1?'s':''} × ${price}€ = <strong>${subNuits}€</strong> 🤍`);
+          P('🏠','1 nuit (arrivée tardive)',_periode(_dts[0],_dts[0]),10,nbChiens,subNuits);
+        else if(arriveTardive){
+          P('🏠','1ʳᵉ nuit (arrivée tardive)',_periode(_dts[0],_dts[0]),10,nbChiens,10*nbChiens);
+          P('🏠',(nuits-1)+' nuit'+(nuits-1>1?'s':'')+_xC(nbChiens),_periode(_dts[1],_dts[nuits-1]),price,(nuits-1)*nbChiens,subNuits-10*nbChiens);
+        }
         else
-          lines.push(`${name} — ${price}€ × ${nuits} nuit${nuits>1?'s':''} = <strong>${subNuits}€</strong>`);
+          P('🏠', nuits+' nuit'+(nuits>1?'s':'')+_xC(nbChiens), _periode(_dts[0],_dts[nuits-1]), price, nuits*nbChiens, subNuits);
       }
-      if(extraJournee) lines.push(`☀️ Jour de départ — <strong>${subJours}€</strong>`);
-      if(extraDemi) lines.push(`🌤️ Demi-journée départ — <strong>${subDemi}€</strong>`);
+      if(extraJournee) P('➕','Journée départ'+_xC(nbChiens),_jm(d2),prixDepart,nbChiens,subJours);
+      if(extraDemi)    P('➕','½ journée départ'+_xC(nbChiens),_jm(d2),10,nbChiens,subDemi);
       if(majore&&F){
         // Période de la première nuit effectivement majorée
         let per=null;
         const datesN=F.datesNuits(d1,nuits);
         for(let _i=0;_i<datesN.length&&!per;_i++) per=F.periodeDe(datesN[_i]);
         if(!per) per=F.periodeDe(d2);
-        if(per) lines.push(`🎄 <strong>Tarif ${per.label}</strong> — majoration appliquée uniquement ${per.libelleCourt}. Le reste de l'année, la nuit reste à ${price}€.`);
+        if(per) NOTE('🎄 Tarif '+per.label+' — majoration appliquée uniquement '+per.libelleCourt+'. Le reste de l\'année, la nuit reste à '+price+'€.');
       }
       total+=subNuits+subJours+subDemi;
       // Carnet Malin : 1 unité par nuit + 1 unité pour le jour de départ (jour non facturé, décompté du carnet)
@@ -1747,14 +1793,14 @@ function calcPrice(){
       const qty=sameday?1:Math.max(1,nuits+extraJournee);
       const sub=disc(price*qty*nbChiens);
       const label=qty>1?qty+' jours':'1 jour';
-      lines.push(`${name} — ${price}€ × ${label} = <strong>${sub}€</strong>`);
+      P(name.replace(/^(\S+)\s.*/,'$1'), name.replace(/^\S+\s/,''), _periode(d1,d2||d1), price, qty*nbChiens, sub);
       total+=sub;
       // Carnet Malin : la garderie de jour est aussi éligible (1 unité par jour)
       if(t.dataset.carnet!=='0'){ for(let _d=0;_d<qty;_d++) _carnetUnitPrices.push(price); _carnetSubtotal+=sub; }
 
     } else {
       const sub=disc(price*nbChiens);
-      lines.push(`${name} — ${price}€ forfait = <strong>${sub}€</strong>`);
+      P(name.replace(/^(\S+)\s.*/,'$1'), name.replace(/^\S+\s/,''), _jm(d1), price, nbChiens, sub);
       total+=sub;
     }
   });
@@ -1779,16 +1825,15 @@ function calcPrice(){
     if(!pxPassage) pxPassage=v.price||15;                   // filet de sécurité
     const visitesCost=disc(pxPassage*totalVisits);
     const freqTxt=v.freq+'× '+(v.unit==='jour'?'/jour':'/semaine');
-    lines.push('🏡 Visite à domicile <small style="color:var(--text-muted);">('+(detailAnimaux.join(', ')||'1 animal')+')</small> — '
-      +pxPassage+'€ × '+totalVisits+' passage'+(totalVisits>1?'s':'')
-      +' <small style="color:var(--text-muted);">('+freqTxt+', '+(v.dur===60?'1h':'30 min')+')</small> = <strong>'+visitesCost+'€</strong>');
-    if(detailAnimaux.length>1) lines.push('<small style="color:var(--text-muted);">↳ un seul déplacement, tous vos animaux sont vus à chaque passage</small>');
+    P('🏡', totalVisits+' passage'+(totalVisits>1?'s':'')+' ('+(detailAnimaux.join(', ')||'1 animal')+')',
+      _periode(v.start,v.end)||(freqTxt+', '+(v.dur===60?'1h':'30 min')), pxPassage, totalVisits, visitesCost);
+    if(detailAnimaux.length>1) NOTE('↳ un seul déplacement, tous vos animaux sont vus à chaque passage');
     total+=visitesCost;
     if(v.km!=null && v.travelTotal>0){
-      lines.push('🚗 Déplacement — <strong>'+v.travelTotal.toString().replace('.',',')+'€</strong> <small style="color:var(--text-muted);">('+v.travelPerDay.toString().replace('.',',')+'€ × '+(v.travelDays||1)+' déplacement'+((v.travelDays||1)>1?'s':'')+')</small>');
+      P('🚗','Déplacement','',v.travelPerDay,(v.travelDays||1),v.travelTotal);
       total=Math.round((total+v.travelTotal)*100)/100;
     } else if(v.km==null){
-      lines.push('🚗 <small style="color:var(--text-muted);">Saisissez l\'adresse pour calculer le déplacement</small>');
+      NOTE('🚗 Saisissez l\'adresse pour calculer le déplacement');
     }
   }
 
@@ -1796,12 +1841,10 @@ function calcPrice(){
   if(window.__pickup && window.__pickup.active && window.__pickup.price>0){
     var _pkCfg=PICKUP_MODES[window.__pickup.mode||'both']||PICKUP_MODES.both;
     var _pkKm=window.__pickup.km?(' '+window.__pickup.km.toString().replace('.',',')+' km'):'';
-    lines.push('🚗 Transport à domicile — '+_pkCfg.label+_pkKm
-      +' <small style="color:var(--text-muted);">('+(window.__pickup.calc||'')+')</small>'
-      +' = <strong>'+window.__pickup.price.toString().replace('.',',')+'€</strong>');
+    P('🚗','Transport à domicile — '+_pkCfg.label, _pkKm.trim(), null, null, window.__pickup.price);
     total=Math.round((total+window.__pickup.price)*100)/100;
   } else if(window.__pickup && window.__pickup.active){
-    lines.push('🚗 Transport à domicile — <small style="color:var(--text-muted);">saisissez votre adresse pour le calcul</small>');
+    NOTE('🚗 Transport à domicile — saisissez votre adresse pour le calcul');
   }
 
   // ── Balades pendant le séjour (option, prix à part, non couvert par le Carnet Malin) ──
@@ -1822,7 +1865,7 @@ function calcPrice(){
       var bcount=(bunit==='jour') ? bfreq*stayDays : bfreq*Math.max(1,Math.ceil(stayDays/7));
       var bsub=bprice*bcount;
       window.__balade.count=bcount; window.__balade.total=bsub; window.__balade.freq=bfreq; window.__balade.unit=bunit;
-      lines.push('🦮 Balades ('+bdur+' min) — '+bprice+'€ × '+bcount+' balade'+(bcount>1?'s':'')+' <small style="color:var(--text-muted);">('+bfreq+'× '+(bunit==='jour'?'/jour':'/semaine')+')</small> = <strong>'+bsub+'€</strong>');
+      P('🦮', bcount+' balade'+(bcount>1?'s':'')+' ('+bdur+' min)', _periode(d1,d2||d1), bprice, bcount, bsub);
       total=Math.round((total+bsub)*100)/100;
       if(sum){ sum.style.display='block'; sum.innerHTML='🦮 <b>'+bcount+' balade'+(bcount>1?'s':'')+'</b> sur le séjour ('+bfreq+' '+(bunit==='jour'?'par jour':'par semaine')+', '+bdur+' min) → <b>'+bsub+'€</b>'; }
     } else if(sum){ sum.style.display='none'; }
@@ -1833,7 +1876,7 @@ function calcPrice(){
     var _tTag=document.querySelector('.service-tag[data-kind="toilettage"]');
     var _tPx=_tTag?parseInt(_tTag.dataset.price)||30:30;
     var _tSub=disc(_tPx*Math.max(1,nbChiens));
-    lines.push('🛁 Toilettage pendant le séjour — '+_tPx+'€'+(nbChiens>1?' × '+nbChiens+' chiens':'')+' = <strong>'+_tSub+'€</strong>');
+    P('🛁','Toilettage pendant le séjour'+_xC(nbChiens),'',_tPx,Math.max(1,nbChiens),_tSub);
     total+=_tSub;
   }
 
@@ -1845,8 +1888,8 @@ function calcPrice(){
     var _evLbl=window.__evasion.dates.map(function(iso){
       return new Date(iso+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
     }).join(', ');
-    lines.push('🏔️ Sortie Évasion ('+_evLbl+') — '+_evPx+'€ × '+_evN+' samedi'+(_evN>1?'s':'')+(nbChiens>1?' × '+nbChiens+' chiens':'')+' = <strong>'+_evSub+'€</strong>');
-    lines.push('<small style="color:var(--text-muted);">↳ demande à confirmer : 5 chiens maximum par samedi</small>');
+    P('🏔️','Sortie Évasion — '+_evN+' samedi'+(_evN>1?'s':''), _evLbl, _evPx, _evN*Math.max(1,nbChiens), _evSub);
+    NOTE('↳ demande à confirmer : 5 chiens maximum par samedi');
     total+=_evSub;
   }
 
@@ -1870,11 +1913,46 @@ function calcPrice(){
   }
 
   if(!lines.length){box.style.display='none';return;}
-  document.getElementById('price-detail').innerHTML=lines.join('<br>');
-  window.__priceLines=lines.slice();   // conservé pour construire le devis ligne par ligne
-  let totalLabel='Total : '+total+'€';
-  if(window.__carnetCovered>0) totalLabel+=' <span style="color:#159067;">(Carnet Malin appliqué)</span>';
-  if(discount) totalLabel+=' (−'+Math.round(discRate*100)+'% multi-animaux inclus)';
+  // ── Sous-total → remise → total (un seul arrondi, comme sur la facture) ──
+  const sousTotal=Math.round(total*100)/100;
+  const remise=discount?Math.round(sousTotal*discRate):0;
+  total=Math.round((sousTotal-remise)*100)/100;
+
+  // Récapitulatif façon facture : animal, service, arrivée, départ
+  const _fr=iso=>{ if(!iso) return '—'; const d=new Date(iso+'T12:00:00');
+    return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear(); };
+  const _h=(h,m)=> h?(' à '+('0'+h).slice(-2)+':'+(m||'00')):'';
+  const _animaux=Object.keys(window.__animaux||{}).map(k=>{
+    const q=window.__animaux[k]; return (q>1?q+' ':'')+VISITE_ANIMALS[k].n.replace(/^\S+\s/,'').toLowerCase()+(q>1?'s':'');
+  }).join(' + ')||'—';
+  const _svcNom=tags.map(t=>t.textContent.replace('✕','').trim()).join(', ')||'—';
+  const rec=[
+    ['Animal', _animaux],
+    ['Service', _svcNom],
+    ['Arrivée', _fr(d1)+_h(document.getElementById('heure-debut-h').value,document.getElementById('heure-debut-m').value)],
+  ];
+  if(d2) rec.push(['Départ', _fr(d2)+_h(document.getElementById('heure-fin-h').value,document.getElementById('heure-fin-m').value)]);
+
+  let html='<div class="dv-rec">'+rec.map(r=>'<div class="dv-r"><span>'+r[0]+'</span><b>'+r[1]+'</b></div>').join('')+'</div>';
+  html+='<div class="dv-box">'+postes.map(function(po){
+    if(po.note) return '<div class="dv-note">'+po.note+'</div>';
+    const calc=(po.pu!=null&&po.qte!=null&&po.qte!==1)?(po.pu+'€ × '+po.qte+' = ')
+             :(po.pu!=null?(String(po.pu).replace('.',',')+'€ = '):'');
+    return '<div class="dv-l"><span class="dv-lib">'+(po.icone?po.icone+' ':'')+po.libelle+
+      (po.periode?' <em>· '+po.periode+'</em>':'')+'</span>'+
+      '<span class="dv-mt">'+calc+'<b>'+String(po.montant).replace('.',',')+'€</b></span></div>';
+  }).join('')+'</div>';
+  if(remise>0){
+    html+='<div class="dv-st"><span>Sous-total</span><b>'+sousTotal+'€</b></div>';
+    html+='<div class="dv-st dv-rem"><span>Remise multi-animaux −'+Math.round(discRate*100)+' %</span><b>−'+remise+'€</b></div>';
+  }
+  document.getElementById('price-detail').innerHTML=html;
+
+  window.__priceLines=lines.slice();   // format historique, lu par _devisLine() puis par l'admin
+  if(remise>0) window.__priceLines.push('Remise multi-animaux −'+Math.round(discRate*100)+'% — <strong>−'+remise+'€</strong>');
+
+  let totalLabel='<span class="dv-tl">Total à régler</span><span class="dv-tv">'+total+' €</span>';
+  if(window.__carnetCovered>0) totalLabel+=' <span style="color:#159067;font-size:.8rem;">(Carnet Malin appliqué)</span>';
   document.getElementById('price-total').innerHTML=totalLabel;
   box.style.display='block';
 }
