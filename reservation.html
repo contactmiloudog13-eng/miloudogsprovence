@@ -679,6 +679,16 @@
               <div style="font-size:.75rem;color:var(--text-muted);margin-top:3px;">Votre ami vous a donné un code ? Entrez-le ici pour lui offrir 10€ de réduction sur sa prochaine garde 🎉</div>
             </div>
 
+            <div class="cgu-row" id="sante-row">
+              <input type="checkbox" id="sante-accept" name="Santé attestée" value="Oui">
+              <label for="sante-accept">
+                <span class="cgu-req">Obligatoire</span>
+                J'atteste que mon chien est <strong>à jour de ses vaccins</strong>, <strong>identifié</strong>
+                et <strong>traité contre les parasites</strong> (puces, tiques, vers).
+                <span style="display:block;margin-top:5px;opacity:.8;">J'apporterai son carnet de santé le jour du dépôt. 🩺</span>
+              </label>
+            </div>
+
             <div class="cgu-row" id="cgv-row">
               <input type="checkbox" id="cgv-accept" name="CGV acceptées" value="Oui" required>
               <label for="cgv-accept">
@@ -2192,6 +2202,18 @@ function prepareSubmit(){
   // À l'étape 3, les étapes 1 et 2 ont déjà été validées.
   // Seule l'acceptation des conditions générales reste à contrôler ici
   // (le bouton d'envoi est un type="button" : l'attribut required ne se déclenche pas).
+  const sante=document.getElementById('sante-accept');
+  if(sante && !sante.checked){
+    const msg=document.getElementById('error-msg');
+    document.getElementById('step-panel-3').appendChild(msg);
+    msg.style.display='block';
+    msg.textContent='⚠️ Merci d\'attester que votre chien est vacciné et traité contre les parasites.';
+    setTimeout(()=>msg.style.display='none',5000);
+    document.getElementById('sante-row').style.borderColor='#c0392b';
+    sante.focus();
+    return false;
+  }
+  if(sante) document.getElementById('sante-row').style.borderColor='';
   const cgv=document.getElementById('cgv-accept');
   if(cgv && !cgv.checked){
     const msg=document.getElementById('error-msg');
@@ -2364,6 +2386,7 @@ async function submitReservation() {
       message   : document.getElementById('message').value,
       parrainage: document.getElementById('parrainage').value,
       cgvAcceptees: !!document.getElementById('cgv-accept')?.checked,
+      santeAttestee: !!document.getElementById('sante-accept')?.checked,
       cgvDate     : document.getElementById('cgv-accept')?.checked ? new Date().toISOString() : null,
       cgvVersion  : 'v2-2026',
       // Champs structurés (les champs texte ci-dessus restent inchangés pour l'admin)
