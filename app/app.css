@@ -10,7 +10,7 @@
    dans la police systeme. */
 
 :root{
-  --cream:#FAF6F0; --lavande:#7B6FA0; --lavande-light:#E8E4F0; --lavande-dark:#4A3F72;
+  --cream:#FAF6F0; --lavande:#706497; --lavande-light:#f0eef5; --lavande-dark:#4A3F72;
   --soleil:#E8A84C; --soleil-light:#FDF3E0; --vert:#5A7A4A; --vert-light:#EBF3E5;
   --rouge:#C0392B; --rouge-light:#FBEAE8;
   --text:#2C2A26; --text-muted:#6B6760; --white:#fff; --border:#E5E0D8;
@@ -38,7 +38,7 @@ a{color:var(--lavande-dark);text-decoration:none;}
 #splash{
   position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:18px;
-  background:linear-gradient(160deg,#7B6FA0,#4A3F72);color:#fff;
+  background:linear-gradient(160deg,#706497,#4A3F72);color:#fff;
   transition:opacity .4s ease;
 }
 #splash.gone{opacity:0;pointer-events:none;}
@@ -134,7 +134,7 @@ main#view-container{flex:1;padding:16px 16px calc(var(--tabbar-h) + var(--safe-b
 .card-title{font-size:.95rem;font-weight:800;color:var(--lavande-dark);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
 .section-label{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);margin:18px 4px 10px;}
 .hero-card{
-  background:linear-gradient(140deg,#7B6FA0,#4A3F72);color:#fff;border:none;
+  background:linear-gradient(140deg,#706497,#4A3F72);color:#fff;border:none;
   border-radius:22px;padding:22px;box-shadow:var(--shadow-lg);margin-bottom:16px;position:relative;overflow:hidden;
 }
 .hero-card::after{content:'🐾';position:absolute;right:-6px;bottom:-14px;font-size:5rem;opacity:.12;}

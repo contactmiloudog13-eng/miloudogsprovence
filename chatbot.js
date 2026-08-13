@@ -346,6 +346,8 @@ function loadGA() {
       <button id="rgpd-refuse">Uniquement les nécessaires</button>
       <button id="rgpd-accept">✓ Tout accepter</button>
     </div>`;
+  bar.setAttribute('role','region');
+  bar.setAttribute('aria-label','Gestion des cookies');
   document.body.appendChild(bar);
 
   document.getElementById('rgpd-accept').addEventListener('click', function(){
@@ -378,6 +380,8 @@ function loadGA() {
   const bar=document.createElement('div');
   bar.id='mdp-cta-bar';
   bar.innerHTML='<a class="cta-resa" href="reservation.html">📅 Réserver</a><a class="cta-tel" href="tel:0777234088">📞 Appeler</a>';
+  bar.setAttribute('role','region');
+  bar.setAttribute('aria-label','Gestion des cookies');
   document.body.appendChild(bar);
   let shown=false;
   window.addEventListener('scroll',function(){

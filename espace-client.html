@@ -71,7 +71,7 @@ body:not(.auth-ready) footer{visibility:hidden;}
 .welcome-avatar-wrap{position:relative;cursor:pointer;flex-shrink:0;}
 .welcome-avatar-wrap .avatar-cam{
   position:absolute;bottom:-2px;right:-2px;width:26px;height:26px;border-radius:50%;
-  background:white;border:2px solid var(--lavande,#7B6FA0);display:flex;align-items:center;justify-content:center;
+  background:white;border:2px solid var(--lavande,#706497);display:flex;align-items:center;justify-content:center;
   font-size:.72rem;box-shadow:0 2px 6px rgba(0,0,0,.25);transition:transform .15s;
 }
 .welcome-avatar-wrap:hover .avatar-cam{transform:scale(1.12);}
@@ -230,7 +230,7 @@ body:not(.auth-ready) footer{visibility:hidden;}
 .status-en-attente{background:#FFF8E7;color:#8B6020;}
 .status-confirme{background:var(--vert-light);color:var(--vert);}
 .status-refuse{background:#fdecea;color:#c0392b;}
-.status-annulee{background:#f0f0f0;color:#888;}
+.status-annulee{background:#f0f0f0;color:#6b6760;}
 .status-invite{background:#f5f5f5;color:#999;}
 .resa-card-body{
   display:flex;flex-wrap:wrap;gap:8px 20px;
@@ -474,7 +474,7 @@ body:not(.auth-ready) footer{visibility:hidden;}
 
 <nav>
   <a class="nav-logo" href="index.html"><span class="paw">🐾</span><span>Milou Dogs Provence</span></a>
-  <button class="hamburger" onclick="toggleMenu(this)"><span></span><span></span><span></span></button>
+  <button class="hamburger" onclick="toggleMenu(this)" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="navlinks"><span></span><span></span><span></span></button>
   <ul class="nav-links" id="navlinks">
     <li><a href="index.html" data-icon="🏠">Accueil</a></li>
     <li><a href="services.html" data-icon="🐾">Services &amp; Tarifs</a></li>
@@ -1522,7 +1522,7 @@ function showBirthdayOverlay(id) {
   const old = document.getElementById('bday-overlay'); if (old) old.remove();
   const ov = document.createElement('div');
   ov.id = 'bday-overlay';
-  const colors = ['#E8A84C', '#7B6FA0', '#5A7A4A', '#F5C84A', '#C0392B', '#4A3F72'];
+  const colors = ['#E8A84C', '#706497', '#5A7A4A', '#F5C84A', '#C0392B', '#4A3F72'];
   let confetti = '';
   for (let i = 0; i < 60; i++) {
     const c = colors[i % colors.length];

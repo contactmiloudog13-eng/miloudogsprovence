@@ -62,7 +62,7 @@
 .fp-social{display:flex;gap:10px;}
 .fp-soc-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:.9rem;color:white;text-decoration:none;transition:background .2s;}
 .fp-soc-btn:hover{background:var(--lavande);}
-.fp-col h4{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:18px;}
+.fp-col h2,.fp-col h3,.fp-col h4{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:18px;}
 .fp-col ul{list-style:none;}
 .fp-col ul li{margin-bottom:10px;}
 .fp-col ul li a{color:rgba(255,255,255,.6);text-decoration:none;font-size:.88rem;transition:color .2s;}
@@ -78,7 +78,7 @@
 <body>
 <nav>
   <a class="nav-logo" href="index.html"><span class="paw">🐾</span><span>Milou Dogs Provence</span></a>
-  <button class="hamburger" onclick="toggleMenu(this)"><span></span><span></span><span></span></button>
+  <button class="hamburger" onclick="toggleMenu(this)" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="navlinks"><span></span><span></span><span></span></button>
   <ul class="nav-links" id="navlinks">
     <li><a href="index.html" data-icon="🏠">Accueil</a></li>
     <li><a href="services.html" data-icon="🐾">Services &amp; Tarifs</a></li>
@@ -96,6 +96,7 @@
   <span id="nav-desktop-auth"></span>
   <a class="nav-cta" href="reservation.html">Réserver</a>
 </nav>
+<main id="contenu">
 
 <div class="page-hero">
   <p class="section-label">❤️ Notre histoire</p>
@@ -209,6 +210,7 @@
   </div>
 </section>
 
+</main>
 <footer id="footer-pro">
   <div class="footer-pro-grid">
     <div class="fp-brand">
@@ -222,7 +224,7 @@
       </div>
     </div>
     <div class="fp-col">
-      <h4>Navigation</h4>
+      <h2>Navigation</h2>
       <ul>
         <li><a href="index.html">🏠 Accueil</a></li>
         <li><a href="services.html">🐾 Services &amp; Tarifs</a></li>
@@ -234,7 +236,7 @@
       </ul>
     </div>
     <div class="fp-col">
-      <h4>Contact &amp; Zones</h4>
+      <h2>Contact &amp; Zones</h2>
       <ul>
         <li><a href="tel:0777234088">📞 07 77 23 40 88</a></li>
         <li><a href="https://maps.google.com/?q=Miramas+13140" target="_blank">📍 Miramas 13140</a></li>

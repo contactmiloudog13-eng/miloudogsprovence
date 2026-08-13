@@ -45,7 +45,7 @@
 .resa-info ul li{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;font-size:.92rem;color:var(--text-muted);}
 .resa-info ul li .check{color:var(--vert);font-size:1.1rem;flex-shrink:0;margin-top:2px;}
 .contact-box{margin-top:32px;background:var(--lavande-light);border-radius:20px;padding:24px;}
-.contact-box h4{font-size:1rem;color:var(--lavande-dark);margin-bottom:16px;}
+.contact-box h2,.contact-box h3,.contact-box h4{font-size:1rem;color:var(--lavande-dark);margin-bottom:16px;}
 .contact-item{display:flex;align-items:center;gap:12px;margin-bottom:12px;font-size:.9rem;color:var(--text-muted);}
 .contact-item a{color:var(--lavande);text-decoration:none;font-weight:700;}
 .resa-form{background:var(--cream);border-radius:24px;padding:40px;border:1px solid var(--border);}
@@ -245,7 +245,7 @@
 <body>
 <nav>
   <a class="nav-logo" href="index.html"><span class="paw">🐾</span><span>Milou Dogs Provence</span></a>
-  <button class="hamburger" onclick="toggleMenu(this)"><span></span><span></span><span></span></button>
+  <button class="hamburger" onclick="toggleMenu(this)" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="navlinks"><span></span><span></span><span></span></button>
   <ul class="nav-links" id="navlinks">
     <li><a href="index.html" data-icon="🏠">Accueil</a></li>
     <li><a href="services.html" data-icon="🐾">Services & Tarifs</a></li>
@@ -261,6 +261,7 @@
   <span id="nav-desktop-auth"></span>
   <a class="nav-cta" href="#resa-form">Réserver</a>
 </nav>
+<main id="contenu">
 
 <div class="resa-hero">
   <div class="resa-hero-inner">
@@ -302,7 +303,7 @@
         <script>/* Sur téléphone : on replie les accordéons (ouverts par défaut sur ordi) */
         try{ if(window.matchMedia('(max-width:760px)').matches){ document.querySelectorAll('.resa-acc[open]').forEach(function(d){ d.removeAttribute('open'); }); } }catch(e){}</script>
         <div class="contact-box">
-          <h4>📞 Contact direct</h4>
+          <h2>📞 Contact direct</h2>
           <div class="contact-item">📱 <a href="tel:0777234088">07 77 23 40 88</a></div>
           <div class="contact-item">📘 <a href="https://facebook.com/miloudogsprovence" target="_blank">Facebook</a></div>
           <div class="contact-item">🎵 <a href="https://tiktok.com/@miloudogs_provence" target="_blank">TikTok</a></div>
@@ -730,6 +731,7 @@
   </div>
 </section>
 
+</main>
 <footer>
   <div class="footer-logo">🐾 Milou Dogs Provence</div>
   <div class="social-links">

@@ -101,7 +101,7 @@
 .parr-faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:860px;margin:36px auto 0;}
 @media(max-width:640px){.parr-faq-grid{grid-template-columns:1fr;}}
 .faq-mini{background:white;border:1.5px solid var(--border);border-radius:16px;padding:20px 22px;}
-.faq-mini h4{font-size:.88rem;font-weight:800;color:var(--lavande-dark);margin-bottom:6px;}
+.faq-mini h3,.faq-mini h3,h4{font-size:.88rem;font-weight:800;color:var(--lavande-dark);margin-bottom:6px;}
 .faq-mini p{font-size:.82rem;color:var(--text-muted);line-height:1.6;}
 
 /* ── FOOTER ── */
@@ -113,7 +113,7 @@
 .fp-social{display:flex;gap:10px;}
 .fp-soc-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:.9rem;color:white;text-decoration:none;transition:background .2s;}
 .fp-soc-btn:hover{background:var(--lavande);}
-.fp-col h4{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:18px;}
+.fp-col h2,.fp-col h3,.fp-col h3,.fp-col h3,h4{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:18px;}
 .fp-col ul{list-style:none;}
 .fp-col ul li{margin-bottom:10px;}
 .fp-col ul li a{color:rgba(255,255,255,.6);text-decoration:none;font-size:.88rem;transition:color .2s;}
@@ -126,7 +126,7 @@
 <body>
 <nav>
   <a class="nav-logo" href="index.html"><span class="paw">🐾</span><span>Milou Dogs Provence</span></a>
-  <button class="hamburger" onclick="toggleMenu(this)"><span></span><span></span><span></span></button>
+  <button class="hamburger" onclick="toggleMenu(this)" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="navlinks"><span></span><span></span><span></span></button>
   <ul class="nav-links" id="navlinks">
     <li><a href="index.html" data-icon="🏠">Accueil</a></li>
     <li><a href="services.html" data-icon="🐾">Services &amp; Tarifs</a></li>
@@ -144,6 +144,7 @@
   <span id="nav-desktop-auth"></span>
   <a class="nav-cta" href="reservation.html">Réserver</a>
 </nav>
+<main id="contenu">
 
 <!-- ── HERO ── -->
 <section class="parr-hero">
@@ -235,19 +236,19 @@
     </div>
     <div class="parr-faq-grid fade-in">
       <div class="faq-mini">
-        <h4>💰 Quand est-ce que je reçois mes 10€ ?</h4>
+        <h3>💰 Quand est-ce que je reçois mes 10€ ?</h3>
         <p>Dès que votre filleul effectue sa 1ère réservation confirmée. Les 10€ sont déduits automatiquement de votre prochaine garde.</p>
       </div>
       <div class="faq-mini">
-        <h4>🔢 Y a-t-il une limite de parrainages ?</h4>
+        <h3>🔢 Y a-t-il une limite de parrainages ?</h3>
         <p>Aucune limite ! Vous pouvez parrainer autant d'amis que vous voulez. Chaque parrainage réussi = 10€ de plus.</p>
       </div>
       <div class="faq-mini">
-        <h4>📋 Comment mon ami mentionne mon code ?</h4>
+        <h3>📋 Comment mon ami mentionne mon code ?</h3>
         <p>Il l'indique dans le champ "Code parrain" du formulaire de réservation en ligne, ou directement par WhatsApp lors de sa prise de contact.</p>
       </div>
       <div class="faq-mini">
-        <h4>🤝 Mon ami a-t-il un avantage aussi ?</h4>
+        <h3>🤝 Mon ami a-t-il un avantage aussi ?</h3>
         <p>Oui ! Il bénéficie de nos services habituels et s'il parraine quelqu'un à son tour, il gagne également 10€ sur sa prochaine garde.</p>
       </div>
     </div>
@@ -259,6 +260,7 @@
   </div>
 </section>
 
+</main>
 <footer id="footer-pro">
   <div class="footer-pro-grid">
     <div class="fp-brand">
@@ -272,7 +274,7 @@
       </div>
     </div>
     <div class="fp-col">
-      <h4>Navigation</h4>
+      <h2>Navigation</h2>
       <ul>
         <li><a href="index.html">🏠 Accueil</a></li>
         <li><a href="services.html">🐾 Services &amp; Tarifs</a></li>
@@ -284,7 +286,7 @@
       </ul>
     </div>
     <div class="fp-col">
-      <h4>Contact &amp; Zones</h4>
+      <h2>Contact &amp; Zones</h2>
       <ul>
         <li><a href="tel:0777234088">📞 07 77 23 40 88</a></li>
         <li><a href="https://maps.google.com/?q=Miramas+13140" target="_blank">📍 Miramas 13140</a></li>

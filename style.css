@@ -5,7 +5,7 @@
    Elles sont desormais chargees en <link> non bloquant dans chaque page ;
    en attendant, le texte s'affiche dans la police systeme. */
 :root{
-  --cream:#FAF6F0;--lavande:#7B6FA0;--lavande-light:#E8E4F0;--lavande-dark:#4A3F72;
+  --cream:#FAF6F0;--lavande:#706497;--lavande-light:#f0eef5;--lavande-dark:#4A3F72;
   --soleil:#E8A84C;--soleil-light:#FDF3E0;--vert:#5A7A4A;--vert-light:#EBF3E5;
   --text:#2C2A26;--text-muted:#6B6760;--white:#FFFFFF;--border:#E5E0D8;
   --shadow:0 4px 24px rgba(123,111,160,0.10);

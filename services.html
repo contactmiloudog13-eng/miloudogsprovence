@@ -118,7 +118,7 @@
 .comp-table th{padding:14px 18px;font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700;}
 .comp-table th:first-child{background:#f5f0fa;color:var(--text-muted);text-align:left;}
 .comp-table th.th-milou{background:var(--lavande);color:white;text-align:center;width:32%;}
-.comp-table th.th-chenil{background:#f0f0f0;color:#888;text-align:center;width:32%;}
+.comp-table th.th-chenil{background:#f0f0f0;color:#6b6760;text-align:center;width:32%;}
 .comp-table td{padding:11px 18px;font-size:.85rem;border-top:1px solid var(--border);background:white;}
 .comp-table td:first-child{background:#faf9fb;color:var(--text);font-weight:600;font-size:.84rem;}
 .comp-table td.td-milou{text-align:center;color:var(--vert);font-weight:700;background:linear-gradient(135deg,#f7f4ff,#f0ecfb);}
@@ -133,7 +133,7 @@
 <body>
 <nav>
   <a class="nav-logo" href="index.html"><span class="paw">🐾</span><span>Milou Dogs Provence</span></a>
-  <button class="hamburger" onclick="toggleMenu(this)"><span></span><span></span><span></span></button>
+  <button class="hamburger" onclick="toggleMenu(this)" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="navlinks"><span></span><span></span><span></span></button>
   <ul class="nav-links" id="navlinks">
         <li><a href="index.html" data-icon="🏠">Accueil</a></li>
     <li><a href="services.html" data-icon="🐾">Services &amp; Tarifs</a></li>
@@ -151,6 +151,7 @@
   <span id="nav-desktop-auth"></span>
   <a class="nav-cta" href="reservation.html">Réserver</a>
 </nav>
+<main id="contenu">
 
 <div class="page-hero" style="background:linear-gradient(135deg,#2d1f4e 0%,#4A3F72 100%);background-size:unset;animation:none;padding:70px 5% 60px;">
   <p class="section-label" style="background:rgba(255,255,255,.15);color:#F5C84A;border-color:rgba(255,255,255,.2);">🐶 Services &amp; Tarifs</p>
@@ -247,7 +248,7 @@
 
       <!-- Forfait Évasion — randonnée du samedi -->
       <div class="t-card fade-in" data-capacite-fixe data-tarif-fixe onclick="location.href='forfait-evasion.html'" style="border-color:var(--lavande);background:linear-gradient(160deg,#fff,#F6F4FB);">
-        <div class="star-ribbon" style="background:linear-gradient(135deg,#4A3F72,#7B6FA0);color:#F5C84A;">🏔️ Nouveau · samedis</div>
+        <div class="star-ribbon" style="background:linear-gradient(135deg,#4A3F72,#706497);color:#F5C84A;">🏔️ Nouveau · samedis</div>
         <div class="t-card-top">
           <div class="t-icon">🏔️</div>
           <div>
@@ -372,7 +373,7 @@
       <table class="comp-table">
         <thead>
           <tr>
-            <th></th>
+            <th><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;">Critère comparé</span></th>
             <th class="th-milou">🐾 Milou Dogs Provence</th>
             <th class="th-chenil">🏢 Chenil classique</th>
           </tr>
@@ -482,7 +483,7 @@
 .fp-social{display:flex;gap:10px;}
 .fp-soc-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:.9rem;color:white;text-decoration:none;transition:background .2s;}
 .fp-soc-btn:hover{background:var(--lavande,#6B5B95);}
-.fp-col h4{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:18px;}
+.fp-col h2,.fp-col h3,.fp-col h4{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:18px;}
 .fp-col ul{list-style:none;}
 .fp-col ul li{margin-bottom:10px;}
 .fp-col ul li a{color:rgba(255,255,255,.6);text-decoration:none;font-size:.88rem;transition:color .2s;}
@@ -491,6 +492,7 @@
 .footer-pro-bottom p{font-size:.73rem;color:rgba(255,255,255,.25);}
 .footer-pro-bottom a{color:rgba(255,255,255,.3);text-decoration:underline;}
 </style>
+</main>
 <footer id="footer-pro">
   <div class="footer-pro-grid">
     <div class="fp-brand">
@@ -504,7 +506,7 @@
       </div>
     </div>
     <div class="fp-col">
-      <h4>Navigation</h4>
+      <h2>Navigation</h2>
       <ul>
         <li><a href="index.html">🏠 Accueil</a></li>
         <li><a href="services.html">🐾 Services & Tarifs</a></li>
@@ -516,7 +518,7 @@
       </ul>
     </div>
     <div class="fp-col">
-      <h4>Contact & Zones</h4>
+      <h2>Contact & Zones</h2>
       <ul>
         <li><a href="tel:0777234088">📞 07 77 23 40 88</a></li>
         <li><a href="https://maps.google.com/?q=Miramas+13140" target="_blank">📍 Miramas 13140</a></li>

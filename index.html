@@ -396,7 +396,7 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
 <body>
 <nav>
   <a class="nav-logo" href="index.html"><span class="paw">🐾</span><span>Milou Dogs Provence</span></a>
-  <button class="hamburger" onclick="toggleMenu(this)"><span></span><span></span><span></span></button>
+  <button class="hamburger" onclick="toggleMenu(this)" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="navlinks"><span></span><span></span><span></span></button>
   <ul class="nav-links" id="navlinks">
         <li><a href="index.html" data-icon="🏠">Accueil</a></li>
     <li><a href="services.html" data-icon="🐾">Services &amp; Tarifs</a></li>
@@ -414,6 +414,7 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
   <span id="nav-desktop-auth"></span>
   <a class="nav-cta" href="reservation.html">Réserver</a>
 </nav>
+<main id="contenu">
 
 <section id="hero">
   <div class="hero-bg"></div>
@@ -779,13 +780,13 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
       <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;">
         <div style="flex:1;min-width:150px;text-align:left;">
           <label style="display:block;color:rgba(255,255,255,.8);font-size:.78rem;font-weight:700;margin-bottom:6px;">Nombre de nuits</label>
-          <select id="simu-nuits" onchange="simuCalc()" style="width:100%;padding:12px 14px;border-radius:12px;border:none;font-family:'Lato',sans-serif;font-size:.95rem;font-weight:700;color:var(--lavande-dark);">
+          <select id="simu-nuits" onchange="simuCalc()" aria-label="Nombre de nuits" style="width:100%;padding:12px 14px;border-radius:12px;border:none;font-family:'Lato',sans-serif;font-size:.95rem;font-weight:700;color:var(--lavande-dark);">
             <option value="1">1 nuit</option><option value="2" selected>2 nuits</option><option value="3">3 nuits</option><option value="4">4 nuits</option><option value="5">5 nuits</option><option value="6">6 nuits</option><option value="7">1 semaine (7 nuits)</option><option value="10">10 nuits</option><option value="14">2 semaines (14 nuits)</option>
           </select>
         </div>
         <div style="flex:1;min-width:150px;text-align:left;">
           <label style="display:block;color:rgba(255,255,255,.8);font-size:.78rem;font-weight:700;margin-bottom:6px;">Nombre de chiens</label>
-          <select id="simu-chiens" onchange="simuCalc()" style="width:100%;padding:12px 14px;border-radius:12px;border:none;font-family:'Lato',sans-serif;font-size:.95rem;font-weight:700;color:var(--lavande-dark);">
+          <select id="simu-chiens" onchange="simuCalc()" aria-label="Nombre de chiens" style="width:100%;padding:12px 14px;border-radius:12px;border:none;font-family:'Lato',sans-serif;font-size:.95rem;font-weight:700;color:var(--lavande-dark);">
             <option value="1" selected>1 chien</option><option value="2">2 chiens (−10%)</option><option value="3">3 chiens (−15%)</option>
           </select>
         </div>
@@ -1034,7 +1035,7 @@ function simuCalc(){
           <tr>
             <th style="background:#f5f0fa;color:var(--text-muted);text-align:left;padding:18px 22px;font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;width:36%;">Critère</th>
             <th style="background:var(--lavande-dark);color:white;text-align:center;padding:18px 22px;font-size:.9rem;font-weight:700;width:32%;">🐾 Milou Dogs Provence</th>
-            <th style="background:#f0f0f0;color:#888;text-align:center;padding:18px 22px;font-size:.9rem;font-weight:700;width:32%;">🏢 Chenil classique</th>
+            <th style="background:#f0f0f0;color:#6b6760;text-align:center;padding:18px 22px;font-size:.9rem;font-weight:700;width:32%;">🏢 Chenil classique</th>
           </tr>
         </thead>
         <tbody>
@@ -1167,7 +1168,7 @@ function vidFull(btn){
       <h2 class="section-title">Nos pensionnaires à 4 pattes</h2>
       <p class="section-sub">Photos fraîches de nos chiens choyés, publiées directement depuis la pension</p>
     </div>
-    <div id="galerie-loading" style="text-align:center;padding:40px;color:#888;font-size:.9rem;">Chargement des photos…</div>
+    <div id="galerie-loading" style="text-align:center;padding:40px;color:#6b6760;font-size:.9rem;">Chargement des photos…</div>
     <div id="galerie-grid" style="display:none;columns:3;column-gap:14px;" class="reveal-scale"></div>
     <div id="galerie-empty" style="display:none;text-align:center;padding:60px 20px;">
       <div style="font-size:3.5rem;margin-bottom:16px;">📸</div>
@@ -1177,7 +1178,7 @@ function vidFull(btn){
     </div>
     <!-- Lightbox -->
     <div id="galerie-lightbox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;align-items:center;justify-content:center;cursor:zoom-out;" onclick="closeLightbox()">
-      <img id="galerie-lightbox-img" src="" alt="Photo d'un chien en pension familiale chez Milou Dogs Provence à Miramas" style="max-width:92vw;max-height:90vh;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.5);">
+      <img id="galerie-lightbox-img" alt="Photo d'un chien en pension familiale chez Milou Dogs Provence à Miramas" style="max-width:92vw;max-height:90vh;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.5);">
       <div id="galerie-lightbox-caption" style="position:absolute;bottom:24px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.75);font-size:.85rem;text-align:center;pointer-events:none;"></div>
     </div>
   </div>
@@ -1186,7 +1187,7 @@ function vidFull(btn){
 #galerie-grid img{width:100%;border-radius:12px;margin-bottom:14px;display:block;cursor:zoom-in;transition:transform .25s,box-shadow .25s;}
 #galerie-grid img:hover{transform:scale(1.03);box-shadow:0 10px 30px rgba(0,0,0,.15);}
 .gal-item{break-inside:avoid;margin-bottom:0;position:relative;}
-.gal-caption{font-size:.75rem;color:#888;text-align:center;margin-top:-8px;margin-bottom:14px;}
+.gal-caption{font-size:.75rem;color:#6b6760;text-align:center;margin-top:-8px;margin-bottom:14px;}
 @media(max-width:760px){#galerie-grid{columns:2;}}
 @media(max-width:480px){#galerie-grid{columns:1;}}
 </style>
@@ -1245,7 +1246,7 @@ function nlSubmit(e){
 .fp-social{display:flex;gap:10px;}
 .fp-soc-btn{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:.95rem;color:white;text-decoration:none;transition:all .2s;}
 .fp-soc-btn:hover{background:var(--lavande);transform:translateY(-3px);}
-.fp-col h4{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.06);}
+.fp-col h2,.fp-col h3,.fp-col h4{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.06);}
 .fp-col ul{list-style:none;}
 .fp-col ul li{margin-bottom:10px;}
 .fp-col ul li a{color:rgba(255,255,255,.55);text-decoration:none;font-size:.88rem;transition:color .2s;display:flex;align-items:center;gap:8px;}
@@ -1346,6 +1347,7 @@ function nlSubmit(e){
   </div>
 </section>
 
+</main>
 <footer id="footer-pro">
   <div class="footer-pro-cta">
     <h3>Votre chien mérite le meilleur 🐾</h3>
@@ -1368,7 +1370,7 @@ function nlSubmit(e){
       </div>
     </div>
     <div class="fp-col">
-      <h4>Navigation</h4>
+      <h2>Navigation</h2>
       <ul>
         <li><a href="index.html">🏠 Accueil</a></li>
         <li><a href="services.html">🐾 Services & Tarifs</a></li>
@@ -1381,7 +1383,7 @@ function nlSubmit(e){
       </ul>
     </div>
     <div class="fp-col">
-      <h4>Contact & Zones</h4>
+      <h2>Contact & Zones</h2>
       <ul>
         <li><a href="tel:0777234088">📞 07 77 23 40 88</a></li>
         <li><a href="https://maps.google.com/?q=Miramas+13140" target="_blank">📍 Miramas 13140</a></li>
@@ -1422,6 +1424,7 @@ window.addEventListener('scroll',()=>{
   function spawn(){
     const el=document.createElement('div');
     el.className='paw-particle';
+    el.setAttribute('aria-hidden','true');   // purement decoratif
     el.textContent=paws[Math.floor(Math.random()*paws.length)];
     el.style.left=Math.random()*100+'vw';
     el.style.animationDuration=(5+Math.random()*6)+'s';
