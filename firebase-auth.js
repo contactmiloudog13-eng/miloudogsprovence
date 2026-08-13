@@ -60,11 +60,42 @@ function mdEscNav(v) {
 window.mdEsc = mdEscNav;
 
 // ── Mise à jour de la navbar selon l'état de connexion ──────────────────────
-function _updateNav(user) {
+// Dessine le menu « connecte ». Extrait de _updateNav pour pouvoir etre
+// appele soit avec le prenom lu en base, soit avec celui mis en cache.
+function _dessinerConnecte(prenom) {
+  const mobileItem  = document.getElementById('nav-auth-item');
+  const desktopSlot = document.getElementById('nav-desktop-auth');
+
+  if (mobileItem) mobileItem.innerHTML =
+    `<a href="espace-client.html" data-icon="👤" style="color:var(--lavande-dark)!important;font-weight:800;">👤 ${prenom}</a>
+     <a href="#" data-icon="🚪" onclick="logoutUser();return false;" style="color:#c0392b!important;">🚪 Déconnexion</a>`;
+
+  if (desktopSlot) desktopSlot.innerHTML =
+    `<a href="espace-client.html" style="
+        font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+        color:var(--lavande-dark);text-decoration:none;
+        background:var(--lavande-light);padding:8px 16px;border-radius:30px;
+        border:1.5px solid var(--lavande);transition:all .2s;margin-right:8px;
+      " onmouseover="this.style.background='var(--lavande)';this.style.color='white';"
+         onmouseout="this.style.background='var(--lavande-light)';this.style.color='var(--lavande-dark)';"
+      >👤 ${prenom}</a>
+     <button onclick="logoutUser()" style="
+        font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+        color:var(--text-muted);background:transparent;border:1.5px solid var(--border);
+        padding:8px 16px;border-radius:30px;cursor:pointer;transition:all .2s;
+      " onmouseover="this.style.borderColor='#c0392b';this.style.color='#c0392b';"
+         onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)';"
+      >Déconnexion</button>`;
+}
+
+function _updateNav(user, prenomConnu) {
   const mobileItem   = document.getElementById('nav-auth-item');
   const desktopSlot  = document.getElementById('nav-desktop-auth');
 
   if (user) {
+    // Si le prenom est deja connu (mis en cache lors d'une visite precedente),
+    // on dessine le menu sans aucun aller-retour reseau.
+    if (prenomConnu != null) { _dessinerConnecte(mdEscNav(prenomConnu)); return; }
     _db.ref('users/' + user.uid).get().then(snap => {
       const data   = snap.exists() ? snap.val() : {};
       // ⚠️ Échappé : ce prénom part dans du innerHTML sur TOUTES les pages qui
@@ -72,28 +103,9 @@ function _updateNav(user) {
       // devenait un élément réel. Portée limitée (chacun n'écrit que son propre
       // profil, donc auto-injection), mais le même prénom est aussi affiché
       // dans le back-office — et là, la session visée n'est plus la sienne.
-      const prenom = mdEscNav(data.prenom || user.displayName || 'Mon espace');
-
-      if (mobileItem) mobileItem.innerHTML =
-        `<a href="espace-client.html" data-icon="👤" style="color:var(--lavande-dark)!important;font-weight:800;">👤 ${prenom}</a>
-         <a href="#" data-icon="🚪" onclick="logoutUser();return false;" style="color:#c0392b!important;">🚪 Déconnexion</a>`;
-
-      if (desktopSlot) desktopSlot.innerHTML =
-        `<a href="espace-client.html" style="
-            font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
-            color:var(--lavande-dark);text-decoration:none;
-            background:var(--lavande-light);padding:8px 16px;border-radius:30px;
-            border:1.5px solid var(--lavande);transition:all .2s;margin-right:8px;
-          " onmouseover="this.style.background='var(--lavande)';this.style.color='white';"
-             onmouseout="this.style.background='var(--lavande-light)';this.style.color='var(--lavande-dark)';"
-          >👤 ${prenom}</a>
-         <button onclick="logoutUser()" style="
-            font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
-            color:var(--text-muted);background:transparent;border:1.5px solid var(--border);
-            padding:8px 16px;border-radius:30px;cursor:pointer;transition:all .2s;
-          " onmouseover="this.style.borderColor='#c0392b';this.style.color='#c0392b';"
-             onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)';"
-          >Déconnexion</button>`;
+      var _p = data.prenom || user.displayName || 'Mon espace';
+      try{ localStorage.setItem('mdpDejaConnecte', _p); }catch(e){}
+      _dessinerConnecte(mdEscNav(_p));
     });
   } else {
     if (mobileItem) mobileItem.innerHTML =
@@ -109,7 +121,41 @@ function _updateNav(user) {
   }
 }
 
-_auth.onAuthStateChanged(_updateNav);
+// ── Mise a jour du menu : repoussee hors du chemin critique ────────────────
+// PageSpeed a montre que ce seul appel declenche, chez Firebase Auth :
+//   • le chargement d'un iframe de 93 Ko depuis milou-dogs.firebaseapp.com
+//     (un QUATRIEME domaine, avec son DNS, son TCP et son TLS)
+//   • un appel getProjectConfig vers www.googleapis.com qui a mis 944 ms
+// Tout cela pour ecrire « Mon espace » ou « Connexion » dans le menu.
+//
+// On procede donc en deux temps :
+//   1. on affiche IMMEDIATEMENT le dernier etat connu, garde en memoire
+//      locale : le menu est juste des le premier affichage ;
+//   2. on interroge vraiment Firebase quand le navigateur n'a plus rien
+//      d'urgent a faire, et on corrige si l'etat a change.
+// Resultat : le menu est correct tout de suite et le chemin critique perd
+// pres d'un mega-octet-seconde de travail.
+(function(){
+  var CLE = 'mdpDejaConnecte';
+
+  // 1) Etat connu -> menu affiche sans attendre le reseau
+  try{
+    var cache = localStorage.getItem(CLE);
+    if (cache) _updateNav({}, cache);   // prenom en cache : aucun acces reseau
+    else       _updateNav(null);
+  }catch(e){ _updateNav(null); }
+
+  // 2) Verification reelle, une fois la page libre
+  function verifier(){
+    _auth.onAuthStateChanged(function(user){
+      if (!user) { try{ localStorage.removeItem(CLE); }catch(e){} }
+      _updateNav(user);
+    });
+  }
+  if ('requestIdleCallback' in window) requestIdleCallback(verifier, { timeout: 3000 });
+  else if (document.readyState === 'complete') setTimeout(verifier, 300);
+  else window.addEventListener('load', function(){ setTimeout(verifier, 300); });
+})();
 
 // ── Capacité max chiens : pilotée depuis l'admin (site_config/maxChiens) ──────
 // Met à jour partout le texte « Max N chiens » / « Maximum N chiens » / « N chiens maximum ».
