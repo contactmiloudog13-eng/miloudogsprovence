@@ -134,6 +134,9 @@
 .tp-d{font-size:.84rem;color:#7a5a1a;line-height:1.65;margin-bottom:12px;}
 #test-prealable{background:#FDF3E0;border:1.5px solid var(--soleil);border-radius:14px;padding:16px 18px;margin:2px 0 16px;}
 #test-prealable label{color:#7a5a1a;}
+.tp-deja-l{display:flex;align-items:flex-start;gap:9px;margin-top:12px;padding:10px 12px;background:rgba(255,255,255,.6);border-radius:10px;cursor:pointer;text-transform:none;letter-spacing:0;}
+.tp-deja-l input{width:17px;height:17px;accent-color:var(--soleil);flex-shrink:0;margin-top:1px;cursor:pointer;}
+.tp-deja-l span{font-size:.82rem;color:#7a5a1a;line-height:1.5;}
 .tp-msg{font-size:.8rem;line-height:1.5;margin-top:2px;min-height:18px;}
 .tp-msg.ko{color:#c0392b;font-weight:700;}
 .tp-msg.ok{color:#159067;font-weight:700;}
@@ -529,24 +532,6 @@
                 <div id="visite-result" class="addon-result"></div>
               </div>
             </div>
-            <div class="form-row" id="row-date-debut">
-              <div class="form-group"><label>Date *</label><input id="date-debut" name="Date arrivée" type="date" required oninput="calcPrice()"></div>
-              <div class="form-group"><label>Heure d'arrivée *</label><div style="display:flex;gap:8px;">
-                <select id="heure-debut-h" name="Heure arrivée H" style="flex:1" required onchange="autoDepart();calcPrice()"><option value="">HH</option><option>08</option><option>09</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option></select>
-                <select id="heure-debut-m" name="Heure arrivée M" style="flex:1" required onchange="autoDepart();calcPrice()"><option value="">MM</option><option selected>00</option><option>15</option><option>30</option><option>45</option></select>
-              </div><small style="color:var(--text-muted);font-size:.75rem;">Ouvert 8h–12h et 13h30–19h</small></div>
-            </div>
-            <div id="row-date-fin" style="display:none">
-              <div class="form-row">
-                <div id="col-date-fin" class="form-group"><label>Date de fin *</label><input id="date-fin" name="Date départ" type="date" oninput="calcPrice()"></div>
-                <div class="form-group" id="col-heure-fin"><label id="label-heure-fin">Heure de départ *</label><div style="display:flex;gap:8px;">
-                  <select id="heure-fin-h" name="Heure départ H" style="flex:1" onchange="calcPrice()"><option value="">HH</option><option>08</option><option>09</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option></select>
-                  <select id="heure-fin-m" name="Heure départ M" style="flex:1"><option value="">MM</option><option selected>00</option><option>15</option><option>30</option><option>45</option></select>
-                </div><small style="color:var(--text-muted);font-size:.75rem;">Ouvert 8h–12h et 13h30–19h</small></div>
-              </div>
-              <small id="msg-depart" style="display:none;margin-top:-8px;margin-bottom:14px;background:#FDF3E0;border:1px solid var(--soleil);border-radius:8px;padding:7px 10px;font-size:.78rem;color:#7a5a1a;line-height:1.5;">⏰ <strong>Heure limite de récupération.</strong> Vous pouvez venir avant, mais pas après — merci de respecter ce créneau ❤️</small>
-            </div>
-
             <!-- Test obligatoire avant la 1re garde (nouveaux clients) -->
             <div id="test-prealable" style="display:none;">
               <div class="tp-t">🐣 Première garde chez nous : un test de 24 h d’abord</div>
@@ -565,6 +550,33 @@
                 </div>
               </div>
               <div id="test-msg" class="tp-msg"></div>
+              <label class="tp-deja-l"><input type="checkbox" id="test-deja" onchange="testDejaFait(this.checked)">
+                <span>Mon chien a <b>déjà fait son test</b> chez vous — inutile d’en refaire un.</span></label>
+            </div>
+
+            <!-- Dates du sejour, presentees comme le panneau visite a domicile -->
+            <div id="sejour-card" class="addon-card checked" style="display:none;">
+              <span class="addon-title" id="sejour-titre">Votre séjour</span>
+              <span class="addon-sub" id="sejour-sous"></span>
+              <div class="addon-panel" style="border-top:none;padding-top:14px;">
+            <div class="form-row" id="row-date-debut">
+              <div class="form-group"><label>Date *</label><input id="date-debut" name="Date arrivée" type="date" required oninput="calcPrice()"></div>
+              <div class="form-group"><label>Heure d'arrivée *</label><div style="display:flex;gap:8px;">
+                <select id="heure-debut-h" name="Heure arrivée H" style="flex:1" required onchange="autoDepart();calcPrice()"><option value="">HH</option><option>08</option><option>09</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option></select>
+                <select id="heure-debut-m" name="Heure arrivée M" style="flex:1" required onchange="autoDepart();calcPrice()"><option value="">MM</option><option selected>00</option><option>15</option><option>30</option><option>45</option></select>
+              </div><small style="color:var(--text-muted);font-size:.75rem;">Ouvert 8h–12h et 13h30–19h</small></div>
+            </div>
+            <div id="row-date-fin" style="display:none">
+              <div class="form-row">
+                <div id="col-date-fin" class="form-group"><label>Date de fin *</label><input id="date-fin" name="Date départ" type="date" oninput="calcPrice()"></div>
+                <div class="form-group" id="col-heure-fin"><label id="label-heure-fin">Heure de départ *</label><div style="display:flex;gap:8px;">
+                  <select id="heure-fin-h" name="Heure départ H" style="flex:1" onchange="calcPrice()"><option value="">HH</option><option>08</option><option>09</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option></select>
+                  <select id="heure-fin-m" name="Heure départ M" style="flex:1"><option value="">MM</option><option selected>00</option><option>15</option><option>30</option><option>45</option></select>
+                </div><small style="color:var(--text-muted);font-size:.75rem;">Ouvert 8h–12h et 13h30–19h</small></div>
+              </div>
+              <small id="msg-depart" style="display:none;margin-top:-8px;margin-bottom:14px;background:#FDF3E0;border:1px solid var(--soleil);border-radius:8px;padding:7px 10px;font-size:.78rem;color:#7a5a1a;line-height:1.5;">⏰ <strong>Heure limite de récupération.</strong> Vous pouvez venir avant, mais pas après — merci de respecter ce créneau ❤️</small>
+            </div>
+              </div>
             </div>
 
             <!-- Balades pendant le séjour (pension) -->
@@ -892,7 +904,7 @@ function _validateStep2() {
   // Test prealable : bloquant tant qu'une date valide n'est pas choisie
   let errTest = false;
   const _tpBox = document.getElementById('test-prealable');
-  if (_tpBox && _tpBox.style.display !== 'none' && !(window.__testPrealable && window.__testPrealable.date)) {
+  if (_tpBox && _tpBox.style.display !== 'none' && !window.__testDejaFait && !(window.__testPrealable && window.__testPrealable.date)) {
     const _td = document.getElementById('test-date');
     if (_td) _td.style.borderColor = '#c0392b';
     err = true; errTest = true;
@@ -983,6 +995,8 @@ function toggleTag(el){
   autoDepart();
   syncOptions();
   syncTestPrealable();
+  majTitreSejour();
+  majTitreVisite();
   calcPrice();
 }
 
@@ -1403,6 +1417,41 @@ function syncOptions(){
   if(window.__evasion&&window.__evasion.active) renderSamedis();
 }
 
+/* Libelle des animaux concernes : « votre chien », « votre chat et vos poules »… */
+function mdpLibelleAnimaux(cles){
+  var noms=cles.map(function(k){
+    var q=window.__animaux[k]||1;
+    var n=VISITE_ANIMALS[k].n.replace(/^\S+\s/,'').toLowerCase();
+    return q>1 ? (q+' '+n+'s') : (/^[aeiouy]/.test(n)?"votre "+n:"votre "+n);
+  });
+  if(noms.length<=1) return noms[0]||'';
+  return noms.slice(0,-1).join(', ')+' et '+noms[noms.length-1];
+}
+
+/* Les dates du sejour reprennent la presentation du panneau visite a domicile :
+   un titre qui nomme le service choisi ET les animaux concernes. */
+function majTitreSejour(){
+  var carte=document.getElementById('sejour-card'); if(!carte) return;
+  var tag=document.querySelector('.service-tag.active:not([data-visite])');
+  var visiteSeule=!tag;
+  carte.style.display=visiteSeule?'none':'';   // en visite seule, tout est dans le panneau visite
+  if(visiteSeule) return;
+  var t=document.getElementById('sejour-titre'), sub=document.getElementById('sejour-sous');
+  var nom=tag.textContent.replace('✕','').trim();
+  var chiens=mdpNbChiens();
+  if(t) t.textContent=nom+(chiens?' — pour '+(chiens>1?(chiens+' chiens'):'votre chien'):'');
+  if(sub) sub.textContent='Indiquez quand vous le déposez et quand vous venez le récupérer.';
+}
+
+/* Le panneau visite nomme lui aussi les animaux concernes */
+function majTitreVisite(){
+  var t=document.querySelector('#visite-panel .addon-title'); if(!t) return;
+  var autres=mdpAutres();
+  var chienEnVisite=!!document.querySelector('.service-tag[data-kind="visite"].active');
+  var cles=(chienEnVisite&&mdpNbChiens()?['chien']:[]).concat(autres);
+  t.textContent='🏡 Visite à domicile'+(cles.length?' — pour '+mdpLibelleAnimaux(cles):'');
+}
+
 /* Test 24 h : la date de fin découle de la date d'arrivée (J+1, même heure).
    C'est tout le sens du passage de la demi-journée à 24 h — on garde le chien
    une nuit pour voir comment il se comporte quand la maison s'éteint. */
@@ -1445,9 +1494,33 @@ async function verifClientConnu(tel){
         if(su.exists() && Number(su.val())>=1) connu=true;
       }
     }
+    // Un test deja passe suffit : inutile d'en redemander un
+    if(!connu && key.length>=10){
+      var st=await firebase.database().ref('clients/'+key+'/testFait').get();
+      if(st.exists() && st.val()) connu=true;
+    }
   }catch(e){ /* hors ligne : on reste sur « nouveau », le test sera propose */ }
+  try{ if(localStorage.getItem('mdp_test_fait')==='1') connu=true; }catch(e){}
   window.__nouveauClient=!connu;
   syncTestPrealable();
+}
+
+/* Le client declare que son chien a deja fait son test (souvent cale par
+   telephone, donc absent de Firebase). On le retient pour les fois suivantes. */
+function testDejaFait(on){
+  window.__testDejaFait=!!on;
+  var d=document.getElementById('test-date'), h=document.getElementById('test-h'), m=document.getElementById('test-m');
+  [d,h,m].forEach(function(e){ if(e){ e.disabled=!!on; if(on) e.value=''; } });
+  var msg=document.getElementById('test-msg');
+  if(on){
+    window.__testPrealable={date:'',heure:''};
+    if(msg){ msg.className='tp-msg ok'; msg.textContent='✅ Pas de nouveau test — on a déjà fait connaissance 🤍'; }
+    try{ localStorage.setItem('mdp_test_fait','1'); }catch(e){}
+  } else {
+    try{ localStorage.removeItem('mdp_test_fait'); }catch(e){}
+    majTestPrealable();
+  }
+  calcPrice();
 }
 
 /* Le test ne concerne que les gardes chez nous, et pas le test lui-meme */
@@ -1565,6 +1638,7 @@ function syncAnimaux(){
   var lbl=document.getElementById('chien-label');
   if(lbl) lbl.textContent=chiens>1?('Noms des '+chiens+' chiens *'):'Nom du chien *';
 
+  if(typeof majTitreSejour==='function'){ majTitreSejour(); majTitreVisite(); }
   if(typeof calcPrice==='function') calcPrice();
 }
 // ── Balades pendant le séjour (pension) ──
@@ -2333,6 +2407,8 @@ async function submitReservation() {
         createdAt : existing.createdAt || Date.now(),
         updatedAt : Date.now(),
         nbResas   : (existing.nbResas || 0) + 1,
+        // Un test passe (ou declare par le client) : on ne le redemandera plus
+        testFait  : existing.testFait || !!(window.__testPrealable && window.__testPrealable.date) || !!window.__testDejaFait || null,
         // Acceptation des conditions générales, horodatée et conservée sur la
         // fiche client : c'est la preuve qu'on doit pouvoir ressortir en cas de
         // contestation d'un supplément propreté ou d'un dégât.
