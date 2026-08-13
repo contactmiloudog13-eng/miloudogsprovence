@@ -338,6 +338,11 @@
           <input type="hidden" name="Service" id="hidden-service">
           <input type="hidden" name="Devis" id="hidden-devis">
           <input type="hidden" name="Nombre de chiens" id="hidden-nbchiens" value="1">
+          <!-- Liste complete des animaux. Sans ce champ, une reservation de
+               1 chien + 3 chats + 1 lapin arrivait par e-mail avec la seule
+               mention « 1 chien » : les autres animaux etaient invisibles si
+               l'enregistrement en base echouait. -->
+          <input type="hidden" name="Animaux" id="hidden-animaux">
           <input type="hidden" id="hidden-userid" value="">
           <input type="hidden" id="hidden-statut" value="invité">
 
@@ -2303,6 +2308,15 @@ function prepareSubmit(){
   document.getElementById('hidden-service').value=services||'Non précisé';
   const nb=String(mdpNbChiens());
   document.getElementById('hidden-nbchiens').value=nb+' chien'+(parseInt(nb)>1?'s':'');
+  // Liste lisible de TOUS les animaux, pour l'e-mail de secours.
+  (function(){
+    var noms={chien:'chien',chat:'chat',furet:'furet',poules:'poule',lapin:'lapin',
+              rongeur:'rongeur',oiseau:'oiseau',tortue:'tortue',poisson:'poisson'};
+    var parts=Object.keys(window.__animaux||{}).filter(function(k){return window.__animaux[k]>0;})
+      .map(function(k){ var q=window.__animaux[k], n=noms[k]||k; return q+' '+n+(q>1?'s':''); });
+    var el=document.getElementById('hidden-animaux');
+    if(el) el.value = parts.join(', ') || 'Non précisé';
+  })();
   const box=document.getElementById('price-box');
   if(box.style.display!=='none'){
     const total=document.getElementById('price-total').textContent;
@@ -2397,6 +2411,7 @@ async function submitReservation() {
     'Nom du chien': document.getElementById('chien').value,
     'Race': document.getElementById('race').value,
     'Nombre de chiens': document.getElementById('hidden-nbchiens').value,
+    'Animaux': document.getElementById('hidden-animaux').value,
     'Service souhaité': document.getElementById('hidden-service').value,
     'Date d\'arrivée': document.getElementById('date-debut').value,
     'Heure d\'arrivée': hH && hM ? hH + ':' + hM : '',
