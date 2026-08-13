@@ -12,6 +12,15 @@ const _firebaseConfig = {
   appId: "1:574605669289:web:af278e11680c9ed1138ab8"
 };
 
+// Si le CDN Firebase n'a pas pu etre charge (reseau coupe, anti-pub, proxy
+// d'entreprise), tout ce fichier plantait a la premiere ligne et entrainait
+// une cascade d'erreurs sur la page. On sort proprement : le site reste
+// consultable, seules les fonctions de compte sont indisponibles.
+if (typeof firebase === 'undefined' || !firebase.apps) {
+  console.warn('Firebase indisponible — navigation possible, compte désactivé.');
+  window.__firebaseKO = true;
+} else {
+
 if (!firebase.apps.length) firebase.initializeApp(_firebaseConfig);
 
 const _auth = firebase.auth();
@@ -383,3 +392,5 @@ function redirectIfLoggedIn(dest) {
     }, true);
   } catch(e){}
 })();
+
+} // fin du garde-fou « Firebase indisponible »

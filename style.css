@@ -1,4 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap');
+/* Les polices Google NE sont plus importees ici.
+   Un @import externe bloque tout l'affichage : le navigateur doit charger ce
+   fichier, le lire, PUIS aller chercher la police. Si Google Fonts est lent,
+   bloque par un anti-pub ou filtre par un operateur, la page reste blanche.
+   Elles sont desormais chargees en <link> non bloquant dans chaque page ;
+   en attendant, le texte s'affiche dans la police systeme. */
 :root{
   --cream:#FAF6F0;--lavande:#7B6FA0;--lavande-light:#E8E4F0;--lavande-dark:#4A3F72;
   --soleil:#E8A84C;--soleil-light:#FDF3E0;--vert:#5A7A4A;--vert-light:#EBF3E5;
