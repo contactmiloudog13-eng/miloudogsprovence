@@ -305,8 +305,8 @@
         <div class="contact-box">
           <h2>📞 Contact direct</h2>
           <div class="contact-item">📱 <a href="tel:0777234088">07 77 23 40 88</a></div>
-          <div class="contact-item">📘 <a href="https://facebook.com/miloudogsprovence" target="_blank">Facebook</a></div>
-          <div class="contact-item">🎵 <a href="https://tiktok.com/@miloudogs_provence" target="_blank">TikTok</a></div>
+          <div class="contact-item">📘 <a href="https://facebook.com/miloudogsprovence" target="_blank" rel="noopener noreferrer">Facebook</a></div>
+          <div class="contact-item">🎵 <a href="https://tiktok.com/@miloudogs_provence" target="_blank" rel="noopener noreferrer">TikTok</a></div>
           <div class="contact-item">📍 Miramas, Bouches-du-Rhône</div>
         </div>
       </div>
@@ -685,7 +685,7 @@
               <input type="checkbox" id="cgv-accept" name="CGV acceptées" value="Oui" required>
               <label for="cgv-accept">
                 <span class="cgu-req">Obligatoire</span>
-                J'ai lu et j'accepte les <a href="cgv.html" target="_blank">conditions générales</a> de Milou Dogs Provence.
+                J'ai lu et j'accepte les <a href="cgv.html" target="_blank" rel="noopener noreferrer">conditions générales</a> de Milou Dogs Provence.
                 J'accepte notamment de régler en fin de garde, le cas échéant, <strong>la réparation si mon chien abîme quelque chose</strong>
                 (au coût réel, justificatif à l'appui) et le <strong>supplément de nettoyage de 5 € par jour</strong>
                 si des accidents de propreté surviennent après ses 24 heures d'adaptation.
@@ -740,13 +740,13 @@
 <footer>
   <div class="footer-logo">🐾 Milou Dogs Provence</div>
   <div class="social-links">
-    <a href="https://facebook.com/miloudogsprovence" target="_blank">📘 Facebook</a>
-    <a href="https://tiktok.com/@miloudogs_provence" target="_blank">🎵 TikTok</a>
+    <a href="https://facebook.com/miloudogsprovence" target="_blank" rel="noopener noreferrer">📘 Facebook</a>
+    <a href="https://tiktok.com/@miloudogs_provence" target="_blank" rel="noopener noreferrer">🎵 TikTok</a>
     <a href="tel:0777234088">📞 07 77 23 40 88</a>
   </div>
   <p>Garde de chien à domicile · Promenades · Garderie · Toilettage</p>
   <p>Miramas & Provence · ⭐⭐⭐⭐⭐ sur Google</p>
-  <p style="margin-top:20px;font-size:.75rem;opacity:.5;">© 2025 Milou Dogs Provence · Tous droits réservés · <a onclick="showAdmin()" style="cursor:pointer;color:rgba(255,255,255,.4);">Admin</a></p>
+  <p style="margin-top:20px;font-size:.75rem;opacity:.5;">© 2025 Milou Dogs Provence · Tous droits réservés · <button type="button" onclick="showAdmin()" style="cursor:pointer;color:rgba(255,255,255,.4);background:none;border:none;font:inherit;padding:0;">Admin</button></p>
 </footer>
 <script src="tarifs-fetes.js"></script>
 <script>
@@ -2771,7 +2771,11 @@ document.addEventListener('DOMContentLoaded',()=>{
 </script>
 
 <!-- EmailJS -->
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<!-- EmailJS ne sert QU'a l'accuse de reception, au moment de l'envoi. Charge
+     de facon synchrone, il ouvrait une cinquieme connexion (cdn.jsdelivr.net)
+     en plein milieu de la lecture de la page. En defer, il arrive pendant que
+     le client remplit le formulaire — largement a temps. -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" defer></script>
 <script>
 // ⚙️ EMAILJS — remplace ces 3 valeurs avec tes identifiants emailjs.com
 const EMAILJS_PUBLIC_KEY   = '9aJnH_zz72kllicJB';
@@ -2783,11 +2787,23 @@ const EMAILJS_TPL_RECUE    = 'template_el176m5';
 // le script qui suit. Le site doit rester utilisable sans elle.
 // EmailJS ne sert qu'a l'accuse de reception : sans lui la demande part quand
 // meme (Web3Forms + Firebase), le client recoit juste un e-mail en moins.
-(function(){ try { emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); }
-            catch(e){ console.warn('EmailJS indisponible :', e && e.message); } })();
+// Initialisation a la demande : la bibliotheque est chargee en defer, elle
+// n'est donc pas encore la quand ce bloc s'execute. On l'initialise au premier
+// envoi. Si elle manque (CDN bloque), la demande part quand meme : elle passe
+// par Web3Forms et Firebase, seul l'accuse de reception saute.
+var _ejsPret = false;
+function ejsDispo(){
+  if (typeof emailjs === 'undefined') return false;
+  if (!_ejsPret) {
+    try { emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); _ejsPret = true; }
+    catch(e){ console.warn('EmailJS indisponible :', e && e.message); return false; }
+  }
+  return true;
+}
 
 function ejsSendReception(data) {
   // Envoie un email au client pour confirmer la réception de sa demande
+  if (!ejsDispo()) return Promise.resolve(null);
   return emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TPL_RECUE, {
     to_email   : data.email,
     to_name    : data.prenom,               // prénom pour le « Bonjour … »

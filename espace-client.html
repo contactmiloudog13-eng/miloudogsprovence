@@ -1912,8 +1912,8 @@ function showCarnetPreview(list) {
   el.innerHTML = '<div class="carnet-grid">' + list.map(function(data, i){
     return '<div class="carnet-item">'
       + (_isCarnetImg(data)
-          ? '<a href="'+data+'" target="_blank"><img src="'+data+'" alt="Carnet '+(i+1)+'"></a>'
-          : '<a href="'+data+'" target="_blank" class="carnet-pdf">📄 PDF '+(i+1)+'</a>')
+          ? '<a href="'+data+'" target="_blank" rel="noopener noreferrer"><img src="'+data+'" alt="Carnet '+(i+1)+'"></a>'
+          : '<a href="'+data+'" target="_blank" class="carnet-pdf" rel="noopener noreferrer">📄 PDF '+(i+1)+'</a>')
       + '<button type="button" onclick="deleteCarnet('+i+')" class="carnet-del" title="Supprimer">🗑️</button>'
       + '</div>';
   }).join('') + '</div>';

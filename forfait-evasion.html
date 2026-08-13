@@ -765,7 +765,7 @@
         <label class="ev-case"><input type="checkbox" id="ev-c2" required><span><b>Mon chien est vacciné (CHLPPi à jour), identifié</b> et traité contre les puces et les tiques. Je présenterai son carnet de santé avant la première sortie.</span></label>
         <label class="ev-case"><input type="checkbox" id="ev-c3"><span>J'autorise Milou Dogs à le détacher sur les portions sécurisées si son rappel est fiable. <em>Sans cette case, il reste en laisse ou en longe toute la balade.</em></span></label>
         <label class="ev-case"><input type="checkbox" id="ev-c4"><span>J'autorise l'utilisation des photos de mon chien sur le site et les réseaux de Milou Dogs Provence.</span></label>
-        <label class="ev-case"><input type="checkbox" id="ev-c5" required><span>J'accepte les <a href="cgv.html" target="_blank" style="color:var(--lavande);font-weight:700;">conditions générales</a>. J'accepte notamment de régler, le cas échéant, <b>la réparation si mon chien abîme quelque chose</b> (au coût réel, justificatif à l'appui) et le <b>supplément de nettoyage de 5 € par jour</b> en cas de souci de propreté après ses 24 heures d'adaptation. On vous prévient tout de suite, photos à l'appui.</span></label>
+        <label class="ev-case"><input type="checkbox" id="ev-c5" required><span>J'accepte les <a href="cgv.html" target="_blank" style="color:var(--lavande);font-weight:700;" rel="noopener noreferrer">conditions générales</a>. J'accepte notamment de régler, le cas échéant, <b>la réparation si mon chien abîme quelque chose</b> (au coût réel, justificatif à l'appui) et le <b>supplément de nettoyage de 5 € par jour</b> en cas de souci de propreté après ses 24 heures d'adaptation. On vous prévient tout de suite, photos à l'appui.</span></label>
 
         <div class="ev-recap" id="ev-recap"></div>
 
@@ -908,7 +908,8 @@ var obs=new IntersectionObserver(function(els){els.forEach(function(e){if(e.isIn
 document.querySelectorAll(".fade-in").forEach(function(el){obs.observe(el);});
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<!-- Charge en defer : ne sert qu'au moment de l'envoi. -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" defer></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -1209,6 +1210,7 @@ function evEnvoyer(ev){
     console.warn('Évasion — enregistrement:', e);
   }).then(function(){
     try {
+      if (typeof emailjs === 'undefined') return;   // CDN indisponible : on n'envoie pas l'accuse
       emailjs.init({ publicKey:'9aJnH_zz72kllicJB' });
       emailjs.send('service_i6phwqu', 'template_el176m5', {
         to_email:fiche.email, to_name:fiche.prenom, from_name:'Milou Dogs Provence',

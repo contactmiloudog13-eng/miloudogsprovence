@@ -464,8 +464,14 @@ function loadGA() {
 
     // Bouton « Plus ▾ »
     var toggle=document.createElement('li'); toggle.className='nav-more-toggle';
-    var tlink=document.createElement('a'); tlink.href='javascript:void(0)'; tlink.setAttribute('data-icon','⋯'); tlink.textContent='Plus ▾';
-    tlink.addEventListener('click',function(e){ e.preventDefault(); var o=ul.classList.toggle('show-extra'); tlink.textContent=o?'Moins ▴':'Plus ▾'; });
+    // C'est un bouton d'interface, pas un lien : un <a href="javascript:..."> est
+    // compte par Google comme un lien qui ne mene nulle part, et annonce comme
+    // tel par les lecteurs d'ecran.
+    var tlink=document.createElement('button'); tlink.type='button';
+    tlink.setAttribute('data-icon','⋯'); tlink.textContent='Plus ▾';
+    tlink.setAttribute('aria-expanded','false');
+    tlink.addEventListener('click',function(){ var o=ul.classList.toggle('show-extra');
+      tlink.textContent=o?'Moins ▴':'Plus ▾'; tlink.setAttribute('aria-expanded',o?'true':'false'); });
     toggle.appendChild(tlink);
 
     // Mon espace / Déconnexion = l'item auth existant (#nav-auth-item), géré par firebase-auth.js
@@ -481,7 +487,7 @@ function loadGA() {
     // Styles (une fois)
     if(!document.getElementById('nav-simpl-css')){
       var st=document.createElement('style'); st.id='nav-simpl-css';
-      st.textContent='@media(max-width:760px){.nav-more-toggle{display:block;}#navlinks .nav-extra{display:none!important;}#navlinks.show-extra .nav-extra{display:flex!important;}}';
+      st.textContent='.nav-more-toggle button{background:none;border:none;font:inherit;color:inherit;cursor:pointer;padding:0;width:100%;text-align:inherit;display:flex;align-items:center;gap:12px;}@media(max-width:760px){.nav-more-toggle{display:block;}#navlinks .nav-extra{display:none!important;}#navlinks.show-extra .nav-extra{display:flex!important;}}';
       document.head.appendChild(st);
     }
   }catch(e){}
