@@ -1,5 +1,5 @@
 /* Milou Dogs — Service Worker (offline app shell + cache images) */
-const CACHE = 'milou-app-v21';
+const CACHE = 'milou-app-v22';
 const IMG_CACHE = 'milou-img-v1';
 const IMG_MAX = 120; // nb max de photos gardées hors-ligne
 const SHELL = [
@@ -17,7 +17,13 @@ const SHELL = [
   './manifest.webmanifest',
   './icons/icon.svg',
   './icons/icon-192.png',
-  './icons/icon-512.png'
+  './icons/icon-512.png',
+  // Polices hebergees chez nous : necessaires hors ligne.
+  '../polices/lato-400-latin.woff2',
+  '../polices/lato-700-latin.woff2',
+  '../polices/lato-300-latin.woff2',
+  '../polices/playfair-display-400-latin.woff2',
+  '../polices/playfair-display-700-latin.woff2'
 ];
 
 self.addEventListener('install', (e) => {
