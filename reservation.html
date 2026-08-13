@@ -534,7 +534,7 @@
             </div>
             <!-- Test obligatoire avant la 1re garde (nouveaux clients) -->
             <div id="test-prealable" style="display:none;">
-              <div class="tp-t">🐣 Première garde chez nous : un test de 24 h d’abord</div>
+              <div class="tp-t" id="tp-titre">🐣 Test 24 h — pour votre chien</div>
               <p class="tp-d">On ne découvre pas un chien le jour où ses maîtres partent. Avant votre première garde, votre chien passe <strong>24 h chez nous</strong> — il visite les lieux, rencontre les autres, et on voit comment il vit la nuit. C’est ce qui fait qu’un séjour se passe bien.</p>
               <div class="form-row">
                 <div class="form-group">
@@ -1025,12 +1025,25 @@ function majCreneaux(idH,idM){
   [].slice.call(m.options).forEach(function(o){
     if(!o.value) return;
     var mn=parseInt(o.value,10);
-    var ko=(v===12 && mn>0) || (v===13 && mn<30) || (v===19 && mn>0);
+    var ko=(v===12) || (v===13 && mn<30) || (v===19 && mn>0);
     o.disabled=ko;
     if(ko && o.selected){ m.value = (v===13?'30':'00'); }
   });
 }
+/* 12h n'est plus une heure d'ouverture : on grise l'option elle-meme
+   plutot que de laisser choisir une heure dont toutes les minutes sont barrees. */
+function grise12h(){
+  ['heure-debut-h','heure-fin-h','test-h'].forEach(function(id){
+    var sel=document.getElementById(id); if(!sel) return;
+    [].slice.call(sel.options).forEach(function(o){
+      // Ne PAS renommer l'option : une <option> sans attribut value renvoie son
+      // texte, la renommer casserait toute comparaison sur o.value ensuite.
+      if(o.value==='12'){ o.disabled=true; if(o.selected) sel.value=''; }
+    });
+  });
+}
 function majTousCreneaux(){
+  grise12h();
   majCreneaux('heure-debut-h','heure-debut-m');
   majCreneaux('heure-fin-h','heure-fin-m');
 }
@@ -1536,6 +1549,8 @@ function testDejaFait(on){
 /* Le test ne concerne que les gardes chez nous, et pas le test lui-meme */
 function syncTestPrealable(){
   var box=document.getElementById('test-prealable'); if(!box) return;
+  var ti=document.getElementById('tp-titre');
+  if(ti){ var nc=mdpNbChiens(); ti.textContent='🐣 Test 24 h — pour '+(nc>1?(nc+' chiens'):'votre chien'); }
   var kinds=[].slice.call(document.querySelectorAll('.service-tag.active')).map(function(t){return t.dataset.kind;});
   var garde=kinds.indexOf('pension')>=0||kinds.indexOf('garderie-jour')>=0||kinds.indexOf('garderie-demi')>=0;
   var besoin=window.__nouveauClient && garde && kinds.indexOf('test24')<0;
@@ -1545,6 +1560,16 @@ function syncTestPrealable(){
 }
 
 /* Le test doit tomber STRICTEMENT avant l'arrivee */
+/* Aucun champ de date ne doit accepter une date passee. */
+function bloqueDatesPassees(){
+  var auj=new Date().toISOString().split('T')[0];
+  ['date-debut','date-fin','test-date','visite-start','visite-end'].forEach(function(id){
+    var e=document.getElementById(id); if(!e) return;
+    if(!e.min || e.min<auj) e.min=auj;
+    if(e.value && e.value<auj) e.value='';
+  });
+}
+
 function majTestPrealable(){
   var d=document.getElementById('test-date'), msg=document.getElementById('test-msg');
   var arr=(document.getElementById('date-debut')||{}).value||'';
@@ -1598,8 +1623,10 @@ function syncAnimaux(){
   // 1. Les services chiens n'ont de sens que s'il y a un chien
   var svcChiens=document.getElementById('svc-chiens');
   if(svcChiens) svcChiens.style.display=chiens>0?'':'none';
+  // Sans chien, il n'y a aucun service a choisir : la visite s'impose.
+  // AVEC un chien, on ne touche PAS a son service : cocher un chat ouvre
+  // seulement le panneau visite pour le chat.
   if(!chiens){
-    // Aucun chien : tout passe en visite à domicile, on la sélectionne d'office
     var vt=document.querySelector('.service-tag[data-kind="visite"]');
     if(vt && !vt.classList.contains('active')){ toggleTag(vt); toggleVisitePanel(); }
   }
@@ -2062,7 +2089,7 @@ function calcPrice(){
   }
 
   // Transport à domicile (aller-retour / récupération seule / dépose seule)
-  if(window.__pickup && window.__pickup.active && window.__pickup.price>0){
+  if(window.__pickup && window.__pickup.active && window.__pickup.km!=null){
     var _pkCfg=PICKUP_MODES[window.__pickup.mode||'both']||PICKUP_MODES.both;
     var _pkKm=window.__pickup.km?(' '+window.__pickup.km.toString().replace('.',',')+' km'):'';
     P('🚗','Transport à domicile — '+_pkCfg.label, _pkKm.trim(), null, null, window.__pickup.price);
@@ -2541,6 +2568,8 @@ if(window.location.hash==='#admin-panel')showAdmin();
 document.addEventListener('DOMContentLoaded',()=>{
   // Sélecteur d'animaux : grille construite depuis VISITE_ANIMALS
   if(typeof renderAutresAnimaux==='function'){ renderAutresAnimaux(); syncAnimaux(); }
+  if(typeof bloqueDatesPassees==='function') bloqueDatesPassees();
+  if(typeof grise12h==='function') grise12h();
   // Les cartes balades et transport existaient deja plus haut dans la page :
   // on les regroupe avec les autres questions de fin de parcours.
   (function(){
