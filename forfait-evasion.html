@@ -41,7 +41,7 @@
 .ev-hero{position:relative;overflow:hidden;padding:132px 5% 84px;isolation:isolate;}
 .ev-hero .evhero{
   position:absolute;inset:0;z-index:-3;
-  background-image:url('IMG_1073.webp');background-size:cover;background-position:center 38%;
+  background-image:url('IMG_1073-500.webp');background-size:cover;background-position:center 38%;
   transform:scale(1.06);
 }
 .ev-hero::before{
@@ -193,7 +193,7 @@
 }
 .ev-photo-cadre .ph{
   height:400px;background-size:cover;background-position:center;
-  background-image:url('IMG_1240.webp');
+  background-image:url('IMG_1240-500.webp');
 }
 .ev-aside-note{
   background:linear-gradient(135deg,var(--lavande-dark),var(--lavande));
@@ -204,7 +204,7 @@
 
 /* ── Lieux ────────────────────────────────────────────────────────────── */
 /* 6 lieux : 3 + 3 en grand écran, jamais une rangée orpheline */
-.ev-lieux{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:1060px;margin:0 auto;}
+.ev-lieux{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:1060px;margin:0 auto;content-visibility:auto;contain-intrinsic-size:auto 780px;}
 @media(max-width:900px){.ev-lieux{grid-template-columns:1fr 1fr;}}
 @media(max-width:560px){.ev-lieux{grid-template-columns:1fr;}}
 .ev-lieu{
@@ -231,17 +231,15 @@
 }
 /* Photos des lieux : quatre viennent de Wikimedia Commons (crédits en bas de
    section), deux attendent nos propres photos. Toutes remplaçables depuis l'admin. */
-.ev1{background-image:url('lieu-miramas-le-vieux.webp');}
-.ev2{background-image:url('IMG_1073.webp');}
-.ev3{background-image:url('lieu-etang-de-berre.webp');}
-.ev4{background-image:url('lieu-etang-olivier.webp');}
-.ev5{background-image:url('IMG_3307.webp');}
-.ev6{background-image:url('lieu-pont-flavien.webp');}
+.ev1{background-image:url('lieu-miramas-le-vieux-800.webp');}
+.ev2{background-image:url('IMG_1073-500.webp');}
+.ev3{background-image:url('lieu-etang-de-berre-800.webp');}
+.ev4{background-image:url('lieu-etang-olivier-800.webp');}
+.ev5{background-image:url('IMG_3307-500.webp');}
+.ev6{background-image:url('lieu-pont-flavien-800.webp');}
+/* Le 800 px sert desormais a tout le monde : la variante mobile
+   distincte n'a plus lieu d'etre. */
 @media(max-width:760px){
-  .ev1{background-image:url('lieu-miramas-le-vieux-800.webp');}
-  .ev3{background-image:url('lieu-etang-de-berre-800.webp');}
-  .ev4{background-image:url('lieu-etang-olivier-800.webp');}
-  .ev6{background-image:url('lieu-pont-flavien-800.webp');}
 }
 .ev-credits{
   text-align:center;font-size:.72rem;color:var(--text-muted);margin-top:18px;line-height:1.7;opacity:.75;
@@ -373,9 +371,9 @@
   border:1px solid var(--border);transition:transform .5s cubic-bezier(.2,.7,.3,1);
 }
 .ev-galerie .ph:hover{transform:scale(1.02);}
-.evg1{background-image:url('IMG_1073.webp');}
-.evg2{background-image:url('IMG_3307.webp');}
-.evg3{background-image:url('IMG_1212.webp');}
+.evg1{background-image:url('IMG_1073-500.webp');}
+.evg2{background-image:url('IMG_3307-500.webp');}
+.evg3{background-image:url('IMG_1212-500.webp');}
 
 /* ── Conditions ───────────────────────────────────────────────────────── */
 .ev-cond{

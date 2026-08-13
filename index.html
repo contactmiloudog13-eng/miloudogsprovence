@@ -216,7 +216,10 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
   }
   #comparaison-home thead th:first-child{font-size:.68rem!important;}
   #scroll-hint-table{display:none!important;}
-  .hero-bg{background-image:url('hero-mobile.png');background-position:center center;background-size:cover;}
+  /* La page prechargeait hero-mobile.webp mais affichait hero-mobile.png :
+     le navigateur telechargeait les DEUX, soit 144 Ko jetes a la poubelle
+     sur chaque visite mobile. On affiche le .webp, celui qui est precharge. */
+  .hero-bg{background-image:url('hero-mobile.webp');background-position:center center;background-size:cover;}
   @keyframes zoomin{from{transform:scale(1.01);}to{transform:scale(1);}}
 }
 /* ── SERVICES MINI ── */
@@ -256,12 +259,15 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
 #about{background:white;}
 .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
 @media(max-width:760px){.about-grid{grid-template-columns:1fr;}}
+/* CSS inutilise : aucun element ne porte ces classes sur cette page.
+   Conserve tel quel (les fonds CSS ne se telechargent que si un element
+   correspond, donc cela ne coute rien), mais a nettoyer un jour. */
 .about-photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;border-radius:24px;overflow:hidden;}
 .about-photo-grid .ap{background-size:cover;background-position:center;border-radius:12px;}
-.ap1{background-image:url('IMG_1075.webp');height:220px;}
-.ap2{background-image:url('IMG_1138.webp');height:220px;}
-.ap3{background-image:url('IMG_1146.webp');height:220px;}
-.ap4{background-image:url('IMG_1191.webp');height:220px;}
+.ap1{background-image:url('IMG_1075-500.webp');height:220px;}
+.ap2{background-image:url('IMG_1138-500.webp');height:220px;}
+.ap3{background-image:url('IMG_1146-500.webp');height:220px;}
+.ap4{background-image:url('IMG_1191-500.webp');height:220px;}
 .about-text ul{list-style:none;margin-top:24px;}
 .about-text ul li{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;font-size:.92rem;color:var(--text-muted);}
 .about-text ul li .check{color:var(--vert);font-size:1.1rem;flex-shrink:0;}
@@ -289,19 +295,22 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
 .avis-text{font-size:.9rem;color:var(--text-muted);line-height:1.7;font-weight:300;font-style:italic;}
 .google-badge span{font-size:.75rem;color:var(--text-muted);}
 
-.mosaic-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr;grid-template-rows:1fr 1fr;height:480px;gap:6px;border-radius:20px;overflow:hidden;box-shadow:0 8px 40px rgba(74,63,114,0.15);}
+.mosaic-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr;grid-template-rows:1fr 1fr;height:480px;gap:6px;border-radius:20px;overflow:hidden;box-shadow:0 8px 40px rgba(74,63,114,0.15);content-visibility:auto;contain-intrinsic-size:auto 480px;}
 .mc{background-size:cover;background-position:center;transition:transform .4s;}
 .mc:hover{transform:scale(1.03);}
-.mc1{grid-row:1/3;background-image:url('IMG_0952.webp');}
-.mc2{background-image:url('IMG_1073.webp');}
-.mc3{background-image:url('IMG_1130.webp');}
-.mc4{background-image:url('IMG_3307.webp');}
-.mc5{background-image:url('IMG_1078.webp');}
+.mc1{grid-row:1/3;background-image:url('IMG_0952-800.webp');}
+.mc2{background-image:url('IMG_1073-800.webp');}
+.mc3{background-image:url('IMG_1130-800.webp');}
+.mc4{background-image:url('IMG_3307-800.webp');}
+.mc5{background-image:url('IMG_1078-800.webp');}
 @media(max-width:600px){.mosaic-grid{grid-template-columns:1fr 1fr;height:300px;}.mc4,.mc5{display:none;}.mc1{grid-row:1/3;}.mc2{grid-row:1;}.mc3{grid-row:2;display:block;}}
 
 </style>
 <style>/* Images allégées sur mobile */
-@media(max-width:760px){.mc1{background-image:url('IMG_0952-800.webp');}.mc2{background-image:url('IMG_1073-800.webp');}.mc3{background-image:url('IMG_1130-800.webp');}.mc4{background-image:url('IMG_3307-800.webp');}.mc5{background-image:url('IMG_1078-800.webp');}}</style>
+/* Les tuiles font au plus 172x300 px sur telephone : une image de 500 px
+   de large couvre deja un ecran a 3x. On servait du 800 px, soit trois
+   fois le poids necessaire. */
+@media(max-width:760px){.mc1{background-image:url('IMG_0952-500.webp');}.mc2{background-image:url('IMG_1073-500.webp');}.mc3{background-image:url('IMG_1130-500.webp');}.mc4{background-image:url('IMG_3307-500.webp');}.mc5{background-image:url('IMG_1078-500.webp');}}</style>
 </head>
 <body>
 <nav>
@@ -612,7 +621,9 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
 #evasion-home{position:relative;overflow:hidden;padding:76px 5%;isolation:isolate;background:#241B45;}
 #evasion-home .evh-photo{
   position:absolute;inset:0;z-index:-3;
-  background-image:url('IMG_1073.webp');background-size:cover;background-position:center 38%;
+  /* Photo recouverte d'un degrade a 88-95 % d'opacite : le 800 px suffit
+     amplement, l'original de 446 Ko ne se voyait pas. */
+  background-image:url('IMG_1073-800.webp');background-size:cover;background-position:center 38%;
   transform:scale(1.04);
 }
 #evasion-home::before{
@@ -625,7 +636,7 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
 }
 @media(max-width:860px){
   #evasion-home::before{background:linear-gradient(180deg,rgba(36,27,69,.95) 0%,rgba(36,27,69,.88) 55%,rgba(74,63,114,.78) 100%);}
-  #evasion-home .evh-photo{background-image:url('IMG_1073-800.webp');}
+  #evasion-home .evh-photo{background-image:url('IMG_1073-fond-mob.webp');}
 }
 #evasion-home .evh-carte{
   display:block;text-decoration:none;
@@ -897,7 +908,7 @@ function simuCalc(){
       <p class="section-sub">Découvrez notre univers et nos pensionnaires en quelques secondes 🐾</p>
     </div>
     <div class="video-wrap fade-in" data-video-wrap>
-      <video controls controlsList="nofullscreen" preload="none" playsinline poster="presentation-poster.jpg"
+      <video controls controlsList="nofullscreen" preload="none" playsinline poster="presentation-poster.webp"
              aria-label="Vidéo de présentation de Milou Dogs Provence, pension familiale à Miramas">
         <source src="presentation.mp4" type="video/mp4">
         Votre navigateur ne peut pas lire la vidéo.
@@ -907,7 +918,7 @@ function simuCalc(){
   </div>
 </section>
 <style>
-#video-section .video-wrap{position:relative;max-width:340px;margin:34px auto 0;border-radius:22px;overflow:hidden;box-shadow:0 18px 50px rgba(74,63,114,.28);background:#000;line-height:0;}
+#video-section .video-wrap{position:relative;max-width:340px;margin:34px auto 0;border-radius:22px;overflow:hidden;box-shadow:0 18px 50px rgba(74,63,114,.28);background:#000;line-height:0;content-visibility:auto;contain-intrinsic-size:auto 604px;}
 #video-section .video-wrap video{width:100%;height:auto;display:block;aspect-ratio:9/16;object-fit:cover;background:#000;}
 @media(max-width:400px){#video-section .video-wrap{max-width:88vw;}}
 .vid-full-btn{position:absolute;top:10px;right:10px;z-index:4;width:36px;height:36px;border:none;border-radius:9px;background:rgba(0,0,0,.5);color:#fff;font-size:1rem;line-height:1;cursor:pointer;backdrop-filter:blur(4px);transition:background .2s;}

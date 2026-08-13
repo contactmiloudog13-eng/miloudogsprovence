@@ -75,26 +75,26 @@
 
 /* ── GALLERY ── */
 #galerie{background:white;padding:64px 5%;}
-.gallery-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;height:260px;overflow:hidden;border-radius:16px;}
+.gallery-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;height:260px;overflow:hidden;border-radius:16px;content-visibility:auto;contain-intrinsic-size:auto 260px;}
 .gallery-strip .photo{background-size:cover;background-position:center;transition:transform .4s;}
 .gallery-strip .photo:hover{transform:scale(1.05);}
-.g1{background-image:url('IMG_0952.webp');}
-.g2{background-image:url('IMG_1073.webp');}
-.g3{background-image:url('IMG_1130.webp');}
-.g4{background-image:url('IMG_1240.webp');}
-.g5{background-image:url('IMG_1212.webp');}
+.g1{background-image:url('IMG_0952-500.webp');}
+.g2{background-image:url('IMG_1073-500.webp');}
+.g3{background-image:url('IMG_1130-500.webp');}
+.g4{background-image:url('IMG_1240-500.webp');}
+.g5{background-image:url('IMG_1212-500.webp');}
 @media(max-width:600px){.gallery-strip{grid-template-columns:1fr 1fr;height:240px;}.g3,.g4,.g5{display:none;}}
 
 /* ── TERRAIN ── */
 #terrain{background:var(--cream);padding:64px 5%;}
 .terrain-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:50px;align-items:center;}
 @media(max-width:760px){.terrain-grid{grid-template-columns:1fr;}}
-.terrain-photos{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.terrain-photos{display:grid;grid-template-columns:1fr 1fr;gap:8px;content-visibility:auto;contain-intrinsic-size:auto 348px;}
 .tp{background-size:cover;background-position:center;border-radius:14px;height:170px;}
-.tp1{background-image:url('IMG_1078.webp');}
-.tp2{background-image:url('IMG_1191.webp');}
-.tp3{background-image:url('IMG_1075.webp');}
-.tp4{background-image:url('IMG_1079.webp');}
+.tp1{background-image:url('IMG_1078-500.webp');}
+.tp2{background-image:url('IMG_1191-500.webp');}
+.tp3{background-image:url('IMG_1075-500.webp');}
+.tp4{background-image:url('IMG_1079-500.webp');}
 .terrain-text ul{list-style:none;margin-top:20px;}
 .terrain-text ul li{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;font-size:.88rem;color:var(--text-muted);}
 .terrain-text ul li .check{color:var(--vert);font-size:1rem;flex-shrink:0;}
@@ -113,7 +113,9 @@
 @media(max-width:600px){.comp-table th,.comp-table td{padding:10px 10px;font-size:.78rem;}}
 </style>
 <style>/* Images allégées sur mobile */
-@media(max-width:760px){.g1{background-image:url('IMG_0952-800.webp');}.g2{background-image:url('IMG_1073-800.webp');}.g3{background-image:url('IMG_1130-800.webp');}.g4{background-image:url('IMG_1240-800.webp');}.g5{background-image:url('IMG_1212-800.webp');}.tp1{background-image:url('IMG_1078-800.webp');}.tp2{background-image:url('IMG_1191-800.webp');}.tp3{background-image:url('IMG_1075-800.webp');}.tp4{background-image:url('IMG_1079-800.webp');}}</style>
+/* Le bandeau est desormais en 500 px pour tout le monde : plus besoin
+   d'une variante mobile distincte. */
+/* 500 px pour tout le monde : la variante mobile n'a plus lieu d'etre. */</style>
 </head>
 <body>
 <nav>

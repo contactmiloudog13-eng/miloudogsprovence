@@ -23,12 +23,12 @@
 /* ── ABOUT HERO ── */
 .about-hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;padding:80px 0;}
 @media(max-width:760px){.about-hero-grid{grid-template-columns:1fr;gap:36px;padding:40px 0;}}
-.about-photos{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.about-photos{display:grid;grid-template-columns:1fr 1fr;gap:10px;content-visibility:auto;contain-intrinsic-size:auto 450px;}
 .about-photo{background-size:cover;background-position:center;border-radius:16px;}
-.ap1{background-image:url('IMG_1075.webp');height:220px;}
-.ap2{background-image:url('IMG_1138.webp');height:220px;}
-.ap3{background-image:url('IMG_1146.webp');height:220px;}
-.ap4{background-image:url('IMG_1191.webp');height:220px;}
+.ap1{background-image:url('IMG_1075-500.webp');height:220px;}
+.ap2{background-image:url('IMG_1138-500.webp');height:220px;}
+.ap3{background-image:url('IMG_1146-500.webp');height:220px;}
+.ap4{background-image:url('IMG_1191-500.webp');height:220px;}
 .about-quote{background:var(--lavande-light);border-left:4px solid var(--lavande);border-radius:0 16px 16px 0;padding:20px 24px;margin:20px 0;font-style:italic;color:var(--lavande-dark);font-size:1.05rem;line-height:1.7;}
 .about-ul{list-style:none;margin-top:20px;}
 .about-ul li{display:flex;gap:12px;margin-bottom:14px;font-size:.93rem;color:var(--text-muted);align-items:flex-start;}
@@ -64,7 +64,8 @@
 .footer-pro-bottom a{color:rgba(255,255,255,.3);text-decoration:underline;}
 </style>
 <style>/* Images allégées sur mobile */
-@media(max-width:760px){.ap1{background-image:url('IMG_1075-800.webp');}.ap2{background-image:url('IMG_1138-800.webp');}.ap3{background-image:url('IMG_1146-800.webp');}.ap4{background-image:url('IMG_1191-800.webp');}}</style>
+/* Le bloc est deja en 500 px pour tout le monde : la variante mobile en
+   800 px faisait telecharger l'image deux fois. */</style>
 </head>
 <body>
 <nav>
@@ -249,14 +250,14 @@ const obs=new IntersectionObserver(els=>els.forEach(e=>{if(e.isIntersecting)e.ta
 document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
 </script>
 <!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script src="firebase-auth.js"></script>
-<script src="site-images.js"></script>
-<script src="site-flags.js"></script>
-<script src="chatbot.js"></script>
-<script src="effects-extra.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js" defer></script>
+<script src="firebase-auth.js" defer></script>
+<script src="site-images.js" defer></script>
+<script src="site-flags.js" defer></script>
+<script src="chatbot.js" defer></script>
+<script src="effects-extra.js" defer></script>
 </body>
 </html>
 
