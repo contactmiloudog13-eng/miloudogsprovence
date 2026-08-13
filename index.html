@@ -24,8 +24,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="canonical" href="https://miloudogsprovence.fr/">
 <!-- LCP : précharge de l'image hero (desktop / mobile) -->
-<link rel="preload" as="image" href="hero-banner.webp" media="(min-width:761px)">
-<link rel="preload" as="image" href="hero-mobile.webp" media="(max-width:760px)">
+<link rel="preload" as="image" href="hero-banner.webp" media="(min-width:761px)" fetchpriority="high">
+<link rel="preload" as="image" href="hero-mobile.webp" media="(max-width:760px)" fetchpriority="high">
 <!-- Hero piloté depuis l'admin : on évite le flash ancienne→nouvelle image.
      Pour les visites suivantes, on applique l'image en cache avant le rendu. -->
 <script>
@@ -35,8 +35,16 @@
     var css='';
     if(h && h.desktop) css+='@media(min-width:761px){.hero-bg{background-image:url(\''+h.desktop+'\')!important;background-size:cover!important;background-position:center center!important;}}';
     if(h && h.mobile)  css+='@media(max-width:760px){.hero-bg{background-image:url(\''+h.mobile+'\')!important;background-size:cover!important;background-position:center center!important;}}';
-    // si on a un cache hero → on l'affiche direct (déjà bon), sinon on masque jusqu'au verdict de Firebase
-    css+= (h ? '.hero-bg{opacity:1!important;}' : '.hero-bg{opacity:0;}');
+    // ── NE JAMAIS MASQUER LE HERO ──────────────────────────────────────
+    // Avant, sans cache (donc pour TOUT nouveau visiteur) on mettait
+    // .hero-bg{opacity:0} en attendant la reponse de Firebase. Or Firebase
+    // arrive apres 250 Ko de bibliotheques, et le filet de securite d'1 s ne
+    // demarrait qu'ensuite : sur une 4G lente, la grande image restait
+    // invisible pendant 9 secondes. C'est ce que mesurait le LCP.
+    // On affiche desormais l'image tout de suite. Si l'admin en a defini une
+    // autre, elle prend le relais quelques instants plus tard — un bref
+    // changement d'image vaut infiniment mieux qu'un ecran vide.
+    css+= '.hero-bg{opacity:1!important;}';
     var s=document.createElement('style'); s.textContent=css; document.head.appendChild(s);
   }catch(e){}
 })();
@@ -316,6 +324,34 @@ nav{transition:height .3s ease,box-shadow .3s ease;}
    de large couvre deja un ecran a 3x. On servait du 800 px, soit trois
    fois le poids necessaire. */
 @media(max-width:760px){.mc1{background-image:url('IMG_0952-500.webp');}.mc2{background-image:url('IMG_1073-500.webp');}.mc3{background-image:url('IMG_1130-500.webp');}.mc4{background-image:url('IMG_3307-500.webp');}.mc5{background-image:url('IMG_1078-500.webp');}}</style>
+<!-- ═══ Version TÉLÉPHONE : accueil épuré + réordonné (n'affecte pas l'ordinateur) ═══
+     CE BLOC DOIT RESTER DANS LE <head>. Il était placé tout en bas de la page :
+     le navigateur affichait donc le héros COMPLET, puis en arrivant sur ce bloc
+     masquait la moitié de son contenu — la page sautait sous les yeux du visiteur
+     au bout d'environ 1,3 seconde. C'était l'essentiel du décalage mesuré par
+     PageSpeed (0,20 sur 0,21). Ici, les règles s'appliquent dès le premier
+     affichage : plus aucun saut. -->
+<style>
+@media(max-width:760px){
+  /* Héros : on ne garde que le titre + les 2 boutons → on voit enfin l'image */
+  #hero .hero-eyebrow,#hero .hero-bottom>p,#hero .hero-reassure,#hero .hero-stats,#hero .hero-scroll{display:none!important;}
+  #hero .hero-bottom{margin-top:6px!important;}
+  /* Bandeau confiance + section application masqués */
+  #trust-bar{display:none!important;}
+  /* « Ce qu'on propose » compact : 2 colonnes, plus de services visibles */
+  #services-mini .svc-mini-grid{grid-template-columns:1fr 1fr!important;gap:10px!important;}
+  #services-mini .svc-mini-card{padding:14px 11px!important;}
+  #services-mini .svc-mini-desc,#services-mini .svc-mini-perks,#services-mini .svc-mini-card>a{display:none!important;}
+  #services-mini .svc-mini-name{font-size:.9rem!important;}
+  #services-mini .section-sub{display:none!important;}
+  /* la carte Évasion garde son texte : c'est la nouveauté qu'on met en avant */
+  #services-mini .svc-neuf .svc-mini-desc{display:block!important;}
+  /* « Comment ça marche » réduit : 2 colonnes, icône + titre seulement */
+  #hiw-home .hiw-grid{grid-template-columns:1fr 1fr!important;gap:10px!important;}
+  #hiw-home .hiw-card{padding:14px 10px!important;}
+  #hiw-home .hiw-card p,#hiw-home .hiw-arrow,#hiw-home .section-sub{display:none!important;}
+}
+</style>
 </head>
 <body>
 <nav>
@@ -1494,28 +1530,7 @@ document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeLigh
 })();
 </script>
 
-<!-- ═══ Version TÉLÉPHONE : accueil épuré + réordonné (n'affecte pas l'ordinateur) ═══ -->
-<style>
-@media(max-width:760px){
-  /* Héros : on ne garde que le titre + les 2 boutons → on voit enfin l'image */
-  #hero .hero-eyebrow,#hero .hero-bottom>p,#hero .hero-reassure,#hero .hero-stats,#hero .hero-scroll{display:none!important;}
-  #hero .hero-bottom{margin-top:6px!important;}
-  /* Bandeau confiance + section application masqués */
-  #trust-bar{display:none!important;}
-  /* « Ce qu'on propose » compact : 2 colonnes, plus de services visibles */
-  #services-mini .svc-mini-grid{grid-template-columns:1fr 1fr!important;gap:10px!important;}
-  #services-mini .svc-mini-card{padding:14px 11px!important;}
-  #services-mini .svc-mini-desc,#services-mini .svc-mini-perks,#services-mini .svc-mini-card>a{display:none!important;}
-  #services-mini .svc-mini-name{font-size:.9rem!important;}
-  #services-mini .section-sub{display:none!important;}
-  /* la carte Évasion garde son texte : c'est la nouveauté qu'on met en avant */
-  #services-mini .svc-neuf .svc-mini-desc{display:block!important;}
-  /* « Comment ça marche » réduit : 2 colonnes, icône + titre seulement */
-  #hiw-home .hiw-grid{grid-template-columns:1fr 1fr!important;gap:10px!important;}
-  #hiw-home .hiw-card{padding:14px 10px!important;}
-  #hiw-home .hiw-card p,#hiw-home .hiw-arrow,#hiw-home .section-sub{display:none!important;}
-}
-</style>
+
 <script>
 /* Réordonne l'accueil (mobile ET ordi) : urgence + confiance collés au hero,
    puis services → comment ça marche → carnet → vidéo → vs chenil.

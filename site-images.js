@@ -111,5 +111,7 @@ window.SITE_IMAGE_PAGE = (function(){
     for (var i=0;i<els.length;i++){ els[i].classList.add('si-ready'); els[i].style.opacity='1'; }
   }
   // Sécurité : on révèle le hero au plus tard après 1s même si Firebase tarde
+  // Filet de securite conserve, mais il ne devrait plus jamais servir :
+  // le hero est desormais visible des le premier rendu (cf. index.html).
   setTimeout(function(){ var els=document.querySelectorAll('.hero-bg'); for(var i=0;i<els.length;i++) els[i].style.opacity='1'; }, 1000);
 })();
