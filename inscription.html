@@ -2,6 +2,11 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<!-- Connexion ouverte a l'avance vers le CDN Firebase (DNS + TLS faits
+     d'avance). On ne precharge PAS les fichiers eux-memes : 250 Ko en
+     haute priorite volaient de la bande passante a la feuille de style
+     et retardaient l'affichage du texte. -->
+<link rel="preconnect" href="https://www.gstatic.com">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Inscription – Milou Dogs Provence</title>
 <meta name="description" content="Créez votre espace client Milou Dogs Provence.">

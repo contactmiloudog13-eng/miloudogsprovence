@@ -1,4 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap');
+/* Les polices ne sont plus importees ici : un @import externe bloque tout
+   l'affichage. Elles sont desormais hebergees sur notre domaine et
+   declarees dans ../polices.css, chargee depuis index.html. */
 
 :root{
   --cream:#FAF6F0; --lavande:#7B6FA0; --lavande-light:#E8E4F0; --lavande-dark:#4A3F72;

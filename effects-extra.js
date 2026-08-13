@@ -132,11 +132,35 @@
     });
   });
 
-  /* ── SMOOTH FADE-IN ON PAGE LOAD ── */
+  /* ── FONDU D'APPARITION ────────────────────────────────────────────────
+     Ce bloc masquait la page entiere (opacity:0) et ne la revelait qu'au
+     'load' du navigateur, c'est-a-dire une fois TOUTES les images, polices
+     et bibliotheques telechargees. Sur l'accueil, cela laissait un ecran
+     blanc pendant 1,6 seconde alors que le texte etait pret en 0,3.
+
+     Et surtout : si une seule ressource ne repondait jamais (Firebase
+     bloque par un anti-pub, une image qui traine), 'load' ne se declenchait
+     pas et la page restait blanche indefiniment. C'est tres probablement ce
+     que decrivaient les clients par « le site charge dans le vide ».
+
+     On garde le fondu, mais on revele des que le HTML est analyse — donc
+     immediatement — avec deux filets de securite : un declenchement au
+     'load' au cas ou, et un delai maximal absolu. La page ne peut plus
+     rester invisible, quoi qu'il arrive. */
+  var _revele = false;
+  function _revelerPage(){
+    if(_revele) return; _revele = true;
+    document.body.style.opacity = '1';
+  }
   document.body.style.opacity = '0';
-  document.body.style.transition = 'opacity .5s ease';
-  window.addEventListener('load', function(){ document.body.style.opacity = '1'; });
-  if(document.readyState === 'complete') document.body.style.opacity = '1';
+  document.body.style.transition = 'opacity .35s ease';
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', _revelerPage);
+  } else {
+    _revelerPage();                       // le HTML est deja analyse
+  }
+  window.addEventListener('load', _revelerPage);   // filet
+  setTimeout(_revelerPage, 1500);                  // filet absolu
 
   /* ── PARALLAX HERO ── */
   var heroBg = document.querySelector('.hero-bg');

@@ -2,6 +2,11 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<!-- Connexion ouverte a l'avance vers le CDN Firebase (DNS + TLS faits
+     d'avance). On ne precharge PAS les fichiers eux-memes : 250 Ko en
+     haute priorite volaient de la bande passante a la feuille de style
+     et retardaient l'affichage du texte. -->
+<link rel="preconnect" href="https://www.gstatic.com">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Milou Dogs Provence","telephone":"+33777234088","url":"https://miloudogsprovence.fr/","address":{"@type":"PostalAddress","addressLocality":"Miramas","addressRegion":"Bouches-du-Rhône","addressCountry":"FR"}}</script>
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_FR">

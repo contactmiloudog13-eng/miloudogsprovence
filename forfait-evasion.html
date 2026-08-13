@@ -2,6 +2,11 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<!-- Connexion ouverte a l'avance vers le CDN Firebase (DNS + TLS faits
+     d'avance). On ne precharge PAS les fichiers eux-memes : 250 Ko en
+     haute priorite volaient de la bande passante a la feuille de style
+     et retardaient l'affichage du texte. -->
+<link rel="preconnect" href="https://www.gstatic.com">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Forfait Évasion – la randonnée du samedi | Milou Dogs Provence Miramas</title>
 <meta name="description" content="Chaque samedi : 2 h de randonnée avec 5 chiens maximum dans les plus beaux coins autour de Miramas, puis toute la journée à la pension. Vous le déposez le matin, vous le récupérez le soir. 35 € la journée.">

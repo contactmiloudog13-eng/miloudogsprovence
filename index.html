@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8"><meta property="og:type" content="website">
+<meta charset="UTF-8"><!-- Connexion ouverte a l'avance vers le CDN Firebase (DNS + TLS faits
+     d'avance). On ne precharge PAS les fichiers eux-memes : 250 Ko en
+     haute priorite volaient de la bande passante a la feuille de style
+     et retardaient l'affichage du texte. -->
+<link rel="preconnect" href="https://www.gstatic.com">
+<meta property="og:type" content="website">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:url" content="https://miloudogsprovence.fr/">
 <meta property="og:title" content="Milou Dogs Provence – Garde de chien à domicile">
@@ -18,8 +23,6 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="canonical" href="https://miloudogsprovence.fr/">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- LCP : précharge de l'image hero (desktop / mobile) -->
 <link rel="preload" as="image" href="hero-banner.webp" media="(min-width:761px)">
 <link rel="preload" as="image" href="hero-mobile.webp" media="(max-width:760px)">
@@ -39,6 +42,8 @@
 })();
 </script>
 <script src="site-flags.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap"></noscript>
 <link rel="stylesheet" href="style.css">
