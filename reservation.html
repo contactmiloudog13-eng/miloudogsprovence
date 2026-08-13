@@ -853,8 +853,17 @@ function _validateStep2() {
   } else {
     document.querySelector('.form-service-tags').style.outline = '';
   }
-  // ── Cas VISITE À DOMICILE seule (hors Pack Duo) : on valide la période + l'adresse ──
-  if (window.__visite && window.__visite.active && !mdpNbChiens()) {
+  // ── Cas VISITE À DOMICILE SEULE : on valide la période + l'adresse ──
+  // Le test portait sur « aucun chien » (!mdpNbChiens()). C'etait faux : un
+  // chien peut tres bien etre VISITE chez lui au lieu d'aller en pension.
+  // Resultat, un client avec 1 chien + 3 chats qui choisissait la visite a
+  // domicile tombait dans la validation de la PENSION et se voyait reclamer
+  // une date et une heure d'arrivee... alors que ces champs ne sont meme pas
+  // affiches. Reservation impossible.
+  // Le bon critere est le service choisi : si la visite est le SEUL service
+  // actif, il n'y a pas de sejour a valider, quel que soit le nombre d'animaux.
+  var _horsVisite = services.filter(function(t){ return t.dataset.visite !== '1'; });
+  if (window.__visite && window.__visite.active && !_horsVisite.length) {
     var vs = document.getElementById('visite-start'), ve = document.getElementById('visite-end');
     var va = document.getElementById('visite-addr');
     var vErr = false;
@@ -899,6 +908,27 @@ function _validateStep2() {
     if (!hFinEl.value) { hFinEl.style.borderColor = '#c0392b'; err = true; errFin = true; }
     else hFinEl.style.borderColor = '';
   }
+  // ── Visite a domicile EN PLUS d'un sejour ────────────────────────────────
+  // Le chien part en pension et les autres animaux sont visites chez eux. Ce
+  // cas ne passait par aucune verification de la visite : on pouvait valider
+  // une reservation pour 3 chats sans adresse, sans dates et sans calcul de
+  // deplacement. La demande arrivait inexploitable.
+  let errVisite = false;
+  if (window.__visite && window.__visite.active) {
+    const _vs = document.getElementById('visite-start');
+    const _ve = document.getElementById('visite-end');
+    const _va = document.getElementById('visite-addr');
+    if (_vs) { if (!_vs.value) { _vs.style.borderColor = '#c0392b'; err = true; errVisite = true; } else _vs.style.borderColor = ''; }
+    if (_ve) {
+      if (!_ve.value || (_vs && _vs.value && _daysBetween(_vs.value, _ve.value) < 1)) { _ve.style.borderColor = '#c0392b'; err = true; errVisite = true; }
+      else _ve.style.borderColor = '';
+    }
+    if (_va) {
+      if (!_va.value.trim() || window.__visite.km == null) { _va.style.borderColor = '#c0392b'; err = true; errVisite = true; }
+      else _va.style.borderColor = '';
+    }
+  }
+
   // Test prealable : bloquant tant qu'une date valide n'est pas choisie
   let errTest = false;
   const _tpBox = document.getElementById('test-prealable');
@@ -915,6 +945,8 @@ function _validateStep2() {
     msg.style.display = 'block';
     msg.textContent = errTest
       ? '⚠️ Première garde : choisissez une date de test, avant votre séjour.'
+      : errVisite
+      ? '⚠️ Pour la visite à domicile : indiquez les dates et l\'adresse (attendez le calcul du déplacement).'
       : errFin
       ? '⚠️ Merci d\'indiquer la date et l\'heure de fin de la garde.'
       : '⚠️ Merci de choisir un service, une date et une heure d\'arrivée.';
