@@ -2080,7 +2080,14 @@ function loadReservations(user) {
     _resaRefs.push(base.orderByChild('email').equalTo(user.email));
     _rattacherResasInvite(user);
   }
-  _resaRefs.forEach(q => q.on('value', collect));
+  // Sans callback d'erreur, une requete refusee (index manquant, permission)
+  // echouait en SILENCE : apply() n'etait jamais appele et la liste restait
+  // bloquee sur « Chargement… ». On rend desormais dans tous les cas.
+  _resaRefs.forEach(q => q.on('value', collect, function(err){
+    console.warn('reservations:', err && err.message);
+    apply();
+  }));
+  setTimeout(apply, 4000);   // filet : si aucune reponse, on affiche l'etat vide
   _resaRef = null;
   _rappelVerifEmail(user);
 }
