@@ -1238,7 +1238,7 @@ function _pickupPrice(km){
   var cfg=PICKUP_MODES[mode]||PICKUP_MODES.both;
   var isMiramas = /miramas/i.test(window.__pickup.city||'') || window.__pickup.postcode==='13140';
   var fixe=(window.DEPL_FIXE!=null?window.DEPL_FIXE:5), perKm=(window.DEPL_KM!=null?window.DEPL_KM:0.5);
-  var miramasFlat=(window.DEPL_MIRAMAS!=null?window.DEPL_MIRAMAS:10);
+  var miramasFlat=(window.DEPL_MIRAMAS!=null?window.DEPL_MIRAMAS:0);
   var n=cfg.trajets, unit, price, calc;
   function fr(x){ return x.toString().replace('.',','); }
   if(isMiramas){
@@ -1751,7 +1751,7 @@ function toggleVisitePanel(){
 window.MDP_REMISE2=10; window.MDP_REMISE3=15;
 // Frais de déplacement + supplément visite 1h (pilotés depuis l'admin)
 // DEPL_MIRAMAS = forfait fixe DANS Miramas ; ailleurs = DEPL_FIXE + DEPL_KM/km (aller-retour)
-window.DEPL_FIXE=5; window.DEPL_KM=0.5; window.DEPL_MIRAMAS=10; window.VISITE_SUPP1H=5;
+window.DEPL_FIXE=5; window.DEPL_KM=0.5; window.DEPL_MIRAMAS=0; window.VISITE_SUPP1H=5;
 // Correspondance clé admin (vXxx) ⇄ animal du select visite
 var VISITE_KEYMAP={chien:'vChien',chat:'vChat',furet:'vFuret',poules:'vPoules',lapin:'vLapin',rongeur:'vRongeur',oiseau:'vOiseau',tortue:'vTortue',poisson:'vPoisson'};
 // ═══ Tarifs pilotables : lit site_config/tarifs et applique partout (temps réel) ═══
@@ -1901,7 +1901,7 @@ function _visiteApplyTravel(){
   var v=window.__visite, res=document.getElementById('visite-result');
   if(v.km==null){ v.travelPerDay=0; v.travelTotal=0; return; }
   var isMiramas=/miramas/i.test(v.city||'')||v.postcode==='13140';
-  var miramasFlat=(window.DEPL_MIRAMAS!=null?window.DEPL_MIRAMAS:10);
+  var miramasFlat=(window.DEPL_MIRAMAS!=null?window.DEPL_MIRAMAS:0);
   if(isMiramas){ v.travelPerDay=miramasFlat; if(res) res.innerHTML='✅ <strong>Miramas</strong> — déplacement <strong>'+miramasFlat.toString().replace('.',',')+'€</strong> <small style="color:var(--text-muted);">(forfait)</small>'; }
   else {
     var fixe=(window.DEPL_FIXE!=null?window.DEPL_FIXE:5), perKm=(window.DEPL_KM!=null?window.DEPL_KM:0.5);
@@ -2716,7 +2716,13 @@ const EMAILJS_PUBLIC_KEY   = '9aJnH_zz72kllicJB';
 const EMAILJS_SERVICE_ID   = 'service_i6phwqu';
 const EMAILJS_TPL_RECUE    = 'template_el176m5';
 
-(function(){ emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); })();
+// Garde-fou : si un CDN externe est injoignable (anti-pub, proxy d'entreprise,
+// operateur qui filtre), cette ligne levait une ReferenceError et tuait tout
+// le script qui suit. Le site doit rester utilisable sans elle.
+// EmailJS ne sert qu'a l'accuse de reception : sans lui la demande part quand
+// meme (Web3Forms + Firebase), le client recoit juste un e-mail en moins.
+(function(){ try { emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); }
+            catch(e){ console.warn('EmailJS indisponible :', e && e.message); } })();
 
 function ejsSendReception(data) {
   // Envoie un email au client pour confirmer la réception de sa demande
@@ -2779,7 +2785,11 @@ function ejsSendReception(data) {
 })();
 
 // ── Pré-remplissage formulaire si connecté ──────────────────────────────────
+// Sans Firebase, le formulaire reste entierement utilisable : il n'est
+// simplement pas pre-rempli. C'est exactement ce qu'on veut — une reservation
+// ne doit jamais dependre d'un CDN.
 let _userEmail = '';
+if (typeof firebase !== 'undefined' && firebase.auth) {
 firebase.auth().onAuthStateChanged(async user => {
   if (!user) return; // non connecté → formulaire normal
   _userEmail = user.email;
@@ -2843,6 +2853,9 @@ firebase.auth().onAuthStateChanged(async user => {
 
   } catch(e) { console.warn('Erreur pré-remplissage:', e); }
 });
+} else {
+  console.warn('Firebase indisponible — le formulaire fonctionne, sans pré-remplissage.');
+}
 
 // ── Mode Carnet Malin (arrivée depuis l'espace client) ──────────────────────
 function initCarnetMode(){

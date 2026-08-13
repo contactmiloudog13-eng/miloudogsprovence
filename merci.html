@@ -166,11 +166,19 @@ document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="firebase-auth.js"></script>
 <script>
+// Garde-fou : si un CDN externe est injoignable (anti-pub, proxy d'entreprise,
+// operateur qui filtre), cette ligne levait une ReferenceError et tuait tout
+// le script qui suit. Le site doit rester utilisable sans elle.
 // Afficher bloc "créer un compte" uniquement si non connecté
-firebase.auth().onAuthStateChanged(function(user) {
-  const block = document.getElementById('merci-compte-block');
-  if (!user && block) block.style.display = 'block';
-});
+if (typeof firebase !== 'undefined' && firebase.auth) {
+  firebase.auth().onAuthStateChanged(function(user) {
+    const block = document.getElementById('merci-compte-block');
+    if (!user && block) block.style.display = 'block';
+  });
+} else {
+  var _b = document.getElementById('merci-compte-block');
+  if (_b) _b.style.display = 'block';
+}
 </script>
 <script src="site-flags.js"></script>
 <script src="chatbot.js"></script>

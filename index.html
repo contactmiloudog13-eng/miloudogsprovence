@@ -1112,6 +1112,58 @@ function nlSubmit(e){
   </div>
 </section>
 
+<!-- ═══ Le pole « autres animaux » : chat, lapin, poules, NAC ═══
+     Le site parle presque uniquement de chiens. Cette section existe pour
+     que les proprietaires de chats et de basse-cour trouvent aussi leur
+     porte d'entree, depuis la page la plus visitee du site. -->
+<section id="autres-animaux" style="background:var(--cream);border-top:1px solid var(--border);">
+  <div class="container" style="max-width:1000px;text-align:center;">
+    <div class="section-header fade-in">
+      <p class="section-label">🐱 Pas que des chiens</p>
+      <h2 class="section-title">Votre chat, vos poules, votre lapin</h2>
+      <p class="section-sub">La pension n'accueille que des chiens — mais tous les autres animaux sont gardés chez vous, dans leurs repères. Repas, litière ou poulailler, présence et photos à chaque passage.</p>
+    </div>
+    <div class="fade-in" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:28px;">
+      <a href="garde-chat-domicile.html" style="background:white;border:1px solid var(--border);border-radius:16px;padding:22px 16px;text-decoration:none;display:block;">
+        <div style="font-size:2rem;">🐱</div>
+        <p style="font-weight:700;color:var(--lavande-dark);margin:6px 0 2px;">Garde de chat</p>
+        <p style="font-size:.8rem;color:var(--text-muted);margin:0;">Visites à domicile dès 12€</p>
+      </a>
+      <a href="garde-lapin-rongeur-domicile.html" style="background:white;border:1px solid var(--border);border-radius:16px;padding:22px 16px;text-decoration:none;display:block;">
+        <div style="font-size:2rem;">🐰</div>
+        <p style="font-weight:700;color:var(--lavande-dark);margin:6px 0 2px;">Lapins &amp; rongeurs</p>
+        <p style="font-size:.8rem;color:var(--text-muted);margin:0;">Foin, clapier, présence — dès 10€</p>
+      </a>
+      <a href="garde-poules-basse-cour-domicile.html" style="background:white;border:1px solid var(--border);border-radius:16px;padding:22px 16px;text-decoration:none;display:block;">
+        <div style="font-size:2rem;">🐔</div>
+        <p style="font-weight:700;color:var(--lavande-dark);margin:6px 0 2px;">Poules &amp; basse-cour</p>
+        <p style="font-size:.8rem;color:var(--text-muted);margin:0;">Trappe, œufs, eau — dès 13€</p>
+      </a>
+      <a href="garde-nac-furet-oiseau-tortue.html" style="background:white;border:1px solid var(--border);border-radius:16px;padding:22px 16px;text-decoration:none;display:block;">
+        <div style="font-size:2rem;">🦜</div>
+        <p style="font-weight:700;color:var(--lavande-dark);margin:6px 0 2px;">Furets, oiseaux, tortues</p>
+        <p style="font-size:.8rem;color:var(--text-muted);margin:0;">Poissons compris — dès 8€</p>
+      </a>
+    </div>
+    <p class="fade-in" style="font-size:.86rem;color:var(--text-muted);margin-top:26px;">Garde de chat, ville par ville :</p>
+    <div class="fade-in" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:12px;">
+      <a href="garde-chat-miramas.html" class="btn-outline" style="font-size:.85rem;padding:8px 16px;">🐱 Miramas</a>
+      <a href="garde-chat-istres.html" class="btn-outline" style="font-size:.85rem;padding:8px 16px;">🐱 Istres</a>
+      <a href="garde-chat-saint-chamas.html" class="btn-outline" style="font-size:.85rem;padding:8px 16px;">🐱 Saint-Chamas</a>
+      <a href="garde-chat-salon-de-provence.html" class="btn-outline" style="font-size:.85rem;padding:8px 16px;">🐱 Salon-de-Provence</a>
+      <a href="garde-chat-fos-sur-mer.html" class="btn-outline" style="font-size:.85rem;padding:8px 16px;">🐱 Fos-sur-Mer</a>
+      <a href="garde-chat-berre-letang.html" class="btn-outline" style="font-size:.85rem;padding:8px 16px;">🐱 Berre-l'Étang</a>
+      <a href="garde-chat-port-de-bouc.html" class="btn-outline" style="font-size:.85rem;padding:8px 16px;">🐱 Port-de-Bouc</a>
+      <a href="garde-chat-martigues.html" class="btn-outline" style="font-size:.85rem;padding:8px 16px;">🐱 Martigues</a>
+    </div>
+    <p class="fade-in" style="font-size:.86rem;color:var(--text-muted);margin-top:24px;line-height:1.8;">
+      Un chien en pension pendant que le chat reste chez vous ? <strong>C'est la même réservation</strong>, avec une réduction dès deux animaux.<br>
+      À lire : <a href="combien-de-temps-laisser-chat-seul.html" style="color:var(--lavande);font-weight:700;">combien de temps peut-on laisser un chat seul ?</a> ·
+      <a href="partir-en-vacances-avec-des-poules.html" style="color:var(--lavande);font-weight:700;">partir en vacances quand on a des poules</a>
+    </p>
+  </div>
+</section>
+
 <footer id="footer-pro">
   <div class="footer-pro-cta">
     <h3>Votre chien mérite le meilleur 🐾</h3>
@@ -1245,6 +1297,14 @@ function cldOpt(u,w){ try{ if(u.indexOf('/upload/')===-1 || u.indexOf('res.cloud
   var empty   = document.getElementById('galerie-empty');
   if (!grid) return;
 
+  // Si le CDN Firebase est injoignable (anti-pub, proxy, reseau lent), cette
+  // ligne levait « firebase is not defined » et tuait TOUT le script qui suit
+  // sur la page d'accueil. On masque la galerie et on continue.
+  if (typeof firebase === 'undefined' || !firebase.database) {
+    var sec = document.getElementById('galerie'); if (sec) sec.style.display = 'none';
+    return;
+  }
+
   firebase.database().ref('gallery_photos').orderByChild('ts').once('value', function(snap) {
     var photos = [];
     snap.forEach(function(c){ photos.push(c.val()); });
@@ -1278,6 +1338,10 @@ function cldOpt(u,w){ try{ if(u.indexOf('/upload/')===-1 || u.indexOf('res.cloud
       }
       grid.appendChild(item);
     });
+  }, function(err){
+    console.warn('galerie:', err && err.message);
+    if (loading) loading.style.display = 'none';
+    var sec = document.getElementById('galerie'); if (sec) sec.style.display = 'none';
   });
 })();
 

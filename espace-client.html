@@ -71,7 +71,7 @@ body:not(.auth-ready) footer{visibility:hidden;}
 .resa-journal .jr-date{font-size:.72rem;color:#a07830;font-weight:700;margin-bottom:6px;text-transform:capitalize;}
 .resa-journal img{width:100%;max-height:320px;object-fit:cover;border-radius:12px;display:block;cursor:zoom-in;box-shadow:0 4px 14px rgba(139,96,32,.15);}
 .resa-journal p{font-size:.88rem;color:#5a4520;line-height:1.6;margin:8px 0 4px;}
-.welcome-text h2{font-size:1.5rem;color:white;margin-bottom:4px;}
+.welcome-text h1,.welcome-text h2{font-size:1.5rem;color:white;margin-bottom:4px;}
 .welcome-text p{font-size:.9rem;color:rgba(255,255,255,.7);font-weight:300;}
 .welcome-badge{
   margin-left:auto;flex-shrink:0;
@@ -490,7 +490,7 @@ body:not(.auth-ready) footer{visibility:hidden;}
         <input type="file" id="client-photo-input" accept="image/*" style="display:none;" onchange="uploadClientPhoto(this)">
       </div>
       <div class="welcome-text">
-        <h2 id="welcome-name">Bonjour !</h2>
+        <h1 id="welcome-name">Bonjour !</h1>
         <p id="welcome-email"></p>
       </div>
       <span class="welcome-badge">✓ Compte actif</span>
@@ -1219,6 +1219,16 @@ let _currentUser = null;
 let _logoutTimer = null;       // délai de grâce avant de conclure à une déconnexion
 let _hasAuthenticated = false; // true dès qu'une session valide a été vue sur cette page
 
+// Garde-fou : si le CDN Firebase est injoignable (anti-pub, proxy, operateur
+// qui filtre), cet appel levait une ReferenceError et bloquait la page sur
+// « Chargement… ». On sort proprement en masquant le bloc concerne.
+if (typeof firebase === 'undefined' || !firebase.auth) {
+  var _l = document.getElementById('auth-loading');
+  if (_l) _l.innerHTML = '<p style="text-align:center;padding:40px 20px;line-height:1.8;">'
+    + 'Impossible de joindre le serveur.<br>Vérifiez votre connexion, ou désactivez un éventuel bloqueur de publicité pour ce site.<br><br>'
+    + '<a class="btn-primary" href="espace-client.html">↻ Réessayer</a> '
+    + '<a class="btn-outline" href="tel:0777234088">📞 07 77 23 40 88</a></p>';
+} else {
 firebase.auth().onAuthStateChanged(async user => {
   const loader  = document.getElementById('auth-loading');
   const content = document.getElementById('dashboard-content');
@@ -1311,6 +1321,7 @@ firebase.auth().onAuthStateChanged(async user => {
   renderCalendar();
   loadAnnonces();
 });
+} // fin du garde-fou « Firebase indisponible »
 
 // ── Annonces Milou Dogs (publiées depuis l'admin) ───────────────────────────
 function loadAnnonces() {

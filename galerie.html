@@ -488,7 +488,15 @@ function cldOpt(u,w){ try{ if(u.indexOf('/upload/')===-1 || u.indexOf('res.cloud
   var grid    = document.getElementById('galerie-grid');
   var loading = document.getElementById('galerie-loading');
   var empty   = document.getElementById('galerie-empty');
+// Garde-fou : si le CDN Firebase est injoignable (anti-pub, proxy, operateur
+// qui filtre), cet appel levait une ReferenceError et bloquait la page sur
+// « Chargement… ». On sort proprement en masquant le bloc concerne.
   if (!grid) return;
+  if (typeof firebase === 'undefined' || !firebase.database) {
+    if (loading) loading.style.display = 'none';
+    if (empty)   empty.style.display   = 'block';
+    return;
+  }
   firebase.database().ref('gallery_photos').orderByChild('ts').once('value', function(snap){
     var photos = [];
     snap.forEach(function(ch){ photos.push(ch.val()); });

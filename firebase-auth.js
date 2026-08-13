@@ -19,6 +19,13 @@ const _firebaseConfig = {
 if (typeof firebase === 'undefined' || !firebase.apps) {
   console.warn('Firebase indisponible — navigation possible, compte désactivé.');
   window.__firebaseKO = true;
+  // Les pages de connexion et d'inscription appellent ces fonctions des le
+  // chargement. Sans elles, la page levait « redirectIfLoggedIn is not a
+  // function » et le formulaire devenait inutilisable. On fournit des
+  // equivalents inoffensifs : rien ne se passe, mais rien ne casse.
+  window.redirectIfLoggedIn = function(){};
+  window.requireAuth        = function(){ return null; };
+  window.logoutUser         = function(){ location.href = 'index.html'; };
 } else {
 
 if (!firebase.apps.length) firebase.initializeApp(_firebaseConfig);

@@ -363,7 +363,12 @@ async function loginGoogle() {
   }
 }
 
-// Au chargement : récupère le résultat d'une connexion Google par redirection
+// Au chargement : récupère le résultat d'une connexion Google par redirection.
+// Sans Firebase (CDN bloque), on affiche un message clair plutot que de laisser
+// la page muette : le client comprend que ca vient de sa connexion.
+if (typeof firebase === 'undefined' || !firebase.auth) {
+  showError('Impossible de joindre le serveur de connexion. Vérifiez votre connexion internet, ou désactivez un bloqueur de publicité pour ce site.');
+} else
 firebase.auth().getRedirectResult().then(res => {
   if (res && res.user) {
     window.__suppressAuthRedirect = true;

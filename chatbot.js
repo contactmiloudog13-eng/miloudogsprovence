@@ -37,15 +37,20 @@ const REPONSES = [
     mots: ['domicile','maison','chez moi','passage','passer','chat','lapin','furet','poule','rongeur','oiseau','tortue','poisson','nourrir','garder mon chat','visite chat','animaux'],
     rep: `🏡 La visite à domicile :\n\nVotre animal reste chez lui, je passe m'en occuper (repas, eau, soins, câlins). Chiens, chats, lapins, poules, furets, rongeurs, oiseaux, tortues, poissons — pas de serpents 🙂\n\nSur la page Réservation, vous choisissez : l'animal, les dates (du… au…), et la fréquence (ex : 2 passages par semaine, ou 2 par jour). Le total et le déplacement se calculent tout seuls. Dès 8€/passage.`
   },
+  // ── CHAT ─────────────────────────────────────────────────
+  {
+    mots: ['chat','chats','chaton','minou','felin','litiere','cat sitter','garder mon chat','garde chat','pension chat'],
+    rep: `🐱 La garde de chat :\n\nOn ne fait pas de pension pour chat, et c'est volontaire : un chat est attaché à son territoire bien plus qu'aux personnes. Le déplacer le stresse, souvent au point qu'il cesse de manger.\n\nDonc il reste chez lui et c'est moi qui viens : repas, eau, litière nettoyée, traitements si besoin, un vrai moment de présence, et des photos après chaque passage.\n\n💰 12€ la visite de 30 min, 17€ pour 1 heure. Jusqu'à 3 passages par jour.\n\n👉 Tout est détaillé sur la page « Garde de chat à domicile ».`
+  },
   // ── RÉCUPÉRATION À DOMICILE ──────────────────────────────
   {
     mots: ['recuperation','recuperer','chercher','venir chercher','deplacement','kilometre','transport','ramener','emmener','conduire'],
     rep: `🚗 Récupération à domicile :\n\nJe peux venir chercher (et ramener) votre chien. Tarif : 5€ de forfait + 0,50€/km en aller-retour, calculé automatiquement selon votre adresse sur la page Réservation.`
   },
-  // ── PACK DUO ─────────────────────────────────────────────
+  // ── PLUSIEURS ANIMAUX ────────────────────────────────────
   {
-    mots: ['pack','duo','deux animaux','2 animaux','plusieurs animaux','chien et chat','combiner','ensemble'],
-    rep: `🎁 Le Pack Duo :\n\nVotre chien est en pension chez nous, et je passe aussi à domicile pour votre 2ᵉ animal (chat, lapin…). Vous profitez de −33% sur toutes les visites du 2ᵉ animal. Tout se réserve d'un coup sur la page Réservation.`
+    mots: ['pack','duo','deux animaux','2 animaux','plusieurs animaux','chien et chat','combiner','ensemble','reduction','remise'],
+    rep: `🐾 Plusieurs animaux, une seule réservation :\n\nVotre chien peut être en pension chez nous pendant que le chat reste chez vous et reçoit ses visites — tout se réserve d'un coup.\n\n💡 Une réduction s'applique automatiquement sur le total : −10% à partir de 2 animaux, −15% à partir de 3. Chiens, chats, lapins, poules : tout compte.\n\nEt si plusieurs animaux vivent au même endroit, un seul déplacement est facturé.`
   },
   // ── RÉSERVATION ──────────────────────────────────────────
   {
@@ -164,7 +169,7 @@ const REPONSES = [
   },
 ];
 
-const DEFAUT = `Hmm, je n'ai pas bien compris 😊\n\nVous pouvez me demander par exemple :\n• Les tarifs${CARNET_ON ? '\n• Le Carnet Malin (nuits prépayées)' : ''}\n• La visite à domicile (chat, lapin…)\n• La récupération à domicile\n• Comment réserver\n• Les vaccins requis\n• Le parrainage\n\nOu appelez-nous directement 📞 07 77 23 40 88 !`;
+const DEFAUT = `Hmm, je n'ai pas bien compris 😊\n\nVous pouvez me demander par exemple :\n• Les tarifs${CARNET_ON ? '\n• Le Carnet Malin (nuits prépayées)' : ''}\n• La garde de chat à domicile\n• La visite à domicile (lapin, poules, furet…)\n• La récupération à domicile\n• Comment réserver\n• Les vaccins requis\n• Le parrainage\n\nOu appelez-nous directement 📞 07 77 23 40 88 !`;
 
 function normalise(t){
   return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,' ');

@@ -337,6 +337,14 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="firebase-auth.js"></script>
 <script>
 // Récupère le profil + génère/affiche le code parrain
+// Sans Firebase (CDN bloque), on affiche simplement l'etat « non connecte »
+// plutot que de lever une erreur qui casserait le reste de la page.
+if (typeof firebase === 'undefined' || !firebase.auth) {
+  var _in = document.getElementById('parr-logged-in');
+  var _out = document.getElementById('parr-logged-out');
+  if (_in)  _in.style.display  = 'none';
+  if (_out) _out.style.display = 'block';
+} else
 firebase.auth().onAuthStateChanged(user => {
   const loggedIn  = document.getElementById('parr-logged-in');
   const loggedOut = document.getElementById('parr-logged-out');

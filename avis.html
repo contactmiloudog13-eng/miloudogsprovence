@@ -753,7 +753,15 @@ function renderAvisWall(){
 }
 
 /* ─── Chargement avis Google (admin) ─── */
+// Garde-fou : si le CDN Firebase est injoignable (anti-pub, proxy, operateur
+// qui filtre), cet appel levait une ReferenceError et bloquait la page sur
+// « Chargement… ». On sort proprement en masquant le bloc concerne.
 function loadGoogleAvis() {
+  if (typeof firebase === 'undefined' || !firebase.database) {
+    const l = document.getElementById('google-avis-loading'); if (l) l.style.display='none';
+    const e = document.getElementById('google-avis-empty');   if (e) e.style.display='block';
+    return;
+  }
   firebase.database().ref('google_avis').orderByChild('ts').once('value', snap => {
     const grid    = document.getElementById('google-avis-grid');
     const loading = document.getElementById('google-avis-loading');
@@ -789,6 +797,7 @@ window.addEventListener('load', () => {
 });
 
 /* ─── Avis espace client ─── */
+if (typeof firebase !== 'undefined' && firebase.database)
 firebase.database().ref('avis').orderByChild('createdAt').on('value', snap => {
   const list = [];
   snap.forEach(c => {
