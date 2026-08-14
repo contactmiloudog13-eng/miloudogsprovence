@@ -1,0 +1,5 @@
+﻿# Dependances des tests (installees a la demande, voir tests/LISEZMOI.md)
+tests/node_modules/
+tests/package.json
+tests/package-lock.json
+node_modules/
