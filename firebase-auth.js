@@ -181,6 +181,13 @@ function _updateNav(user, prenomConnu) {
   }
   function start() {
     try {
+      // db-rest.js present -> lecture REST (pas de WebSocket), sinon le SDK.
+      if (window.MDPdb) {
+        window.MDPdb.suivre('site_config/maxChiens', function (n) {
+          if (n) applyMaxChiens(parseInt(n));
+        });
+        return;
+      }
       _db.ref('site_config/maxChiens').on('value', function (snap) {
         var n = snap.val();
         if (n) applyMaxChiens(parseInt(n));
@@ -208,6 +215,13 @@ function _updateNav(user, prenomConnu) {
   }
   function start() {
     try {
+      // db-rest.js present -> lecture REST (pas de WebSocket), sinon le SDK.
+      if (window.MDPdb) {
+        window.MDPdb.suivre('site_config/reviews', function (r) {
+          if (r && r.count) applyReviewCount(parseInt(r.count));
+        });
+        return;
+      }
       _db.ref('site_config/reviews').on('value', function (snap) {
         var r = snap.val() || {};
         if (r.count) applyReviewCount(parseInt(r.count));

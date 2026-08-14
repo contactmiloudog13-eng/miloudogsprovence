@@ -1465,6 +1465,9 @@ document.addEventListener('DOMContentLoaded',()=>{
 </script>
 
 <!-- Firebase SDKs -->
+<!-- Lecture de la base en REST : doit etre charge avant firebase-auth.js et
+     site-images.js, qui l'utilisent quand il est present. -->
+<script src="db-rest.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -1490,10 +1493,8 @@ function cldOpt(u,w){ try{ if(u.indexOf('/upload/')===-1 || u.indexOf('res.cloud
     return;
   }
 
-  firebase.database().ref('gallery_photos').orderByChild('ts').once('value', function(snap) {
-    var photos = [];
-    snap.forEach(function(c){ photos.push(c.val()); });
-    photos.reverse();
+  MDPdb.lire('gallery_photos').then(function(val) {
+    var photos = MDPdb.trierParDesc(val || {}, 'ts');
 
     loading.style.display = 'none';
     if (!photos.length) {
@@ -1535,8 +1536,8 @@ function cldOpt(u,w){ try{ if(u.indexOf('/upload/')===-1 || u.indexOf('res.cloud
   try{
     var el = document.getElementById('urgence-txt'); if(!el) return;
     Promise.all([
-      firebase.database().ref('availability').once('value').then(function(s){return s.val()||{};}),
-      firebase.database().ref('closures').once('value').then(function(s){return s.val()||{};})
+      MDPdb.lire('availability').then(function(v){return v||{};}),
+      MDPdb.lire('closures').then(function(v){return v||{};})
     ]).then(function(res){
       var av=res[0], cl=res[1];
       if(!av.updated) return;                 // pas encore publié → on garde le texte statique
@@ -1582,10 +1583,9 @@ document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeLigh
   var MOIS_EV=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
   function cle(d){ return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
   try{
-    var db=firebase.database();
-    Promise.all([db.ref('evasion/config').once('value'), db.ref('evasion/sorties').once('value')])
+    Promise.all([MDPdb.lire('evasion/config'), MDPdb.lire('evasion/sorties')])
     .then(function(r){
-      var cfg=r[0].val()||{}, sorties=r[1].val()||{};
+      var cfg=r[0]||{}, sorties=r[1]||{};
       if(cfg.actif===false) return;
       var places=cfg.places||5, semaines=cfg.semaines||8;
       var d=new Date(); d.setHours(0,0,0,0);
@@ -1627,8 +1627,8 @@ document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeLigh
 <script>
 (function(){
   try{
-    firebase.database().ref('site_config/tarifs').on('value', function(s){
-      var t=s.val(); if(!t) return;
+    MDPdb.suivre('site_config/tarifs', function(t){
+      if(!t) return;
       document.querySelectorAll('.svc-mini-price').forEach(function(el){
         // data-tarif-fixe : prix qui ne vient PAS de site_config/tarifs
         // (le Forfait Évasion a ses propres tarifs dans evasion/config).

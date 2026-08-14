@@ -64,33 +64,53 @@ window.SITE_IMAGE_PAGE = (function(){
   setTimeout(function(){ var els=document.querySelectorAll('.hero-bg'); for(var i=0;i<els.length;i++) els[i].style.opacity='1'; }, 1200);
 
   if (!page || !window.SITE_IMAGE_REGISTRY[page]) return;
-  if (typeof firebase === 'undefined' || !firebase.database) return;
+  // Lecture REST quand db-rest.js est charge (pas de WebSocket), sinon le SDK.
+  var source = window.MDPdb
+    ? window.MDPdb.lire('site_images')
+    : ((typeof firebase === 'undefined' || !firebase.database)
+        ? null
+        : firebase.database().ref('site_images').once('value').then(function(snap){ return snap.val(); }));
+  if (!source) return;
 
-  firebase.database().ref('site_images').once('value').then(function(snap){
-    var data = snap.val() || {};
+  source.then(function(val){
+    var data = val || {};
     var slots = window.SITE_IMAGE_REGISTRY[page];
     var css = '';
+    // Le hero est l'element LCP. Sa photo de remplacement vit sur Cloudinary et
+    // n'est pas prechargee : l'injecter avant la fin du chargement fait attendre
+    // le LCP apres CETTE image (mesure : 2,8 s -> 4,5 s sous bridage Lighthouse).
+    // On l'applique donc apres `load`, une fois le LCP acquis sur l'image locale
+    // prechargee. Aux visites suivantes le cache `siHero` la pose des le depart.
+    var cssHero = '';
     slots.forEach(function(s){
       var ov = data[page + '__' + s.id];
       if (!ov) return;
+      var estHero = (s.kind === 'hero-desktop' || s.kind === 'hero-mobile');
       if (ov.hidden) {
-        css += '.' + s.cls + '{display:none!important;}\n';
+        var masque = '.' + s.cls + '{display:none!important;}\n';
+        if (estHero) cssHero += masque; else css += masque;
         return;
       }
       if (ov.url) {
         // on force cover/centre/no-repeat pour un cadrage impeccable quelle que soit la photo
         var decl = "background-image:url('" + ov.url + "')!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;";
         var rule = '.' + s.cls + '{' + decl + '}';
-        if (s.kind === 'hero-desktop')      css += '@media(min-width:761px){' + rule + '}\n';
-        else if (s.kind === 'hero-mobile')  css += '@media(max-width:760px){' + rule + '}\n';
+        if (s.kind === 'hero-desktop')      cssHero += '@media(min-width:761px){' + rule + '}\n';
+        else if (s.kind === 'hero-mobile')  cssHero += '@media(max-width:760px){' + rule + '}\n';
         else                                css += rule + '\n';
       }
     });
-    if (css) {
+    function poser(id, regles){
+      if (!regles) return;
       var style = document.createElement('style');
-      style.id = 'site-images-overrides';
-      style.textContent = css;
+      style.id = id;
+      style.textContent = regles;
       document.head.appendChild(style);
+    }
+    poser('site-images-overrides', css);
+    if (cssHero) {
+      if (document.readyState === 'complete') poser('site-images-hero', cssHero);
+      else window.addEventListener('load', function(){ poser('site-images-hero', cssHero); });
     }
     // Hero : on met en cache l'image perso et on révèle (anti-flash)
     if (page === 'home') {
