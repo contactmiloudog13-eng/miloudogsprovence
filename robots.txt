@@ -7,4 +7,8 @@ Disallow: /connexion.html
 Disallow: /inscription.html
 Disallow: /merci.html
 
+# Notes de travail et tests — sans intérêt pour les moteurs
+Disallow: /CLAUDE.md
+Disallow: /tests/
+
 Sitemap: https://miloudogsprovence.fr/sitemap.xml
