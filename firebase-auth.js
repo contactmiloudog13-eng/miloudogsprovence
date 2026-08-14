@@ -31,7 +31,13 @@ if (typeof firebase === 'undefined' || !firebase.apps) {
 if (!firebase.apps.length) firebase.initializeApp(_firebaseConfig);
 
 const _auth = firebase.auth();
-const _db   = firebase.database();
+
+// Instanciation retardée au premier usage réel. Mesuré : firebase.database()
+// seule n'ouvre AUCUN socket — c'est la première opération sur une référence
+// qui le fait. On évite quand même de construire l'objet pour rien sur les
+// pages qui lisent en REST (db-rest.js) et n'y touchent jamais.
+let _dbInstance = null;
+function _db() { return _dbInstance || (_dbInstance = firebase.database()); }
 
 // ── Bascule AUTOMATIQUE sur les émulateurs en local ────────────────────────
 // Sert au banc XSS (tests-regles/) : servi depuis 127.0.0.1, le site affiche
@@ -40,7 +46,7 @@ const _db   = firebase.database();
 // ⚠️ La condition porte sur le NOM D'HÔTE : elle ne peut pas se déclencher sur
 // miloudogsprovence.fr. Vérifié en ligne après déploiement.
 if (location.hostname === "127.0.0.1" || location.hostname === "localhost") {
-  try { _db.useEmulator("127.0.0.1", 9101); } catch (e) {}
+  try { _db().useEmulator("127.0.0.1", 9101); } catch (e) {}
   try { _auth.useEmulator("http://127.0.0.1:9199", { disableWarnings: true }); } catch (e) {}
 }
 
@@ -96,7 +102,7 @@ function _updateNav(user, prenomConnu) {
     // Si le prenom est deja connu (mis en cache lors d'une visite precedente),
     // on dessine le menu sans aucun aller-retour reseau.
     if (prenomConnu != null) { _dessinerConnecte(mdEscNav(prenomConnu)); return; }
-    _db.ref('users/' + user.uid).get().then(snap => {
+    _db().ref('users/' + user.uid).get().then(snap => {
       const data   = snap.exists() ? snap.val() : {};
       // ⚠️ Échappé : ce prénom part dans du innerHTML sur TOUTES les pages qui
       // chargent ce script (barre de navigation). Banc XSS du 04/08 : la charge
@@ -188,7 +194,7 @@ function _updateNav(user, prenomConnu) {
         });
         return;
       }
-      _db.ref('site_config/maxChiens').on('value', function (snap) {
+      _db().ref('site_config/maxChiens').on('value', function (snap) {
         var n = snap.val();
         if (n) applyMaxChiens(parseInt(n));
       });
@@ -222,7 +228,7 @@ function _updateNav(user, prenomConnu) {
         });
         return;
       }
-      _db.ref('site_config/reviews').on('value', function (snap) {
+      _db().ref('site_config/reviews').on('value', function (snap) {
         var r = snap.val() || {};
         if (r.count) applyReviewCount(parseInt(r.count));
       });
@@ -281,6 +287,10 @@ function redirectIfLoggedIn(dest) {
 //
 // MDPtrack('nom_evenement') est exposé globalement pour marquer un événement
 // métier depuis n'importe quelle page (envoi de demande, réservation Évasion…).
+// Vrai dès que le visiteur a fait un geste. Vit hors de trackVisit, qui se
+// rappelle elle-même une fois le geste survenu.
+var _gesteVu = false;
+
 (function trackVisit(){
   var A, inc1, JOUR, PAGE, PREFIX;
 
@@ -318,7 +328,34 @@ function redirectIfLoggedIn(dest) {
       if (localStorage.getItem('mdp_no_analytics')) return;
     } catch(e){}
 
-    A     = _db.ref('analytics');
+    // ⚠️ Le filtre par user-agent ci-dessus n'attrape PLUS PageSpeed : relevé
+    // le 14/08/2026, son UA réseau est « Mozilla/5.0 (Linux; Android 11; moto
+    // g power (2022)) … Chrome/150.0.0.0 Mobile Safari/537.36 » — aucune
+    // mention de Lighthouse. Or l'ouverture de `analytics` ci-dessous est la
+    // SEULE chose qui ouvre un WebSocket sur la page (prouvé en instrumentant
+    // window.WebSocket : 1 socket avec le compteur, 0 sans). Ce socket échoue
+    // dans le bac à sable de Lighthouse, le SDK bascule sur le long-polling
+    // qui pose des écouteurs « unload » obsolètes, et les deux audits notés de
+    // « Bonnes pratiques » tombent.
+    //
+    // On attend donc un vrai geste du visiteur avant d'ouvrir la connexion.
+    // `scroll` est volontairement absent de la liste : Lighthouse fait défiler
+    // la page pour sa capture d'écran, il déclencherait le compteur.
+    // Conséquence assumée : un visiteur qui repart sans le moindre geste n'est
+    // plus compté.
+    if (!_gesteVu) {
+      var _evts = ['pointerdown', 'keydown', 'touchstart', 'mousemove'];
+      var _demarrer = function(){
+        if (_gesteVu) return;
+        _gesteVu = true;
+        _evts.forEach(function(e){ document.removeEventListener(e, _demarrer, true); });
+        trackVisit();
+      };
+      _evts.forEach(function(e){ document.addEventListener(e, _demarrer, true); });
+      return;
+    }
+
+    A     = _db().ref('analytics');
     inc1  = nb(1);
     var d = new Date();
     JOUR  = d.getFullYear() + '-' + ('0'+(d.getMonth()+1)).slice(-2) + '-' + ('0'+d.getDate()).slice(-2);
