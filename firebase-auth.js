@@ -218,6 +218,30 @@ function _updateNav(user, prenomConnu) {
       v = v.replace(/\b\d+(\s+)(avis)\b/gi, function (m, sp, word) { return n + sp + word; });
       if (v !== o) t.nodeValue = v;
     });
+    // Cas ou le nombre est isole dans sa propre balise (« <span>41</span> avis
+    // verifies ») : la reecriture par noeud de texte ci-dessus ne peut pas le
+    // voir, puisque le noeud ne contient que le chiffre.
+    document.querySelectorAll('.tb-avis-n, .avis-count-live').forEach(function (el) {
+      if (/^\s*\d+\s*$/.test(el.textContent)) el.textContent = n;
+    });
+    majDonneesStructurees(n);
+  }
+
+  // Le nombre d'avis est aussi ecrit en dur dans le JSON-LD (aggregateRating).
+  // S'il diverge du nombre affiche, Google considere les donnees structurees
+  // comme non conformes au contenu de la page et peut retirer les etoiles des
+  // resultats. On les realigne ici, a partir de la meme source que l'affichage.
+  function majDonneesStructurees(n) {
+    var blocs = document.querySelectorAll('script[type="application/ld+json"]');
+    for (var i = 0; i < blocs.length; i++) {
+      try {
+        var o = JSON.parse(blocs[i].textContent);
+        if (!o || !o.aggregateRating || o.aggregateRating.reviewCount == null) continue;
+        if (String(o.aggregateRating.reviewCount) === String(n)) continue;
+        o.aggregateRating.reviewCount = String(n);
+        blocs[i].textContent = JSON.stringify(o);
+      } catch (e) {}
+    }
   }
   function start() {
     try {
