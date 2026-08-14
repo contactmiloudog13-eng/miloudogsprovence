@@ -562,6 +562,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="db-rest.js"></script>
 <script src="firebase-auth.js"></script>
 
 <script>
@@ -777,7 +778,7 @@ function loadGoogleAvis() {
     const e = document.getElementById('google-avis-empty');   if (e) e.style.display='block';
     return;
   }
-  firebase.database().ref('google_avis').orderByChild('ts').once('value', snap => {
+  MDPdb.lireSnapshot('google_avis', 'ts').then(snap => {
     const grid    = document.getElementById('google-avis-grid');
     const loading = document.getElementById('google-avis-loading');
     const empty   = document.getElementById('google-avis-empty');
@@ -813,7 +814,7 @@ window.addEventListener('load', () => {
 
 /* ─── Avis espace client ─── */
 if (typeof firebase !== 'undefined' && firebase.database)
-firebase.database().ref('avis').orderByChild('createdAt').on('value', snap => {
+MDPdb.suivreSnapshot('avis', 'createdAt', snap => {
   const list = [];
   snap.forEach(c => {
     const a = c.val();

@@ -566,6 +566,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="db-rest.js"></script>
 <script src="firebase-auth.js"></script>
 <script src="site-images.js"></script>
 <script src="site-flags.js"></script>
@@ -610,8 +611,8 @@ function notifyToilettage(){
 <script>
 (function(){
   try{
-    firebase.database().ref('site_config/tarifs').on('value', function(s){
-      var t=s.val(); if(!t) return;
+    MDPdb.suivre('site_config/tarifs', function(t){
+      if(!t) return;
       document.querySelectorAll('.t-price').forEach(function(el){
         // data-tarif-fixe : prix qui ne vient PAS de site_config/tarifs
         // (le Forfait Évasion a ses propres tarifs dans evasion/config).

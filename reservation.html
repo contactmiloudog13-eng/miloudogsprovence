@@ -1122,10 +1122,9 @@ var _pickupTimer=null, _pickupFeats=[];
 window.addEventListener('load', function(){
   try{
     if(!window.firebase || !firebase.database) return;
-    var db=firebase.database();
     Promise.all([
-      db.ref('availability').once('value').then(function(s){return s.val()||{};}).catch(function(){return {};}),
-      db.ref('closures').once('value').then(function(s){return s.val()||{};}).catch(function(){return {};})
+      MDPdb.lire('availability').then(function(v){return v||{};}),
+      MDPdb.lire('closures').then(function(v){return v||{};})
     ]).then(function(res){
       var avail=res[0], closures=res[1];
       var cap=avail.capacity||7, days=avail.days||{};
@@ -1809,8 +1808,8 @@ var VISITE_KEYMAP={chien:'vChien',chat:'vChat',furet:'vFuret',poules:'vPoules',l
 // ═══ Tarifs pilotables : lit site_config/tarifs et applique partout (temps réel) ═══
 (function(){
   try{
-    firebase.database().ref('site_config/tarifs').on('value', function(s){
-      var t=s.val(); if(!t) return;
+    MDPdb.suivre('site_config/tarifs', function(t){
+      if(!t) return;
       // 1) Prix des boutons de service
       // Correspondance data-kind → clé admin. Reconnaître les services par leur
       // identifiant et non par leur libellé : renommer un service ne casse plus
@@ -2749,7 +2748,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     banner.innerHTML='🏖️ <strong>Périodes de congés à venir :</strong> '+txt+'. Ces dates ne sont pas réservables.';
     banner.style.display='block';
   }
-  try{ firebase.database().ref('closures').on('value', s=>{ _closures=s.val()||{}; _renderCongeBanner(); _checkConge(); }); }catch(e){}
+  try{ MDPdb.suivre('closures', v=>{ _closures=v||{}; _renderCongeBanner(); _checkConge(); }); }catch(e){}
 
   // Basculement 3D réservé au pointeur précis : sur tactile, mousemove part
   // mais mouseleave jamais — la carte resterait figée de travers.
@@ -2831,15 +2830,15 @@ function ejsSendReception(data) {
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="db-rest.js"></script>
 <script src="firebase-auth.js"></script>
 
 <script>
 // ── Forfait Évasion : places restantes du prochain samedi ───────────────────
 (function(){
   try{
-    var db=firebase.database();
-    Promise.all([db.ref('evasion/config').once('value'), db.ref('evasion/sorties').once('value')]).then(function(r){
-      var cfg=r[0].val()||{}, so=r[1].val()||{}, el=document.getElementById('ev-resa-places');
+    Promise.all([MDPdb.lire('evasion/config'), MDPdb.lire('evasion/sorties')]).then(function(r){
+      var cfg=r[0]||{}, so=r[1]||{}, el=document.getElementById('ev-resa-places');
       // Alimente l'option « sortie Évasion » du formulaire (places et tarif réels)
       window.__evCfg=cfg; window.__evSorties=so;
       var evc=document.getElementById('evasion-card');

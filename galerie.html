@@ -490,6 +490,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="db-rest.js"></script>
 <script src="firebase-auth.js"></script>
 
 <script>
@@ -510,7 +511,7 @@ function cldOpt(u,w){ try{ if(u.indexOf('/upload/')===-1 || u.indexOf('res.cloud
     if (empty)   empty.style.display   = 'block';
     return;
   }
-  firebase.database().ref('gallery_photos').orderByChild('ts').once('value', function(snap){
+  MDPdb.lireSnapshot('gallery_photos', 'ts').then(function(snap){
     var photos = [];
     snap.forEach(function(ch){ photos.push(ch.val()); });
     photos.reverse();

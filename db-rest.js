@@ -61,5 +61,43 @@
     return liste;
   }
 
-  window.MDPdb = { lire: lire, suivre: suivre, trierParDesc: trierParDesc };
+  // Tri croissant sur une cle enfant, comme .orderByChild() du SDK.
+  function trierParCroissant(objet, cle) {
+    var liste = [];
+    for (var k in objet) if (Object.prototype.hasOwnProperty.call(objet, k)) liste.push(objet[k]);
+    liste.sort(function (a, b) {
+      var va = (a && a[cle] != null) ? a[cle] : -Infinity;
+      var vb = (b && b[cle] != null) ? b[cle] : -Infinity;
+      return va === vb ? 0 : (va < vb ? -1 : 1);
+    });
+    return liste;
+  }
+
+  // Adaptateur : rend un objet exposant le sous-ensemble de l'API snapshot
+  // reellement utilise par les pages (exists / forEach / val), dans le meme
+  // ordre que .orderByChild(cle). Permet de basculer une lecture en REST sans
+  // toucher au corps du rappel, donc sans risque de regression.
+  function commeSnapshot(objet, cle) {
+    var liste = trierParCroissant(objet || {}, cle);
+    return {
+      exists: function () { return liste.length > 0; },
+      val: function () { return objet; },
+      forEach: function (cb) {
+        liste.forEach(function (v) { cb({ val: function () { return v; } }); });
+      }
+    };
+  }
+
+  function lireSnapshot(chemin, cle) {
+    return lire(chemin).then(function (v) { return commeSnapshot(v, cle); });
+  }
+
+  function suivreSnapshot(chemin, cle, cb) {
+    suivre(chemin, function (v) { cb(commeSnapshot(v, cle)); });
+  }
+
+  window.MDPdb = {
+    lire: lire, suivre: suivre, trierParDesc: trierParDesc,
+    lireSnapshot: lireSnapshot, suivreSnapshot: suivreSnapshot
+  };
 })();

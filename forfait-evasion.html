@@ -913,6 +913,7 @@ document.querySelectorAll(".fade-in").forEach(function(el){obs.observe(el);});
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="db-rest.js"></script>
 <script src="firebase-auth.js"></script>
 <script src="site-images.js"></script>
 
@@ -964,9 +965,8 @@ function evEtat(cle){
 (function evCharger(){
   function fini(){ evRendreCarte(); evRendreDates(); }
   try {
-    var db = firebase.database();
-    db.ref('evasion/config').once('value').then(function(s){
-      var c = s.val() || {};
+    MDPdb.lire('evasion/config').then(function(c){
+      c = c || {};
       Object.keys(EV).forEach(function(k){
         if (k !== 'actif' && c[k] != null && c[k] !== '') EV[k] = c[k];
       });
@@ -975,8 +975,8 @@ function evEtat(cle){
       Object.keys(m).forEach(function(id){ var el = document.getElementById(id); if (el) el.textContent = m[id] + '€'; });
       var bt = document.getElementById('ev-barre-t');
       if (bt) bt.textContent = 'Forfait Évasion — ' + EV.prix + ' €';
-      return db.ref('evasion/sorties').once('value');
-    }).then(function(s){ EV_SORTIES = s.val() || {}; fini(); })
+      return MDPdb.lire('evasion/sorties');
+    }).then(function(s){ EV_SORTIES = s || {}; fini(); })
       .catch(function(e){ console.warn('Évasion:', e); fini(); });
   } catch(e){ fini(); }
 })();
