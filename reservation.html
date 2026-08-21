@@ -189,32 +189,6 @@
 .form-submit{width:100%;padding:16px;background:var(--lavande);color:white;border:none;border-radius:40px;font-family:'Lato',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:all .2s;margin-top:8px;}
 .form-submit:hover{background:var(--lavande-dark);}
 .success-msg{display:none;background:var(--vert-light);border:1px solid var(--vert);border-radius:12px;padding:16px;color:var(--vert);font-weight:700;text-align:center;margin-top:16px;}
-/* ADMIN */
-#admin{display:none;padding:80px 5%;background:#1a1a2e;}
-#admin.visible{display:block;}
-.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;}
-.admin-header h2{color:white;font-size:1.8rem;}
-.admin-close{background:rgba(255,255,255,.1);color:white;border:none;padding:10px 20px;border-radius:20px;cursor:pointer;font-family:'Lato',sans-serif;}
-#admin-login-form{max-width:400px;margin:60px auto;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:40px;text-align:center;}
-#admin-login-form h3{color:white;margin-bottom:24px;}
-#admin-login-form input{width:100%;padding:12px 16px;border:1px solid rgba(255,255,255,.2);border-radius:12px;background:rgba(255,255,255,.05);color:white;font-family:'Lato',sans-serif;font-size:.95rem;outline:none;margin-bottom:16px;}
-#admin-login-form button{width:100%;padding:14px;background:var(--lavande);color:white;border:none;border-radius:40px;font-family:'Lato',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;}
-#pwd-error{color:#ff6b6b;font-size:.85rem;margin-top:8px;display:none;}
-#admin-panel{display:none;}
-#admin-panel.show{display:block;}
-.admin-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:32px;}
-.admin-stat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:20px;text-align:center;}
-.admin-stat strong{font-size:2rem;color:white;font-family:'Playfair Display',serif;display:block;}
-.admin-stat span{font-size:.8rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.1em;}
-.reservations-table{width:100%;border-collapse:collapse;background:rgba(255,255,255,.05);border-radius:16px;overflow:hidden;}
-.reservations-table th{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;padding:14px 16px;text-align:left;}
-.reservations-table td{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.05);color:rgba(255,255,255,.8);font-size:.88rem;}
-.status-badge{padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700;}
-.status-pending{background:rgba(232,168,76,.2);color:var(--soleil);}
-.status-confirmed{background:rgba(90,122,74,.2);color:#7BC75A;}
-.status-done{background:rgba(255,255,255,.1);color:rgba(255,255,255,.5);}
-.btn-sm{padding:6px 14px;border:1px solid var(--lavande);color:var(--lavande);background:none;border-radius:20px;font-size:.75rem;cursor:pointer;transition:all .2s;font-family:'Lato',sans-serif;}
-.btn-sm:hover{background:var(--lavande);color:white;}
 .table-wrap{overflow-x:auto;}
 .form-group select:disabled{background:#f0edf8;color:var(--lavande-dark);cursor:not-allowed;opacity:1;}
 
@@ -706,35 +680,6 @@
   </div>
 </section>
 
-<!-- ADMIN -->
-<section id="admin">
-  <div class="container">
-    <div class="admin-header">
-      <h2>🔐 Administration</h2>
-      <button class="admin-close" onclick="document.getElementById('admin').classList.remove('visible')">✕ Fermer</button>
-    </div>
-    <div id="admin-login-form">
-      <h3>Accès administrateur</h3>
-      <input id="admin-pwd" type="password" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')checkAdmin()">
-      <button onclick="checkAdmin()">Se connecter</button>
-      <p id="pwd-error">Mot de passe incorrect.</p>
-    </div>
-    <div id="admin-panel">
-      <div class="admin-stats">
-        <div class="admin-stat"><strong id="stat-total">0</strong><span>Total</span></div>
-        <div class="admin-stat"><strong id="stat-pending">0</strong><span>En attente</span></div>
-        <div class="admin-stat"><strong id="stat-confirmed">0</strong><span>Confirmées</span></div>
-        <div class="admin-stat"><strong id="stat-revenue">0€</strong><span>CA estimé</span></div>
-      </div>
-      <div class="table-wrap">
-        <table class="reservations-table" id="resa-table">
-          <thead><tr><th>Date</th><th>Client</th><th>Chien</th><th>Service</th><th>Dates</th><th>Tél</th><th>Statut</th><th>Action</th></tr></thead>
-          <tbody id="resa-tbody"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</section>
 
 </main>
 <footer>
@@ -746,7 +691,7 @@
   </div>
   <p>Garde de chien à domicile · Promenades · Garderie · Toilettage</p>
   <p>Miramas & Provence · ⭐⭐⭐⭐⭐ sur Google</p>
-  <p style="margin-top:20px;font-size:.75rem;opacity:.5;">© 2025 Milou Dogs Provence · Tous droits réservés · <button type="button" onclick="showAdmin()" style="cursor:pointer;color:rgba(255,255,255,.4);background:none;border:none;font:inherit;padding:0;">Admin</button></p>
+  <p style="margin-top:20px;font-size:.75rem;opacity:.5;">© 2026 Milou Dogs Provence · Tous droits réservés</p>
 </footer>
 <script src="tarifs-fetes.js"></script>
 <script>
@@ -1038,7 +983,6 @@ function toggleTag(el){
 const obs=new IntersectionObserver(els=>els.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.1});
 document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
 
-let reservations=JSON.parse(localStorage.getItem('mdp_reservations')||'[]');
 
 /* Horaires d'ouverture : 8h–12h et 13h30–19h. La coupure du midi ne doit pas
    etre selectionnable, minutes comprises : a 12h seul :00 reste valide, et a
@@ -2593,30 +2537,6 @@ async function submitReservation() {
   // Si Web3Forms échoue, rediriger quand même (Sheet a reçu)
   window.location.href = 'merci.html';
 }
-
-function showAdmin(){document.getElementById('admin').classList.add('visible');document.getElementById('admin').scrollIntoView({behavior:'smooth'});}
-function checkAdmin(){
-  const _h=s=>[...s].reduce((a,c)=>Math.imul(31,a)+c.charCodeAt(0)|0,0);if(_h(document.getElementById('admin-pwd').value)===_h('milou2024')){
-    document.getElementById('admin-login-form').style.display='none';
-    document.getElementById('admin-panel').classList.add('show');
-    renderAdmin();
-  }else{document.getElementById('pwd-error').style.display='block';}
-}
-function renderAdmin(){
-  reservations=JSON.parse(localStorage.getItem('mdp_reservations')||'[]');
-  const pending=reservations.filter(r=>r.status==='pending').length;
-  const confirmed=reservations.filter(r=>r.status==='confirmed').length;
-  document.getElementById('stat-total').textContent=reservations.length;
-  document.getElementById('stat-pending').textContent=pending;
-  document.getElementById('stat-confirmed').textContent=confirmed;
-  document.getElementById('stat-revenue').textContent=(confirmed*20)+'€';
-  const tbody=document.getElementById('resa-tbody');
-  if(!reservations.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:32px;color:rgba(255,255,255,.4);">Aucune réservation 🐾</td></tr>';return;}
-  tbody.innerHTML=reservations.map((r,i)=>`<tr><td>${r.date}</td><td><strong>${r.prenom} ${r.nom}</strong></td><td>${r.chien}${r.race?' ('+r.race+')':''}</td><td>${r.service}</td><td>${r.dateDebut||'—'}${r.dateFin?' → '+r.dateFin:''}</td><td><a href="tel:${r.tel}" style="color:var(--lavande);font-weight:700;">${r.tel}</a></td><td><span class="status-badge status-${r.status}">${r.status==='pending'?'⏳ En attente':r.status==='confirmed'?'✅ Confirmée':'✔ Terminée'}</span></td><td style="display:flex;gap:6px;flex-wrap:wrap;">${r.status==='pending'?`<button class="btn-sm" onclick="setStatus(${i},'confirmed')">Confirmer</button>`:''}${r.status==='confirmed'?`<button class="btn-sm" onclick="setStatus(${i},'done')">Terminée</button>`:''}<button class="btn-sm" style="border-color:#c0392b;color:#c0392b;" onclick="deleteResa(${i})">✕</button></td></tr>`).join('');
-}
-function setStatus(idx,status){reservations[idx].status=status;localStorage.setItem('mdp_reservations',JSON.stringify(reservations));renderAdmin();}
-function deleteResa(idx){if(confirm('Supprimer ?')){reservations.splice(idx,1);localStorage.setItem('mdp_reservations',JSON.stringify(reservations));renderAdmin();}}
-if(window.location.hash==='#admin-panel')showAdmin();
 
 
 </script>
