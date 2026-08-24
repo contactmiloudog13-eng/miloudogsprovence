@@ -163,10 +163,15 @@ function check(nom, ok, detail) {
   check('article 14 = Droit applicable (reste le dernier)', /^14\. Droit applicable/.test(arts[13]), arts[13]);
 
   const corps = await page.innerText('.ml-box');
-  check('date de mise à jour inchangée', /Dernière mise à jour : juin 2026/.test(corps));
+  check('date de mise à jour à jour', /Dernière mise à jour : août 2026/.test(corps));
   check('aucune date d\'entrée en vigueur sur les nouvelles clauses',
     !/(applicable|en vigueur|à compter du|à partir du)\s+(le\s+)?\d{1,2}\s+\w+\s+20\d\d/i.test(corps));
-  check('clause propreté : 24 h + 5 €/jour', /24 heures/.test(corps) && /5 €/.test(corps));
+  // Regle changee en aout 2026 : 5 € par dejection, sans delai d'adaptation.
+  check('clause propreté : 5 € par déjection, aucune adaptation',
+    /Aucun délai d'adaptation/.test(corps)
+    && /Chaque déjection — urine ou selle — déposée à l'intérieur est facturée 5 €/.test(corps)
+    && !/24 heures d'adaptation/.test(corps));
+  check('renvoi vers le contrat de garde signé', /contrat de garde individuel/.test(corps));
   check('clause dégâts : le propriétaire paie', /son propriétaire le paie/.test(corps));
   check('lien article 8 → article 13 fonctionnel', await page.$('#art-degats') !== null);
 
