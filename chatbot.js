@@ -155,12 +155,12 @@ const REPONSES = [
   // ── TOILETTAGE ───────────────────────────────────────────
   {
     mots: ['toilett','bain','brossage','poil','propre','coiffure','seche','shampoo','shampooing'],
-    rep: `🛁 Le toilettage simple sera bientôt disponible à 30€ !\n\n(Bain, séchage, brossage, nettoyage des oreilles)\n\nLaissez votre email sur la page Services pour être prévenu au lancement.`
+    rep: `🛁 Toilettage simple : 30€ la séance (chiens de petite et moyenne taille).\n\nBain, séchage, brossage et nettoyage des oreilles — seul, ou pendant une pension ou une garderie.\n\nTous les détails : miloudogsprovence.fr/toilettage-chien.html`
   },
   // ── AVIS / RÉPUTATION ────────────────────────────────────
   {
     mots: ['avis','note','google','commentaire','reputation','etoile','stars','confiance','serieux','fiable'],
-    rep: `⭐ Nous avons une note parfaite 5.0/5 sur Google avec 41 avis vérifiés !\n\nConsultez tous les témoignages sur notre page Avis 😊`
+    rep: `⭐ Nous avons une note parfaite 5.0/5 sur Google avec 87 avis vérifiés !\n\nConsultez tous les témoignages sur notre page Avis 😊`
   },
   // ── ASSURANCE ────────────────────────────────────────────
   {
@@ -452,8 +452,9 @@ function loadGA() {
     // Items principaux (dans l'ordre voulu)
     var accueil=liByHref('index.html'), services=liByHref('services.html');
     var reserv=liByHref('reservation.html'), avis=liByHref('avis.html');
+    var animaux=liByHref('garde-animaux-domicile-miramas.html');
     // Items secondaires → regroupés sous « Plus »
-    var primary=['index.html','services.html','avis.html','reservation.html','espace-client.html','connexion.html'];
+    var primary=['index.html','services.html','garde-animaux-domicile-miramas.html','avis.html','reservation.html','espace-client.html','connexion.html'];
     var extras=[].slice.call(ul.querySelectorAll('li')).filter(function(li){
       if(li.classList.contains('nav-mobile-cta')) return false;
       var a=li.querySelector('a'); if(!a) return false;
@@ -480,8 +481,8 @@ function loadGA() {
     // Bouton CTA « Réserver » redondant → masqué (on a déjà Réservation dans le menu)
     var cta=ul.querySelector('.nav-mobile-cta'); if(cta) cta.style.display='none';
 
-    // Ré-agencement : Mon espace, Accueil, Services, Réservation, Avis, Plus + le reste
-    var order=[monEspace, accueil, services, reserv, avis, toggle].concat(extras);
+    // Ré-agencement : Mon espace, Accueil, Services, Chats & NAC, Réservation, Avis, Plus + le reste
+    var order=[monEspace, accueil, services, animaux, reserv, avis, toggle].concat(extras);
     order.forEach(function(el){ if(el) ul.appendChild(el); });
 
     // Styles (une fois)

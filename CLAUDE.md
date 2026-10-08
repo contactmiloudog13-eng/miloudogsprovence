@@ -14,7 +14,7 @@ Miramas (13140).
 - **Hébergement** : GitHub Pages, dépôt `contactmiloudog13-eng/miloudogsprovence`
 - **Déploiement** : tout commit sur `main` est en ligne en une à deux minutes.
   Il n'y a ni préproduction ni étape de compilation.
-- **56 pages HTML**, 47 URL au sitemap.
+- **61 pages HTML**, 52 URL au sitemap.
 
 ## Architecture
 
@@ -144,6 +144,44 @@ Une section `#autres-animaux` a été ajoutée à `index.html`.
 
 **112 combinaisons** (4 nombres de chiens × 4 compositions d'espèces × 7 services)
 sont balayées par `tests/matrice.js` — toutes au vert.
+
+### SEO multi-services (octobre 2026)
+
+Problème du client : des demandes pour la pension, presque aucune pour chats,
+promenades, visites. Causes trouvées : fiche Google en catégorie unique
+« Pension pour chiens » ; accueil, menu et données structurées 100 % pension ;
+aucune page promenade / garderie / toilettage ; pages chien et chat d'une même
+ville sans aucun lien entre elles.
+
+- **3 pages créées** : `promenade-chien.html`, `garderie-chien.html`,
+  `toilettage-chien.html` (le toilettage est **ouvert** : confirmé par la
+  cliente, le « bientôt disponible » a été retiré de Services et du chatbot).
+- `garde-animaux-domicile-miramas.html` réécrite en page pilier « pet sitter ».
+- Pas de page « pension » séparée : **l'accueil reste la page pension** (elle
+  apporte les demandes actuelles), une seconde page la cannibaliserait.
+- Accueil : titre élargi, ligne de services dans le H1, accès chats dans le
+  hero (visible aussi sur mobile), 8 cartes de services liées, section
+  `#autres-animaux` remontée (ajoutée aussi au script de réordonnancement).
+- Menu : « Parrainage » remplacé par « Chats & NAC » (le menu ordinateur est
+  plein) ; Parrainage reste en pied de page. Sur mobile, « Chats & NAC » est
+  dans les entrées principales (`chatbot.js`).
+- Bloc « Nos services » dans **tous** les pieds de page (`div.pied-services` —
+  surtout pas un `<nav>`, que `style.css` fixe en haut de l'écran).
+- JSON-LD : entité unique `@id` `https://miloudogsprovence.fr/#entreprise`,
+  lien vers la fiche Google (`hasMap`, CID 15388702352928937936), catalogue
+  complet des services. **`streetAddress` retirée partout** : l'adresse est
+  confidentielle (communiquée à la confirmation) et la fiche Google est en zone
+  desservie. Elle reste dans l'e-mail EmailJS de `reservation.html`.
+- Nombre d'avis aligné sur Google : **87** (l'admin Firebase disait 76 et le
+  réécrit à l'exécution — à mettre à jour dans l'admin).
+- Pages ville chien (8 communes) : section promenade / visites / chat de la
+  ville ; pages ville chat : lien retour vers le chien de la même ville.
+- `preview-design.html` passé en `noindex`.
+
+**CLS des pages intérieures (préexistant, non corrigé)** : 0,08 à 0,14 en
+mesure bridée, dû **uniquement** au remplacement de police au chargement
+(0,000 quand les polices sont bloquées). Piste : polices de repli avec
+`size-adjust`/`ascent-override`. À mesurer page par page, voir régressions 2 et 3.
 
 ---
 
